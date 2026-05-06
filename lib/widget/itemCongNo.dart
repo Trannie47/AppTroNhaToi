@@ -1,7 +1,7 @@
 import 'package:AppTroNhaToi/models/cong_no.dart';
 import 'package:flutter/material.dart';
 
-import '../controllers/cost_controller.dart';
+import '../utils/currency_formatter.dart';
 
 class ItemCongNo extends StatelessWidget {
   final CongNo congNo;

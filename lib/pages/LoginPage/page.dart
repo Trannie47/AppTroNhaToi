@@ -51,7 +51,7 @@ class _LoginPageState extends State<LoginPage> {
     if (errorUser != null || errorPass != null) return;
 
     // giả lập login
-    if (userController.text != "admin" || passController.text != "123456") {
+    if (userController.text != "admin" || passController.text != "123") {
       showError("Tài khoản/Mật khẩu chưa đúng yêu cầu nhập lại");
     } else {
       // 👉 Đăng nhập thành công, chuyển sang trang chính

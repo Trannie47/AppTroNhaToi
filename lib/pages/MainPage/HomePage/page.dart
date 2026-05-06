@@ -1,7 +1,8 @@
-import 'package:AppTroNhaToi/controllers/cost_controller.dart';
-import 'package:AppTroNhaToi/controllers/date_controller.dart';
 import 'package:AppTroNhaToi/models/cong_no.dart';
 import 'package:AppTroNhaToi/models/thong_bao.dart';
+import 'package:AppTroNhaToi/pages/MainPage/HomePage/FormRoom/page.dart';
+import 'package:AppTroNhaToi/utils/currency_formatter.dart';
+import 'package:AppTroNhaToi/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/widget/itemCongNo.dart';
 import 'package:AppTroNhaToi/widget/itemThongBao.dart';
 import 'package:flutter/material.dart';
@@ -14,9 +15,30 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final double roomCount = 9;
-  final double emptyRoomCount = 3;
-  final double occupiedRoomCount = 9;
+  late double roomCount = 0;
+  late double emptyRoomCount = 0;
+  late double occupiedRoomCount = 0;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
+
+  Future<void> loadData() async {
+    // giả lập loading
+    await Future.delayed(const Duration(seconds: 2));
+
+    setState(() {
+      isLoading = false;
+
+      // test dữ liệu
+      roomCount = 0;
+      emptyRoomCount = 0;
+      occupiedRoomCount = roomCount - emptyRoomCount;
+    });
+  }
 
   List<ThongBao> issues = [
     ThongBao(
@@ -41,6 +63,14 @@ class _HomePageState extends State<HomePage> {
     CongNo(name: "Trần Thị Lan", room: "Phòng 201 · 2 lần mua", amount: 120000),
   ];
 
+  //Nút chuyển sang trang Form Room
+  void navigateToFormRoom() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const FormRoomPage()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,24 +82,117 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _header(),
+
               const SizedBox(height: 16),
-              _quickActions(),
-              const SizedBox(height: 16),
-              _stats(),
-              const SizedBox(height: 16),
-              roomCount > 0
-                  ? Column(
-                      children: [
-                        _revenue(27900000, 320000),
-                        const SizedBox(height: 16),
-                        _status(),
-                      ],
-                    )
-                  : _emptyHome(),
+
+              /// LOADING TOÀN BỘ TỪ QUICK ACTION
+              if (isLoading)
+                _loadingHome()
+              /// DỮ LIỆU THẬT
+              else ...[
+                _quickActions(),
+
+                const SizedBox(height: 16),
+
+                _stats(),
+
+                const SizedBox(height: 16),
+
+                if (roomCount > 0) ...[
+                  _revenue(27900000, 320000),
+
+                  const SizedBox(height: 16),
+
+                  _status(),
+                ] else ...[
+                  _emptyHome(),
+                ],
+              ],
             ],
           ),
         ),
       ),
+    );
+  }
+
+  /// LOADING UI
+  Widget _loadingHome() {
+    return Column(
+      children: [
+        /// QUICK ACTION
+        Row(
+          children: List.generate(4, (index) {
+            return Expanded(
+              child: Container(
+                height: 100,
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+            );
+          }),
+        ),
+
+        const SizedBox(height: 16),
+
+        /// STATS
+        Row(
+          children: List.generate(3, (index) {
+            return Expanded(
+              child: Container(
+                height: 110,
+                margin: const EdgeInsets.only(right: 8),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+            );
+          }),
+        ),
+
+        const SizedBox(height: 16),
+
+        /// REVENUE
+        Row(
+          children: [
+            Expanded(
+              child: Container(
+                height: 120,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+            ),
+
+            const SizedBox(width: 8),
+
+            Expanded(
+              child: Container(
+                height: 120,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 16),
+
+        /// STATUS
+        Container(
+          height: 120,
+          decoration: BoxDecoration(
+            color: Colors.grey.shade200,
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+      ],
     );
   }
 
@@ -166,7 +289,13 @@ class _HomePageState extends State<HomePage> {
   Widget _stats() {
     return Row(
       children: [
-        _box(roomCount, "Tổng phòng", badge: "75% lấp đầy"),
+        _box(
+          roomCount,
+          "Tổng phòng",
+          badge: (roomCount > 0)
+              ? "${(occupiedRoomCount / roomCount * 100).toInt()}% lấp đầy"
+              : null,
+        ),
         _box(
           emptyRoomCount,
           "Phòng trống",
@@ -216,8 +345,12 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 8),
 
             // BADGE
-            if (badge != null)
-              Container(
+            Visibility(
+              visible: badge != null,
+              maintainSize: true,
+              maintainAnimation: true,
+              maintainState: true,
+              child: Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 10,
                   vertical: 4,
@@ -227,7 +360,7 @@ class _HomePageState extends State<HomePage> {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  badge,
+                  badge ?? "",
                   style: const TextStyle(
                     fontSize: 8,
                     color: Color(0xFF2D7A3A),
@@ -235,6 +368,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
+            ),
           ],
         ),
       ),
@@ -502,28 +636,33 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(height: 16),
 
               // BUTTON
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 14,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
-                    Text(
-                      "Thêm phòng trọ đầu tiên",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    Icon(
-                      Icons.arrow_forward_ios,
-                      size: 16,
-                      color: Colors.white,
-                    ),
-                  ],
+              InkWell(
+                onTap: () {
+                  navigateToFormRoom();
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 14,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: const [
+                      Text(
+                        "Thêm phòng trọ đầu tiên",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      Icon(
+                        Icons.arrow_forward_ios,
+                        size: 16,
+                        color: Colors.white,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -544,27 +683,31 @@ class _HomePageState extends State<HomePage> {
           1,
           "Thêm phòng trọ",
           "Nhập thông tin phòng, diện tích, giá thuê và trạng thái",
+          null,
         ),
         _stepItem(
           2,
           "Thêm người thuê",
           "Nhập thông tin người thuê và phân vào phòng",
+          null,
         ),
         _stepItem(
           3,
           "Tạo hợp đồng",
           "Lập hợp đồng thuê phòng và ghi nhận tiền cọc",
+          null,
         ),
         _stepItem(
           4,
           "Ghi điện nước & tạo hóa đơn",
           "Ghi chỉ số hàng tháng và xuất hóa đơn cho người thuê",
+          null,
         ),
       ],
     );
   }
 
-  Widget _stepItem(int index, String title, String desc) {
+  Widget _stepItem(int index, String title, String desc, VoidCallback? onTap) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),

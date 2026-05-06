@@ -1,31 +1,35 @@
 class LoaiPhong {
-  final int? maLoaiPhong;
-  final double? dienTich;
-  final bool? isMayLanh;
-  final int? soNguoiToiDa;
-  final double? giaTien;
+  final int maLoaiPhong;
+  final String tenLoaiPhong;
+  final double dienTich;
+  final bool isMayLanh;
+  final int soNguoiToiDa;
+  final double giaTien;
 
   LoaiPhong({
-    this.maLoaiPhong,
-    this.dienTich,
-    this.isMayLanh,
-    this.soNguoiToiDa,
-    this.giaTien,
+    required this.maLoaiPhong,
+    required this.tenLoaiPhong,
+    required this.dienTich,
+    this.isMayLanh = true,
+    required this.soNguoiToiDa,
+    required this.giaTien,
   });
 
   factory LoaiPhong.fromMap(Map<String, dynamic> map) {
     return LoaiPhong(
-      maLoaiPhong: map['maLoaiPhong'] as int?,
-      dienTich: (map['dienTich'] as num?)?.toDouble(),
+      maLoaiPhong: map['maLoaiPhong'] as int,
+      tenLoaiPhong: map['tenLoaiPhong'] as String,
+      dienTich: (map['dienTich'] as num?)!.toDouble(),
       isMayLanh: map['isMayLanh'] == 1 || map['isMayLanh'] == true,
-      soNguoiToiDa: map['soNguoiToiDa'] as int?,
-      giaTien: (map['giaTien'] as num?)?.toDouble(),
+      soNguoiToiDa: map['soNguoiToiDa'] as int,
+      giaTien: (map['giaTien'] as num?)!.toDouble(),
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
       if (maLoaiPhong != null) 'maLoaiPhong': maLoaiPhong,
+      'tenLoaiPhong': tenLoaiPhong,
       'dienTich': dienTich,
       'isMayLanh': isMayLanh == true ? 1 : 0,
       'soNguoiToiDa': soNguoiToiDa,
@@ -46,6 +50,7 @@ class LoaiPhong {
       isMayLanh: isMayLanh ?? this.isMayLanh,
       soNguoiToiDa: soNguoiToiDa ?? this.soNguoiToiDa,
       giaTien: giaTien ?? this.giaTien,
+      tenLoaiPhong: tenLoaiPhong ?? this.tenLoaiPhong,
     );
   }
 
