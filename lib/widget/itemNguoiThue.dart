@@ -1,9 +1,8 @@
-import 'package:AppTroNhaToi/models/nguoi_thue.dart';
+import 'package:AppTroNhaToi/models/view_model/nguoi_thue_phong.dart';
 import 'package:flutter/material.dart';
 
 class ItemNguoiThue extends StatelessWidget {
-  final NguoiThue nguoiThue;
-
+  final NguoiThuePhong nguoiThue;
 
   final bool isSelected;
   final VoidCallback? onTap;
@@ -19,7 +18,8 @@ class ItemNguoiThue extends StatelessWidget {
   Widget build(BuildContext context) {
     /// KIỂM TRA VAI TRÒ
     bool isOGhep =
-        nguoiThue.ghiChu != null && nguoiThue.ghiChu!.trim().isNotEmpty;
+        nguoiThue.nguoiThue.ghiChu != null &&
+        nguoiThue.nguoiThue.ghiChu!.trim().isNotEmpty;
 
     String vaiTro = isOGhep ? "Ở ghép" : "Chính";
 
@@ -46,10 +46,7 @@ class ItemNguoiThue extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.only(bottom: 14),
 
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 14,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
 
         decoration: BoxDecoration(
           color: Colors.white,
@@ -79,7 +76,7 @@ class ItemNguoiThue extends StatelessWidget {
               alignment: Alignment.center,
 
               child: Text(
-                _vietTat(nguoiThue.hoTen??""),
+                _vietTat(nguoiThue.nguoiThue.hoTen ?? ""),
 
                 style: TextStyle(
                   color: avatarText,
@@ -98,7 +95,7 @@ class ItemNguoiThue extends StatelessWidget {
                 children: [
                   /// HỌ TÊN
                   Text(
-                    nguoiThue.hoTen??"",
+                    nguoiThue.nguoiThue.hoTen ?? "",
 
                     style: const TextStyle(
                       fontSize: 16,
@@ -111,7 +108,7 @@ class ItemNguoiThue extends StatelessWidget {
 
                   /// SDT + CCCD
                   Text(
-                    "${nguoiThue.sdt} · CCCD: ${nguoiThue.cccd}",
+                    "${nguoiThue.nguoiThue.sdt} · CCCD: ${nguoiThue.nguoiThue.cccd}",
 
                     style: const TextStyle(
                       fontSize: 13,
@@ -125,7 +122,7 @@ class ItemNguoiThue extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        "phong",
+                        nguoiThue.phong?.tenPhong ?? "",
 
                         style: const TextStyle(
                           fontSize: 14,

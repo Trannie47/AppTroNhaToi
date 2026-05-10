@@ -1,4 +1,6 @@
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
+import 'package:AppTroNhaToi/models/phong.dart';
+import 'package:AppTroNhaToi/models/view_model/nguoi_thue_phong.dart';
 import 'package:AppTroNhaToi/widget/itemNguoiThue.dart';
 import 'package:flutter/material.dart';
 
@@ -10,24 +12,40 @@ class NguoiThuePage extends StatefulWidget {
 }
 
 class _NguoiThuePageState extends State<NguoiThuePage> {
-  final List<NguoiThue> danhSachNguoiThue = [
-    NguoiThue(
-      idnt: 1,
-      hoTen: "Nguyễn Văn A",
-      cccd: "079203001234",
-      sdt: "0909123456",
-      queQuan: "TP.HCM",
-      ghiChu: "Đã cọc phòng",
-      ngaySinh: DateTime(2003, 5, 12),
+  final List<NguoiThuePhong> danhSachNguoiThue = [
+    NguoiThuePhong(
+      nguoiThue: NguoiThue(
+        idnt: 1,
+        hoTen: "Nguyễn Văn A",
+        cccd: "079203001234",
+        sdt: "0909123456",
+        queQuan: "TP.HCM",
+        ghiChu: "Đã cọc phòng",
+        ngaySinh: DateTime(2003, 5, 12),
+      ),
+      phong: Phong(
+        phongID: 1,
+        tenPhong: "Phòng 101",
+        trangThai: 1,
+        maLoaiPhong: 1,
+      ),
     ),
-    NguoiThue(
-      idnt: 2,
-      hoTen: "Trần Thị B",
-      cccd: "079203004567",
-      sdt: "0988111222",
-      queQuan: "Cần Thơ",
-      ghiChu: "Thuê dài hạn",
-      ngaySinh: DateTime(2002, 8, 20),
+    NguoiThuePhong(
+      nguoiThue: NguoiThue(
+        idnt: 2,
+        hoTen: "Trần Thị B",
+        cccd: "079203001235",
+        sdt: "0909234567",
+        queQuan: "Hà Nội",
+        ghiChu: "",
+        ngaySinh: DateTime(2000, 8, 20),
+      ),
+      phong: Phong(
+        phongID: 2,
+        tenPhong: "Phòng 102",
+        trangThai: 1,
+        maLoaiPhong: 1,
+      ),
     ),
   ];
 
