@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'HomePage/HomePage.dart';
+import 'NguoiThuePage/nguoithuePage.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -14,7 +15,7 @@ class _MainPageState extends State<MainPage> {
   final List<Widget> pages = [
     const HomePage(),
     const Center(child: Text("Phòng")),
-    const Center(child: Text("Người thuê")),
+    const NguoiThuePage(),
     const Center(child: Text("Khác")),
   ];
 
