@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:AppTroNhaToi/models/loaiphong.dart';
 
-class FormRoomTypePage extends StatefulWidget {
+class FormLoaiPhong extends StatefulWidget {
   final LoaiPhong? loaiPhong;
 
-  const FormRoomTypePage({super.key, this.loaiPhong});
+  const FormLoaiPhong({super.key, this.loaiPhong});
 
   @override
-  State<FormRoomTypePage> createState() => _FormRoomTypePageState();
+  State<FormLoaiPhong> createState() => _FormLoaiPhongState();
 }
 
-class _FormRoomTypePageState extends State<FormRoomTypePage> {
+class _FormLoaiPhongState extends State<FormLoaiPhong> {
   late TextEditingController tenLoaiPhongController;
   late TextEditingController dienTichController;
   late TextEditingController soNguoiController;

@@ -1,19 +1,19 @@
 import 'package:AppTroNhaToi/models/loaiphong.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
-import 'package:AppTroNhaToi/pages/MainPage/HomePage/FormRoomType/page.dart';
+import 'package:AppTroNhaToi/pages/MainPage/HomePage/FormLoaiPhong/FormLoaiPhong.dart';
 import 'package:AppTroNhaToi/widget/itemLoaiPhongSelectBox.dart';
 import 'package:flutter/material.dart';
 
-class FormRoomPage extends StatefulWidget {
+class FormPhong extends StatefulWidget {
   final Phong? room;
 
-  const FormRoomPage({super.key, this.room});
+  const FormPhong({super.key, this.room});
 
   @override
-  State<FormRoomPage> createState() => _FormRoomPageState();
+  State<FormPhong> createState() => _FormPhongState();
 }
 
-class _FormRoomPageState extends State<FormRoomPage> {
+class _FormPhongState extends State<FormPhong> {
   late TextEditingController nameController;
   late TextEditingController descController;
 
@@ -74,7 +74,7 @@ class _FormRoomPageState extends State<FormRoomPage> {
   void goToFormRoomType() async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const FormRoomTypePage()),
+      MaterialPageRoute(builder: (context) => const FormLoaiPhong()),
     );
 
     if (result != null && result is LoaiPhong) {

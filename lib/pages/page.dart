@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'LoginPage/page.dart';
+import 'TrangDangNhap/TrangDangNhap.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -8,7 +8,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginPage(), // 👉 vào thẳng login
+      home: TrangDangNhap(),
     );
   }
 }

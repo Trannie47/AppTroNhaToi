@@ -1,6 +1,6 @@
 import 'package:AppTroNhaToi/models/cong_no.dart';
 import 'package:AppTroNhaToi/models/thong_bao.dart';
-import 'package:AppTroNhaToi/pages/MainPage/HomePage/FormRoom/page.dart';
+import 'package:AppTroNhaToi/pages/MainPage/HomePage/FormPhong/FormPhong.dart';
 import 'package:AppTroNhaToi/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/widget/itemCongNo.dart';
@@ -67,7 +67,7 @@ class _HomePageState extends State<HomePage> {
   void navigateToFormRoom() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const FormRoomPage()),
+      MaterialPageRoute(builder: (context) => const FormPhong()),
     );
   }
 

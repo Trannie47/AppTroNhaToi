@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
-import '../MainPage/page.dart';
+import '../MainPage/MainPage.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class TrangDangNhap extends StatefulWidget {
+  const TrangDangNhap({Key? key}) : super(key: key);
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<TrangDangNhap> createState() => _TrangDangNhapState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _TrangDangNhapState extends State<TrangDangNhap> {
   bool isHidden = true;
   bool remember = false;
 
