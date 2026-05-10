@@ -1,6 +1,4 @@
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
-import 'package:AppTroNhaToi/models/phong.dart';
-import 'package:AppTroNhaToi/models/view_model/nguoi_thue_phong.dart';
 import 'package:AppTroNhaToi/widget/itemNguoiThue.dart';
 import 'package:flutter/material.dart';
 
@@ -12,289 +10,63 @@ class NguoiThuePage extends StatefulWidget {
 }
 
 class _NguoiThuePageState extends State<NguoiThuePage> {
-  final List<NguoiThuePhong> danhSachNguoiThue = [
-    NguoiThuePhong(
-      nguoiThue: NguoiThue(
-        idnt: 1,
-        hoTen: "Nguyễn Văn A",
-        cccd: "079203001234",
-        sdt: "0909123456",
-        queQuan: "TP.HCM",
-        ghiChu: "",
-        ngaySinh: DateTime(2003, 5, 12),
-      ),
-      phong: Phong(
-        phongID: 1,
-        tenPhong: "P101",
-        trangThai: 1,
-        maLoaiPhong: 1,
-      ),
+  final List<NguoiThue> danhSachNguoiThue = [
+    NguoiThue(
+      idnt: 1,
+      hoTen: "Nguyễn Văn A",
+      cccd: "079203001234",
+      sdt: "0909123456",
+      queQuan: "TP.HCM",
+      ghiChu: "Đã cọc phòng",
+      ngaySinh: DateTime(2003, 5, 12),
     ),
-
-    NguoiThuePhong(
-      nguoiThue: NguoiThue(
-        idnt: 2,
-        hoTen: "Trần Thị B",
-        cccd: "079203001235",
-        sdt: "0909234567",
-        queQuan: "Hà Nội",
-        ghiChu: "Ở ghép",
-        ngaySinh: DateTime(2000, 8, 20),
-      ),
-      phong: Phong(
-        phongID: 2,
-        tenPhong: "P102",
-        trangThai: 1,
-        maLoaiPhong: 1,
-      ),
-    ),
-
-    NguoiThuePhong(
-      nguoiThue: NguoiThue(
-        idnt: 3,
-        hoTen: "Lê Văn C",
-        cccd: "079203001236",
-        sdt: "0909345678",
-        queQuan: "Đà Nẵng",
-        ghiChu: "",
-        ngaySinh: DateTime(2001, 3, 15),
-      ),
-      phong: Phong(
-        phongID: 3,
-        tenPhong: "P103",
-        trangThai: 1,
-        maLoaiPhong: 1,
-      ),
+    NguoiThue(
+      idnt: 2,
+      hoTen: "Trần Thị B",
+      cccd: "079203004567",
+      sdt: "0988111222",
+      queQuan: "Cần Thơ",
+      ghiChu: "Thuê dài hạn",
+      ngaySinh: DateTime(2002, 8, 20),
     ),
   ];
 
-  final TextEditingController searchController = TextEditingController();
+  String formatDate(DateTime? date) {
+    if (date == null) return "";
+    return "${date.day}/${date.month}/${date.year}";
+  }
 
   @override
   Widget build(BuildContext context) {
-    int tong = danhSachNguoiThue.length;
-
-    int thueChinh = danhSachNguoiThue
-        .where(
-          (e) =>
-      e.nguoiThue.ghiChu == null ||
-          e.nguoiThue.ghiChu!.trim().isEmpty,
-    )
-        .length;
-
-    int oGhep = tong - thueChinh;
-
     return Scaffold(
-      backgroundColor: const Color(0xffF5F6FA),
-
-      body: SafeArea(
-        child: Column(
-          children: [
-            /// HEADER
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 18, 20, 16),
-
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-                children: [
-                  const Text(
-                    "Người thuê",
-
-                    style: TextStyle(
-                      fontSize: 34,
-                      fontWeight: FontWeight.w800,
-                      color: Color(0xff1C1C1E),
-                    ),
-                  ),
-
-                  Container(
-                    height: 44,
-
-                    decoration: BoxDecoration(
-                      color: const Color(0xff2D7A3A),
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-
-                    child: Material(
-                      color: Colors.transparent,
-
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(30),
-
-                        onTap: () {},
-
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 18),
-
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.add,
-                                color: Colors.white,
-                                size: 20,
-                              ),
-
-                              SizedBox(width: 4),
-
-                              Text(
-                                "Thêm",
-
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            /// SEARCH
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-
-              child: Container(
-                height: 50,
-
-                decoration: BoxDecoration(
-                  color: const Color(0xffEFEFEF),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-
-                child: TextField(
-                  controller: searchController,
-
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-
-                    hintText: "Tìm tên, SDT, CCCD...",
-
-                    hintStyle: TextStyle(
-                      color: Colors.grey.shade500,
-                      fontSize: 15,
-                    ),
-
-                    prefixIcon: Icon(
-                      Icons.search,
-                      color: Colors.grey.shade500,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 18),
-
-            /// THỐNG KÊ
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-              ),
-
-              child: Row(
-                children: [
-                  _itemThongKe(
-                    title: "$tong",
-                    subTitle: "Tổng (chính + ghép)",
-                    color: const Color(0xff222222),
-                  ),
-
-                  _divider(),
-
-                  _itemThongKe(
-                    title: "$thueChinh",
-                    subTitle: "Thuê chính",
-                    color: const Color(0xff2D7A3A),
-                  ),
-
-                  _divider(),
-
-                  _itemThongKe(
-                    title: "$oGhep",
-                    subTitle: "Ở ghép",
-                    color: const Color(0xff222222),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 18),
-
-            /// LIST
-            Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-
-                itemCount: danhSachNguoiThue.length,
-
-                itemBuilder: (context, index) {
-                  return ItemNguoiThue(
-                    nguoiThue: danhSachNguoiThue[index],
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
+      backgroundColor: const Color(0xffF5F7FA),
+      appBar: AppBar(
+        title: const Text("Danh sách người thuê"),
+        centerTitle: true,
+        backgroundColor: const Color(0xff2D7A3A),
+        foregroundColor: Colors.white,
       ),
-    );
-  }
-
-  Widget _divider() {
-    return Container(
-      width: 1,
-      height: 65,
-      color: const Color(0xffEEEEEE),
-    );
-  }
-
-  Widget _itemThongKe({
-    required String title,
-    required String subTitle,
-    required Color color,
-  }) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 14),
-
-        child: Column(
-          children: [
-            Text(
-              title,
-
-              style: TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.w800,
-                color: color,
-              ),
-            ),
-
-            const SizedBox(height: 4),
-
-            Text(
-              subTitle,
-
-              textAlign: TextAlign.center,
-
-              style: const TextStyle(
-                fontSize: 12,
-                color: Color(0xff999999),
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color(0xff2D7A3A),
+        onPressed: () {},
+        child: const Icon(Icons.add, color: Colors.white),
       ),
+      body: danhSachNguoiThue.isEmpty
+          ? const Center(
+              child: Text(
+                "Chưa có người thuê",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              ),
+            )
+          : ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: danhSachNguoiThue.length,
+              itemBuilder: (context, index) {
+                final nt = danhSachNguoiThue[index];
+
+                return ItemNguoiThue(nguoiThue: nt);
+              },
+            ),
     );
   }
 }
