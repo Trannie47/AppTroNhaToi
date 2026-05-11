@@ -1,12 +1,11 @@
 class HoaDonGuiXe {
-
   final int? maHoaDon;
 
   final String? thangNam;
 
   final double? soTien;
 
-  final String? bienSo;
+  final num? idPhuongTien;
 
   /// 0 = chưa thu
   /// 1 = đã thu
@@ -14,58 +13,39 @@ class HoaDonGuiXe {
   /// 3 = đã hủy
   final int? trangThai;
 
-  /// số lượng xe
-  final int? soLuongXe;
-
   HoaDonGuiXe({
     this.maHoaDon,
     this.thangNam,
     this.soTien,
-    this.bienSo,
+    this.idPhuongTien,
     this.trangThai,
-    this.soLuongXe,
   });
 
-  factory HoaDonGuiXe.fromMap(
-      Map<String, dynamic> map,
-      ) {
+  factory HoaDonGuiXe.fromMap(Map<String, dynamic> map) {
     return HoaDonGuiXe(
-      maHoaDon:
-      map['maHoaDon'] as int?,
+      maHoaDon: map['maHoaDon'] as int?,
 
-      thangNam:
-      map['thangNam'] as String?,
+      thangNam: map['thangNam'] as String?,
 
-      soTien:
-      (map['soTien'] as num?)
-          ?.toDouble(),
+      soTien: (map['soTien'] as num?)?.toDouble(),
 
-      bienSo:
-      map['bienSo'] as String?,
+      idPhuongTien: map['idPhuongTien'] as num?,
 
-      trangThai:
-      map['trangThai'] as int?,
-
-      soLuongXe:
-      map['soLuongXe'] as int?,
+      trangThai: map['trangThai'] as int?,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-
-      if (maHoaDon != null)
-        'maHoaDon': maHoaDon,
+      if (maHoaDon != null) 'maHoaDon': maHoaDon,
 
       'thangNam': thangNam,
 
       'soTien': soTien,
 
-      'bienSo': bienSo,
+      'idPhuongTien': idPhuongTien,
 
       'trangThai': trangThai,
-
-      'soLuongXe': soLuongXe,
     };
   }
 
@@ -78,23 +58,15 @@ class HoaDonGuiXe {
     int? soLuongXe,
   }) {
     return HoaDonGuiXe(
-      maHoaDon:
-      maHoaDon ?? this.maHoaDon,
+      maHoaDon: maHoaDon ?? this.maHoaDon,
 
-      thangNam:
-      thangNam ?? this.thangNam,
+      thangNam: thangNam ?? this.thangNam,
 
-      soTien:
-      soTien ?? this.soTien,
+      soTien: soTien ?? this.soTien,
 
-      bienSo:
-      bienSo ?? this.bienSo,
+      idPhuongTien: idPhuongTien ?? this.idPhuongTien,
 
-      trangThai:
-      trangThai ?? this.trangThai,
-
-      soLuongXe:
-      soLuongXe ?? this.soLuongXe,
+      trangThai: trangThai ?? this.trangThai,
     );
   }
 
@@ -104,9 +76,8 @@ class HoaDonGuiXe {
         'maHoaDon: $maHoaDon, '
         'thangNam: $thangNam, '
         'soTien: $soTien, '
-        'bienSo: $bienSo, '
+        'idPhuongTien: $idPhuongTien, '
         'trangThai: $trangThai, '
-        'soLuongXe: $soLuongXe'
         ')';
   }
 }

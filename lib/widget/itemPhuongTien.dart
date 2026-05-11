@@ -1,131 +1,87 @@
-import 'package:AppTroNhaToi/models/hoa_don_gui_xe.dart';
+import 'package:AppTroNhaToi/models/phuong_tien.dart';
+import 'package:AppTroNhaToi/utils/currency_formatter.dart';
 import 'package:flutter/material.dart';
 
-class ItemHoaDonGuiXe extends StatelessWidget {
-  final HoaDonGuiXe hoaDon;
+class ItemPhuongTien extends StatelessWidget {
+  final PhuongTien phuongTien;
 
-  final Function()? onTap;
-
-  const ItemHoaDonGuiXe({super.key, required this.hoaDon, this.onTap});
+  const ItemPhuongTien({super.key, required this.phuongTien});
 
   @override
   Widget build(BuildContext context) {
-    int trangThai = hoaDon.trangThai ?? 0;
+    bool coBienSo = phuongTien.bienSo?.trim().isNotEmpty ?? false;
 
-    int soLuongXe = hoaDon.soLuongXe ?? 1;
+    return Row(
+      children: [
+        /// ICON
+        Container(
+          width: 38,
+          height: 38,
 
-    String textTrangThai = "";
-
-    Color mauText = Colors.black;
-
-    Color mauNen = Colors.white;
-
-    switch (trangThai) {
-      /// ĐÃ THU
-      case 1:
-        textTrangThai = "Đã thu";
-
-        mauText = const Color(0xff2D7A3A);
-
-        mauNen = const Color(0xffE7F7EC);
-
-        break;
-
-      /// KHÔNG CÒN Ở
-      case 2:
-        textTrangThai = "Không còn ở";
-
-        mauText = Colors.grey;
-
-        mauNen = const Color(0xffF1F1F1);
-
-        break;
-
-      /// hủy hóa đơn
-      case 3:
-        textTrangThai = "Đã hủy";
-
-        mauText = Colors.red;
-
-        mauNen =
-        const Color(0xffFDECEC);
-
-        break;
-    /// CHƯA THU
-      default:
-        textTrangThai = "Chưa thu";
-
-        mauText = const Color(0xffF08A24);
-
-        mauNen = const Color(0xffFFF1E5);
-    }
-
-    return GestureDetector(
-      onTap: onTap,
-
-      child: Row(
-        children: [
-          /// THÔNG TIN
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-
-              children: [
-                /// THÁNG
-                Text(
-                  hoaDon.thangNam ?? "",
-
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xff1C1C1E),
-                  ),
-                ),
-
-                const SizedBox(height: 3),
-
-                /// TIỀN + SỐ XE
-                Text(
-                  "${formatTien(hoaDon.soTien ?? 0)} • $soLuongXe xe",
-
-                  style: const TextStyle(
-                    fontSize: 11,
-                    color: Color(0xff999999),
-                  ),
-                ),
-              ],
-            ),
+          decoration: BoxDecoration(
+            color: const Color(0xffF5F5F5),
+            borderRadius: BorderRadius.circular(10),
           ),
 
-          /// TRẠNG THÁI
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          alignment: Alignment.center,
 
-            decoration: BoxDecoration(
-              color: mauNen,
+          child: Icon(
+            phuongTien.loaiXe == 1
+                ? Icons.directions_car_rounded
+                : phuongTien.loaiXe == 2
+                ? Icons.directions_bike_rounded
+                : Icons.radio_button_checked_rounded,
 
-              borderRadius: BorderRadius.circular(30),
-            ),
+            size: 22,
 
-            child: Text(
-              textTrangThai,
+            color: const Color(0xff7A7A7A),
+          ),
+        ),
 
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-                color: mauText,
+        const SizedBox(width: 14),
+
+        /// INFO
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+
+            children: [
+              Text(
+                phuongTien.hangXe ?? "",
+
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xff1C1C1E),
+                ),
               ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
-  String formatTien(double tien) {
-    return tien
-            .toStringAsFixed(0)
-            .replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (match) => ',') +
-        "đ";
+              const SizedBox(height: 2),
+
+              Text(
+                coBienSo
+                    ? "${phuongTien.bienSo} · ${phuongTien.mauSac ?? ""}"
+                    : "Không BKS · ${phuongTien.mauSac ?? ""}",
+
+                style: const TextStyle(fontSize: 11, color: Color(0xff888888)),
+              ),
+            ],
+          ),
+        ),
+
+        const SizedBox(width: 10),
+
+        /// PRICE
+        Text(
+          formatMoney(phuongTien.giaGui ?? 0),
+
+          style: const TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w800,
+            color: Color(0xff2D7A3A),
+          ),
+        ),
+      ],
+    );
   }
 }

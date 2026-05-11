@@ -68,13 +68,17 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
   ];
 
   final TextEditingController searchController = TextEditingController();
-// lôi
-  //Chuyển đến tran ChitietNGuoiThuePage
-  // void toChiTietNguoiThue(NguoiThuePhong nt) async {
-  //   final result = await Navigator.push(
-  //   context,
-  //   MaterialPageRoute(builder: (context) => const ChiTietNguoiThuePage())
-  // );}
+  // lôi
+  // Chuyển đến tran ChitietNGuoiThuePage
+  void toChiTietNguoiThue(NguoiThuePhong nt) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            ChiTietNguoiThuePage(nguoiThue: nt.nguoiThue, phong: nt.phong!),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -107,14 +111,14 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
                     "Người thuê",
 
                     style: TextStyle(
-                      fontSize: 34,
+                      fontSize: 22,
                       fontWeight: FontWeight.w800,
                       color: Color(0xff1C1C1E),
                     ),
                   ),
 
                   Container(
-                    height: 44,
+                    height: 36,
 
                     decoration: BoxDecoration(
                       color: const Color(0xff2D7A3A),
@@ -134,7 +138,7 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
 
                           child: Row(
                             children: [
-                              Icon(Icons.add, color: Colors.white, size: 20),
+                              Icon(Icons.add, color: Colors.white, size: 16),
 
                               SizedBox(width: 4),
 
@@ -144,7 +148,7 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w700,
-                                  fontSize: 16,
+                                  fontSize: 12,
                                 ),
                               ),
                             ],
@@ -159,27 +163,31 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
 
             /// SEARCH
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
 
               child: Container(
-                height: 50,
-
+                height: 36,
                 decoration: BoxDecoration(
                   color: const Color(0xffEFEFEF),
                   borderRadius: BorderRadius.circular(14),
                 ),
+                alignment: Alignment.center,
 
                 child: TextField(
                   controller: searchController,
+                  textAlignVertical: TextAlignVertical.center,
 
                   decoration: InputDecoration(
                     border: InputBorder.none,
+                    isDense: true,
+
+                    contentPadding: const EdgeInsets.symmetric(vertical: 10),
 
                     hintText: "Tìm tên, SDT, CCCD...",
 
                     hintStyle: TextStyle(
                       color: Colors.grey.shade500,
-                      fontSize: 15,
+                      fontSize: 13,
                     ),
 
                     prefixIcon: Icon(Icons.search, color: Colors.grey.shade500),
@@ -229,22 +237,22 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
             const SizedBox(height: 18),
             //lỗi
             /// LIST
-            // Expanded(
-            //   child: ListView.builder(
-            //     padding: const EdgeInsets.symmetric(horizontal: 20),
-            //
-            //     itemCount: danhSachNguoiThue.length,
-            //
-            //     itemBuilder: (context, index) {
-            //       return ItemNguoiThue(
-            //         nguoiThue: danhSachNguoiThue[index],
-            //         onTap: () => toChiTietNguoiThue(danhSachNguoiThue[index]),
-            //       );
-            //     },
-            //   ),
-            // ),
-          ],
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
 
+                itemCount: danhSachNguoiThue.length,
+
+                itemBuilder: (context, index) {
+                  return ItemNguoiThue(
+                    nguoiThue: danhSachNguoiThue[index].nguoiThue,
+                    phong: danhSachNguoiThue[index].phong,
+                    onTap: () => toChiTietNguoiThue(danhSachNguoiThue[index]),
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -269,7 +277,7 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
               title,
 
               style: TextStyle(
-                fontSize: 30,
+                fontSize: 18,
                 fontWeight: FontWeight.w800,
                 color: color,
               ),
@@ -283,7 +291,7 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
               textAlign: TextAlign.center,
 
               style: const TextStyle(
-                fontSize: 12,
+                fontSize: 10,
                 color: Color(0xff999999),
                 fontWeight: FontWeight.w500,
               ),

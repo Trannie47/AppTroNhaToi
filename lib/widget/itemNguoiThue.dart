@@ -1,9 +1,11 @@
-import 'package:AppTroNhaToi/models/view_model/nguoi_thue_phong.dart';
+import 'package:AppTroNhaToi/models/nguoi_thue.dart';
+import 'package:AppTroNhaToi/models/phong.dart';
+import 'package:AppTroNhaToi/utils/string_formatter.dart';
 import 'package:flutter/material.dart';
 
 class ItemNguoiThue extends StatelessWidget {
-  final NguoiThuePhong nguoiThue;
-
+  final NguoiThue nguoiThue;
+  final Phong? phong;
   final bool isSelected;
   final Function()? onTap;
 
@@ -11,15 +13,15 @@ class ItemNguoiThue extends StatelessWidget {
     super.key,
     required this.nguoiThue,
     this.isSelected = false,
-    this.onTap ,
+    this.onTap,
+    this.phong,
   });
 
   @override
   Widget build(BuildContext context) {
     /// KIỂM TRA VAI TRÒ
     bool isOGhep =
-        nguoiThue.nguoiThue.ghiChu != null &&
-        nguoiThue.nguoiThue.ghiChu!.trim().isNotEmpty;
+        nguoiThue.ghiChu != null && nguoiThue.ghiChu!.trim().isNotEmpty;
 
     String vaiTro = isOGhep ? "Ở ghép" : "Chính";
 
@@ -44,29 +46,36 @@ class ItemNguoiThue extends StatelessWidget {
       onTap: onTap,
 
       child: Container(
-        margin: const EdgeInsets.only(bottom: 14),
-
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        margin: phong != null
+            ? EdgeInsets.only(bottom: 10)
+            : EdgeInsets.symmetric(vertical: 10),
+        height: phong != null ? 87 : 60,
+        padding: EdgeInsets.symmetric(
+          horizontal: phong != null ? 16 : 4,
+          vertical: 6,
+        ),
 
         decoration: BoxDecoration(
           color: Colors.white,
 
           borderRadius: BorderRadius.circular(20),
 
-          border: Border.all(
-            color: isSelected
-                ? const Color(0xff2F61E7)
-                : const Color(0xffEAEAEA),
-            width: 1,
-          ),
+          border: phong != null
+              ? Border.all(
+                  color: isSelected
+                      ? const Color(0xff2F61E7)
+                      : const Color(0xffEAEAEA),
+                  width: 1,
+                )
+              : null,
         ),
 
         child: Row(
           children: [
             /// AVATAR
             Container(
-              width: 54,
-              height: 54,
+              width: 48,
+              height: 48,
 
               decoration: BoxDecoration(
                 color: avatarBg,
@@ -76,12 +85,12 @@ class ItemNguoiThue extends StatelessWidget {
               alignment: Alignment.center,
 
               child: Text(
-                _vietTat(nguoiThue.nguoiThue.hoTen ?? ""),
+                vietTat(nguoiThue.hoTen ?? ""),
 
                 style: TextStyle(
                   color: avatarText,
                   fontWeight: FontWeight.bold,
-                  fontSize: 20,
+                  fontSize: 15,
                 ),
               ),
             ),
@@ -92,13 +101,14 @@ class ItemNguoiThue extends StatelessWidget {
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   /// HỌ TÊN
                   Text(
-                    nguoiThue.nguoiThue.hoTen ?? "",
+                    nguoiThue.hoTen ?? "",
 
                     style: const TextStyle(
-                      fontSize: 16,
+                      fontSize: 15,
                       fontWeight: FontWeight.w700,
                       color: Color(0xff222222),
                     ),
@@ -108,61 +118,64 @@ class ItemNguoiThue extends StatelessWidget {
 
                   /// SDT + CCCD
                   Text(
-                    "${nguoiThue.nguoiThue.sdt} · CCCD: ${nguoiThue.nguoiThue.cccd}",
+                    "${nguoiThue.sdt} · CCCD: ${nguoiThue.cccd}",
 
                     style: const TextStyle(
-                      fontSize: 13,
+                      fontSize: 12,
                       color: Color(0xff9B9B9B),
                     ),
                   ),
 
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 4),
 
                   /// PHÒNG + VAI TRÒ
-                  Row(
-                    children: [
-                      Text(
-                        nguoiThue.phong?.tenPhong ?? "",
+                  //Nếu đầu vào phòng thì hiển thị không có thì không hiện
+                  if (phong != null) ...{
+                    Row(
+                      children: [
+                        Text(
+                          phong?.tenPhong ?? "",
 
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Color(0xff555555),
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-
-                      Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 10),
-
-                        width: 1,
-                        height: 14,
-
-                        color: const Color(0xffDDDDDD),
-                      ),
-
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 4,
-                        ),
-
-                        decoration: BoxDecoration(
-                          color: statusBg,
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-
-                        child: Text(
-                          vaiTro,
-
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                            color: statusText,
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: Color(0xff555555),
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
+
+                        Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 10),
+
+                          width: 1,
+                          height: 14,
+
+                          color: const Color(0xffDDDDDD),
+                        ),
+
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 4,
+                          ),
+
+                          decoration: BoxDecoration(
+                            color: statusBg,
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+
+                          child: Text(
+                            vaiTro,
+
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: statusText,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  },
                 ],
               ),
             ),
@@ -177,15 +190,5 @@ class ItemNguoiThue extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  String _vietTat(String name) {
-    List<String> arr = name.trim().split(" ");
-
-    if (arr.length >= 2) {
-      return "${arr[0][0]}${arr[1][0]}".toUpperCase();
-    }
-
-    return arr[0][0].toUpperCase();
   }
 }

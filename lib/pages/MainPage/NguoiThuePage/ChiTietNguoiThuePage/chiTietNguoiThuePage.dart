@@ -3,16 +3,16 @@ import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/models/phuong_tien.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/view_model/nguoi_thue_phong.dart';
+import 'package:AppTroNhaToi/utils/date_formatter.dart';
+import 'package:AppTroNhaToi/utils/string_formatter.dart';
+import 'package:AppTroNhaToi/widget/itemHoaDonGuiXe.dart';
 
-import 'package:AppTroNhaToi/widget/itemNguoiOGhep.dart';
+import 'package:AppTroNhaToi/widget/itemNguoiThue.dart';
 import 'package:AppTroNhaToi/widget/itemPhuongTien.dart';
-
-
 
 import 'package:flutter/material.dart';
 
 class ChiTietNguoiThuePage extends StatefulWidget {
-
   final NguoiThue nguoiThue;
 
   final Phong phong;
@@ -24,28 +24,30 @@ class ChiTietNguoiThuePage extends StatefulWidget {
   });
 
   @override
-  State<ChiTietNguoiThuePage> createState() =>
-      _ChiTietNguoiThuePageState();
+  State<ChiTietNguoiThuePage> createState() => _ChiTietNguoiThuePageState();
 }
 
-class _ChiTietNguoiThuePageState
-    extends State<ChiTietNguoiThuePage> {
-
+class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
   List<NguoiThuePhong> dsOGhep = [];
 
   List<PhuongTien> dsXe = [];
 
   List<HoaDonGuiXe> dsHoaDon = [];
+  late final NguoiThue nguoiThue;
+  late final Phong phong;
 
   @override
   void initState() {
     super.initState();
 
     fakeData();
+    setState(() {
+      nguoiThue = widget.nguoiThue;
+      phong = widget.phong;
+    });
   }
 
   void fakeData() {
-
     /// NGƯỜI Ở GHÉP
     dsOGhep = [
       NguoiThuePhong(
@@ -53,7 +55,7 @@ class _ChiTietNguoiThuePageState
           idnt: 2,
           hoTen: "Trần Văn Bảo",
           sdt: "0912 345 678",
-          cccd: "079001234890",
+          cccd: "07900123480",
         ),
 
         phong: widget.phong,
@@ -63,15 +65,19 @@ class _ChiTietNguoiThuePageState
     /// XE
     dsXe = [
       PhuongTien(
+        ID: 1,
         bienSo: "59B1-123.45",
         hangXe: "Honda Wave 110",
         mauSac: "Màu đen",
+        giaGui: 50000,
       ),
 
       PhuongTien(
+        ID: 2,
         bienSo: "",
         hangXe: "Xe đạp điện",
         mauSac: "Màu trắng",
+        giaGui: 30000,
       ),
     ];
 
@@ -82,7 +88,7 @@ class _ChiTietNguoiThuePageState
         thangNam: "Tháng 4/2025",
         soTien: 150000,
         trangThai: 0,
-        soLuongXe: 2,
+        idPhuongTien: 1,
       ),
 
       HoaDonGuiXe(
@@ -90,199 +96,190 @@ class _ChiTietNguoiThuePageState
         thangNam: "Tháng 3/2025",
         soTien: 150000,
         trangThai: 1,
-        soLuongXe: 2,
+        idPhuongTien: 2,
       ),
     ];
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-      backgroundColor:
-      const Color(0xffF5F6FA),
+      backgroundColor: const Color(0xffF7F8FC),
 
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding:
-          const EdgeInsets.all(16),
+      appBar: AppBar(
+        elevation: 0,
+        scrolledUnderElevation: 0,
 
-          child: Column(
-            crossAxisAlignment:
-            CrossAxisAlignment.start,
+        backgroundColor: Colors.white,
 
-            children: [
+        centerTitle: false,
 
-              /// HEADER
-              Row(
-                children: [
+        titleSpacing: 0,
 
-                  /// BACK
-                  Container(
-                    width: 38,
-                    height: 38,
+        leadingWidth: 70,
 
-                    decoration:
-                    const BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                    ),
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 16),
 
-                    child: IconButton(
-                      onPressed: () {
-                        Navigator.pop(
-                            context);
-                      },
+          child: GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+            },
 
-                      icon: const Icon(
-                        Icons
-                            .arrow_back_ios_new_rounded,
-                        size: 18,
-                      ),
-                    ),
-                  ),
+            child: Container(
+              width: 36,
+              height: 36,
 
-                  const SizedBox(width: 12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(14),
 
-                  const Text(
-                    "Chi tiết người thuê",
-
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight:
-                      FontWeight.w800,
-                    ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
                   ),
                 ],
               ),
 
-              const SizedBox(height: 28),
+              child: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                size: 18,
+                color: Color(0xff1C1C1E),
+              ),
+            ),
+          ),
+        ),
 
-              /// PROFILE
-              Row(
+        title: const Text(
+          "Chi tiết người thuê",
+
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w800,
+            color: Color(0xff1C1C1E),
+          ),
+        ),
+      ),
+
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(0, 0, 0, 24),
+
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+
+          children: [
+            /// PROFILE CARD
+            Container(
+              width: double.infinity,
+
+              padding: const EdgeInsets.all(20),
+
+              decoration: BoxDecoration(
+                color: Colors.white,
+
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 14,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
+              ),
+
+              child: Row(
                 children: [
-
                   /// AVATAR
                   Container(
-                    width: 60,
-                    height: 60,
+                    width: 74,
+                    height: 74,
 
-                    decoration:
-                    const BoxDecoration(
-                      color:
-                      Color(0xffDCE8FF),
+                    decoration: BoxDecoration(
+                      color: const Color(0xffDCE8FF),
                       shape: BoxShape.circle,
+
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.06),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
 
-                    alignment:
-                    Alignment.center,
+                    alignment: Alignment.center,
 
                     child: Text(
-                      vietTat(
-                        widget.nguoiThue
-                            .hoTen ??
-                            "",
-                      ),
+                      vietTat(nguoiThue.hoTen ?? ""),
 
-                      style:
-                      const TextStyle(
-                        fontSize: 24,
-                        fontWeight:
-                        FontWeight.w800,
-                        color:
-                        Color(0xff2F61E7),
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xff2F61E7),
                       ),
                     ),
                   ),
 
-                  const SizedBox(width: 14),
+                  const SizedBox(width: 16),
 
                   Expanded(
                     child: Column(
-                      crossAxisAlignment:
-                      CrossAxisAlignment
-                          .start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
 
                       children: [
-
                         Text(
-                          widget.nguoiThue
-                              .hoTen ??
-                              "",
+                          nguoiThue.hoTen ?? "",
 
-                          style:
-                          const TextStyle(
-                            fontSize: 28,
-                            fontWeight:
-                            FontWeight
-                                .w800,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w800,
                           ),
                         ),
 
-                        const SizedBox(
-                            height: 3),
+                        const SizedBox(height: 4),
 
                         Text(
-                          "${widget.phong.tenPhong} · Người thuê chính",
+                          "${phong.tenPhong} · Người thuê chính",
 
-                          style:
-                          const TextStyle(
+                          style: const TextStyle(
                             fontSize: 13,
-                            color: Color(
-                                0xff8E8E93),
+                            color: Color(0xff8E8E93),
                           ),
                         ),
 
-                        const SizedBox(
-                            height: 8),
+                        const SizedBox(height: 6),
 
                         Container(
-                          padding:
-                          const EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                             horizontal: 12,
-                            vertical: 6,
+                            vertical: 7,
                           ),
 
-                          decoration:
-                          BoxDecoration(
-                            color:
-                            const Color(
-                                0xffE7F7EC),
-
-                            borderRadius:
-                            BorderRadius.circular(
-                                30),
+                          decoration: BoxDecoration(
+                            color: const Color(0xffE8F7ED),
+                            borderRadius: BorderRadius.circular(30),
                           ),
 
                           child: const Row(
-                            mainAxisSize:
-                            MainAxisSize
-                                .min,
+                            mainAxisSize: MainAxisSize.min,
 
                             children: [
-
                               Icon(
                                 Icons.circle,
-                                size: 10,
-                                color: Color(
-                                    0xff2D7A3A),
+                                size: 7,
+                                color: Color(0xff2D7A3A),
                               ),
 
-                              SizedBox(
-                                  width: 6),
+                              SizedBox(width: 6),
 
                               Text(
                                 "Đang thuê · Từ 01/01/2024",
 
-                                style:
-                                TextStyle(
-                                  fontSize:
-                                  12,
-                                  fontWeight:
-                                  FontWeight
-                                      .w700,
-                                  color: Color(
-                                      0xff2D7A3A),
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xff2D7A3A),
                                 ),
                               ),
                             ],
@@ -293,199 +290,134 @@ class _ChiTietNguoiThuePageState
                   ),
                 ],
               ),
+            ),
 
-              const SizedBox(height: 24),
+            const SizedBox(height: 20),
 
-              /// THÔNG TIN CÁ NHÂN
-              _section(
-                title:
-                "Thông tin cá nhân",
+            /// THÔNG TIN CÁ NHÂN
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: [
+                  _section(
+                    title: "Thông tin cá nhân",
+                    action: "Sửa",
 
-                action: "Sửa",
-
-                child: Column(
-                  children: [
-
-                    _itemInfo(
-                      "Số điện thoại",
-                      widget.nguoiThue
-                          .sdt ??
-                          "",
-                      isBlue: true,
-                    ),
-
-                    _itemInfo(
-                      "CCCD",
-                      widget.nguoiThue
-                          .cccd ??
-                          "",
-                    ),
-
-                    _itemInfo(
-                      "Ngày sinh",
-                      "15/06/1998",
-                    ),
-
-                    _itemInfo(
-                      "Quê quán",
-                      widget.nguoiThue
-                          .queQuan ??
-                          "",
-                    ),
-
-                    _itemInfo(
-                      "Ghi chú",
-                      widget.nguoiThue
-                          .ghiChu ??
-                          "",
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              /// NGƯỜI Ở GHÉP
-              _section(
-                title:
-                "Người ở ghép (${dsOGhep.length})",
-
-                action: "Thêm",
-
-                child: Column(
-                  children: List.generate(
-                    dsOGhep.length,
-                        (index) {
-
-                      return Padding(
-                        padding:
-                        EdgeInsets.only(
-                          bottom:
-                          index ==
-                              dsOGhep.length -
-                                  1
-                              ? 0
-                              : 12,
+                    child: Column(
+                      children: [
+                        _itemInfo(
+                          "Số điện thoại",
+                          nguoiThue.sdt ?? "",
+                          isBlue: true,
                         ),
 
-                        child:
-                        ItemNguoiOGhep(
-                          nguoiThue:
-                          dsOGhep[index],
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
+                        _itemInfo("CCCD", nguoiThue.cccd ?? ""),
 
-              const SizedBox(height: 16),
+                        _itemInfo("Ngày sinh", formatDate(nguoiThue.ngaySinh)),
 
-              /// PHƯƠNG TIỆN
-              _section(
-                title:
-                "Phương tiện (${dsXe.length})",
+                        _itemInfo("Quê quán", nguoiThue.queQuan ?? ""),
 
-                action: "Xem tất cả",
-
-                child: Column(
-                  children: List.generate(
-                    dsXe.length,
-                        (index) {
-
-                      return Padding(
-                        padding:
-                        EdgeInsets.only(
-                          bottom:
-                          index ==
-                              dsXe.length - 1
-                              ? 0
-                              : 14,
-                        ),
-
-                        // child: ItemPhuongTien(
-                        //   phuongTien:
-                        //   dsXe[index],
-                        //
-                        //   giaTien:
-                        //   index == 0
-                        //       ? "100,000đ"
-                        //       : "50,000đ",
-                        // ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              /// HÓA ĐƠN
-              _section(
-                title:
-                "Hóa đơn giữ xe",
-
-                action: "Xem tất cả",
-
-                child: Column(
-                  children: List.generate(
-                    dsHoaDon.length,
-                        (index) {
-
-                      return Padding(
-                        padding:
-                        EdgeInsets.only(
-                          bottom:
-                          index ==
-                              dsHoaDon.length -
-                                  1
-                              ? 0
-                              : 14,
-                        ),
-
-                        child:
-                        ItemHoaDonGuiXe(
-                          hoaDon:
-                          dsHoaDon[
-                          index],
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 24),
-
-              /// DELETE
-              Container(
-                width: double.infinity,
-                height: 54,
-
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius:
-                  BorderRadius.circular(
-                      16),
-                ),
-
-                child: TextButton(
-                  onPressed: () {},
-
-                  child: const Text(
-                    "Xóa người thuê này",
-
-                    style: TextStyle(
-                      color: Colors.red,
-                      fontWeight:
-                      FontWeight.w700,
-                      fontSize: 16,
+                        _itemInfo("Ghi chú", nguoiThue.ghiChu ?? ""),
+                      ],
                     ),
                   ),
-                ),
+
+                  const SizedBox(height: 18),
+
+                  /// NGƯỜI Ở GHÉP
+                  _section(
+                    title: "Người ở ghép (${dsOGhep.length})",
+                    action: "Thêm",
+
+                    child: Column(
+                      children: List.generate(dsOGhep.length, (index) {
+                        return ItemNguoiThue(
+                          nguoiThue: dsOGhep[index].nguoiThue,
+                        );
+                      }),
+                    ),
+                  ),
+
+                  const SizedBox(height: 18),
+
+                  /// PHƯƠNG TIỆN
+                  _section(
+                    title: "Phương tiện (${dsXe.length})",
+                    action: "Xem tất cả",
+
+                    child: Column(
+                      children: List.generate(dsXe.length, (index) {
+                        return Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8),
+
+                          child: ItemPhuongTien(phuongTien: dsXe[index]),
+                        );
+                      }),
+                    ),
+                  ),
+
+                  const SizedBox(height: 18),
+
+                  /// HÓA ĐƠN
+                  _section(
+                    title: "Hóa đơn giữ xe",
+                    action: "Xem tất cả",
+
+                    child: Column(
+                      children: List.generate(dsHoaDon.length, (index) {
+                        final phuongTien = dsXe.firstWhere(
+                          (xe) => xe.ID == dsHoaDon[index].idPhuongTien,
+                        );
+
+                        return Padding(
+                          padding: EdgeInsets.only(
+                            bottom: index == dsHoaDon.length - 1 ? 0 : 14,
+                          ),
+
+                          child: ItemHoaDonGuiXe(
+                            hoaDon: dsHoaDon[index],
+                            phuongTien: phuongTien,
+                          ),
+                        );
+                      }),
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  /// DELETE
+                  Container(
+                    width: double.infinity,
+                    height: 56,
+
+                    decoration: BoxDecoration(
+                      color: const Color(0xffFFF1F1),
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+
+                    child: TextButton.icon(
+                      onPressed: () {},
+
+                      icon: const Icon(
+                        Icons.delete_outline_rounded,
+                        color: Colors.red,
+                      ),
+
+                      label: const Text(
+                        "Xóa người thuê này",
+
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -495,85 +427,73 @@ class _ChiTietNguoiThuePageState
     required String title,
     required String action,
     required Widget child,
+    VoidCallback? onTap,
   }) {
     return Container(
       width: double.infinity,
 
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
 
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius:
-        BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20),
       ),
 
       child: Column(
+        spacing: 4,
         children: [
-
           /// HEADER
           Row(
-            mainAxisAlignment:
-            MainAxisAlignment
-                .spaceBetween,
-
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-
               Text(
                 title,
 
                 style: const TextStyle(
                   fontSize: 13,
-                  fontWeight:
-                  FontWeight.w700,
-                  color:
-                  Color(0xff2D7A3A),
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xff2D7A3A),
                 ),
               ),
-
-              Text(
-                action,
-
-                style: const TextStyle(
-                  fontSize: 13,
-                  fontWeight:
-                  FontWeight.w700,
-                  color:
-                  Color(0xff2D7A3A),
-                ),
-              ),
+              onTap != null
+                  ? GestureDetector(
+                      onTap: onTap,
+                      child: Text(
+                        action,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xff2D7A3A),
+                        ),
+                      ),
+                    )
+                  : Text(
+                      action,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xff2D7A3A),
+                      ),
+                    ),
             ],
           ),
-
-          const SizedBox(height: 16),
-
           child,
         ],
       ),
     );
   }
 
-  Widget _itemInfo(
-      String title,
-      String value, {
-        bool isBlue = false,
-      }) {
+  Widget _itemInfo(String title, String value, {bool isBlue = false}) {
     return Padding(
-      padding:
-      const EdgeInsets.only(
-          bottom: 18),
+      padding: const EdgeInsets.only(bottom: 18),
 
       child: Row(
         children: [
-
           Expanded(
             child: Text(
               title,
 
-              style: const TextStyle(
-                fontSize: 13,
-                color:
-                Color(0xff999999),
-              ),
+              style: const TextStyle(fontSize: 13, color: Color(0xff999999)),
             ),
           ),
 
@@ -581,35 +501,14 @@ class _ChiTietNguoiThuePageState
             value,
 
             style: TextStyle(
-              fontSize: 14,
-              fontWeight:
-              FontWeight.w700,
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
 
-              color: isBlue
-                  ? const Color(
-                  0xff2F61E7)
-                  : const Color(
-                  0xff1C1C1E),
+              color: isBlue ? const Color(0xff2F61E7) : const Color(0xff1C1C1E),
             ),
           ),
         ],
       ),
     );
-  }
-
-  String vietTat(String name) {
-
-    List<String> arr =
-    name.trim().split(" ");
-
-    if (arr.length >= 2) {
-
-      return
-        "${arr.first[0]}${arr.last[0]}"
-            .toUpperCase();
-    }
-
-    return arr.first[0]
-        .toUpperCase();
   }
 }
