@@ -4,6 +4,8 @@ import 'package:AppTroNhaToi/models/view_model/nguoi_thue_phong.dart';
 import 'package:AppTroNhaToi/widget/itemNguoiThue.dart';
 import 'package:flutter/material.dart';
 
+import 'ChiTietNguoiThuePage/chiTietNguoiThuePage.dart';
+
 class NguoiThuePage extends StatefulWidget {
   const NguoiThuePage({super.key});
 
@@ -16,7 +18,7 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
     NguoiThuePhong(
       nguoiThue: NguoiThue(
         idnt: 1,
-        hoTen: "Nguyễn Văn A",
+        hoTen: "Nguyễn Văn An",
         cccd: "079203001234",
         sdt: "0909123456",
         queQuan: "TP.HCM",
@@ -36,7 +38,7 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
         ghiChu: "Ở ghép",
         ngaySinh: DateTime(2000, 8, 20),
       ),
-      phong: Phong(phongID: 2, tenPhong: "P102", trangThai: 1, maLoaiPhong: 1),
+      phong: Phong(phongID: 1, tenPhong: "P101", trangThai: 1, maLoaiPhong: 1),
     ),
 
     NguoiThuePhong(
@@ -49,11 +51,30 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
         ghiChu: "",
         ngaySinh: DateTime(2001, 3, 15),
       ),
+      phong: Phong(phongID: 2, tenPhong: "P102", trangThai: 1, maLoaiPhong: 1),
+    ),
+    NguoiThuePhong(
+      nguoiThue: NguoiThue(
+        idnt: 3,
+        hoTen: "Lê Văn D",
+        cccd: "123456789966",
+        sdt: "0325896345",
+        queQuan: "Hà Tĩnh",
+        ghiChu: "",
+        ngaySinh: DateTime(2004, 8, 16),
+      ),
       phong: Phong(phongID: 3, tenPhong: "P103", trangThai: 1, maLoaiPhong: 1),
     ),
   ];
 
   final TextEditingController searchController = TextEditingController();
+// lôi
+  //Chuyển đến tran ChitietNGuoiThuePage
+  // void toChiTietNguoiThue(NguoiThuePhong nt) async {
+  //   final result = await Navigator.push(
+  //   context,
+  //   MaterialPageRoute(builder: (context) => const ChiTietNguoiThuePage())
+  // );}
 
   @override
   Widget build(BuildContext context) {
@@ -206,20 +227,24 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
             ),
 
             const SizedBox(height: 18),
-
+            //lỗi
             /// LIST
-            Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-
-                itemCount: danhSachNguoiThue.length,
-
-                itemBuilder: (context, index) {
-                  return ItemNguoiThue(nguoiThue: danhSachNguoiThue[index]);
-                },
-              ),
-            ),
+            // Expanded(
+            //   child: ListView.builder(
+            //     padding: const EdgeInsets.symmetric(horizontal: 20),
+            //
+            //     itemCount: danhSachNguoiThue.length,
+            //
+            //     itemBuilder: (context, index) {
+            //       return ItemNguoiThue(
+            //         nguoiThue: danhSachNguoiThue[index],
+            //         onTap: () => toChiTietNguoiThue(danhSachNguoiThue[index]),
+            //       );
+            //     },
+            //   ),
+            // ),
           ],
+
         ),
       ),
     );

@@ -5,13 +5,13 @@ class ItemNguoiThue extends StatelessWidget {
   final NguoiThuePhong nguoiThue;
 
   final bool isSelected;
-  final VoidCallback? onTap;
+  final Function()? onTap;
 
   const ItemNguoiThue({
     super.key,
     required this.nguoiThue,
     this.isSelected = false,
-    this.onTap,
+    this.onTap ,
   });
 
   @override
