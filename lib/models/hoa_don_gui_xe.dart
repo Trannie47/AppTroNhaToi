@@ -3,8 +3,6 @@ class HoaDonGuiXe {
 
   final String? thangNam;
 
-  final double? soTien;
-
   final num? idPhuongTien;
 
   /// 0 = chưa thu
@@ -16,7 +14,6 @@ class HoaDonGuiXe {
   HoaDonGuiXe({
     this.maHoaDon,
     this.thangNam,
-    this.soTien,
     this.idPhuongTien,
     this.trangThai,
   });
@@ -26,8 +23,6 @@ class HoaDonGuiXe {
       maHoaDon: map['maHoaDon'] as int?,
 
       thangNam: map['thangNam'] as String?,
-
-      soTien: (map['soTien'] as num?)?.toDouble(),
 
       idPhuongTien: map['idPhuongTien'] as num?,
 
@@ -41,8 +36,6 @@ class HoaDonGuiXe {
 
       'thangNam': thangNam,
 
-      'soTien': soTien,
-
       'idPhuongTien': idPhuongTien,
 
       'trangThai': trangThai,
@@ -52,7 +45,6 @@ class HoaDonGuiXe {
   HoaDonGuiXe copyWith({
     int? maHoaDon,
     String? thangNam,
-    double? soTien,
     String? bienSo,
     int? trangThai,
     int? soLuongXe,
@@ -61,8 +53,6 @@ class HoaDonGuiXe {
       maHoaDon: maHoaDon ?? this.maHoaDon,
 
       thangNam: thangNam ?? this.thangNam,
-
-      soTien: soTien ?? this.soTien,
 
       idPhuongTien: idPhuongTien ?? this.idPhuongTien,
 
@@ -75,7 +65,6 @@ class HoaDonGuiXe {
     return 'HoaDonGuiXe('
         'maHoaDon: $maHoaDon, '
         'thangNam: $thangNam, '
-        'soTien: $soTien, '
         'idPhuongTien: $idPhuongTien, '
         'trangThai: $trangThai, '
         ')';
