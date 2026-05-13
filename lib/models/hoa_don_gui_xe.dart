@@ -47,7 +47,6 @@ class HoaDonGuiXe {
     String? thangNam,
     String? bienSo,
     int? trangThai,
-    int? soLuongXe,
   }) {
     return HoaDonGuiXe(
       maHoaDon: maHoaDon ?? this.maHoaDon,

@@ -92,7 +92,7 @@ class ItemHoaDonGuiXe extends StatelessWidget {
 
                 /// TIỀN + SỐ XE
                 Text(
-                  "${formatMoney(hoaDon.soTien ?? 0)} • ${phuongTien.bienSo ?? "Không BKS"}",
+                  "${formatMoney(phuongTien.giaGui ?? 0)} • ${phuongTien.bienSo ?? "Không BKS"}",
 
                   style: const TextStyle(
                     fontSize: 11,

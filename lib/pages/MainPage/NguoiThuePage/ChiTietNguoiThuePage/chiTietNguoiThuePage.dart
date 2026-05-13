@@ -86,7 +86,6 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
       HoaDonGuiXe(
         maHoaDon: 1,
         thangNam: "Tháng 4/2025",
-        soTien: 150000,
         trangThai: 0,
         idPhuongTien: 1,
       ),
@@ -94,7 +93,6 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
       HoaDonGuiXe(
         maHoaDon: 2,
         thangNam: "Tháng 3/2025",
-        soTien: 150000,
         trangThai: 1,
         idPhuongTien: 2,
       ),
