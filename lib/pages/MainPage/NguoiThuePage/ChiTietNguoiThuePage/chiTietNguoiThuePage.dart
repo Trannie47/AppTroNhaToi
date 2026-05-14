@@ -4,6 +4,7 @@ import 'package:AppTroNhaToi/models/phuong_tien.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/view_model/nguoi_thue_phong.dart';
 import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/NguoiThueForm/NguoiThueForm.dart';
+import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/PhuongTienNguoiThuePage/PhuongTienNguoiThuePage.dart';
 import 'package:AppTroNhaToi/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/utils/string_formatter.dart';
 import 'package:AppTroNhaToi/widget/itemHoaDonGuiXe.dart';
@@ -100,6 +101,24 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
     ];
   }
 
+  void Test(){
+    print("Hello");
+  }
+
+  void openPhuongTienPage() {
+    Navigator.push(
+      context,
+
+      MaterialPageRoute(
+        builder: (context) {
+          return PhuongTienNguoiThuePage(
+            nguoiThue: nguoiThue,
+            dsPhuongTien: dsXe,
+          );
+        },
+      ),
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -355,13 +374,14 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                   _section(
                     title: "Phương tiện (${dsXe.length})",
                     action: "Xem tất cả",
+                    onTap: openPhuongTienPage,
 
                     child: Column(
                       children: List.generate(dsXe.length, (index) {
                         return Padding(
                           padding: EdgeInsets.symmetric(vertical: 8),
 
-                          child: ItemPhuongTien(phuongTien: dsXe[index]),
+                          child: ItemPhuongTien(phuongTien: dsXe[index],delete: Test,),
                         );
                       }),
                     ),

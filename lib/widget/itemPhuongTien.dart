@@ -103,41 +103,44 @@ class ItemPhuongTien extends StatelessWidget {
           ),
 
           const SizedBox(height: 14),
-
+          if (delete != null)... {
           Row(
-            children: [
-              Text(
-                phuongTien.loaiXe == 1
-                    ? "Loại: Xe máy"
-                    : phuongTien.loaiXe == 2
-                    ? "Loại: Xe đạp điện"
-                    : "Loại: Khác",
+                children: [
+                  Text(
+                    phuongTien.loaiXe == 1
+                        ? "Loại: Xe máy"
+                        : phuongTien.loaiXe == 2
+                        ? "Loại: Xe đạp điện"
+                        : "Loại: Khác",
 
-                style: const TextStyle(
-                  fontSize: 11,
-                  color: Color(0xffA1A1A1),
-                ),
-              ),
-
-              const Spacer(),
-
-              if (delete != null)
-                GestureDetector(
-                  onTap: delete,
-
-                  child: const Text(
-                    "Xóa xe",
-
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 11,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.red,
+                      color: Color(0xffA1A1A1),
                     ),
                   ),
-                ),
-            ],
-          ),
+
+                  const Spacer(),
+
+
+                    GestureDetector(
+                      onTap: delete,
+
+                      child: const Text(
+                        "Xóa xe",
+
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.red,
+                        ),
+                      ),
+                    ),
+                ],
+              )
+          }
         ],
+      
+          
       ),
     );
   }

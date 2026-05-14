@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 class ThemNguoiThuePage extends StatefulWidget {
   const ThemNguoiThuePage({super.key});
@@ -237,10 +238,9 @@ class _ThemNguoiThuePageState extends State<ThemNguoiThuePage> {
 
                                   suffixIcon: IconButton(
                                     onPressed: () async {
+
                                       DateTime? picked = await showDatePicker(
                                         context: context,
-
-                                        locale: const Locale("vi", "VN"),
 
                                         initialDate: DateTime.now(),
 
@@ -248,7 +248,6 @@ class _ThemNguoiThuePageState extends State<ThemNguoiThuePage> {
 
                                         lastDate: DateTime.now(),
                                       );
-
                                       if (picked != null) {
                                         txtNgaySinh.text =
                                         "${picked.day.toString().padLeft(2, '0')}/"
