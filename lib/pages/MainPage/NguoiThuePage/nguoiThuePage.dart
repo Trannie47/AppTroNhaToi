@@ -1,6 +1,7 @@
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/view_model/nguoi_thue_phong.dart';
+import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/NguoiThueForm/NguoiThueForm.dart';
 import 'package:AppTroNhaToi/widget/itemNguoiThue.dart';
 import 'package:flutter/material.dart';
 
@@ -131,7 +132,17 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
                       child: InkWell(
                         borderRadius: BorderRadius.circular(30),
 
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return const ThemNguoiThuePage();
+                              },
+                            ),
+                          );
+                        },
 
                         child: const Padding(
                           padding: EdgeInsets.symmetric(horizontal: 18),

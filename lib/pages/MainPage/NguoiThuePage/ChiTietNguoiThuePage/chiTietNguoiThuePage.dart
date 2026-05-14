@@ -3,6 +3,7 @@ import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/models/phuong_tien.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/view_model/nguoi_thue_phong.dart';
+import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/NguoiThueForm/NguoiThueForm.dart';
 import 'package:AppTroNhaToi/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/utils/string_formatter.dart';
 import 'package:AppTroNhaToi/widget/itemHoaDonGuiXe.dart';
@@ -326,6 +327,18 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                   _section(
                     title: "Người ở ghép (${dsOGhep.length})",
                     action: "Thêm",
+
+                    onTap: () {
+                      Navigator.push(
+                        context,
+
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return const ThemNguoiThuePage();
+                          },
+                        ),
+                      );
+                    },
 
                     child: Column(
                       children: List.generate(dsOGhep.length, (index) {
