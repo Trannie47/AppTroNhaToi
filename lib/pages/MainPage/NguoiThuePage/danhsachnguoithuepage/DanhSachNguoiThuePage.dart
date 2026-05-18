@@ -26,12 +26,7 @@ class _DanhSachNguoiThuePageState extends State<DanhSachNguoiThuePage> {
       ),
 
       phong: [
-        Phong(
-          phongID: 1,
-          tenPhong: "P101",
-          trangThai: 1,
-          maLoaiPhong: 1,
-        ),
+        Phong(phongID: 1, tenPhong: "P101", trangThai: 1, maLoaiPhong: 1),
       ],
     ),
 
@@ -45,12 +40,7 @@ class _DanhSachNguoiThuePageState extends State<DanhSachNguoiThuePage> {
       ),
 
       phong: [
-        Phong(
-          phongID: 1,
-          tenPhong: "P101",
-          trangThai: 1,
-          maLoaiPhong: 1,
-        ),
+        Phong(phongID: 1, tenPhong: "P101", trangThai: 1, maLoaiPhong: 1),
       ],
     ),
 
@@ -64,12 +54,7 @@ class _DanhSachNguoiThuePageState extends State<DanhSachNguoiThuePage> {
       ),
 
       phong: [
-        Phong(
-          phongID: 2,
-          tenPhong: "P102",
-          trangThai: 1,
-          maLoaiPhong: 1,
-        ),
+        Phong(phongID: 2, tenPhong: "P102", trangThai: 1, maLoaiPhong: 1),
       ],
     ),
 
@@ -83,12 +68,7 @@ class _DanhSachNguoiThuePageState extends State<DanhSachNguoiThuePage> {
       ),
 
       phong: [
-        Phong(
-          phongID: 3,
-          tenPhong: "P103",
-          trangThai: 2,
-          maLoaiPhong: 1,
-        ),
+        Phong(phongID: 3, tenPhong: "P103", trangThai: 2, maLoaiPhong: 1),
       ],
     ),
 
@@ -102,12 +82,7 @@ class _DanhSachNguoiThuePageState extends State<DanhSachNguoiThuePage> {
       ),
 
       phong: [
-        Phong(
-          phongID: 3,
-          tenPhong: "P103",
-          trangThai: 1,
-          maLoaiPhong: 2,
-        ),
+        Phong(phongID: 3, tenPhong: "P103", trangThai: 1, maLoaiPhong: 2),
       ],
     ),
 
@@ -121,14 +96,8 @@ class _DanhSachNguoiThuePageState extends State<DanhSachNguoiThuePage> {
       ),
 
       phong: [
-        Phong(
-          phongID: 3,
-          tenPhong: "P103",
-          trangThai: 1,
-          maLoaiPhong: 1,
-        ),
+        Phong(phongID: 3, tenPhong: "P103", trangThai: 1, maLoaiPhong: 1),
       ],
-
     ),
   ];
 
@@ -209,7 +178,6 @@ class _DanhSachNguoiThuePageState extends State<DanhSachNguoiThuePage> {
                       ),
                     ),
                   ),
-
 
                   /// ADD
                   GestureDetector(
@@ -317,10 +285,7 @@ class _DanhSachNguoiThuePageState extends State<DanhSachNguoiThuePage> {
                   return ItemNguoiThue(
                     nguoiThue: danhSachNguoiThue[index].nguoiThue,
 
-                    phong:
-                    danhSachNguoiThue[index]
-                        .phong
-                        .first,
+                    phong: danhSachNguoiThue[index].phong.first,
                   );
                 },
               ),
@@ -374,4 +339,6 @@ class _DanhSachNguoiThuePageState extends State<DanhSachNguoiThuePage> {
       ),
     );
   }
+
+  //end
 }

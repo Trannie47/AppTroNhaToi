@@ -4,7 +4,6 @@ import 'package:AppTroNhaToi/utils/currency_formatter.dart';
 import 'package:flutter/material.dart';
 
 class ItemPhong extends StatelessWidget {
-
   final Phong phong;
 
   final LoaiPhong loaiPhong;
@@ -22,41 +21,28 @@ class ItemPhong extends StatelessWidget {
   Widget build(BuildContext context) {
     String textTrangThai = "Đang thuê";
 
-    Color bgTrangThai =
-    const Color(0xffFFF1E1);
+    Color bgTrangThai = const Color(0xffFFF1E1);
 
-    Color textColorTrangThai =
-    const Color(0xffFF8A00);
+    Color textColorTrangThai = const Color(0xffFF8A00);
 
     if (phong.trangThai == 0) {
-
       textTrangThai = "Phòng trống";
 
-      bgTrangThai =
-      const Color(0xffE8F7EC);
+      bgTrangThai = const Color(0xffE8F7EC);
 
-      textColorTrangThai =
-      const Color(0xff2D7A3A);
+      textColorTrangThai = const Color(0xff2D7A3A);
+    } else if (phong.trangThai == 1) {
+      textTrangThai = "Đang thuê";
 
+      bgTrangThai = const Color(0xffFFF1E1);
+
+      textColorTrangThai = const Color(0xffFF8A00);
     } else if (phong.trangThai == 2) {
-
-      textTrangThai = "Đã hủy";
-
-      bgTrangThai =
-      const Color(0xffFFEAEA);
-
-      textColorTrangThai =
-          Colors.red;
-
-    } else if (phong.trangThai == 3) {
-
       textTrangThai = "Đang sửa";
 
-      bgTrangThai =
-      const Color(0xffECECEC);
+      bgTrangThai = const Color(0xffFFEAEA);
 
-      textColorTrangThai =
-          Colors.grey;
+      textColorTrangThai = Colors.red;
     }
 
     return GestureDetector(
@@ -67,38 +53,25 @@ class ItemPhong extends StatelessWidget {
 
         height: 112,
 
-        margin: const EdgeInsets.only(
-          bottom: 14,
-        ),
+        margin: const EdgeInsets.only(bottom: 14),
 
-        padding: const EdgeInsets.symmetric(
-          horizontal: 14,
-          vertical: 14,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
 
         decoration: BoxDecoration(
           color: Colors.white,
 
-          borderRadius:
-          BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(18),
 
-          border: Border.all(
-            color: const Color(
-              0xffECECEC,
-            ),
-          ),
+          border: Border.all(color: const Color(0xffECECEC)),
         ),
 
         child: Column(
           children: [
-
             /// TOP
             Row(
-              crossAxisAlignment:
-              CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
 
               children: [
-
                 /// BOX P101
                 Container(
                   width: 46,
@@ -107,13 +80,9 @@ class ItemPhong extends StatelessWidget {
                   alignment: Alignment.center,
 
                   decoration: BoxDecoration(
-                    color:
-                    const Color(0xffEAF3EB),
+                    color: const Color(0xffEAF3EB),
 
-                    borderRadius:
-                    BorderRadius.circular(
-                      13,
-                    ),
+                    borderRadius: BorderRadius.circular(13),
                   ),
 
                   child: Text(
@@ -121,11 +90,9 @@ class ItemPhong extends StatelessWidget {
 
                     style: const TextStyle(
                       fontSize: 15,
-                      fontWeight:
-                      FontWeight.w700,
+                      fontWeight: FontWeight.w700,
 
-                      color:
-                      Color(0xff2D7A3A),
+                      color: Color(0xff2D7A3A),
                     ),
                   ),
                 ),
@@ -135,23 +102,18 @@ class ItemPhong extends StatelessWidget {
                 /// INFO
                 Expanded(
                   child: Column(
-                    crossAxisAlignment:
-                    CrossAxisAlignment
-                        .start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
 
                     children: [
-
                       /// TÊN PHÒNG
                       Text(
                         "Phòng ${phong.tenPhong.replaceAll("P", "")}",
 
                         style: const TextStyle(
                           fontSize: 15,
-                          fontWeight:
-                          FontWeight.bold,
+                          fontWeight: FontWeight.bold,
 
-                          color:
-                          Color(0xff111111),
+                          color: Color(0xff111111),
                         ),
                       ),
 
@@ -164,8 +126,7 @@ class ItemPhong extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 13,
 
-                          color:
-                          Color(0xff9A9A9A),
+                          color: Color(0xff9A9A9A),
                         ),
                       ),
                     ],
@@ -183,10 +144,7 @@ class ItemPhong extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: bgTrangThai,
 
-                    borderRadius:
-                    BorderRadius.circular(
-                      20,
-                    ),
+                    borderRadius: BorderRadius.circular(20),
                   ),
 
                   child: Text(
@@ -195,8 +153,7 @@ class ItemPhong extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 11,
 
-                      fontWeight:
-                      FontWeight.w600,
+                      fontWeight: FontWeight.w600,
 
                       color: textColorTrangThai,
                     ),
@@ -215,11 +172,9 @@ class ItemPhong extends StatelessWidget {
 
               child: Row(
                 children: [
-
                   /// GIÁ
                   Row(
                     children: [
-
                       Icon(
                         Icons.attach_money,
                         size: 14,
@@ -229,18 +184,14 @@ class ItemPhong extends StatelessWidget {
                       const SizedBox(width: 2),
 
                       Text(
-                        formatMoney(
-                          loaiPhong.giaTien,
-                        ),
+                        formatMoney(loaiPhong.giaTien),
 
                         style: const TextStyle(
                           fontSize: 11,
 
-                          fontWeight:
-                          FontWeight.w600,
+                          fontWeight: FontWeight.w600,
 
-                          color:
-                          Color(0xff444444),
+                          color: Color(0xff444444),
                         ),
                       ),
                     ],
@@ -251,7 +202,6 @@ class ItemPhong extends StatelessWidget {
                   /// NGƯỜI
                   Row(
                     children: [
-
                       Icon(
                         Icons.person_outline,
                         size: 13,
@@ -266,11 +216,9 @@ class ItemPhong extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 11,
 
-                          fontWeight:
-                          FontWeight.w600,
+                          fontWeight: FontWeight.w600,
 
-                          color:
-                          Color(0xff444444),
+                          color: Color(0xff444444),
                         ),
                       ),
                     ],
@@ -282,7 +230,6 @@ class ItemPhong extends StatelessWidget {
                   if (loaiPhong.isMayLanh)
                     Row(
                       children: [
-
                         Icon(
                           Icons.ac_unit,
                           size: 13,
@@ -297,11 +244,9 @@ class ItemPhong extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 11,
 
-                            fontWeight:
-                            FontWeight.w600,
+                            fontWeight: FontWeight.w600,
 
-                            color:
-                            Color(0xff444444),
+                            color: Color(0xff444444),
                           ),
                         ),
                       ],

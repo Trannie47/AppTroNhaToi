@@ -1,3 +1,4 @@
+import 'package:AppTroNhaToi/pages/MainPage/PhongPage/phongPage.dart';
 import 'package:flutter/material.dart';
 import 'HomePage/HomePage.dart';
 import 'NguoiThuePage/nguoithuePage.dart';
@@ -14,7 +15,7 @@ class _MainPageState extends State<MainPage> {
 
   final List<Widget> pages = [
     const HomePage(),
-    const Center(child: Text("Phòng")),
+    const PhongPage(),
     const NguoiThuePage(),
     const Center(child: Text("Khác")),
   ];

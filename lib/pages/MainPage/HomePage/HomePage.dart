@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> loadData() async {
     // giả lập loading
     await Future.delayed(const Duration(seconds: 2));
-
+    if (!mounted) return;
     setState(() {
       isLoading = false;
 
