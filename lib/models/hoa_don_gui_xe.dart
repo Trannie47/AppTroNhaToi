@@ -5,6 +5,8 @@ class HoaDonGuiXe {
 
   final num? idPhuongTien;
 
+  final DateTime? ngayLap;
+
   /// 0 = chưa thu
   /// 1 = đã thu
   /// 2 = không còn ở
@@ -15,6 +17,7 @@ class HoaDonGuiXe {
     this.maHoaDon,
     this.thangNam,
     this.idPhuongTien,
+    this.ngayLap,
     this.trangThai,
   });
 
@@ -25,6 +28,11 @@ class HoaDonGuiXe {
       thangNam: map['thangNam'] as String?,
 
       idPhuongTien: map['idPhuongTien'] as num?,
+
+      ngayLap:
+      map['ngayLap'] != null
+          ? DateTime.parse(map['ngayLap'])
+          : null,
 
       trangThai: map['trangThai'] as int?,
     );
@@ -38,6 +46,8 @@ class HoaDonGuiXe {
 
       'idPhuongTien': idPhuongTien,
 
+      'ngayLap': ngayLap?.toIso8601String(),
+
       'trangThai': trangThai,
     };
   }
@@ -45,7 +55,8 @@ class HoaDonGuiXe {
   HoaDonGuiXe copyWith({
     int? maHoaDon,
     String? thangNam,
-    String? bienSo,
+    num? idPhuongTien,
+    DateTime? ngayLap,
     int? trangThai,
   }) {
     return HoaDonGuiXe(
@@ -54,6 +65,8 @@ class HoaDonGuiXe {
       thangNam: thangNam ?? this.thangNam,
 
       idPhuongTien: idPhuongTien ?? this.idPhuongTien,
+
+      ngayLap: ngayLap ?? this.ngayLap,
 
       trangThai: trangThai ?? this.trangThai,
     );
@@ -65,6 +78,7 @@ class HoaDonGuiXe {
         'maHoaDon: $maHoaDon, '
         'thangNam: $thangNam, '
         'idPhuongTien: $idPhuongTien, '
+        'ngayLap: $ngayLap, '
         'trangThai: $trangThai, '
         ')';
   }

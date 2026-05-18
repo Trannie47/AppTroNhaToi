@@ -4,12 +4,16 @@ import 'package:flutter/material.dart';
 
 class ItemPhuongTien extends StatelessWidget {
   final PhuongTien phuongTien;
+
   final VoidCallback? delete;
+
+  final VoidCallback? edit;
 
   const ItemPhuongTien({
     super.key,
     required this.phuongTien,
     this.delete,
+    this.edit,
   });
 
   @override
@@ -21,81 +25,90 @@ class ItemPhuongTien extends StatelessWidget {
 
       decoration: BoxDecoration(
         color: Colors.white,
+
         borderRadius: BorderRadius.circular(18),
+
+        border: Border.all(color: const Color(0xffEEEEEE)),
       ),
 
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-
         children: [
+          /// DÒNG TRÊN
           Row(
             children: [
               /// ICON
               Container(
-                width: 42,
-                height: 42,
+                width: 48,
+                height: 48,
 
                 decoration: BoxDecoration(
                   color: const Color(0xffEEF5EF),
-                  borderRadius: BorderRadius.circular(12),
+
+                  borderRadius: BorderRadius.circular(14),
                 ),
 
                 alignment: Alignment.center,
 
                 child: Icon(
-                  phuongTien.loaiXe == 1
-                      ? Icons.directions_car_rounded
+                  phuongTien.loaiXe == 0
+                      ? Icons.two_wheeler_rounded
                       : phuongTien.loaiXe == 2
-                      ? Icons.directions_bike_rounded
-                      : Icons.radio_button_checked_rounded,
+                      ? Icons.pedal_bike_rounded
+                      : Icons.directions_car_filled_rounded,
 
-                  size: 22,
+                  size: 24,
 
                   color: const Color(0xff5D8E63),
                 ),
               ),
 
-              const SizedBox(width: 12),
+              const SizedBox(width: 14),
 
-              /// INFO
+              /// THÔNG TIN
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
 
                   children: [
+                    /// TÊN XE
                     Text(
                       phuongTien.hangXe ?? "",
 
                       style: const TextStyle(
-                        fontSize: 13,
+                        fontSize: 15,
                         fontWeight: FontWeight.w700,
+
                         color: Color(0xff1C1C1E),
                       ),
                     ),
 
-                    const SizedBox(height: 3),
+                    const SizedBox(height: 4),
 
+                    /// BIỂN SỐ
                     Text(
                       coBienSo
                           ? "${phuongTien.bienSo} · ${phuongTien.mauSac ?? ""}"
                           : "Không BKS · ${phuongTien.mauSac ?? ""}",
 
                       style: const TextStyle(
-                        fontSize: 11,
-                        color: Color(0xff8E8E93),
+                        fontSize: 12,
+
+                        color: Color(0xff9B9B9B),
                       ),
                     ),
                   ],
                 ),
               ),
 
-              /// PRICE
+              /// GIÁ
               Text(
                 "${formatMoney(phuongTien.giaGui ?? 0)}/tháng",
 
                 style: const TextStyle(
-                  fontSize: 13,
+                  fontSize: 15,
+
                   fontWeight: FontWeight.w800,
+
                   color: Color(0xff2D7A3A),
                 ),
               ),
@@ -103,44 +116,81 @@ class ItemPhuongTien extends StatelessWidget {
           ),
 
           const SizedBox(height: 14),
-          if (delete != null)... {
-          Row(
-                children: [
-                  Text(
-                    phuongTien.loaiXe == 1
-                        ? "Loại: Xe máy"
-                        : phuongTien.loaiXe == 2
-                        ? "Loại: Xe đạp điện"
-                        : "Loại: Khác",
 
-                    style: const TextStyle(
-                      fontSize: 11,
-                      color: Color(0xffA1A1A1),
+          /// DÒNG DƯỚI bỏ laoij xe
+          if (delete != null || edit != null)
+            Row(
+              children: [
+                const Spacer(),
+
+                /// SỬA
+                if (edit != null)
+                  GestureDetector(
+                    onTap: edit,
+
+                    child: const Row(
+                      children: [
+                        Icon(
+                          Icons.edit_outlined,
+
+                          size: 15,
+
+                          color: Color(0xffF08A24),
+                        ),
+
+                        SizedBox(width: 4),
+
+                        Text(
+                          "Sửa",
+
+                          style: TextStyle(
+                            fontSize: 11,
+
+                            fontWeight: FontWeight.w500,
+
+                            color: Color(0xffF08A24),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
 
-                  const Spacer(),
+                if (edit != null && delete != null) const SizedBox(width: 14),
 
+                /// XÓA
+                if (delete != null)
+                  GestureDetector(
+                    onTap: delete,
 
-                    GestureDetector(
-                      onTap: delete,
+                    child: const Row(
+                      children: [
+                        Icon(
+                          Icons.delete_outline_rounded,
 
-                      child: const Text(
-                        "Xóa xe",
+                          size: 15,
 
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w500,
                           color: Colors.red,
                         ),
-                      ),
+
+                        SizedBox(width: 4),
+
+                        Text(
+                          "Xóa",
+
+                          style: TextStyle(
+                            fontSize: 11,
+
+                            fontWeight: FontWeight.w500,
+
+                            color: Colors.red,
+                          ),
+                        ),
+                      ],
                     ),
-                ],
-              )
-          }
+                  ),
+              ],
+            ),
         ],
-      
-          
       ),
     );
   }

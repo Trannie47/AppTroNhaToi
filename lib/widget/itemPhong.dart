@@ -4,9 +4,12 @@ import 'package:AppTroNhaToi/utils/currency_formatter.dart';
 import 'package:flutter/material.dart';
 
 class ItemPhong extends StatelessWidget {
+
   final Phong phong;
+
   final LoaiPhong loaiPhong;
-  final VoidCallback? onTap;
+
+  final Function()? onTap;
 
   const ItemPhong({
     super.key,
@@ -17,96 +20,152 @@ class ItemPhong extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String statusText = "";
-    Color statusColor = Colors.green;
-    Color statusBg = const Color(0xFFEAF5ED);
+    String textTrangThai = "Đang thuê";
 
-    switch (phong.trangThai) {
-      // Còn trống
-      case 0:
-        statusText = "Còn trống";
-        statusColor = const Color(0xFF2D7A3A);
-        statusBg = const Color(0xFFEAF5ED);
-        break;
+    Color bgTrangThai =
+    const Color(0xffFFF1E1);
 
-      // Đang thuê
-      case 1:
-        statusText = "Đang thuê";
-        statusColor = const Color(0xFFE68600);
-        statusBg = const Color(0xFFFFF3E8);
-        break;
+    Color textColorTrangThai =
+    const Color(0xffFF8A00);
 
-      // Đang sửa chữa
-      case 2:
-        statusText = "Sửa chữa";
-        statusColor = Colors.red;
-        statusBg = const Color(0xFFFFECEC);
-        break;
+    if (phong.trangThai == 0) {
+
+      textTrangThai = "Phòng trống";
+
+      bgTrangThai =
+      const Color(0xffE8F7EC);
+
+      textColorTrangThai =
+      const Color(0xff2D7A3A);
+
+    } else if (phong.trangThai == 2) {
+
+      textTrangThai = "Đã hủy";
+
+      bgTrangThai =
+      const Color(0xffFFEAEA);
+
+      textColorTrangThai =
+          Colors.red;
+
+    } else if (phong.trangThai == 3) {
+
+      textTrangThai = "Đang sửa";
+
+      bgTrangThai =
+      const Color(0xffECECEC);
+
+      textColorTrangThai =
+          Colors.grey;
     }
 
     return GestureDetector(
       onTap: onTap,
 
       child: Container(
-        margin: const EdgeInsets.only(bottom: 14),
-        padding: const EdgeInsets.all(16),
+        width: 361,
+
+        height: 112,
+
+        margin: const EdgeInsets.only(
+          bottom: 14,
+        ),
+
+        padding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 14,
+        ),
 
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(22),
 
-          border: Border.all(color: Colors.grey.shade200),
+          borderRadius:
+          BorderRadius.circular(18),
+
+          border: Border.all(
+            color: const Color(
+              0xffECECEC,
+            ),
+          ),
         ),
 
         child: Column(
           children: [
-            /// HEADER
+
+            /// TOP
             Row(
+              crossAxisAlignment:
+              CrossAxisAlignment.start,
+
               children: [
-                /// ICON
+
+                /// BOX P101
                 Container(
-                  width: 62,
-                  height: 62,
+                  width: 46,
+                  height: 46,
+
+                  alignment: Alignment.center,
 
                   decoration: BoxDecoration(
-                    color: const Color(0xFFEAF5ED),
-                    borderRadius: BorderRadius.circular(18),
+                    color:
+                    const Color(0xffEAF3EB),
+
+                    borderRadius:
+                    BorderRadius.circular(
+                      13,
+                    ),
                   ),
 
-                  child: Center(
-                    child: Text(
-                      phong.tenPhong,
-                      style: const TextStyle(
-                        color: Color(0xFF2D7A3A),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 22,
-                      ),
+                  child: Text(
+                    phong.tenPhong,
+
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight:
+                      FontWeight.w700,
+
+                      color:
+                      Color(0xff2D7A3A),
                     ),
                   ),
                 ),
 
-                const SizedBox(width: 14),
+                const SizedBox(width: 12),
 
                 /// INFO
                 Expanded(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment:
+                    CrossAxisAlignment
+                        .start,
+
                     children: [
+
+                      /// TÊN PHÒNG
                       Text(
-                        "Phòng ${phong.tenPhong}",
+                        "Phòng ${phong.tenPhong.replaceAll("P", "")}",
+
                         style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                          fontWeight:
+                          FontWeight.bold,
+
+                          color:
+                          Color(0xff111111),
                         ),
                       ),
 
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 2),
 
+                      /// LOẠI PHÒNG
                       Text(
                         "${loaiPhong.tenLoaiPhong} · ${loaiPhong.dienTich.toInt()} m²",
+
                         style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 15,
+                          fontSize: 13,
+
+                          color:
+                          Color(0xff9A9A9A),
                         ),
                       ),
                     ],
@@ -115,156 +174,140 @@ class ItemPhong extends StatelessWidget {
 
                 /// STATUS
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 8,
-                  ),
+                  width: 72.55,
+
+                  height: 21,
+
+                  alignment: Alignment.center,
 
                   decoration: BoxDecoration(
-                    color: statusBg,
-                    borderRadius: BorderRadius.circular(30),
+                    color: bgTrangThai,
+
+                    borderRadius:
+                    BorderRadius.circular(
+                      20,
+                    ),
                   ),
 
                   child: Text(
-                    statusText,
+                    textTrangThai,
+
                     style: TextStyle(
-                      color: statusColor,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 11,
+
+                      fontWeight:
+                      FontWeight.w600,
+
+                      color: textColorTrangThai,
                     ),
                   ),
                 ),
               ],
             ),
 
-            const SizedBox(height: 18),
+            const Spacer(),
 
-            Divider(color: Colors.grey.shade200, height: 1),
+            /// BOTTOM
+            SizedBox(
+              width: 361,
 
-            const SizedBox(height: 14),
+              height: 28,
 
-            /// FOOTER
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                /// GIÁ
-                Expanded(
-                  child: Row(
+              child: Row(
+                children: [
+
+                  /// GIÁ
+                  Row(
                     children: [
-                      const Icon(
-                        Icons.attach_money,
-                        color: Colors.grey,
-                        size: 18,
-                      ),
 
-                      const SizedBox(width: 4),
-
-                      Expanded(
-                        child: RichText(
-                          overflow: TextOverflow.ellipsis,
-
-                          text: TextSpan(
-                            style: const TextStyle(
-                              color: Colors.grey,
-                              fontSize: 14,
-                            ),
-
-                            children: [
-                              const TextSpan(text: "Giá: "),
-
-                              TextSpan(
-                                text: "${formatMoney(loaiPhong.giaTien)}/tháng",
-
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(width: 10),
-
-                /// NGƯỜI
-                Expanded(
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.person_outline,
-                        color: Colors.grey,
-                        size: 18,
-                      ),
-
-                      const SizedBox(width: 4),
-
-                      Expanded(
-                        child: RichText(
-                          overflow: TextOverflow.ellipsis,
-
-                          text: TextSpan(
-                            style: const TextStyle(
-                              color: Colors.grey,
-                              fontSize: 14,
-                            ),
-
-                            children: [
-                              const TextSpan(text: "Tối đa "),
-
-                              TextSpan(
-                                text: "${loaiPhong.soNguoiToiDa} người",
-
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(width: 10),
-
-                /// MÁY LẠNH
-                Expanded(
-                  child: Row(
-                    children: [
                       Icon(
-                        Icons.ac_unit,
-                        color: loaiPhong.isMayLanh
-                            ? Colors.black
-                            : Colors.grey.shade400,
-                        size: 18,
+                        Icons.attach_money,
+                        size: 14,
+                        color: Colors.grey.shade500,
+                      ),
+
+                      const SizedBox(width: 2),
+
+                      Text(
+                        formatMoney(
+                          loaiPhong.giaTien,
+                        ),
+
+                        style: const TextStyle(
+                          fontSize: 11,
+
+                          fontWeight:
+                          FontWeight.w600,
+
+                          color:
+                          Color(0xff444444),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(width: 14),
+
+                  /// NGƯỜI
+                  Row(
+                    children: [
+
+                      Icon(
+                        Icons.person_outline,
+                        size: 13,
+                        color: Colors.grey.shade500,
                       ),
 
                       const SizedBox(width: 4),
 
-                      Expanded(
-                        child: Text(
-                          loaiPhong.isMayLanh ? "Máy lạnh" : "Không ML",
+                      Text(
+                        "Tối đa ${loaiPhong.soNguoiToiDa} người",
 
-                          overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 11,
+
+                          fontWeight:
+                          FontWeight.w600,
+
+                          color:
+                          Color(0xff444444),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(width: 14),
+
+                  /// MÁY LẠNH
+                  if (loaiPhong.isMayLanh)
+                    Row(
+                      children: [
+
+                        Icon(
+                          Icons.ac_unit,
+                          size: 13,
+                          color: Colors.grey.shade500,
+                        ),
+
+                        const SizedBox(width: 4),
+
+                        const Text(
+                          "Máy lạnh",
 
                           style: TextStyle(
-                            color: loaiPhong.isMayLanh
-                                ? Colors.black
-                                : Colors.grey,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14,
+                            fontSize: 11,
+
+                            fontWeight:
+                            FontWeight.w600,
+
+                            color:
+                            Color(0xff444444),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                      ],
+                    ),
+                ],
+              ),
             ),
           ],
         ),

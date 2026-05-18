@@ -1,4 +1,5 @@
 class NguoiThue {
+
   final int? idnt;
 
   final String? cccd;
@@ -13,7 +14,13 @@ class NguoiThue {
 
   final String? ghiChu;
 
-  final bool? gioiTinh; // true: Nam, false: Nữ
+  final bool? gioiTinh;
+
+  /// ID người thuê chính
+  final int? idntc;
+
+  /// ID phòng
+  final int? iPhong;
 
   NguoiThue({
     this.idnt,
@@ -24,42 +31,67 @@ class NguoiThue {
     this.queQuan,
     this.ghiChu,
     this.gioiTinh,
+    this.idntc,
+    this.iPhong,
   });
 
-  factory NguoiThue.fromMap(Map<String, dynamic> map) {
+  factory NguoiThue.fromMap(
+      Map<String, dynamic> map,
+      ) {
     return NguoiThue(
+
       idnt: map['IDNT'] as int?,
 
       cccd: map['CCCD'] as String?,
 
       hoTen: map['hoTen'] as String?,
 
-      ngaySinh: map['ngaySinh'] != null
-          ? DateTime.tryParse(map['ngaySinh'] as String)
+      ngaySinh:
+      map['ngaySinh'] != null
+          ? DateTime.tryParse(
+        map['ngaySinh']
+        as String,
+      )
           : null,
 
       sdt: map['SDT'] as String?,
 
-      queQuan: map['queQuan'] as String?,
+      queQuan:
+      map['queQuan'] as String?,
 
-      ghiChu: map['ghiChu'] as String?,
+      ghiChu:
+      map['ghiChu'] as String?,
 
-      gioiTinh: map['gioiTinh'] != null
+      gioiTinh:
+      map['gioiTinh'] != null
           ? map['gioiTinh'] == 1 ||
-          map['gioiTinh'] == true
+          map['gioiTinh'] ==
+              true
           : null,
+
+      idntc:
+      map['IDNTC'] as int?,
+
+      iPhong:
+      map['IPhong'] as int?,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      if (idnt != null) 'IDNT': idnt,
+
+      if (idnt != null)
+        'IDNT': idnt,
 
       'CCCD': cccd,
 
       'hoTen': hoTen,
 
-      'ngaySinh': ngaySinh?.toIso8601String().split('T').first,
+      'ngaySinh':
+      ngaySinh
+          ?.toIso8601String()
+          .split('T')
+          .first,
 
       'SDT': sdt,
 
@@ -67,7 +99,14 @@ class NguoiThue {
 
       'ghiChu': ghiChu,
 
-      'gioiTinh': gioiTinh,
+      'gioiTinh':
+      gioiTinh == true
+          ? 1
+          : 0,
+
+      'IDNTC': idntc,
+
+      'IPhong': iPhong,
     };
   }
 
@@ -80,23 +119,46 @@ class NguoiThue {
     String? queQuan,
     String? ghiChu,
     bool? gioiTinh,
+    int? idntc,
+    int? iPhong,
   }) {
     return NguoiThue(
-      idnt: idnt ?? this.idnt,
 
-      cccd: cccd ?? this.cccd,
+      idnt:
+      idnt ?? this.idnt,
 
-      hoTen: hoTen ?? this.hoTen,
+      cccd:
+      cccd ?? this.cccd,
 
-      ngaySinh: ngaySinh ?? this.ngaySinh,
+      hoTen:
+      hoTen ?? this.hoTen,
 
-      sdt: sdt ?? this.sdt,
+      ngaySinh:
+      ngaySinh ??
+          this.ngaySinh,
 
-      queQuan: queQuan ?? this.queQuan,
+      sdt:
+      sdt ?? this.sdt,
 
-      ghiChu: ghiChu ?? this.ghiChu,
+      queQuan:
+      queQuan ??
+          this.queQuan,
 
-      gioiTinh: gioiTinh ?? this.gioiTinh,
+      ghiChu:
+      ghiChu ??
+          this.ghiChu,
+
+      gioiTinh:
+      gioiTinh ??
+          this.gioiTinh,
+
+      idntc:
+      idntc ??
+          this.idntc,
+
+      iPhong:
+      iPhong ??
+          this.iPhong,
     );
   }
 
@@ -110,7 +172,9 @@ class NguoiThue {
         'sdt: $sdt, '
         'queQuan: $queQuan, '
         'ghiChu: $ghiChu, '
-        'gioiTinh: $gioiTinh'
+        'gioiTinh: $gioiTinh, '
+        'idntc: $idntc, '
+        'iPhong: $iPhong'
         ')';
   }
 }

@@ -2,6 +2,8 @@ import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/view_model/nguoi_thue_phong.dart';
 import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/NguoiThueForm/NguoiThueForm.dart';
+import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/danhsachnguoithuepage/DanhSachNguoiThuePage.dart';
+import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/danhsachphongthuepage/DanhSachPhongThuePage.dart';
 import 'package:AppTroNhaToi/widget/itemNguoiThue.dart';
 import 'package:flutter/material.dart';
 
@@ -26,8 +28,19 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
         ghiChu: "",
         ngaySinh: DateTime(2003, 5, 12),
       ),
-      phong: Phong(phongID: 1, tenPhong: "P101", trangThai: 1, maLoaiPhong: 1),
+//phongid 0	Trống  1	Đang thuê  2	Đang sửa
+//         maLoaiPhong	1	Tiêu chuẩn  2	VIP  3	Studio
+
+      phong: [
+        Phong(phongID: 1, tenPhong: "P101", trangThai: 1, maLoaiPhong: 1),
+
+        Phong(phongID: 2, tenPhong: "P102", trangThai: 2, maLoaiPhong: 2),
+        Phong(phongID: 5, tenPhong: "P105", trangThai: 0, maLoaiPhong: 3),
+        Phong(phongID: 4, tenPhong: "P104", trangThai: 3, maLoaiPhong: 1),
+      ],
     ),
+
+
 
     NguoiThuePhong(
       nguoiThue: NguoiThue(
@@ -39,7 +52,15 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
         ghiChu: "Ở ghép",
         ngaySinh: DateTime(2000, 8, 20),
       ),
-      phong: Phong(phongID: 1, tenPhong: "P101", trangThai: 1, maLoaiPhong: 1),
+
+      phong: [
+        Phong(
+          phongID: 1,
+          tenPhong: "P102",
+          trangThai: 1,
+          maLoaiPhong: 1,
+        ),
+      ],
     ),
 
     NguoiThuePhong(
@@ -52,11 +73,20 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
         ghiChu: "",
         ngaySinh: DateTime(2001, 3, 15),
       ),
-      phong: Phong(phongID: 2, tenPhong: "P102", trangThai: 1, maLoaiPhong: 1),
+
+      phong: [
+        Phong(
+          phongID: 2,
+          tenPhong: "P102",
+          trangThai: 1,
+          maLoaiPhong: 1,
+        ),
+      ],
     ),
+
     NguoiThuePhong(
       nguoiThue: NguoiThue(
-        idnt: 3,
+        idnt: 4,
         hoTen: "Lê Văn D",
         cccd: "123456789966",
         sdt: "0325896345",
@@ -64,36 +94,52 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
         ghiChu: "",
         ngaySinh: DateTime(2004, 8, 16),
       ),
-      phong: Phong(phongID: 3, tenPhong: "P103", trangThai: 1, maLoaiPhong: 1),
+
+      phong: [
+        Phong(
+          phongID: 3,
+          tenPhong: "P103",
+          trangThai: 1,
+          maLoaiPhong: 1,
+        ),
+      ],
     ),
   ];
 
   final TextEditingController searchController = TextEditingController();
-  // lôi
-  // Chuyển đến tran ChitietNGuoiThuePage
+
+  /// CHI TIẾT NGƯỜI THUÊ
   void toChiTietNguoiThue(NguoiThuePhong nt) async {
-    final result = await Navigator.push(
+    await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            ChiTietNguoiThuePage(nguoiThue: nt.nguoiThue, phong: nt.phong!),
+        builder: (context) {
+          return DanhSachPhongThuePage(
+            phong:nt.phong
+            ,
+
+            nguoiThue:nt.nguoiThue
+          );
+        },
+      ),
+    );
+  }
+
+  /// DANH SÁCH NGƯỜI THUÊ
+  void toDanhSachNguoiThue() async {
+    await Navigator.push(
+      context,
+
+      MaterialPageRoute(
+        builder: (context) {
+          return const DanhSachNguoiThuePage();
+        },
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    int tong = danhSachNguoiThue.length;
-
-    int thueChinh = danhSachNguoiThue
-        .where(
-          (e) =>
-              e.nguoiThue.ghiChu == null || e.nguoiThue.ghiChu!.trim().isEmpty,
-        )
-        .length;
-
-    int oGhep = tong - thueChinh;
-
     return Scaffold(
       backgroundColor: const Color(0xffF5F6FA),
 
@@ -112,26 +158,16 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
                     "Người thuê",
 
                     style: TextStyle(
-                      fontSize: 22,
+                      fontSize: 24,
                       fontWeight: FontWeight.w800,
                       color: Color(0xff1C1C1E),
                     ),
                   ),
 
-                  Container(
-                    height: 36,
-
-                    decoration: BoxDecoration(
-                      color: const Color(0xff2D7A3A),
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-
-                    child: Material(
-                      color: Colors.transparent,
-
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(30),
-
+                  Row(
+                    children: [
+                      /// ADD
+                      GestureDetector(
                         onTap: () {
                           Navigator.push(
                             context,
@@ -144,29 +180,26 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
                           );
                         },
 
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 18),
-
-                          child: Row(
-                            children: [
-                              Icon(Icons.add, color: Colors.white, size: 16),
-
-                              SizedBox(width: 4),
-
-                              Text(
-                                "Thêm",
-
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
+                        child: Image.asset(
+                          "assets/images/add.png",
+                          width: 40,
+                          height: 40,
                         ),
                       ),
-                    ),
+
+                      const SizedBox(width: 10),
+
+                      /// LIST
+                      GestureDetector(
+                        onTap: toDanhSachNguoiThue,
+
+                        child: Image.asset(
+                          "assets/images/list.png",
+                          width: 40,
+                          height: 40,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -174,22 +207,27 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
 
             /// SEARCH
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
 
               child: Container(
-                height: 36,
+                height: 40,
+
                 decoration: BoxDecoration(
                   color: const Color(0xffEFEFEF),
-                  borderRadius: BorderRadius.circular(14),
+
+                  borderRadius: BorderRadius.circular(12),
                 ),
+
                 alignment: Alignment.center,
 
                 child: TextField(
                   controller: searchController,
+
                   textAlignVertical: TextAlignVertical.center,
 
                   decoration: InputDecoration(
                     border: InputBorder.none,
+
                     isDense: true,
 
                     contentPadding: const EdgeInsets.symmetric(vertical: 10),
@@ -198,6 +236,7 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
 
                     hintStyle: TextStyle(
                       color: Colors.grey.shade500,
+
                       fontSize: 13,
                     ),
 
@@ -207,46 +246,8 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
               ),
             ),
 
-            const SizedBox(height: 18),
+            const SizedBox(height: 15),
 
-            /// THỐNG KÊ
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-              ),
-
-              child: Row(
-                children: [
-                  _itemThongKe(
-                    title: "$tong",
-                    subTitle: "Tổng (chính + ghép)",
-                    color: const Color(0xff222222),
-                  ),
-
-                  _divider(),
-
-                  _itemThongKe(
-                    title: "$thueChinh",
-                    subTitle: "Thuê chính",
-                    color: const Color(0xff2D7A3A),
-                  ),
-
-                  _divider(),
-
-                  _itemThongKe(
-                    title: "$oGhep",
-                    subTitle: "Ở ghép",
-                    color: const Color(0xff222222),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 18),
-            //lỗi
             /// LIST
             Expanded(
               child: ListView.builder(
@@ -257,54 +258,15 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
                 itemBuilder: (context, index) {
                   return ItemNguoiThue(
                     nguoiThue: danhSachNguoiThue[index].nguoiThue,
-                    phong: danhSachNguoiThue[index].phong,
+
+                    phong:
+                    danhSachNguoiThue[index]
+                        .phong
+                        .first,
+
                     onTap: () => toChiTietNguoiThue(danhSachNguoiThue[index]),
                   );
                 },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _divider() {
-    return Container(width: 1, height: 65, color: const Color(0xffEEEEEE));
-  }
-
-  Widget _itemThongKe({
-    required String title,
-    required String subTitle,
-    required Color color,
-  }) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 14),
-
-        child: Column(
-          children: [
-            Text(
-              title,
-
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w800,
-                color: color,
-              ),
-            ),
-
-            const SizedBox(height: 4),
-
-            Text(
-              subTitle,
-
-              textAlign: TextAlign.center,
-
-              style: const TextStyle(
-                fontSize: 10,
-                color: Color(0xff999999),
-                fontWeight: FontWeight.w500,
               ),
             ),
           ],

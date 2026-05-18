@@ -132,7 +132,7 @@ class _PhuongTienNguoiThuePageState
 
             /// LIST
             Expanded(
-              child: ListView.separated(
+              child: ListView(
                 padding: const EdgeInsets.fromLTRB(
                   16,
                   16,
@@ -140,24 +140,35 @@ class _PhuongTienNguoiThuePageState
                   120,
                 ),
 
-                itemCount: dsPhuongTien.length,
+                children: [
 
-                separatorBuilder: (_, __) =>
-                const SizedBox(height: 14),
+                  /// XE MÁY
+                  if(dsPhuongTien.where((e) => e.loaiXe == 0).isNotEmpty)
+                    _groupXe(
+                      title: "Xe máy",
+                      dsXe:
+                      dsPhuongTien.where((e) => e.loaiXe == 0).toList(),
+                    ),
 
-                itemBuilder: (context, index) {
-                  return ItemPhuongTien(
-                    phuongTien: dsPhuongTien[index],
+                  /// Ô TÔ
+                  if(dsPhuongTien.where((e) => e.loaiXe == 1).isNotEmpty)
+                    _groupXe(
+                      title: "Xe ô tô",
+                      dsXe:
+                      dsPhuongTien.where((e) => e.loaiXe == 1).toList(),
+                    ),
 
-                    delete: () {
-                      setState(() {
-                        dsPhuongTien.removeAt(index);
-                      });
-                    },
-                  );
-                },
+                  /// XE ĐẠP ĐIỆN
+                  if(dsPhuongTien.where((e) => e.loaiXe == 2).isNotEmpty)
+                    _groupXe(
+                      title: "Xe đạp điện",
+                      dsXe:
+                      dsPhuongTien.where((e) => e.loaiXe == 2).toList(),
+                    ),
+                ],
               ),
             ),
+
           ],
         ),
       ),
@@ -217,6 +228,221 @@ class _PhuongTienNguoiThuePageState
           ),
         ),
       ),
+    );
+  }
+  Widget _groupXe({
+    required String title,
+    required List<PhuongTien> dsXe,
+  }) {
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+
+      children: [
+
+        /// TITLE
+        Padding(
+          padding: const EdgeInsets.only(
+            bottom: 10,
+            top: 8,
+          ),
+
+          child: Text(
+            "$title (${dsXe.length})",
+
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              color: Color(0xff2D7A3A),
+            ),
+          ),
+        ),
+
+        /// LIST XE
+        ...List.generate(dsXe.length, (index) {
+
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 14),
+
+            child: ItemPhuongTien(
+
+              phuongTien: dsXe[index],
+
+              delete: () {
+
+                setState(() {
+
+                  dsPhuongTien.remove(dsXe[index]);
+
+                });
+
+              },
+
+              edit: () {
+
+                final txtHangXe =
+                TextEditingController(
+                  text: dsXe[index].hangXe,
+                );
+
+                final txtBienSo =
+                TextEditingController(
+                  text: dsXe[index].bienSo,
+                );
+
+                final txtMauSac =
+                TextEditingController(
+                  text: dsXe[index].mauSac,
+                );
+
+                final txtGiaGui =
+                TextEditingController(
+                  text:
+                  dsXe[index].giaGui.toString(),
+                );
+
+
+                showDialog(
+
+                  context: context,
+
+                  builder: (dialogContext) {
+
+                    return AlertDialog(
+
+                      shape: RoundedRectangleBorder(
+
+                        borderRadius:
+                        BorderRadius.circular(24),
+                      ),
+
+                      title: const Center(
+
+                        child: Text(
+
+                          "Sửa phương tiện",
+
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+
+                      content: SingleChildScrollView(
+
+                        child: Column(
+
+                          mainAxisSize: MainAxisSize.min,
+
+                          children: [
+
+                            TextField(
+
+                              controller: txtHangXe,
+
+                              decoration: const InputDecoration(
+                                labelText: "Hãng xe",
+                              ),
+                            ),
+
+                            const SizedBox(height: 14),
+
+                            TextField(
+
+                              controller: txtBienSo,
+
+                              decoration: const InputDecoration(
+                                labelText: "Biển số",
+                              ),
+                            ),
+
+                            const SizedBox(height: 14),
+
+                            TextField(
+
+                              controller: txtMauSac,
+
+                              decoration: const InputDecoration(
+                                labelText: "Màu sắc",
+                              ),
+                            ),
+
+                            const SizedBox(height: 14),
+
+                            TextField(
+
+                              controller: txtGiaGui,
+
+                              decoration: const InputDecoration(
+                                labelText: "Giá gửi",
+                              ),
+                            ),
+
+                            const SizedBox(height: 22),
+
+                            SizedBox(
+
+                              width: double.infinity,
+
+                              height: 48,
+
+                              child: ElevatedButton(
+
+                                onPressed: () {
+
+                                  setState(() {
+
+                                    final xeMoi =
+                                    dsXe[index].copyWith(
+
+                                      hangXe:
+                                      txtHangXe.text,
+
+                                      bienSo:
+                                      txtBienSo.text,
+
+                                      mauSac:
+                                      txtMauSac.text,
+
+                                      giaGui:
+                                      double.tryParse(
+                                        txtGiaGui.text,
+                                      ) ?? 0,
+                                    );
+
+
+
+                                    final viTri =
+                                    dsPhuongTien.indexOf(
+                                      dsXe[index],
+                                    );
+
+
+
+                                    dsPhuongTien[viTri] =
+                                        xeMoi;
+                                  });
+
+                                  Navigator.pop(dialogContext);
+                                },
+
+                                child: const Text(
+                                  "Lưu thay đổi",
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+
+              },
+            ),
+          );
+        }),
+      ],
     );
   }
 }
