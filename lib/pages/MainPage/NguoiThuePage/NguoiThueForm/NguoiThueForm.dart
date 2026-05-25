@@ -1,14 +1,15 @@
+import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 
-class ThemNguoiThuePage extends StatefulWidget {
-  const ThemNguoiThuePage({super.key});
+class NguoiThueForm extends StatefulWidget {
+  final NguoiThue? nguoiThue;
+  const NguoiThueForm({super.key, this.nguoiThue});
 
   @override
-  State<ThemNguoiThuePage> createState() => _ThemNguoiThuePageState();
+  State<NguoiThueForm> createState() => _NguoiThueFormState();
 }
 
-class _ThemNguoiThuePageState extends State<ThemNguoiThuePage> {
+class _NguoiThueFormState extends State<NguoiThueForm> {
   final TextEditingController txtSearch = TextEditingController();
 
   final TextEditingController txtHoTen = TextEditingController();
@@ -28,6 +29,25 @@ class _ThemNguoiThuePageState extends State<ThemNguoiThuePage> {
   final TextEditingController txtGhiChu = TextEditingController();
 
   bool? gioiTinh;
+  late NguoiThue nguoiThue;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    setState(() {
+      if (widget.nguoiThue != null) {
+        nguoiThue = widget.nguoiThue!;
+        txtHoTen.text = nguoiThue.hoTen ?? "";
+        txtSDT.text = nguoiThue.sdt ?? "";
+        txtCCCD.text = nguoiThue.cccd ?? "";
+        txtNgaySinh.text =
+            "${nguoiThue.ngaySinh?.day.toString().padLeft(2, '0')}/${nguoiThue.ngaySinh?.month.toString().padLeft(2, '0')}/${nguoiThue.ngaySinh?.year}";
+        txtQueQuan.text = nguoiThue.queQuan ?? "";
+        gioiTinh = nguoiThue.gioiTinh;
+        txtGhiChu.text = nguoiThue.ghiChu ?? "";
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,10 +69,7 @@ class _ThemNguoiThuePageState extends State<ThemNguoiThuePage> {
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
 
-          child: Container(
-            height: 1,
-            color: const Color(0xffF1F1F1),
-          ),
+          child: Container(height: 1, color: const Color(0xffF1F1F1)),
         ),
 
         leading: Padding(
@@ -95,9 +112,7 @@ class _ThemNguoiThuePageState extends State<ThemNguoiThuePage> {
       bottomNavigationBar: Container(
         padding: const EdgeInsets.fromLTRB(12, 8, 12, 18),
 
-        decoration: const BoxDecoration(
-          color: Color(0xffF7F9FC),
-        ),
+        decoration: const BoxDecoration(color: Color(0xffF7F9FC)),
 
         child: SizedBox(
           height: 52,
@@ -238,7 +253,6 @@ class _ThemNguoiThuePageState extends State<ThemNguoiThuePage> {
 
                                   suffixIcon: IconButton(
                                     onPressed: () async {
-
                                       DateTime? picked = await showDatePicker(
                                         context: context,
 
@@ -250,7 +264,7 @@ class _ThemNguoiThuePageState extends State<ThemNguoiThuePage> {
                                       );
                                       if (picked != null) {
                                         txtNgaySinh.text =
-                                        "${picked.day.toString().padLeft(2, '0')}/"
+                                            "${picked.day.toString().padLeft(2, '0')}/"
                                             "${picked.month.toString().padLeft(2, '0')}/"
                                             "${picked.year}";
                                       }
@@ -305,7 +319,9 @@ class _ThemNguoiThuePageState extends State<ThemNguoiThuePage> {
                               const SizedBox(height: 8),
 
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 14),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 14,
+                                ),
 
                                 decoration: BoxDecoration(
                                   color: const Color(0xffF8F8F8),
@@ -371,17 +387,9 @@ class _ThemNguoiThuePageState extends State<ThemNguoiThuePage> {
 
               child: Column(
                 children: [
-                  _input(
-                    title: "Phòng thuê",
-                    hint: "",
-                    controller: txtPhong,
-                  ),
+                  _input(title: "Phòng thuê", hint: "", controller: txtPhong),
 
-                  _input(
-                    title: "Vai trò",
-                    hint: "",
-                    controller: txtVaiTro,
-                  ),
+                  _input(title: "Vai trò", hint: "", controller: txtVaiTro),
                 ],
               ),
             ),
@@ -423,11 +431,7 @@ class _ThemNguoiThuePageState extends State<ThemNguoiThuePage> {
     );
   }
 
-
-  Widget _section({
-    required String title,
-    required Widget child,
-  }) {
+  Widget _section({required String title, required Widget child}) {
     return Container(
       width: double.infinity,
 
@@ -496,10 +500,7 @@ class _ThemNguoiThuePageState extends State<ThemNguoiThuePage> {
             controller: controller,
             keyboardType: keyboardType,
 
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-            ),
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
 
             decoration: InputDecoration(
               hintText: hint,
@@ -530,10 +531,7 @@ class _ThemNguoiThuePageState extends State<ThemNguoiThuePage> {
             Text(
               subTitle,
 
-              style: const TextStyle(
-                fontSize: 11,
-                color: Color(0xffB5B5B5),
-              ),
+              style: const TextStyle(fontSize: 11, color: Color(0xffB5B5B5)),
             ),
           ],
         ],

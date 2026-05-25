@@ -8,8 +8,8 @@ import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/PhuongTienNguoiThuePag
 import 'package:AppTroNhaToi/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/utils/string_formatter.dart';
 import 'package:AppTroNhaToi/widget/itemHoaDonGuiXe.dart';
-
 import 'package:AppTroNhaToi/widget/itemNguoiThue.dart';
+import 'package:AppTroNhaToi/widget/itemPhong.dart';
 import 'package:AppTroNhaToi/widget/itemPhuongTien.dart';
 
 import 'package:flutter/material.dart';
@@ -17,26 +17,22 @@ import 'package:flutter/material.dart';
 class ChiTietNguoiThuePage extends StatefulWidget {
   final NguoiThue nguoiThue;
 
-  final Phong phong;
 
-  const ChiTietNguoiThuePage({
-    super.key,
-    required this.nguoiThue,
-    required this.phong,
-  });
+  const ChiTietNguoiThuePage({super.key, required this.nguoiThue});
 
   @override
   State<ChiTietNguoiThuePage> createState() => _ChiTietNguoiThuePageState();
 }
 
 class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
-  List<NguoiThuePhong> dsOGhep = [];
+  List<Phong> dsOGhep = [];
+
+
 
   List<PhuongTien> dsXe = [];
 
   List<HoaDonGuiXe> dsHoaDon = [];
   late final NguoiThue nguoiThue;
-  late final Phong phong;
 
   @override
   void initState() {
@@ -45,134 +41,58 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
     fakeData();
     setState(() {
       nguoiThue = widget.nguoiThue;
-      phong = widget.phong;
     });
   }
 
   void fakeData() {
-    //// NGƯỜI Ở GHÉP
-    dsOGhep = [
-      NguoiThuePhong(
-        nguoiThue: NguoiThue(
-          idnt: 2,
+    /// XE từng người
 
-          /// ID người chính
-          idntc: 1,
+    /// NGƯỜI CHÍNH
+    dsXe = [
+      PhuongTien(
+        ID: 1,
 
-          hoTen: "Trần Văn Bảo",
+        bienSo: "59B1-123.45",
 
-          sdt: "0912 345 678",
+        hangXe: "Honda Wave 110",
 
-          cccd: "07900123480",
-        ),
+        mauSac: "Màu đen",
 
-        phong: [widget.phong],
+        giaGui: 50000,
+
+        loaiXe: 1,
+      ),
+
+      PhuongTien(
+        ID: 2,
+
+        bienSo: "",
+
+        hangXe: "Xe đạp điện",
+
+        mauSac: "Màu trắng",
+
+        giaGui: 30000,
+
+        loaiXe: 2,
+      ),
+      PhuongTien(
+        ID: 3,
+        bienSo: "59A1-99999",
+        hangXe: "SH Mode",
+        mauSac: "Đen",
+        giaGui: 120000,
+        loaiXe: 0,
+      ),
+      PhuongTien(
+        ID: 4,
+        bienSo: "51G-12345",
+        hangXe: "Toyota Vios",
+        mauSac: "Bạc",
+        giaGui: 700000,
+        loaiXe: 1,
       ),
     ];
-
-
-    /// XE từng người
-    if (widget.nguoiThue.idntc != null) {
-
-      /// NGƯỜI Ở GHÉP
-      dsXe = [
-
-        PhuongTien(
-          ID: 2,
-
-          bienSo: "",
-
-          hangXe: "Xe đạp điện",
-
-          mauSac: "Màu trắng",
-
-          giaGui: 30000,
-
-          loaiXe: 2,
-        ),
-        PhuongTien(
-          ID: 1,
-
-          bienSo: "",
-
-          hangXe: "Xe ô tô",
-
-          mauSac: "Màu trắng",
-
-          giaGui: 70000,
-
-          loaiXe: 1,
-        ),
-
-        PhuongTien(
-          ID: 0,
-
-          bienSo: "59B1-123.45",
-
-          hangXe: "Honda vision",
-
-          mauSac: "Màu kem trắng",
-
-          giaGui: 50000,
-
-          loaiXe: 0,
-        ),
-      ];
-
-
-
-    } else {
-
-      /// NGƯỜI CHÍNH
-      dsXe = [
-
-        PhuongTien(
-          ID: 1,
-
-          bienSo: "59B1-123.45",
-
-          hangXe: "Honda Wave 110",
-
-          mauSac: "Màu đen",
-
-          giaGui: 50000,
-
-          loaiXe: 1,
-        ),
-
-        PhuongTien(
-          ID: 2,
-
-          bienSo: "",
-
-          hangXe: "Xe đạp điện",
-
-          mauSac: "Màu trắng",
-
-          giaGui: 30000,
-
-          loaiXe: 2,
-        ),
-        PhuongTien(
-          ID: 3,
-          bienSo: "59A1-99999",
-          hangXe: "SH Mode",
-          mauSac: "Đen",
-          giaGui: 120000,
-          loaiXe: 0,
-        ),
-        PhuongTien(
-          ID: 4,
-          bienSo: "51G-12345",
-          hangXe: "Toyota Vios",
-          mauSac: "Bạc",
-          giaGui: 700000,
-          loaiXe: 1,
-        ),
-
-
-      ];
-    }
 
     /// HÓA ĐƠN
     dsHoaDon = [
@@ -192,10 +112,6 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
     ];
   }
 
-  void Test() {
-    print("Hello");
-  }
-
   void openPhuongTienPage() {
     Navigator.push(
       context,
@@ -211,6 +127,21 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
     );
   }
 
+void toChiTietNguoiThuePhong(Phong phong) async {
+  await Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) {
+        return ChiTietNguoiThuePage(
+          nguoiThue: widget.nguoiThue,
+          
+        );
+      },
+    ),
+  );
+}
+
+
   /// ĐI CHI TIẾT NGƯỜI THUÊ
   void toChiTietNguoiThue(NguoiThue nguoiThue) async {
     await Navigator.push(
@@ -218,11 +149,19 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
 
       MaterialPageRoute(
         builder: (context) {
-          return ChiTietNguoiThuePage(
-            nguoiThue: nguoiThue,
+          return ChiTietNguoiThuePage(nguoiThue: nguoiThue);
+        },
+      ),
+    );
+  }
 
-            phong: widget.phong,
-          );
+  //To NguoiThueForm để sửa thông tin người thuê
+  void toNguoiThueForm() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return NguoiThueForm(nguoiThue: nguoiThue);
         },
       ),
     );
@@ -230,8 +169,6 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
 
   @override
   Widget build(BuildContext context) {
-    bool isOGhep = widget.nguoiThue.idntc != null;
-
     return Scaffold(
       backgroundColor: const Color(0xffF7F8FC),
 
@@ -369,8 +306,7 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                         const SizedBox(height: 4),
 
                         Text(
-                          "${phong.tenPhong} · "
-                          "${isOGhep ? "Người ở ghép" : "Người thuê chính"}",
+                          "Người thuê chính",
 
                           style: const TextStyle(
                             fontSize: 13,
@@ -432,6 +368,7 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                   _section(
                     title: "Thông tin cá nhân",
                     action: "Sửa",
+                    onTap: toNguoiThueForm,
 
                     child: Column(
                       children: [
@@ -454,65 +391,21 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
 
                   const SizedBox(height: 18),
 
-                  /// NGƯỜI Ở GHÉP
-                  isOGhep
-
-                      ? _section(
-
-                    title: "Người chính",
-
-                    action: "",
-
-                    child: ItemNguoiThue(
-
-                      nguoiThue: NguoiThue(
-
-                        idnt: 1,
-
-                        hoTen: "Nguyễn Văn An",
-
-                        sdt: "0912 345 678",
-
-                        cccd: "079001234890",
-                      ),
-                      onTap: null,
-                    ),
-                  )
-
-                      : _section(
-
-                    title:
-                    "Người ở ghép (${dsOGhep.length})",
+                  // Chuyển sang người lưu trú tạm thời nếu có thể
+                  _section(
+                    title: " Phòng kí hợp đồng",
 
                     action: "Thêm",
 
                     child: Column(
-
-                      children: List.generate(
-
-                        dsOGhep.length,
-
-                            (index) {
-
-                          return ItemNguoiThue(
-
-                            nguoiThue:
-                            dsOGhep[index]
-                                .nguoiThue,
-
-                            onTap: () {
-
-                              toChiTietNguoiThue(
-
-                                dsOGhep[index]
-                                    .nguoiThue,
-                              );
-                            },
-                          );
-                        },
-                      ),
-                    ),
+                      children: List.generate(dsOGhep.length, (index) {
+                        return ItemPhong(phong: dsOGhep[index]);
+                          },
+                        );
+                      }),
+                    
                   ),
+
 
                   const SizedBox(height: 18),
 
@@ -524,15 +417,10 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
 
                     child: Column(
                       children: List.generate(dsXe.length, (index) {
-
                         return Padding(
-                          padding: EdgeInsets.symmetric(
-                            vertical: 8,
-                          ),
+                          padding: EdgeInsets.symmetric(vertical: 8),
 
-                          child: ItemPhuongTien(
-                            phuongTien: dsXe[index],
-                          ),
+                          child: ItemPhuongTien(phuongTien: dsXe[index]),
                         );
                       }),
                     ),

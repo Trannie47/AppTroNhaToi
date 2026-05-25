@@ -1,4 +1,9 @@
+import 'dart:convert';
+
+import 'package:AppTroNhaToi/models/view_model/user_login.dart';
+import 'package:AppTroNhaToi/values/shareKey.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../MainPage/MainPage.dart';
 
@@ -33,7 +38,7 @@ class _TrangDangNhapState extends State<TrangDangNhap> {
     });
   }
 
-  void handleLogin() {
+  Future<void> handleLogin() async {
     setState(() {
       errorUser = null;
       errorPass = null;
@@ -54,6 +59,17 @@ class _TrangDangNhapState extends State<TrangDangNhap> {
     if (userController.text != "admin" || passController.text != "123") {
       showError("Tài khoản/Mật khẩu chưa đúng yêu cầu nhập lại");
     } else {
+      if (remember) {
+        UserLogin userLogin = UserLogin(
+          email: userController.text,
+          password: passController.text,
+          remember: remember,
+        );
+
+        final prefs = await SharedPreferences.getInstance();
+
+        await prefs.setString(ShareKeys.user, jsonEncode(userLogin.toJson()));
+      }
       // 👉 Đăng nhập thành công, chuyển sang trang chính
       Navigator.pushReplacement(
         context,
@@ -74,6 +90,33 @@ class _TrangDangNhapState extends State<TrangDangNhap> {
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
     );
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    //checkRememberedLogin để tự động điền thông tin và đăng nhập nếu người dùng đã chọn "Ghi nhớ mật khẩu"
+    checkRememberedLogin();
+  }
+
+  //Logic: Khi người dùng đã đăng nhập và chọn "Ghi nhớ mật khẩu", lần sau mở app sẽ tự động điền thông tin và đăng nhập luôn
+  // => Kiểm tra SharedPreferences xem có thông tin đăng nhập không, nếu có thì tự động điền và gọi hàm handleLogin
+  Future<void> checkRememberedLogin() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userLoginString = prefs.getString(ShareKeys.user);
+    if (userLoginString != null) {
+      final userLoginJson = jsonDecode(userLoginString);
+      UserLogin userLogin = UserLogin.fromJson(userLoginJson);
+
+      if (userLogin.remember) {
+        userController.text = userLogin.email;
+        passController.text = userLogin.password;
+
+        // Tự động đăng nhập
+        handleLogin();
+      }
+    }
   }
 
   @override

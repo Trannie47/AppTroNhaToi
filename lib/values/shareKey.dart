@@ -1,4 +1,3 @@
 class ShareKeys {
-  static final Categories = 'categories';
-  static final Expense = 'expense';
+  static const String user = 'user';
 }
