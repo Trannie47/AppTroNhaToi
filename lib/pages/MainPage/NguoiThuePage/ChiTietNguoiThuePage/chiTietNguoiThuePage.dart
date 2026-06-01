@@ -17,7 +17,6 @@ import 'package:flutter/material.dart';
 class ChiTietNguoiThuePage extends StatefulWidget {
   final NguoiThue nguoiThue;
 
-
   const ChiTietNguoiThuePage({super.key, required this.nguoiThue});
 
   @override
@@ -26,8 +25,6 @@ class ChiTietNguoiThuePage extends StatefulWidget {
 
 class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
   List<Phong> dsOGhep = [];
-
-
 
   List<PhuongTien> dsXe = [];
 
@@ -127,20 +124,16 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
     );
   }
 
-void toChiTietNguoiThuePhong(Phong phong) async {
-  await Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) {
-        return ChiTietNguoiThuePage(
-          nguoiThue: widget.nguoiThue,
-          
-        );
-      },
-    ),
-  );
-}
-
+  void toChiTietNguoiThuePhong(Phong phong) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return ChiTietNguoiThuePage(nguoiThue: widget.nguoiThue);
+        },
+      ),
+    );
+  }
 
   /// ĐI CHI TIẾT NGƯỜI THUÊ
   void toChiTietNguoiThue(NguoiThue nguoiThue) async {
@@ -393,19 +386,14 @@ void toChiTietNguoiThuePhong(Phong phong) async {
 
                   // Chuyển sang người lưu trú tạm thời nếu có thể
                   _section(
-                    title: " Phòng kí hợp đồng",
-
+                    title: "Phòng kí hợp đồng",
                     action: "Thêm",
-
                     child: Column(
                       children: List.generate(dsOGhep.length, (index) {
                         return ItemPhong(phong: dsOGhep[index]);
-                          },
-                        );
                       }),
-                    
+                    ),
                   ),
-
 
                   const SizedBox(height: 18),
 
