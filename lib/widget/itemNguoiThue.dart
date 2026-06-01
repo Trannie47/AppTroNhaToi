@@ -4,7 +4,10 @@ import 'package:AppTroNhaToi/utils/string_formatter.dart';
 import 'package:flutter/material.dart';
 
 class ItemNguoiThue extends StatelessWidget {
+
   final NguoiThue nguoiThue;
+
+  final Phong? phong;
 
   final bool isSelected;
 
@@ -13,37 +16,78 @@ class ItemNguoiThue extends StatelessWidget {
   const ItemNguoiThue({
     super.key,
     required this.nguoiThue,
+    this.phong,
     this.isSelected = false,
     this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+
     /// KIỂM TRA Ở GHÉP
+    bool isOGhep =
+        nguoiThue.idntc != null;
 
     /// MÀU AVATAR
-    Color avatarBg = const Color(0xffDDE8FF);
+    Color avatarBg =
+    const Color(0xffDDE8FF);
 
-    Color avatarText = const Color(0xff2F61E7);
+    Color avatarText =
+    const Color(0xff2F61E7);
+
+    /// NẾU Ở GHÉP
+    if (isOGhep) {
+
+      avatarBg =
+      const Color(0xffEEE5FF);
+
+      avatarText =
+      const Color(0xff7C4DFF);
+    }
 
     return GestureDetector(
       onTap: onTap,
 
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 10),
+        margin: phong != null
+            ? const EdgeInsets.only(
+          bottom: 10,
+        )
+            : const EdgeInsets.symmetric(
+          vertical: 10,
+        ),
 
-        padding: EdgeInsets.symmetric(horizontal: 4, vertical: 14),
+        padding: EdgeInsets.symmetric(
+          horizontal:
+          phong != null ? 16 : 4,
+
+          vertical: 14,
+        ),
 
         decoration: BoxDecoration(
           color: Colors.white,
 
-          borderRadius: BorderRadius.circular(16),
+          borderRadius:
+          BorderRadius.circular(16),
 
-          border: null,
+          border: phong != null
+              ? Border.all(
+            color: isSelected
+                ? const Color(
+              0xff2F61E7,
+            )
+                : const Color(
+              0xffEAEAEA,
+            ),
+
+            width: 1,
+          )
+              : null,
         ),
 
         child: Row(
           children: [
+
             /// AVATAR
             Container(
               width: 48,
@@ -57,11 +101,14 @@ class ItemNguoiThue extends StatelessWidget {
               alignment: Alignment.center,
 
               child: Text(
-                vietTat(nguoiThue.hoTen ?? ""),
+                vietTat(
+                  nguoiThue.hoTen ?? "",
+                ),
 
                 style: TextStyle(
                   color: avatarText,
-                  fontWeight: FontWeight.bold,
+                  fontWeight:
+                  FontWeight.bold,
                   fontSize: 15,
                 ),
               ),
@@ -72,19 +119,24 @@ class ItemNguoiThue extends StatelessWidget {
             /// THÔNG TIN
             Expanded(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment:
+                CrossAxisAlignment.start,
 
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment:
+                MainAxisAlignment.center,
 
                 children: [
+
                   /// HỌ TÊN
                   Text(
                     nguoiThue.hoTen ?? "",
 
                     style: const TextStyle(
                       fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xff222222),
+                      fontWeight:
+                      FontWeight.w700,
+                      color:
+                      Color(0xff222222),
                     ),
                   ),
 
@@ -92,13 +144,12 @@ class ItemNguoiThue extends StatelessWidget {
 
                   /// SDT + CCCD
                   Text(
-                    // "${nguoiThue.sdt} · CCCD: ${nguoiThue.cccd}", --- IGNORE ---
-                    // nếu có cả 2 mới đặt dấu . ở giữa nếu chỉ có 1 trong 2 thì không cần dấu .
-                    "${nguoiThue.sdt ?? ""}${nguoiThue.cccd != null && nguoiThue.sdt != null ? " · " : ""}CCCD: ${nguoiThue.cccd ?? ""}",
+                    "${nguoiThue.sdt} · CCCD: ${nguoiThue.cccd}",
 
                     style: const TextStyle(
                       fontSize: 12,
-                      color: Color(0xff9B9B9B),
+                      color:
+                      Color(0xff9B9B9B),
                     ),
                   ),
                 ],
@@ -107,7 +158,10 @@ class ItemNguoiThue extends StatelessWidget {
 
             /// ICON
             onTap != null
-                ? Icon(Icons.chevron_right_rounded, color: Color(0xffC7C7CC))
+                ? Icon(
+              Icons.chevron_right_rounded,
+              color: Color(0xffC7C7CC),
+            )
                 : SizedBox(),
           ],
         ),

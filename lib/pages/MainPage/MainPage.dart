@@ -1,3 +1,4 @@
+import 'package:AppTroNhaToi/pages/MainPage/KhacPage/khacPage.dart';
 import 'package:AppTroNhaToi/pages/MainPage/PhongPage/phongPage.dart';
 import 'package:flutter/material.dart';
 import 'HomePage/HomePage.dart';
@@ -17,7 +18,7 @@ class _MainPageState extends State<MainPage> {
     const HomePage(),
     const PhongPage(),
     const NguoiThuePage(),
-    const Center(child: Text("Khác")),
+    const KhacPage(),
   ];
 
   @override

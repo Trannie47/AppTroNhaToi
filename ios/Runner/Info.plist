@@ -66,5 +66,7 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+ <key>NSCameraUsageDescription</key>
+    <string>Ứng dụng cần sử dụng camera để quét CCCD</string>
 </dict>
 </plist>

@@ -6,11 +6,16 @@ import 'package:flutter/material.dart';
 class ItemPhong extends StatelessWidget {
   final Phong phong;
 
-  final LoaiPhong? loaiPhong;
+  final LoaiPhong loaiPhong;
 
   final Function()? onTap;
 
-  const ItemPhong({super.key, required this.phong, this.loaiPhong, this.onTap});
+  const ItemPhong({
+    super.key,
+    required this.phong,
+    required this.loaiPhong,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +121,7 @@ class ItemPhong extends StatelessWidget {
 
                       /// LOẠI PHÒNG
                       Text(
-                        "${loaiPhong?.tenLoaiPhong ?? 'Không xác định'} · ${loaiPhong?.dienTich.toInt() ?? 0} m²",
+                        "${loaiPhong.tenLoaiPhong} · ${loaiPhong.dienTich.toInt()} m²",
 
                         style: const TextStyle(
                           fontSize: 13,
@@ -179,7 +184,7 @@ class ItemPhong extends StatelessWidget {
                       const SizedBox(width: 2),
 
                       Text(
-                        formatMoney(loaiPhong?.giaTien ?? 0),
+                        formatMoney(loaiPhong.giaTien),
 
                         style: const TextStyle(
                           fontSize: 11,
@@ -206,7 +211,7 @@ class ItemPhong extends StatelessWidget {
                       const SizedBox(width: 4),
 
                       Text(
-                        "Tối đa ${loaiPhong?.soNguoiToiDa ?? 0} người",
+                        "Tối đa ${loaiPhong.soNguoiToiDa} người",
 
                         style: const TextStyle(
                           fontSize: 11,
@@ -222,7 +227,7 @@ class ItemPhong extends StatelessWidget {
                   const SizedBox(width: 14),
 
                   /// MÁY LẠNH
-                  if (loaiPhong?.isMayLanh == true)
+                  if (loaiPhong.isMayLanh)
                     Row(
                       children: [
                         Icon(

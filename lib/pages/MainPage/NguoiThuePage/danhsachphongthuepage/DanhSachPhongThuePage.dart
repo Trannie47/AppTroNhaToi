@@ -40,7 +40,11 @@ class _DanhSachPhongThuePageState extends State<DanhSachPhongThuePage> {
       context,
       MaterialPageRoute(
         builder: (context) {
-          return ChiTietNguoiThuePage(nguoiThue: widget.nguoiThue);
+          return ChiTietNguoiThuePage(
+            nguoiThue: widget.nguoiThue,
+
+            dsPhong:widget.phong,
+          );
         },
       ),
     );

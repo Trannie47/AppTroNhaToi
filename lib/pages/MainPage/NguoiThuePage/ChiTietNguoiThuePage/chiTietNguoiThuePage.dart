@@ -3,13 +3,14 @@ import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/models/phuong_tien.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/view_model/nguoi_thue_phong.dart';
-import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/NguoiThueForm/NguoiThueForm.dart';
 import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/PhuongTienNguoiThuePage/PhuongTienNguoiThuePage.dart';
+import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/ThemNguoiThuePage/themNguoiThuePage.dart';
+import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/hoaDonGuiXePage/hoaDonGuiXePage.dart';
 import 'package:AppTroNhaToi/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/utils/string_formatter.dart';
 import 'package:AppTroNhaToi/widget/itemHoaDonGuiXe.dart';
+
 import 'package:AppTroNhaToi/widget/itemNguoiThue.dart';
-import 'package:AppTroNhaToi/widget/itemPhong.dart';
 import 'package:AppTroNhaToi/widget/itemPhuongTien.dart';
 
 import 'package:flutter/material.dart';
@@ -17,96 +18,41 @@ import 'package:flutter/material.dart';
 class ChiTietNguoiThuePage extends StatefulWidget {
   final NguoiThue nguoiThue;
 
-  const ChiTietNguoiThuePage({super.key, required this.nguoiThue});
+  final List<Phong> dsPhong;
+
+  const ChiTietNguoiThuePage({
+    super.key,
+    required this.nguoiThue,
+    required this.dsPhong,
+  });
 
   @override
   State<ChiTietNguoiThuePage> createState() => _ChiTietNguoiThuePageState();
 }
 
 class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
-  List<Phong> dsOGhep = [];
+
 
   List<PhuongTien> dsXe = [];
 
   List<HoaDonGuiXe> dsHoaDon = [];
   late final NguoiThue nguoiThue;
+  late final List<Phong> dsPhong;
 
   @override
   void initState() {
     super.initState();
 
-    fakeData();
+
     setState(() {
       nguoiThue = widget.nguoiThue;
+      dsPhong = widget.dsPhong;
     });
   }
 
-  void fakeData() {
-    /// XE từng người
 
-    /// NGƯỜI CHÍNH
-    dsXe = [
-      PhuongTien(
-        ID: 1,
-
-        bienSo: "59B1-123.45",
-
-        hangXe: "Honda Wave 110",
-
-        mauSac: "Màu đen",
-
-        giaGui: 50000,
-
-        loaiXe: 1,
-      ),
-
-      PhuongTien(
-        ID: 2,
-
-        bienSo: "",
-
-        hangXe: "Xe đạp điện",
-
-        mauSac: "Màu trắng",
-
-        giaGui: 30000,
-
-        loaiXe: 2,
-      ),
-      PhuongTien(
-        ID: 3,
-        bienSo: "59A1-99999",
-        hangXe: "SH Mode",
-        mauSac: "Đen",
-        giaGui: 120000,
-        loaiXe: 0,
-      ),
-      PhuongTien(
-        ID: 4,
-        bienSo: "51G-12345",
-        hangXe: "Toyota Vios",
-        mauSac: "Bạc",
-        giaGui: 700000,
-        loaiXe: 1,
-      ),
-    ];
-
-    /// HÓA ĐƠN
-    dsHoaDon = [
-      HoaDonGuiXe(
-        maHoaDon: 1,
-        thangNam: "Tháng 4/2025",
-        trangThai: 0,
-        idPhuongTien: 1,
-      ),
-
-      HoaDonGuiXe(
-        maHoaDon: 2,
-        thangNam: "Tháng 3/2025",
-        trangThai: 1,
-        idPhuongTien: 2,
-      ),
-    ];
+  void Test() {
+    print("Hello");
   }
 
   void openPhuongTienPage() {
@@ -124,44 +70,12 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
     );
   }
 
-  void toChiTietNguoiThuePhong(Phong phong) async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) {
-          return ChiTietNguoiThuePage(nguoiThue: widget.nguoiThue);
-        },
-      ),
-    );
-  }
 
-  /// ĐI CHI TIẾT NGƯỜI THUÊ
-  void toChiTietNguoiThue(NguoiThue nguoiThue) async {
-    await Navigator.push(
-      context,
-
-      MaterialPageRoute(
-        builder: (context) {
-          return ChiTietNguoiThuePage(nguoiThue: nguoiThue);
-        },
-      ),
-    );
-  }
-
-  //To NguoiThueForm để sửa thông tin người thuê
-  void toNguoiThueForm() async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) {
-          return NguoiThueForm(nguoiThue: nguoiThue);
-        },
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
       backgroundColor: const Color(0xffF7F8FC),
 
@@ -212,6 +126,7 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
         ),
 
         title: const Text(
+
           "Chi tiết người thuê",
 
           style: TextStyle(
@@ -220,7 +135,38 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
             color: Color(0xff1C1C1E),
           ),
         ),
+
+        actions: [
+
+          Padding(
+
+            padding: const EdgeInsets.only(
+              right: 16,
+            ),
+
+            child: Container(
+
+              width: 38,
+              height: 38,
+
+              decoration: const BoxDecoration(
+                color: Color(0xffF4F4F4),
+                shape: BoxShape.circle,
+              ),
+
+              child: IconButton(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.more_vert,
+                  size: 18,
+                  color: Color(0xff666666),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
+
 
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(0, 0, 0, 24),
@@ -229,127 +175,144 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
 
           children: [
-            /// PROFILE CARD
-            Container(
-              width: double.infinity,
+        Padding(
 
-              padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16,
+        ),
 
-              decoration: BoxDecoration(
-                color: Colors.white,
+        child: Container(
 
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
-                    blurRadius: 14,
-                    offset: const Offset(0, 6),
+          width: double.infinity,
+
+          padding: const EdgeInsets.all(20),
+
+          decoration: BoxDecoration(
+
+            color: Colors.white,
+
+            borderRadius:
+            BorderRadius.circular(24),
+
+            boxShadow: [
+
+              BoxShadow(
+
+                color:
+                Colors.black.withOpacity(
+                  0.03,
+                ),
+
+                blurRadius: 10,
+
+                offset: const Offset(
+                  0,
+                  2,
+                ),
+              ),
+            ],
+          ),
+
+          child: Column(
+
+            children: [
+
+              Container(
+
+                width: 72,
+                height: 72,
+
+                decoration: const BoxDecoration(
+                  color: Color(0xff1F9D3A),
+                  shape: BoxShape.circle,
+                ),
+
+                alignment: Alignment.center,
+
+                child: Text(
+
+                  vietTat(
+                    nguoiThue.hoTen ?? "",
                   ),
-                ],
+
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 28,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
               ),
 
-              child: Row(
+              const SizedBox(height: 12),
+
+              Text(
+
+                nguoiThue.hoTen ?? "",
+
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+
+              const SizedBox(height: 4),
+
+              const Text(
+
+                "Đang thuê hoạt động",
+
+                style: TextStyle(
+                  color: Color(0xff1F9D3A),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              Row(
+
                 children: [
-                  /// AVATAR
-                  Container(
-                    width: 74,
-                    height: 74,
-
-                    decoration: BoxDecoration(
-                      color: const Color(0xffDCE8FF),
-                      shape: BoxShape.circle,
-
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.06),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-
-                    alignment: Alignment.center,
-
-                    child: Text(
-                      vietTat(nguoiThue.hoTen ?? ""),
-
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0xff2F61E7),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(width: 16),
 
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: _actionButton(
+                      const Icon(
+                        Icons.call_outlined,
+                        color: Color(0xff2F61E7),
+                      ),
+                      "Gọi điện",
+                    ),
+                  ),
 
-                      children: [
-                        Text(
-                          nguoiThue.hoTen ?? "",
+                  const SizedBox(width: 12),
 
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
+                  Expanded(
+                    child: _actionButton(
+                      const Icon(
+                        Icons.message_outlined,
+                        color: Color(0xff2F61E7),
+                      ),
+                      "Nhắn tin",
+                    ),
+                  ),
 
-                        const SizedBox(height: 4),
+                  const SizedBox(width: 12),
 
-                        Text(
-                          "Người thuê chính",
-
-                          style: const TextStyle(
-                            fontSize: 13,
-                            color: Color(0xff8E8E93),
-                          ),
-                        ),
-
-                        const SizedBox(height: 6),
-
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 7,
-                          ),
-
-                          decoration: BoxDecoration(
-                            color: const Color(0xffE8F7ED),
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-
-                          child: const Row(
-                            mainAxisSize: MainAxisSize.min,
-
-                            children: [
-                              Icon(
-                                Icons.circle,
-                                size: 7,
-                                color: Color(0xff2D7A3A),
-                              ),
-
-                              SizedBox(width: 6),
-
-                              Text(
-                                "Đang thuê · Từ 01/01/2024",
-
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w700,
-                                  color: Color(0xff2D7A3A),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                  Expanded(
+                    child: _actionButton(
+                      Image.asset(
+                        "assets/images/zalo.png",
+                        width: 20,
+                        height: 20,
+                      ),
+                      "Zalo",
                     ),
                   ),
                 ],
               ),
-            ),
+            ],
+          ),
+        ),
+      ),
 
             const SizedBox(height: 20),
 
@@ -361,7 +324,17 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                   _section(
                     title: "Thông tin cá nhân",
                     action: "Sửa",
-                    onTap: toNguoiThueForm,
+                    // thêm sữa thông tin cá nhân
+                    onTap: () {
+                      Navigator.push(
+                        context,
+
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              ThemNguoiThuePage(nguoiThueSua: widget.nguoiThue),
+                        ),
+                      );
+                    },
 
                     child: Column(
                       children: [
@@ -384,62 +357,46 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
 
                   const SizedBox(height: 18),
 
-                  // Chuyển sang người lưu trú tạm thời nếu có thể
                   _section(
-                    title: "Phòng kí hợp đồng",
-                    action: "Thêm",
+
+                    title:
+                    "Phòng đang thuê (${dsPhong.length})",
+
+                    action: "Xem thêm",
+
                     child: Column(
-                      children: List.generate(dsOGhep.length, (index) {
-                        return ItemPhong(phong: dsOGhep[index]);
-                      }),
+
+                      children:
+
+                      dsPhong.asMap().entries.map((e) {
+
+                        final phong = e.value;
+
+                        return Column(
+
+                          children: [
+
+                            _itemPhong(
+
+                              phong.tenPhong,
+
+                              "Phòng ${phong.tenPhong.replaceAll("P", "")}",
+
+                              "",
+                            ),
+
+                            if (e.key !=
+                                dsPhong.length - 1)
+
+                              const Divider(
+                                height: 1,
+                              ),
+                          ],
+                        );
+                      }).toList(),
                     ),
                   ),
 
-                  const SizedBox(height: 18),
-
-                  /// PHƯƠNG TIỆN
-                  _section(
-                    title: "Phương tiện (${dsXe.length})",
-                    action: "Xem tất cả",
-                    onTap: openPhuongTienPage,
-
-                    child: Column(
-                      children: List.generate(dsXe.length, (index) {
-                        return Padding(
-                          padding: EdgeInsets.symmetric(vertical: 8),
-
-                          child: ItemPhuongTien(phuongTien: dsXe[index]),
-                        );
-                      }),
-                    ),
-                  ),
-
-                  const SizedBox(height: 18),
-
-                  /// HÓA ĐƠN
-                  _section(
-                    title: "Hóa đơn giữ xe",
-                    action: "Xem tất cả",
-
-                    child: Column(
-                      children: List.generate(dsHoaDon.length, (index) {
-                        final phuongTien = dsXe.firstWhere(
-                          (xe) => xe.ID == dsHoaDon[index].idPhuongTien,
-                        );
-
-                        return Padding(
-                          padding: EdgeInsets.only(
-                            bottom: index == dsHoaDon.length - 1 ? 0 : 14,
-                          ),
-
-                          child: ItemHoaDonGuiXe(
-                            hoaDon: dsHoaDon[index],
-                            phuongTien: phuongTien,
-                          ),
-                        );
-                      }),
-                    ),
-                  ),
 
                   const SizedBox(height: 24),
 
@@ -569,4 +526,148 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
       ),
     );
   }
+  Widget _itemPhong(
+      String maPhong,
+      String tenPhong,
+      String ngayThue,
+      ) {
+
+    return Padding(
+
+      padding: const EdgeInsets.symmetric(
+        vertical: 12,
+      ),
+
+      child: Row(
+
+        children: [
+
+          Container(
+
+            width: 42,
+            height: 42,
+
+            decoration: BoxDecoration(
+
+              color:
+              const Color(
+                0xffEEF6EF,
+              ),
+
+              borderRadius:
+              BorderRadius.circular(
+                12,
+              ),
+            ),
+
+            alignment: Alignment.center,
+
+            child: Text(
+
+              maPhong,
+
+              style: const TextStyle(
+
+                color:
+                Color(
+                  0xff2D7A3A,
+                ),
+
+                fontWeight:
+                FontWeight.w700,
+
+                fontSize: 12,
+              ),
+            ),
+          ),
+
+          const SizedBox(width: 12),
+
+          Expanded(
+
+            child: Text(
+
+              tenPhong,
+
+              style: const TextStyle(
+
+                fontSize: 15,
+
+                fontWeight:
+                FontWeight.w700,
+              ),
+            ),
+          ),
+
+          const Icon(
+            Icons.chevron_right_rounded,
+            color: Color(0xffC7C7CC),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _actionButton(
+      Widget icon,
+      String title,
+      ) {
+
+    return Container(
+
+      height: 72,
+
+      decoration: BoxDecoration(
+
+        color:
+        const Color(
+          0xffF7F8FC,
+        ),
+
+        borderRadius:
+        BorderRadius.circular(
+          16,
+        ),
+      ),
+
+      child: Column(
+
+        mainAxisAlignment:
+        MainAxisAlignment.center,
+
+        children: [
+
+          SizedBox(
+
+            width: 22,
+            height: 22,
+
+            child: Center(
+              child: icon,
+            ),
+          ),
+
+          const SizedBox(
+            height: 8,
+          ),
+
+          Text(
+
+            title,
+
+            style: const TextStyle(
+
+              fontSize: 12,
+
+              color:
+              Color(
+                0xff555555,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
 }
