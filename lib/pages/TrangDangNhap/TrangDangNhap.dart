@@ -55,7 +55,6 @@ class _TrangDangNhapState extends State<TrangDangNhap> {
 
     if (errorUser != null || errorPass != null) return;
 
-    // giả lập login
     if (userController.text != "admin" || passController.text != "123") {
       showError("Tài khoản/Mật khẩu chưa đúng yêu cầu nhập lại");
     } else {
@@ -67,10 +66,8 @@ class _TrangDangNhapState extends State<TrangDangNhap> {
         );
 
         final prefs = await SharedPreferences.getInstance();
-
         await prefs.setString(ShareKeys.user, jsonEncode(userLogin.toJson()));
       }
-      // 👉 Đăng nhập thành công, chuyển sang trang chính
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const MainPage()),
@@ -94,14 +91,10 @@ class _TrangDangNhapState extends State<TrangDangNhap> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    //checkRememberedLogin để tự động điền thông tin và đăng nhập nếu người dùng đã chọn "Ghi nhớ mật khẩu"
     checkRememberedLogin();
   }
 
-  //Logic: Khi người dùng đã đăng nhập và chọn "Ghi nhớ mật khẩu", lần sau mở app sẽ tự động điền thông tin và đăng nhập luôn
-  // => Kiểm tra SharedPreferences xem có thông tin đăng nhập không, nếu có thì tự động điền và gọi hàm handleLogin
   Future<void> checkRememberedLogin() async {
     final prefs = await SharedPreferences.getInstance();
     final userLoginString = prefs.getString(ShareKeys.user);
@@ -112,8 +105,6 @@ class _TrangDangNhapState extends State<TrangDangNhap> {
       if (userLogin.remember) {
         userController.text = userLogin.email;
         passController.text = userLogin.password;
-
-        // Tự động đăng nhập
         handleLogin();
       }
     }
@@ -122,6 +113,7 @@ class _TrangDangNhapState extends State<TrangDangNhap> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       body: Stack(
         children: [
           // BACKGROUND
@@ -134,7 +126,7 @@ class _TrangDangNhapState extends State<TrangDangNhap> {
             child: Container(color: Colors.black.withValues(alpha: 0.2)),
           ),
 
-          // 🔥 BANNER TRÊN CÙNG (AUTO ANIMATION)
+          // BANNER LỖI TRÊN CÙNG
           AnimatedPositioned(
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
@@ -168,107 +160,133 @@ class _TrangDangNhapState extends State<TrangDangNhap> {
             ),
           ),
 
-          // CONTENT
+          /// CONTENT
           SafeArea(
             child: Column(
               children: [
-                const SizedBox(height: 60),
+                const SizedBox(height: 40),
 
-                // LOGO
-                Image.asset('assets/images/Logo_NoBG.png', width: 160),
+                // ✅ LOGO - cố định, luôn hiển thị
+                Image.asset(
+                  'assets/images/Logo_NoBG.png',
+                  width: 140,
+                  errorBuilder: (context, error, stackTrace) =>
+                      const Icon(Icons.home, size: 100, color: Colors.white),
+                ),
 
-                const Spacer(),
+                const SizedBox(height: 20),
 
-                // FORM
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  margin: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.9),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Column(
-                    children: [
-                      // USER
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: const Text("Tài khoản"),
+                // ✅ Form nằm trong Expanded + SingleChildScrollView
+                Expanded(
+                  child: SingleChildScrollView(
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight:
+                            MediaQuery.of(context).size.height -
+                            MediaQuery.of(context).padding.top -
+                            MediaQuery.of(context).padding.bottom -
+                            220, // trừ logo + padding
                       ),
-                      const SizedBox(height: 8),
-                      TextField(
-                        controller: userController,
-                        decoration: inputStyle("Nhập tài khoản", errorUser),
-                      ),
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 250),
+                          margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.9),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              /// USER
+                              const Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text("Tài khoản"),
+                              ),
+                              const SizedBox(height: 8),
+                              TextField(
+                                controller: userController,
+                                decoration: inputStyle(
+                                  "Nhập tài khoản",
+                                  errorUser,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
 
-                      const SizedBox(height: 16),
+                              /// PASS
+                              const Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text("Mật khẩu"),
+                              ),
+                              const SizedBox(height: 8),
+                              TextField(
+                                controller: passController,
+                                obscureText: isHidden,
+                                decoration: inputStyle("Mật khẩu", errorPass)
+                                    .copyWith(
+                                      suffixIcon: IconButton(
+                                        icon: Icon(
+                                          isHidden
+                                              ? Icons.visibility_off
+                                              : Icons.visibility,
+                                          color: Colors.grey,
+                                        ),
+                                        onPressed: () {
+                                          setState(() {
+                                            isHidden = !isHidden;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                              ),
+                              const SizedBox(height: 12),
 
-                      // PASS
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: const Text("Mật khẩu"),
-                      ),
-                      const SizedBox(height: 8),
-                      TextField(
-                        controller: passController,
-                        obscureText: isHidden,
-                        decoration: inputStyle("Mật khẩu", errorPass).copyWith(
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              isHidden
-                                  ? Icons.visibility_off
-                                  : Icons.visibility,
-                              color: Colors.grey,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                isHidden = !isHidden;
-                              });
-                            },
+                              /// REMEMBER
+                              Row(
+                                children: [
+                                  Checkbox(
+                                    value: remember,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        remember = value!;
+                                      });
+                                    },
+                                  ),
+                                  const Text("Ghi nhớ mật khẩu"),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+
+                              /// BUTTON
+                              SizedBox(
+                                width: double.infinity,
+                                height: 50,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF2D7A3A),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                  onPressed: handleLogin,
+                                  child: const Text(
+                                    "Đăng nhập",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-
-                      const SizedBox(height: 12),
-
-                      // REMEMBER
-                      Row(
-                        children: [
-                          Checkbox(
-                            value: remember,
-                            onChanged: (value) {
-                              setState(() {
-                                remember = value!;
-                              });
-                            },
-                          ),
-                          const Text("Ghi nhớ mật khẩu"),
-                        ],
-                      ),
-
-                      const SizedBox(height: 10),
-
-                      // BUTTON
-                      SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF2D7A3A),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          onPressed: handleLogin,
-                          child: const Text(
-                            "Đăng nhập",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ],
