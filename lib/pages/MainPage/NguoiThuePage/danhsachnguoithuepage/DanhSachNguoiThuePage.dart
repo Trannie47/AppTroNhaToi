@@ -2,8 +2,7 @@ import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/view_model/nguoi_thue_phong.dart';
 import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/ChiTietNguoiThuePage/chiTietNguoiThuePage.dart';
-import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/NguoiThueForm/formNguoiThue.dart';
-import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/ThemNguoiThuePage/themNguoiThuePage.dart';
+import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/NguoiThueForm/NguoiThueForm.dart';
 import 'package:AppTroNhaToi/widget/itemNguoiThue.dart';
 import 'package:flutter/material.dart';
 
@@ -109,7 +108,7 @@ class _DanhSachNguoiThuePageState extends State<DanhSachNguoiThuePage> {
       context,
       MaterialPageRoute(
         builder: (context) {
-          return ThemNguoiThuePage();
+          return NguoiThueForm();
         },
       ),
     );
@@ -278,50 +277,27 @@ class _DanhSachNguoiThuePageState extends State<DanhSachNguoiThuePage> {
 
             /// LIST
             Expanded(
-
               child: ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
 
-                padding:
-                const EdgeInsets.symmetric(
-                  horizontal: 16,
-                ),
+                itemCount: danhSachNguoiThue.length,
 
-                itemCount:
-                danhSachNguoiThue.length,
-
-                itemBuilder:
-                    (context, index) {
-
+                itemBuilder: (context, index) {
                   return ItemNguoiThue(
+                    nguoiThue: danhSachNguoiThue[index].nguoiThue,
 
-                    nguoiThue:
-                    danhSachNguoiThue[index]
-                        .nguoiThue,
-
-                    phong:
-                    danhSachNguoiThue[index]
-                        .phong
-                        .first,
+                    phong: danhSachNguoiThue[index].phong.first,
 
                     onTap: () {
-
                       Navigator.push(
-
                         context,
 
                         MaterialPageRoute(
+                          builder: (_) => ChiTietNguoiThuePage(
+                            nguoiThue: danhSachNguoiThue[index].nguoiThue,
 
-                          builder: (_) =>
-                              ChiTietNguoiThuePage(
-
-                                nguoiThue:
-                                danhSachNguoiThue[index]
-                                    .nguoiThue,
-
-                                dsPhong:
-                                danhSachNguoiThue[index]
-                                    .phong
-                              ),
+                            dsPhong: danhSachNguoiThue[index].phong,
+                          ),
                         ),
                       );
                     },

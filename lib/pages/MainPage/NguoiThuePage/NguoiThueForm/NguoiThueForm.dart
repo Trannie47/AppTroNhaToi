@@ -1,4 +1,5 @@
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
+import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/qr_cccd_scanner_page/qr_cccd_scanner_page.dart';
 import 'package:flutter/material.dart';
 
 class NguoiThueForm extends StatefulWidget {
@@ -148,9 +149,74 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
         child: Column(
           children: [
             // /// SEARCH
-            // _searchBox(),
-            //
-            // const SizedBox(height: 7),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+
+                  MaterialPageRoute(builder: (_) => const QRCCCDScannerPage()),
+                );
+              },
+
+              child: Container(
+                height: 72,
+
+                margin: const EdgeInsets.only(bottom: 16),
+
+                decoration: BoxDecoration(
+                  color: const Color(0xff4C469D),
+
+                  borderRadius: BorderRadius.circular(16),
+                ),
+
+                child: const Row(
+                  children: [
+                    SizedBox(width: 16),
+
+                    Icon(Icons.qr_code_scanner, color: Colors.white),
+
+                    SizedBox(width: 12),
+
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+
+                        crossAxisAlignment: CrossAxisAlignment.start,
+
+                        children: [
+                          Text(
+                            "Quét mã QR trên thẻ CCCD",
+
+                            style: TextStyle(
+                              color: Colors.white,
+
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+
+                          Text(
+                            "Tự động điền nhanh họ tên, ngày sinh, địa chỉ...",
+
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 11,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      color: Colors.white,
+                      size: 16,
+                    ),
+
+                    SizedBox(width: 16),
+                  ],
+                ),
+              ),
+            ),
 
             /// THÔNG TIN CÁ NHÂN
             _section(

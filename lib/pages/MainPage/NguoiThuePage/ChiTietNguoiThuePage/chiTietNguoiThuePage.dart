@@ -3,8 +3,8 @@ import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/models/phuong_tien.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/view_model/nguoi_thue_phong.dart';
+import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/NguoiThueForm/NguoiThueForm.dart';
 import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/PhuongTienNguoiThuePage/PhuongTienNguoiThuePage.dart';
-import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/ThemNguoiThuePage/themNguoiThuePage.dart';
 import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/hoaDonGuiXePage/hoaDonGuiXePage.dart';
 import 'package:AppTroNhaToi/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/utils/string_formatter.dart';
@@ -31,8 +31,6 @@ class ChiTietNguoiThuePage extends StatefulWidget {
 }
 
 class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
-
-
   List<PhuongTien> dsXe = [];
 
   List<HoaDonGuiXe> dsHoaDon = [];
@@ -43,13 +41,11 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
   void initState() {
     super.initState();
 
-
     setState(() {
       nguoiThue = widget.nguoiThue;
       dsPhong = widget.dsPhong;
     });
   }
-
 
   void Test() {
     print("Hello");
@@ -70,12 +66,8 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
     );
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
       backgroundColor: const Color(0xffF7F8FC),
 
@@ -126,7 +118,6 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
         ),
 
         title: const Text(
-
           "Chi tiết người thuê",
 
           style: TextStyle(
@@ -137,15 +128,10 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
         ),
 
         actions: [
-
           Padding(
-
-            padding: const EdgeInsets.only(
-              right: 16,
-            ),
+            padding: const EdgeInsets.only(right: 16),
 
             child: Container(
-
               width: 38,
               height: 38,
 
@@ -167,7 +153,6 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
         ],
       ),
 
-
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(0, 0, 0, 24),
 
@@ -175,144 +160,120 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
 
           children: [
-        Padding(
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
 
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16,
-        ),
+              child: Container(
+                width: double.infinity,
 
-        child: Container(
+                padding: const EdgeInsets.all(20),
 
-          width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.white,
 
-          padding: const EdgeInsets.all(20),
+                  borderRadius: BorderRadius.circular(24),
 
-          decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.03),
 
-            color: Colors.white,
+                      blurRadius: 10,
 
-            borderRadius:
-            BorderRadius.circular(24),
-
-            boxShadow: [
-
-              BoxShadow(
-
-                color:
-                Colors.black.withOpacity(
-                  0.03,
-                ),
-
-                blurRadius: 10,
-
-                offset: const Offset(
-                  0,
-                  2,
-                ),
-              ),
-            ],
-          ),
-
-          child: Column(
-
-            children: [
-
-              Container(
-
-                width: 72,
-                height: 72,
-
-                decoration: const BoxDecoration(
-                  color: Color(0xff1F9D3A),
-                  shape: BoxShape.circle,
-                ),
-
-                alignment: Alignment.center,
-
-                child: Text(
-
-                  vietTat(
-                    nguoiThue.hoTen ?? "",
-                  ),
-
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 28,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 12),
-
-              Text(
-
-                nguoiThue.hoTen ?? "",
-
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-
-              const SizedBox(height: 4),
-
-              const Text(
-
-                "Đang thuê hoạt động",
-
-                style: TextStyle(
-                  color: Color(0xff1F9D3A),
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              Row(
-
-                children: [
-
-                  Expanded(
-                    child: _actionButton(
-                      const Icon(
-                        Icons.call_outlined,
-                        color: Color(0xff2F61E7),
-                      ),
-                      "Gọi điện",
+                      offset: const Offset(0, 2),
                     ),
-                  ),
+                  ],
+                ),
 
-                  const SizedBox(width: 12),
+                child: Column(
+                  children: [
+                    Container(
+                      width: 72,
+                      height: 72,
 
-                  Expanded(
-                    child: _actionButton(
-                      const Icon(
-                        Icons.message_outlined,
-                        color: Color(0xff2F61E7),
+                      decoration: const BoxDecoration(
+                        color: Color(0xff1F9D3A),
+                        shape: BoxShape.circle,
                       ),
-                      "Nhắn tin",
-                    ),
-                  ),
 
-                  const SizedBox(width: 12),
+                      alignment: Alignment.center,
 
-                  Expanded(
-                    child: _actionButton(
-                      Image.asset(
-                        "assets/images/zalo.png",
-                        width: 20,
-                        height: 20,
+                      child: Text(
+                        vietTat(nguoiThue.hoTen ?? ""),
+
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 28,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                      "Zalo",
                     ),
-                  ),
-                ],
+
+                    const SizedBox(height: 12),
+
+                    Text(
+                      nguoiThue.hoTen ?? "",
+
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+
+                    const SizedBox(height: 4),
+
+                    const Text(
+                      "Đang thuê hoạt động",
+
+                      style: TextStyle(
+                        color: Color(0xff1F9D3A),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _actionButton(
+                            const Icon(
+                              Icons.call_outlined,
+                              color: Color(0xff2F61E7),
+                            ),
+                            "Gọi điện",
+                          ),
+                        ),
+
+                        const SizedBox(width: 12),
+
+                        Expanded(
+                          child: _actionButton(
+                            const Icon(
+                              Icons.message_outlined,
+                              color: Color(0xff2F61E7),
+                            ),
+                            "Nhắn tin",
+                          ),
+                        ),
+
+                        const SizedBox(width: 12),
+
+                        Expanded(
+                          child: _actionButton(
+                            Image.asset(
+                              "assets/images/zalo.png",
+                              width: 20,
+                              height: 20,
+                            ),
+                            "Zalo",
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
-        ),
-      ),
+            ),
 
             const SizedBox(height: 20),
 
@@ -331,7 +292,7 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
 
                         MaterialPageRoute(
                           builder: (_) =>
-                              ThemNguoiThuePage(nguoiThueSua: widget.nguoiThue),
+                              NguoiThueForm(nguoiThue: widget.nguoiThue),
                         ),
                       );
                     },
@@ -358,26 +319,17 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                   const SizedBox(height: 18),
 
                   _section(
-
-                    title:
-                    "Phòng đang thuê (${dsPhong.length})",
+                    title: "Phòng đang thuê (${dsPhong.length})",
 
                     action: "Xem thêm",
 
                     child: Column(
-
-                      children:
-
-                      dsPhong.asMap().entries.map((e) {
-
+                      children: dsPhong.asMap().entries.map((e) {
                         final phong = e.value;
 
                         return Column(
-
                           children: [
-
                             _itemPhong(
-
                               phong.tenPhong,
 
                               "Phòng ${phong.tenPhong.replaceAll("P", "")}",
@@ -385,18 +337,13 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                               "",
                             ),
 
-                            if (e.key !=
-                                dsPhong.length - 1)
-
-                              const Divider(
-                                height: 1,
-                              ),
+                            if (e.key != dsPhong.length - 1)
+                              const Divider(height: 1),
                           ],
                         );
                       }).toList(),
                     ),
                   ),
-
 
                   const SizedBox(height: 24),
 
@@ -526,55 +473,32 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
       ),
     );
   }
-  Widget _itemPhong(
-      String maPhong,
-      String tenPhong,
-      String ngayThue,
-      ) {
 
+  Widget _itemPhong(String maPhong, String tenPhong, String ngayThue) {
     return Padding(
-
-      padding: const EdgeInsets.symmetric(
-        vertical: 12,
-      ),
+      padding: const EdgeInsets.symmetric(vertical: 12),
 
       child: Row(
-
         children: [
-
           Container(
-
             width: 42,
             height: 42,
 
             decoration: BoxDecoration(
+              color: const Color(0xffEEF6EF),
 
-              color:
-              const Color(
-                0xffEEF6EF,
-              ),
-
-              borderRadius:
-              BorderRadius.circular(
-                12,
-              ),
+              borderRadius: BorderRadius.circular(12),
             ),
 
             alignment: Alignment.center,
 
             child: Text(
-
               maPhong,
 
               style: const TextStyle(
+                color: Color(0xff2D7A3A),
 
-                color:
-                Color(
-                  0xff2D7A3A,
-                ),
-
-                fontWeight:
-                FontWeight.w700,
+                fontWeight: FontWeight.w700,
 
                 fontSize: 12,
               ),
@@ -584,90 +508,44 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
           const SizedBox(width: 12),
 
           Expanded(
-
             child: Text(
-
               tenPhong,
 
-              style: const TextStyle(
-
-                fontSize: 15,
-
-                fontWeight:
-                FontWeight.w700,
-              ),
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
             ),
           ),
 
-          const Icon(
-            Icons.chevron_right_rounded,
-            color: Color(0xffC7C7CC),
-          ),
+          const Icon(Icons.chevron_right_rounded, color: Color(0xffC7C7CC)),
         ],
       ),
     );
   }
 
-  Widget _actionButton(
-      Widget icon,
-      String title,
-      ) {
-
+  Widget _actionButton(Widget icon, String title) {
     return Container(
-
       height: 72,
 
       decoration: BoxDecoration(
+        color: const Color(0xffF7F8FC),
 
-        color:
-        const Color(
-          0xffF7F8FC,
-        ),
-
-        borderRadius:
-        BorderRadius.circular(
-          16,
-        ),
+        borderRadius: BorderRadius.circular(16),
       ),
 
       child: Column(
-
-        mainAxisAlignment:
-        MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
 
         children: [
+          SizedBox(width: 22, height: 22, child: Center(child: icon)),
 
-          SizedBox(
-
-            width: 22,
-            height: 22,
-
-            child: Center(
-              child: icon,
-            ),
-          ),
-
-          const SizedBox(
-            height: 8,
-          ),
+          const SizedBox(height: 8),
 
           Text(
-
             title,
 
-            style: const TextStyle(
-
-              fontSize: 12,
-
-              color:
-              Color(
-                0xff555555,
-              ),
-            ),
+            style: const TextStyle(fontSize: 12, color: Color(0xff555555)),
           ),
         ],
       ),
     );
   }
-
 }

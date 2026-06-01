@@ -1,7 +1,7 @@
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/view_model/nguoi_thue_phong.dart';
-import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/ThemNguoiThuePage/themNguoiThuePage.dart';
+import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/NguoiThueForm/NguoiThueForm.dart';
 import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/danhsachnguoithuepage/DanhSachNguoiThuePage.dart';
 import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/danhsachphongthuepage/DanhSachPhongThuePage.dart';
 import 'package:AppTroNhaToi/widget/itemNguoiThue.dart';
@@ -28,9 +28,9 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
         ghiChu: "",
         ngaySinh: DateTime(2003, 5, 12),
       ),
-//phongid 0	Trống  1	Đang thuê  2	Đang sửa
-//         maLoaiPhong	1	Tiêu chuẩn  2	VIP  3	Studio
 
+      //phongid 0	Trống  1	Đang thuê  2	Đang sửa
+      //         maLoaiPhong	1	Tiêu chuẩn  2	VIP  3	Studio
       phong: [
         Phong(phongID: 1, tenPhong: "P101", trangThai: 1, maLoaiPhong: 1),
 
@@ -39,8 +39,6 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
         Phong(phongID: 4, tenPhong: "P104", trangThai: 3, maLoaiPhong: 1),
       ],
     ),
-
-
 
     NguoiThuePhong(
       nguoiThue: NguoiThue(
@@ -54,12 +52,7 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
       ),
 
       phong: [
-        Phong(
-          phongID: 1,
-          tenPhong: "P102",
-          trangThai: 1,
-          maLoaiPhong: 1,
-        ),
+        Phong(phongID: 1, tenPhong: "P102", trangThai: 1, maLoaiPhong: 1),
       ],
     ),
 
@@ -75,12 +68,7 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
       ),
 
       phong: [
-        Phong(
-          phongID: 2,
-          tenPhong: "P102",
-          trangThai: 1,
-          maLoaiPhong: 1,
-        ),
+        Phong(phongID: 2, tenPhong: "P102", trangThai: 1, maLoaiPhong: 1),
       ],
     ),
 
@@ -96,33 +84,19 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
       ),
 
       phong: [
-        Phong(
-          phongID: 3,
-          tenPhong: "P103",
-          trangThai: 1,
-          maLoaiPhong: 1,
-        ),
+        Phong(phongID: 3, tenPhong: "P103", trangThai: 1, maLoaiPhong: 1),
       ],
     ),
   ];
 
   final TextEditingController searchController = TextEditingController();
-  void toChiTietNguoiThue(
-      NguoiThuePhong nt,
-      ) {
-
+  void toChiTietNguoiThue(NguoiThuePhong nt) {
     Navigator.push(
-
       context,
 
       MaterialPageRoute(
-
-        builder: (_) => ChiTietNguoiThuePage(
-
-          nguoiThue: nt.nguoiThue,
-
-          dsPhong: nt.phong,
-        ),
+        builder: (_) =>
+            ChiTietNguoiThuePage(nguoiThue: nt.nguoiThue, dsPhong: nt.phong),
       ),
     );
   }
@@ -163,7 +137,7 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
 
                             MaterialPageRoute(
                               builder: (context) {
-                                return const ThemNguoiThuePage();
+                                return const NguoiThueForm();
                               },
                             ),
                           );
@@ -177,8 +151,6 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
                       ),
 
                       const SizedBox(width: 10),
-
-
                     ],
                   ),
                 ],
@@ -237,19 +209,11 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
 
                 itemBuilder: (context, index) {
                   return ItemNguoiThue(
+                    nguoiThue: danhSachNguoiThue[index].nguoiThue,
 
-                    nguoiThue:
-                    danhSachNguoiThue[index]
-                        .nguoiThue,
+                    phong: danhSachNguoiThue[index].phong.first,
 
-                    phong:
-                    danhSachNguoiThue[index]
-                        .phong
-                        .first,
-
-                    onTap: () => toChiTietNguoiThue(
-                      danhSachNguoiThue[index],
-                    ),
+                    onTap: () => toChiTietNguoiThue(danhSachNguoiThue[index]),
                   );
                 },
               ),
