@@ -50,6 +50,51 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
     });
   }
 
+  // Thêm hàm parse chuỗi QR CCCD
+  void _parseCCCDQR(String raw) {
+    // Format: CCCD||HoTen|NgaySinh|GioiTinh|QueQuan|NgayCap
+    // VD: 079201018856||Lê Hoàng Tuấn|21072001|Nam|90A Cô Giang...|29072022
+    final parts = raw.split('|');
+
+    if (parts.length < 6) return;
+
+    setState(() {
+      // CCCD - phần tử đầu tiên
+      txtCCCD.text = parts[0].trim();
+
+      // Họ tên - index 2 (sau dấu ||)
+      txtHoTen.text = parts[2].trim();
+
+      // Ngày sinh - index 3 (format: ddMMyyyy → dd/MM/yyyy)
+      final dob = parts[3].trim();
+      if (dob.length == 8) {
+        txtNgaySinh.text =
+            "${dob.substring(0, 2)}/${dob.substring(2, 4)}/${dob.substring(4, 8)}";
+      }
+
+      // Giới tính - index 4
+      final gender = parts[4].trim().toLowerCase();
+      gioiTinh = gender == 'nam' ? true : false;
+
+      // Quê quán - index 5
+      txtQueQuan.text = parts[5].trim();
+    });
+  }
+
+  //Function mở trang quét QR code CCCD
+  Future<void> _openQRScanner() async {
+    final result = await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.black,
+      builder: (_) => const QRCCCDScannerPage(),
+    );
+
+    if (result != null && result.isNotEmpty) {
+      _parseCCCDQR(result);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -151,11 +196,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
             // /// SEARCH
             GestureDetector(
               onTap: () {
-                Navigator.push(
-                  context,
-
-                  MaterialPageRoute(builder: (_) => const QRCCCDScannerPage()),
-                );
+                _openQRScanner();
               },
 
               child: Container(
@@ -164,7 +205,11 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                 margin: const EdgeInsets.only(bottom: 16),
 
                 decoration: BoxDecoration(
-                  color: const Color(0xff4C469D),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Color(0xFF2B2854), Color(0xFF4A468B)],
+                  ),
 
                   borderRadius: BorderRadius.circular(16),
                 ),
@@ -235,14 +280,14 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                     hint: "VD: 0901 234 567",
                     controller: txtSDT,
                     keyboardType: TextInputType.phone,
+                    subTitle: "Mã QR CCCD không chứa SĐT, vui lòng tự nhập",
                   ),
 
                   _input(
-                    title: "CCCD",
+                    title: "Số CCCD ( Căn cước công dân)",
                     hint: "Nhập số CCCD/CMND",
                     controller: txtCCCD,
                     keyboardType: TextInputType.number,
-                    subTitle: "Dùng để xác thực và tạo hợp đồng",
                   ),
 
                   Row(
@@ -441,21 +486,6 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                     hint: "Tỉnh / Thành phố",
                     controller: txtQueQuan,
                   ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 14),
-
-            /// PHÂN CÔNG PHÒNG
-            _section(
-              title: "Phân công phòng",
-
-              child: Column(
-                children: [
-                  _input(title: "Phòng thuê", hint: "", controller: txtPhong),
-
-                  _input(title: "Vai trò", hint: "", controller: txtVaiTro),
                 ],
               ),
             ),
