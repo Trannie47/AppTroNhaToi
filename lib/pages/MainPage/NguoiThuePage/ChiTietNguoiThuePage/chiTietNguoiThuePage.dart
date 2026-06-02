@@ -32,7 +32,7 @@ class ChiTietNguoiThuePage extends StatefulWidget {
 }
 
 class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
-   late ChiTietNguoiThuePageViewModel vm;
+  late ChiTietNguoiThuePageViewModel vm;
 
   @override
   void initState() {
@@ -50,7 +50,7 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
     });
   }
 
- @override
+  @override
   void dispose() {
     vm.dispose();
     super.dispose();
@@ -144,13 +144,118 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                 shape: BoxShape.circle,
               ),
 
-              child: IconButton(
-                onPressed: () {},
+              child: PopupMenuButton<String>(
+                offset: const Offset(0, 48),
+                padding: EdgeInsets.zero,
                 icon: const Icon(
                   Icons.more_vert,
                   size: 18,
                   color: Color(0xff666666),
                 ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                color: Colors.white,
+                elevation: 10,
+                onSelected: (value) {
+                  switch (value) {
+                    case 'update':
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              NguoiThueForm(nguoiThue: widget.nguoiThue),
+                        ),
+                      );
+                      break;
+
+                    case 'room':
+                      break;
+
+                    case 'vehicle':
+                      openPhuongTienPage();
+                      break;
+
+                    case 'parking_bill':
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) {
+                            return HoaDonGuiXePage(dsPhuongTien: [...vm.dsXe]);
+                          },
+                        ),
+                      );
+                      break;
+
+                    case 'guest':
+                      break;
+
+                    case 'delete':
+                      vm.showDeleteDialog(context);
+                      break;
+                  }
+                },
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: 'update',
+                    child: _menuItem(
+                      Icons.edit_outlined,
+                      const Color(0xff2D7A3A),
+                      "Cập nhật thông tin",
+                      "Sửa tên, SĐT, CCCD, quê quán",
+                    ),
+                  ),
+
+                  PopupMenuItem(
+                    value: 'room',
+                    child: _menuItem(
+                      Icons.work_outline,
+                      const Color(0xff2D7A3A),
+                      "Phòng đang thuê",
+                      "Xem lịch sử thuê phòng",
+                    ),
+                  ),
+
+                  PopupMenuItem(
+                    value: 'vehicle',
+                    child: _menuItem(
+                      Icons.directions_car_outlined,
+                      const Color(0xff635BFF),
+                      "Phương tiện",
+                      "Thêm, sửa xe của người thuê",
+                    ),
+                  ),
+
+                  PopupMenuItem(
+                    value: 'parking_bill',
+                    child: _menuItem(
+                      Icons.receipt_long_outlined,
+                      const Color(0xffF59E0B),
+                      "Hóa đơn gửi xe",
+                      "Lịch sử hóa đơn gửi xe",
+                    ),
+                  ),
+
+                  PopupMenuItem(
+                    value: 'guest',
+                    child: _menuItem(
+                      Icons.groups_outlined,
+                      const Color(0xff8B5CF6),
+                      "Người lưu trú tạm thời",
+                      "Ba mẹ, anh chị, bạn bè ở ngắn ngày",
+                    ),
+                  ),
+
+                  PopupMenuItem(
+                    value: 'delete',
+                    child: _menuItem(
+                      Icons.delete_outline,
+                      Colors.red,
+                      "Xóa người thuê",
+                      "Chỉ xóa nếu chưa phát sinh dữ liệu",
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -311,7 +416,10 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
 
                         _itemInfo("CCCD", vm.nguoiThue.cccd ?? ""),
 
-                        _itemInfo("Ngày sinh", formatDate(vm.nguoiThue.ngaySinh)),
+                        _itemInfo(
+                          "Ngày sinh",
+                          formatDate(vm.nguoiThue.ngaySinh),
+                        ),
 
                         _itemInfo("Quê quán", vm.nguoiThue.queQuan ?? ""),
 
@@ -547,6 +655,48 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
             title,
 
             style: const TextStyle(fontSize: 12, color: Color(0xff555555)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _menuItem(IconData icon, Color color, String title, String subtitle) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.12),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: color, size: 20),
+          ),
+
+          const SizedBox(width: 12),
+
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+              ],
+            ),
           ),
         ],
       ),

@@ -1,83 +1,66 @@
 import 'package:AppTroNhaToi/models/hop_dong.dart';
-import 'package:AppTroNhaToi/pages/MainPage/KhacPage/taoHopDongForm/taoHopDongForm.dart';
+import 'package:AppTroNhaToi/pages/MainPage/KhacPage/HopDongForm/hopDongForm.dart';
 import 'package:flutter/material.dart';
 
 class HopDongPage extends StatefulWidget {
   HopDongPage({super.key});
 
-
   @override
   State<HopDongPage> createState() => _HopDongPageState();
 }
 
-
 class _HopDongPageState extends State<HopDongPage> {
   String boLoc = "TAT_CA";
 
-  String taoMaHopDong(
-      DateTime ngayKy,
-      int stt,
-      ) {
-    String ngay =
-    ngayKy.day.toString().padLeft(2, '0');
+  String taoMaHopDong(DateTime ngayKy, int stt) {
+    String ngay = ngayKy.day.toString().padLeft(2, '0');
 
-    String thang =
-    ngayKy.month.toString().padLeft(2, '0');
+    String thang = ngayKy.month.toString().padLeft(2, '0');
 
-    String nam =
-    ngayKy.year.toString();
+    String nam = ngayKy.year.toString();
 
-    String soThuTu =
-    stt.toString().padLeft(2, '0');
+    String soThuTu = stt.toString().padLeft(2, '0');
 
     return "$ngay$thang$nam$soThuTu";
   }
 
-
   //final List<HopDong> danhSachHopDong = [];
 
   final List<HopDong> danhSachHopDong = [
-  HopDong(
-    hopDongID: 1,
-    phongID: 101,
-    giaPhongThucTe: 3000000,
-    trangThai: "HIEU_LUC",
-    ngayHetHan: DateTime(2026, 12, 31),
-  ),
-
-  HopDong(
-    hopDongID: 2,
-    phongID: 102,
-    giaPhongThucTe: 3500000,
-    trangThai: "SAP_HET_HAN",
-    ngayHetHan: DateTime.now().add(
-      const Duration(days: 15),
+    HopDong(
+      hopDongID: 1,
+      phongID: 101,
+      giaPhongThucTe: 3000000,
+      trangThai: "HIEU_LUC",
+      ngayHetHan: DateTime(2026, 12, 31),
     ),
-  ),
 
-  HopDong(
-    hopDongID: 3,
-    phongID: 103,
-    giaPhongThucTe: 2800000,
-    trangThai: "DA_KET_THUC",
-    ngayHetHan: DateTime.now().subtract(
-      const Duration(days: 10),
+    HopDong(
+      hopDongID: 2,
+      phongID: 102,
+      giaPhongThucTe: 3500000,
+      trangThai: "SAP_HET_HAN",
+      ngayHetHan: DateTime.now().add(const Duration(days: 15)),
     ),
-  ),
-];
+
+    HopDong(
+      hopDongID: 3,
+      phongID: 103,
+      giaPhongThucTe: 2800000,
+      trangThai: "DA_KET_THUC",
+      ngayHetHan: DateTime.now().subtract(const Duration(days: 10)),
+    ),
+  ];
 
   void moTrangTaoHopDong() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (_) => const TaoHopDongForm(),
-      ),
+      MaterialPageRoute(builder: (_) => const HopDongForm()),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-
     List<HopDong> danhSachHienThi;
 
     switch (boLoc) {
@@ -100,12 +83,10 @@ class _HopDongPageState extends State<HopDongPage> {
       //   break;
 
       case "SAP_HET_HAN":
-  danhSachHienThi = danhSachHopDong
-      .where(
-        (e) => e.trangThai == "SAP_HET_HAN",
-      )
-      .toList();
-  break;
+        danhSachHienThi = danhSachHopDong
+            .where((e) => e.trangThai == "SAP_HET_HAN")
+            .toList();
+        break;
 
       case "DA_KET_THUC":
         danhSachHienThi = danhSachHopDong
@@ -116,8 +97,6 @@ class _HopDongPageState extends State<HopDongPage> {
       default:
         danhSachHienThi = danhSachHopDong;
     }
-
-
 
     int tongHopDong = danhSachHopDong.length;
 
@@ -141,10 +120,8 @@ class _HopDongPageState extends State<HopDongPage> {
     // }).length;
 
     int hopDongSapHetHan = danhSachHopDong
-    .where(
-      (e) => e.trangThai == "SAP_HET_HAN",
-    )
-    .length;
+        .where((e) => e.trangThai == "SAP_HET_HAN")
+        .length;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -154,9 +131,7 @@ class _HopDongPageState extends State<HopDongPage> {
             // HEADER
             Container(
               height: 70,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
                 children: [
                   Container(
@@ -166,10 +141,7 @@ class _HopDongPageState extends State<HopDongPage> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: const Icon(
-                      Icons.arrow_back_ios_new,
-                      size: 18,
-                    ),
+                    child: const Icon(Icons.arrow_back_ios_new, size: 18),
                   ),
 
                   const SizedBox(width: 12),
@@ -184,46 +156,37 @@ class _HopDongPageState extends State<HopDongPage> {
                       ),
                     ),
                   ),
-              GestureDetector(
-                onTap: moTrangTaoHopDong,
-                child:
-                  Container(
-                    height: 42,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                    ),
-                    decoration: BoxDecoration(
-                      color: const Color(0xff2E7D32),
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    child: const Row(
-                      children: [
-                        Icon(
-                          Icons.add,
-                          size: 18,
-                          color: Colors.white,
-                        ),
-                        SizedBox(width: 4),
-                        Text(
-                          "Tạo mới",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
+                  GestureDetector(
+                    onTap: moTrangTaoHopDong,
+                    child: Container(
+                      height: 42,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: const Color(0xff2E7D32),
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                      child: const Row(
+                        children: [
+                          Icon(Icons.add, size: 18, color: Colors.white),
+                          SizedBox(width: 4),
+                          Text(
+                            "Tạo mới",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                        )
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-              )
                 ],
               ),
             ),
 
             // SEARCH
             Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Container(
                 height: 48,
                 decoration: BoxDecoration(
@@ -233,13 +196,8 @@ class _HopDongPageState extends State<HopDongPage> {
                 child: TextField(
                   decoration: InputDecoration(
                     hintText: "Tìm tên người thuê, phòng...",
-                    hintStyle: TextStyle(
-                      color: Colors.grey.shade400,
-                    ),
-                    prefixIcon: const Icon(
-                      Icons.search,
-                      color: Colors.grey,
-                    ),
+                    hintStyle: TextStyle(color: Colors.grey.shade400),
+                    prefixIcon: const Icon(Icons.search, color: Colors.grey),
                     border: InputBorder.none,
                   ),
                 ),
@@ -251,10 +209,7 @@ class _HopDongPageState extends State<HopDongPage> {
             // FILTER
             Container(
               color: const Color(0xFFF4F4F4),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
@@ -272,7 +227,7 @@ class _HopDongPageState extends State<HopDongPage> {
                       ),
                     ),
 
-                  const SizedBox(width: 8),
+                    const SizedBox(width: 8),
 
                     GestureDetector(
                       onTap: () {
@@ -287,7 +242,7 @@ class _HopDongPageState extends State<HopDongPage> {
                       ),
                     ),
 
-                  const SizedBox(width: 8),
+                    const SizedBox(width: 8),
 
                     GestureDetector(
                       onTap: () {
@@ -302,7 +257,7 @@ class _HopDongPageState extends State<HopDongPage> {
                       ),
                     ),
 
-                  const SizedBox(width: 8),
+                    const SizedBox(width: 8),
 
                     GestureDetector(
                       onTap: () {
@@ -316,8 +271,8 @@ class _HopDongPageState extends State<HopDongPage> {
                         bgColor: const Color(0xffFFEBEE),
                       ),
                     ),
-                ],
-              ),
+                  ],
+                ),
               ),
             ),
 
@@ -326,17 +281,13 @@ class _HopDongPageState extends State<HopDongPage> {
             Expanded(
               child: Container(
                 color: const Color(0xFFF4F4F4),
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: danhSachHienThi.length,
+                  itemBuilder: (context, index) {
+                    return _buildHopDongCard(danhSachHienThi[index]);
+                  },
                 ),
-                itemCount: danhSachHienThi.length,
-                itemBuilder: (context, index) {
-                  return _buildHopDongCard(
-                    danhSachHienThi[index],
-                  );
-                },
-              ),
               ),
             ),
           ],
@@ -351,10 +302,7 @@ class _HopDongPageState extends State<HopDongPage> {
     required Color bgColor,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 8,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(20),
@@ -406,21 +354,15 @@ class _HopDongPageState extends State<HopDongPage> {
               children: [
                 const Text(
                   "Nguyễn Văn An",
-                  style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
                 ),
 
                 const SizedBox(height: 4),
 
                 Text(
-                 // "MÃ HĐ: ${taoMaHopDong(DateTime.now(), 1)}",
+                  // "MÃ HĐ: ${taoMaHopDong(DateTime.now(), 1)}",
                   "MÃ HĐ: ${hopDong.hopDongID}",
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey.shade600,
-                  ),
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                 ),
 
                 const SizedBox(height: 8),
@@ -449,11 +391,7 @@ class _HopDongPageState extends State<HopDongPage> {
 
                     const SizedBox(width: 10),
 
-                    Container(
-                      width: 1,
-                      height: 14,
-                      color: Color(0xffD9D9D9),
-                    ),
+                    Container(width: 1, height: 14, color: Color(0xffD9D9D9)),
 
                     const SizedBox(width: 10),
 
@@ -472,10 +410,7 @@ class _HopDongPageState extends State<HopDongPage> {
             ),
           ),
 
-          const Icon(
-            Icons.chevron_right,
-            color: Colors.grey,
-          ),
+          const Icon(Icons.chevron_right, color: Colors.grey),
         ],
       ),
     );

@@ -1,71 +1,33 @@
+import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/hopDongForm/hopDongForm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 
-class TaoHopDongForm extends StatefulWidget {
-  const TaoHopDongForm({super.key});
+class HopDongForm extends StatefulWidget {
+  const HopDongForm({super.key});
 
   @override
-  State<TaoHopDongForm> createState() => _TaoHopDongPageState();
+  State<HopDongForm> createState() => _TaoHopDongPageState();
 }
 
-class _TaoHopDongPageState extends State<TaoHopDongForm> {
-  final txtPhong = TextEditingController();
-  final txtNguoiThue = TextEditingController();
+class _TaoHopDongPageState extends State<HopDongForm> {
+  late HopDongFormModelView vm;
 
-  final txtNgayKy = TextEditingController();
-  final txtNgayHetHan = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
 
-  final txtTongGiaPhong = TextEditingController();
-  final txtGiaHopDong = TextEditingController();
-  final txtGiaDeXuat = TextEditingController();
+    vm = HopDongFormModelView();
 
-  final txtTienCoc = TextEditingController();
-  final txtGhiChu = TextEditingController();
-
-  Future<void> chonNgay(
-      TextEditingController controller,
-      ) async {
-    DateTime? ngay = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2100),
-    );
-
-
-    if (ngay != null) {
-      controller.text =
-      "${ngay.day.toString().padLeft(2, '0')}/"
-          "${ngay.month.toString().padLeft(2, '0')}/"
-          "${ngay.year}";
-    }
-  }
-
-  DateTime? chuyenNgay(String ngay) {
-    try {
-      final tach = ngay.split('/');
-
-      return DateTime(
-        int.parse(tach[2]),
-        int.parse(tach[1]),
-        int.parse(tach[0]),
-      );
-    } catch (e) {
-      return null;
-    }
+    vm.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
 
   @override
   void dispose() {
-    txtPhong.dispose();
-    txtNguoiThue.dispose();
-    txtNgayKy.dispose();
-    txtNgayHetHan.dispose();
-    txtTongGiaPhong.dispose();
-    txtGiaHopDong.dispose();
-    txtGiaDeXuat.dispose();
-    txtTienCoc.dispose();
-    txtGhiChu.dispose();
+    vm.dispose();
     super.dispose();
   }
 
@@ -89,10 +51,7 @@ class _TaoHopDongPageState extends State<TaoHopDongForm> {
                 customBorder: const CircleBorder(),
                 onTap: () => Navigator.pop(context),
                 child: const Center(
-                  child: Icon(
-                    Icons.arrow_back_ios_new,
-                    size: 14,
-                  ),
+                  child: Icon(Icons.arrow_back_ios_new, size: 14),
                 ),
               ),
             ),
@@ -116,16 +75,13 @@ class _TaoHopDongPageState extends State<TaoHopDongForm> {
               child: Column(
                 children: [
                   _label("Phòng thuê"),
-                  _textfield(
-                    controller: txtPhong,
-                    hint: "Nhập phòng thuê",
-                  ),
+                  _textfield(controller: vm.txtPhong, hint: "Nhập phòng thuê"),
 
                   const SizedBox(height: 16),
 
                   _label("Người thuê chính"),
                   _textfield(
-                    controller: txtNguoiThue,
+                    controller: vm.txtNguoiThue,
                     hint: "Nhập người thuê",
                   ),
 
@@ -135,22 +91,20 @@ class _TaoHopDongPageState extends State<TaoHopDongForm> {
                     children: [
                       Expanded(
                         child: Column(
-                          crossAxisAlignment:
-                          CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             _label("Ngày ký"),
-                            _dateField(txtNgayKy),
+                            _dateField(vm.txtNgayKy),
                           ],
                         ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Column(
-                          crossAxisAlignment:
-                          CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             _label("Ngày hết hạn"),
-                            _dateField(txtNgayHetHan),
+                            _dateField(vm.txtNgayHetHan),
                           ],
                         ),
                       ),
@@ -168,32 +122,27 @@ class _TaoHopDongPageState extends State<TaoHopDongForm> {
                 children: [
                   _label("Tổng giá phòng"),
                   _textfield(
-                    controller: txtTongGiaPhong,
+                    controller: vm.txtTongGiaPhong,
                     hint: "Nhập tổng giá phòng",
-                    keyboardType:
-                    TextInputType.number,
+                    keyboardType: TextInputType.number,
                   ),
 
                   const SizedBox(height: 16),
 
                   _label("Giá thuê của hợp đồng"),
                   _textfield(
-                    controller: txtGiaHopDong,
+                    controller: vm.txtGiaHopDong,
                     hint: "Nhập giá thuê hợp đồng",
-                    keyboardType:
-                    TextInputType.number,
+                    keyboardType: TextInputType.number,
                   ),
 
                   const SizedBox(height: 16),
 
-                  _label(
-                    "Giá thuê đề xuất cho người đang ở",
-                  ),
+                  _label("Giá thuê đề xuất cho người đang ở"),
                   _textfield(
-                    controller: txtGiaDeXuat,
+                    controller: vm.txtGiaDeXuat,
                     hint: "Nhập giá đề xuất",
-                    keyboardType:
-                    TextInputType.number,
+                    keyboardType: TextInputType.number,
                   ),
                 ],
               ),
@@ -207,17 +156,16 @@ class _TaoHopDongPageState extends State<TaoHopDongForm> {
                 children: [
                   _label("Tiền cọc"),
                   _textfield(
-                    controller: txtTienCoc,
+                    controller: vm.txtTienCoc,
                     hint: "Nhập tiền cọc",
-                    keyboardType:
-                    TextInputType.number,
+                    keyboardType: TextInputType.number,
                   ),
 
                   const SizedBox(height: 16),
 
                   _label("Ghi chú"),
                   _textfield(
-                    controller: txtGhiChu,
+                    controller: vm.txtGhiChu,
                     hint: "Nhập ghi chú",
                     maxLines: 2,
                   ),
@@ -232,35 +180,23 @@ class _TaoHopDongPageState extends State<TaoHopDongForm> {
               height: 52,
               child: ElevatedButton(
                 onPressed: () {
+                  final ngayKy = vm.chuyenNgay(vm.txtNgayKy.text);
 
-                  final ngayKy =
-                  chuyenNgay(txtNgayKy.text);
+                  final ngayHetHan = vm.chuyenNgay(vm.txtNgayHetHan.text);
 
-                  final ngayHetHan =
-                  chuyenNgay(txtNgayHetHan.text);
-
-                  if (ngayKy == null ||
-                      ngayHetHan == null) {
-
-                    ScaffoldMessenger.of(context)
-                        .showSnackBar(
+                  if (ngayKy == null || ngayHetHan == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text(
-                          "Vui lòng nhập ngày hợp lệ",
-                        ),
+                        content: Text("Vui lòng nhập ngày hợp lệ"),
                       ),
                     );
                     return;
                   }
 
                   if (!ngayHetHan.isAfter(ngayKy)) {
-
-                    ScaffoldMessenger.of(context)
-                        .showSnackBar(
+                    ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text(
-                          "Ngày hết hạn phải lớn hơn ngày ký",
-                        ),
+                        content: Text("Ngày hết hạn phải lớn hơn ngày ký"),
                       ),
                     );
                     return;
@@ -269,11 +205,9 @@ class _TaoHopDongPageState extends State<TaoHopDongForm> {
                   print("Lưu hợp đồng");
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                  const Color(0xff2E7D32),
+                  backgroundColor: const Color(0xff2E7D32),
                   shape: RoundedRectangleBorder(
-                    borderRadius:
-                    BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
                 child: const Text(
@@ -297,11 +231,9 @@ class _TaoHopDongPageState extends State<TaoHopDongForm> {
                   Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                  const Color(0xffC62828),
+                  backgroundColor: const Color(0xffC62828),
                   shape: RoundedRectangleBorder(
-                    borderRadius:
-                    BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
                 child: const Text(
@@ -320,10 +252,7 @@ class _TaoHopDongPageState extends State<TaoHopDongForm> {
     );
   }
 
-  Widget _section({
-    required String title,
-    required Widget child,
-  }) {
+  Widget _section({required String title, required Widget child}) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(14),
@@ -332,8 +261,7 @@ class _TaoHopDongPageState extends State<TaoHopDongForm> {
         borderRadius: BorderRadius.circular(14),
       ),
       child: Column(
-        crossAxisAlignment:
-        CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
@@ -355,10 +283,7 @@ class _TaoHopDongPageState extends State<TaoHopDongForm> {
       alignment: Alignment.centerLeft,
       child: Text(
         text,
-        style: const TextStyle(
-          fontSize: 13,
-          color: Colors.black87,
-        ),
+        style: const TextStyle(fontSize: 13, color: Colors.black87),
       ),
     );
   }
@@ -379,38 +304,26 @@ class _TaoHopDongPageState extends State<TaoHopDongForm> {
           hintText: hint,
           filled: true,
           fillColor: const Color(0xffF7F7F7),
-          contentPadding:
-          const EdgeInsets.symmetric(
+          contentPadding: const EdgeInsets.symmetric(
             horizontal: 12,
             vertical: 14,
           ),
-          border: OutlineInputBorder(
-            borderRadius:
-            BorderRadius.circular(10),
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
           enabledBorder: OutlineInputBorder(
-            borderRadius:
-            BorderRadius.circular(10),
-            borderSide: BorderSide(
-              color: Colors.grey.shade300,
-            ),
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Colors.grey.shade300),
           ),
         ),
       ),
     );
   }
 
-  Widget _dateField(
-      TextEditingController controller,
-      ) {
+  Widget _dateField(TextEditingController controller) {
     return TextFormField(
       controller: controller,
       keyboardType: TextInputType.number,
-      inputFormatters: [
-        MaskedInputFormatter(
-          '##/##/####',
-        ),
-      ],
+      inputFormatters: [MaskedInputFormatter('##/##/####')],
+      style: const TextStyle(fontSize: 14),
       decoration: InputDecoration(
         filled: true,
         fillColor: const Color(0xffF8F8F8),
@@ -419,28 +332,19 @@ class _TaoHopDongPageState extends State<TaoHopDongForm> {
           vertical: 16,
         ),
         suffixIcon: IconButton(
-          icon: const Icon(
-            Icons.calendar_month,
-          ),
+          icon: const Icon(Icons.calendar_month),
           onPressed: () {
-            chonNgay(controller);
+            vm.chonNgay(context, controller);
           },
         ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(
-            color: Color(0xffEAEAEA),
-          ),
+          borderSide: const BorderSide(color: Color(0xffEAEAEA)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(
-            color: Color(0xff2D7A3A),
-            width: 1.2,
-          ),
+          borderSide: const BorderSide(color: Color(0xff2D7A3A), width: 1.2),
         ),
       ),
     );

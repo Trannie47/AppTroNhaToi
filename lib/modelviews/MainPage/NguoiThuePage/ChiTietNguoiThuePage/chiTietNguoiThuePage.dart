@@ -16,5 +16,29 @@ class ChiTietNguoiThuePageViewModel extends ChangeNotifier {
     required this.dsPhong,
   });
 
-  
+  void showDeleteDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          title: const Text("Xóa người thuê"),
+          content: const Text(
+            "Bạn có chắc chắn muốn xóa người thuê này không?",
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Hủy"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text("Xóa", style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
