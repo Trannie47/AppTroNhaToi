@@ -1,6 +1,7 @@
 import 'package:AppTroNhaToi/models/loaiphong.dart';
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/NguoiThuePage/danhsachphongthuepage/DanhSachPhongThuePage.dart';
 import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/ChiTietNguoiThuePage/chiTietNguoiThuePage.dart';
 import 'package:AppTroNhaToi/widget/itemPhong.dart';
 import 'package:flutter/material.dart';
@@ -21,18 +22,26 @@ class DanhSachPhongThuePage extends StatefulWidget {
 }
 
 class _DanhSachPhongThuePageState extends State<DanhSachPhongThuePage> {
-  final TextEditingController searchController = TextEditingController();
+  late DanhSachPhongThuePageViewModel vm ;
 
-  final List<LoaiPhong> dsLoaiPhong = [
-    LoaiPhong(
-      maLoaiPhong: 1,
-      tenLoaiPhong: "Tiêu chuẩn",
-      dienTich: 18,
-      soNguoiToiDa: 2,
-      giaTien: 3200000,
-      isMayLanh: true,
-    ),
-  ];
+  @override
+  void initState() {
+    super.initState();
+
+    vm = DanhSachPhongThuePageViewModel();
+
+    vm.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    vm.dispose();
+    super.dispose();
+  }
 
   /// ĐI CHI TIẾT NGƯỜI THUÊ
   void toChiTietNguoiThue(Phong phong) async {
@@ -124,7 +133,7 @@ class _DanhSachPhongThuePageState extends State<DanhSachPhongThuePage> {
                 ),
 
                 child: TextField(
-                  controller: searchController,
+                  controller: vm.searchController,
 
                   textAlignVertical: TextAlignVertical.center,
 
@@ -166,7 +175,7 @@ class _DanhSachPhongThuePageState extends State<DanhSachPhongThuePage> {
                   return ItemPhong(
                     phong: widget.phong[index],
 
-                    loaiPhong: dsLoaiPhong.first,
+                    loaiPhong: vm.dsLoaiPhong.first,
 
                     onTap: () {
                       toChiTietNguoiThue(widget.phong[index]);

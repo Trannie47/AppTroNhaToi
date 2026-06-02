@@ -1,19 +1,13 @@
-import 'package:AppTroNhaToi/models/nguoi_thue.dart';
-import 'package:AppTroNhaToi/models/phong.dart';
-import 'package:AppTroNhaToi/utils/string_formatter.dart';
 import 'package:flutter/material.dart';
+import 'package:AppTroNhaToi/models/hop_dong.dart';
 
-class ItemNguoiThue extends StatelessWidget {
-  final NguoiThue nguoiThue;
-  final Phong? phong;
-  final bool isSelected;
-  final Function()? onTap;
+class ItemNTHopDong extends StatelessWidget {
+  final HopDong hopDong;
+  final VoidCallback? onTap;
 
-  const ItemNguoiThue({
+  const ItemNTHopDong({
     super.key,
-    required this.nguoiThue,
-    this.phong,
-    this.isSelected = false,
+    required this.hopDong,
     this.onTap,
   });
 
@@ -22,85 +16,107 @@ class ItemNguoiThue extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: phong != null
-            ? const EdgeInsets.only(
-          bottom: 10,
-        )
-            : const EdgeInsets.symmetric(
-          vertical: 10,
-        ),
-        padding: EdgeInsets.symmetric(
-          horizontal: phong != null ? 16 : 4,
-          vertical: 14,
-        ),
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: phong != null
-              ? Border.all(
-            color: isSelected
-                ? const Color(0xff2F61E7)
-                : const Color(0xffEAEAEA),
-            width: 1,
-          )
-              : null,
+          borderRadius: BorderRadius.circular(18),
         ),
         child: Row(
           children: [
-            /// AVATAR
             Container(
-              width: 48,
-              height: 48,
+              width: 52,
+              height: 52,
               decoration: const BoxDecoration(
-                color: Color(0xffDDE8FF),
+                color: Color(0xffE8EEF9),
                 shape: BoxShape.circle,
               ),
               alignment: Alignment.center,
-              child: Text(
-                vietTat(
-                  nguoiThue.hoTen ?? "",
-                ),
-                style: const TextStyle(
-                  color: Color(0xff2F61E7),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
+              child: const Text(
+                "NA",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xff3467EB),
                 ),
               ),
             ),
 
             const SizedBox(width: 14),
 
-            /// THÔNG TIN
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    nguoiThue.hoTen ?? "",
-                    style: const TextStyle(
-                      fontSize: 15,
+                  const Text(
+                    "Nguyễn Văn An",
+                    style: TextStyle(
+                      fontSize: 17,
                       fontWeight: FontWeight.w700,
-                      color: Color(0xff222222),
                     ),
                   ),
+
                   const SizedBox(height: 4),
+
                   Text(
-                    "${nguoiThue.sdt} · CCCD: ${nguoiThue.cccd}",
-                    style: const TextStyle(
+                    "Mã HĐ: ${hopDong.hopDongID}",
+                    style: TextStyle(
                       fontSize: 12,
-                      color: Color(0xff9B9B9B),
+                      color: Colors.grey.shade600,
                     ),
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xffE8F5E9),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          "Phòng ${hopDong.phongID}",
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Color(0xff2E7D32),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(width: 10),
+
+                      Container(
+                        width: 1,
+                        height: 14,
+                        color: const Color(0xffD9D9D9),
+                      ),
+
+                      const SizedBox(width: 10),
+
+                      Text(
+                        "${hopDong.giaPhongThucTe?.toStringAsFixed(0)}đ/tháng",
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xff2E7D32),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
 
-            if (onTap != null)
-              const Icon(
-                Icons.chevron_right_rounded,
-                color: Color(0xffC7C7CC),
-              ),
+            const Icon(
+              Icons.chevron_right_rounded,
+              color: Color(0xffC7C7CC),
+            ),
           ],
         ),
       ),

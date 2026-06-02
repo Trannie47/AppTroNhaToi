@@ -1,9 +1,5 @@
-import 'dart:convert';
-
-import 'package:AppTroNhaToi/models/view_model/user_login.dart';
-import 'package:AppTroNhaToi/values/shareKey.dart';
+import 'package:AppTroNhaToi/modelviews/TrangDangNhap/TrangDangNhap.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../MainPage/MainPage.dart';
 
@@ -15,62 +11,30 @@ class TrangDangNhap extends StatefulWidget {
 }
 
 class _TrangDangNhapState extends State<TrangDangNhap> {
-  bool isHidden = true;
-  bool remember = false;
+  final TrangDangNhapModelView vm = TrangDangNhapModelView();
 
-  final TextEditingController userController = TextEditingController();
-  final TextEditingController passController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
 
-  String? errorUser;
-  String? errorPass;
-  String? errorServer;
-
-  void showError(String message) {
-    setState(() {
-      errorServer = message;
+    vm.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
     });
 
-    Future.delayed(const Duration(seconds: 5), () {
-      if (!mounted) return;
-      setState(() {
-        errorServer = null;
-      });
-    });
+    checkLogin();
   }
 
-  Future<void> handleLogin() async {
-    setState(() {
-      errorUser = null;
-      errorPass = null;
-      errorServer = null;
+  Future<void> checkLogin() async {
+    bool success = await vm.checkRememberedLogin();
 
-      if (userController.text.trim().isEmpty) {
-        errorUser = "Vui lòng nhập tài khoản";
-      }
-
-      if (passController.text.trim().isEmpty) {
-        errorPass = "Vui lòng nhập mật khẩu";
-      }
-    });
-
-    if (errorUser != null || errorPass != null) return;
-
-    if (userController.text != "admin" || passController.text != "123") {
-      showError("Tài khoản/Mật khẩu chưa đúng yêu cầu nhập lại");
-    } else {
-      if (remember) {
-        UserLogin userLogin = UserLogin(
-          email: userController.text,
-          password: passController.text,
-          remember: remember,
-        );
-
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString(ShareKeys.user, jsonEncode(userLogin.toJson()));
-      }
+    if (success && mounted) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const MainPage()),
+        MaterialPageRoute(
+          builder: (_) => const MainPage(),
+        ),
       );
     }
   }
@@ -85,29 +49,17 @@ class _TrangDangNhapState extends State<TrangDangNhap> {
         borderRadius: BorderRadius.circular(10),
         borderSide: BorderSide.none,
       ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: 12,
+        vertical: 14,
+      ),
     );
   }
 
   @override
-  void initState() {
-    super.initState();
-    checkRememberedLogin();
-  }
-
-  Future<void> checkRememberedLogin() async {
-    final prefs = await SharedPreferences.getInstance();
-    final userLoginString = prefs.getString(ShareKeys.user);
-    if (userLoginString != null) {
-      final userLoginJson = jsonDecode(userLoginString);
-      UserLogin userLogin = UserLogin.fromJson(userLoginJson);
-
-      if (userLogin.remember) {
-        userController.text = userLogin.email;
-        passController.text = userLogin.password;
-        handleLogin();
-      }
-    }
+  void dispose() {
+    vm.dispose();
+    super.dispose();
   }
 
   @override
@@ -116,21 +68,23 @@ class _TrangDangNhapState extends State<TrangDangNhap> {
       resizeToAvoidBottomInset: true,
       body: Stack(
         children: [
-          // BACKGROUND
           Positioned.fill(
-            child: Image.asset('assets/images/bg_tro.png', fit: BoxFit.cover),
+            child: Image.asset(
+              'assets/images/bg_tro.png',
+              fit: BoxFit.cover,
+            ),
           ),
 
-          // OVERLAY
           Positioned.fill(
-            child: Container(color: Colors.black.withValues(alpha: 0.2)),
+            child: Container(
+              color: Colors.black.withValues(alpha: 0.2),
+            ),
           ),
 
-          // BANNER LỖI TRÊN CÙNG
           AnimatedPositioned(
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
-            top: errorServer != null ? 0 : -100,
+            top: vm.errorServer != null ? 0 : -100,
             left: 0,
             right: 0,
             child: SafeArea(
@@ -143,11 +97,14 @@ class _TrangDangNhapState extends State<TrangDangNhap> {
                 color: Colors.grey[200],
                 child: Row(
                   children: [
-                    const Icon(Icons.error_outline, color: Colors.red),
+                    const Icon(
+                      Icons.error_outline,
+                      color: Colors.red,
+                    ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        errorServer ?? "",
+                        vm.errorServer ?? "",
                         style: const TextStyle(
                           color: Colors.red,
                           fontWeight: FontWeight.w500,
@@ -160,127 +117,217 @@ class _TrangDangNhapState extends State<TrangDangNhap> {
             ),
           ),
 
-          /// CONTENT
           SafeArea(
             child: Column(
               children: [
                 const SizedBox(height: 40),
 
-                // ✅ LOGO - cố định, luôn hiển thị
                 Image.asset(
                   'assets/images/Logo_NoBG.png',
                   width: 140,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const Icon(Icons.home, size: 100, color: Colors.white),
+                  errorBuilder:
+                      (context, error, stackTrace) =>
+                          const Icon(
+                            Icons.home,
+                            size: 100,
+                            color: Colors.white,
+                          ),
                 ),
 
                 const SizedBox(height: 20),
 
-                // ✅ Form nằm trong Expanded + SingleChildScrollView
                 Expanded(
                   child: SingleChildScrollView(
                     keyboardDismissBehavior:
-                        ScrollViewKeyboardDismissBehavior.onDrag,
+                        ScrollViewKeyboardDismissBehavior
+                            .onDrag,
                     child: ConstrainedBox(
                       constraints: BoxConstraints(
                         minHeight:
-                            MediaQuery.of(context).size.height -
-                            MediaQuery.of(context).padding.top -
-                            MediaQuery.of(context).padding.bottom -
-                            220, // trừ logo + padding
+                            MediaQuery.of(context)
+                                    .size
+                                    .height -
+                                MediaQuery.of(context)
+                                    .padding
+                                    .top -
+                                MediaQuery.of(context)
+                                    .padding
+                                    .bottom -
+                                220,
                       ),
                       child: Align(
-                        alignment: Alignment.bottomCenter,
+                        alignment:
+                            Alignment.bottomCenter,
                         child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 250),
-                          margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                          padding: const EdgeInsets.all(20),
+                          duration:
+                              const Duration(
+                                milliseconds: 250,
+                              ),
+                          margin:
+                              const EdgeInsets.fromLTRB(
+                                16,
+                                0,
+                                16,
+                                16,
+                              ),
+                          padding:
+                              const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.9),
-                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.white
+                                .withValues(
+                                  alpha: 0.9,
+                                ),
+                            borderRadius:
+                                BorderRadius.circular(
+                                  20,
+                                ),
                           ),
                           child: Column(
-                            mainAxisSize: MainAxisSize.min,
+                            mainAxisSize:
+                                MainAxisSize.min,
                             children: [
-                              /// USER
                               const Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text("Tài khoản"),
+                                alignment:
+                                    Alignment.centerLeft,
+                                child:
+                                    Text("Tài khoản"),
                               ),
-                              const SizedBox(height: 8),
-                              TextField(
-                                controller: userController,
-                                decoration: inputStyle(
-                                  "Nhập tài khoản",
-                                  errorUser,
-                                ),
-                              ),
-                              const SizedBox(height: 16),
 
-                              /// PASS
-                              const Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text("Mật khẩu"),
+                              const SizedBox(
+                                height: 8,
                               ),
-                              const SizedBox(height: 8),
+
                               TextField(
-                                controller: passController,
-                                obscureText: isHidden,
-                                decoration: inputStyle("Mật khẩu", errorPass)
-                                    .copyWith(
-                                      suffixIcon: IconButton(
-                                        icon: Icon(
-                                          isHidden
-                                              ? Icons.visibility_off
-                                              : Icons.visibility,
-                                          color: Colors.grey,
-                                        ),
-                                        onPressed: () {
-                                          setState(() {
-                                            isHidden = !isHidden;
-                                          });
-                                        },
-                                      ),
+                                controller:
+                                    vm.userController,
+                                decoration:
+                                    inputStyle(
+                                      "Nhập tài khoản",
+                                      vm.errorUser,
                                     ),
                               ),
-                              const SizedBox(height: 12),
 
-                              /// REMEMBER
+                              const SizedBox(
+                                height: 16,
+                              ),
+
+                              const Align(
+                                alignment:
+                                    Alignment.centerLeft,
+                                child:
+                                    Text("Mật khẩu"),
+                              ),
+
+                              const SizedBox(
+                                height: 8,
+                              ),
+
+                              TextField(
+                                controller:
+                                    vm.passController,
+                                obscureText:
+                                    vm.isHidden,
+                                decoration:
+                                    inputStyle(
+                                      "Mật khẩu",
+                                      vm.errorPass,
+                                    ).copyWith(
+                                      suffixIcon:
+                                          IconButton(
+                                            icon: Icon(
+                                              vm.isHidden
+                                                  ? Icons
+                                                      .visibility_off
+                                                  : Icons
+                                                      .visibility,
+                                              color:
+                                                  Colors
+                                                      .grey,
+                                            ),
+                                            onPressed:
+                                                vm.togglePassword,
+                                          ),
+                                    ),
+                              ),
+
+                              const SizedBox(
+                                height: 12,
+                              ),
+
                               Row(
                                 children: [
                                   Checkbox(
-                                    value: remember,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        remember = value!;
-                                      });
+                                    value:
+                                        vm.remember,
+                                    onChanged:
+                                        (value) {
+                                      vm.setRemember(
+                                        value!,
+                                      );
                                     },
                                   ),
-                                  const Text("Ghi nhớ mật khẩu"),
+                                  const Text(
+                                    "Ghi nhớ mật khẩu",
+                                  ),
                                 ],
                               ),
-                              const SizedBox(height: 10),
 
-                              /// BUTTON
+                              const SizedBox(
+                                height: 10,
+                              ),
+
                               SizedBox(
-                                width: double.infinity,
+                                width:
+                                    double.infinity,
                                 height: 50,
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFF2D7A3A),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
+                                child:
+                                    ElevatedButton(
+                                      style:
+                                          ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                const Color(
+                                                  0xFF2D7A3A,
+                                                ),
+                                            shape:
+                                                RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        10,
+                                                      ),
+                                                ),
+                                          ),
+                                      onPressed:
+                                          () async {
+                                        bool success =
+                                            await vm
+                                                .dangNhap();
+
+                                        if (success &&
+                                            mounted) {
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder:
+                                                  (
+                                                    context,
+                                                  ) =>
+                                                      const MainPage(),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                      child:
+                                          const Text(
+                                            "Đăng nhập",
+                                            style:
+                                                TextStyle(
+                                                  fontWeight:
+                                                      FontWeight.bold,
+                                                  color:
+                                                      Colors.white,
+                                                ),
+                                          ),
                                     ),
-                                  ),
-                                  onPressed: handleLogin,
-                                  child: const Text(
-                                    "Đăng nhập",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
                               ),
                             ],
                           ),
@@ -297,3 +344,4 @@ class _TrangDangNhapState extends State<TrangDangNhap> {
     );
   }
 }
+

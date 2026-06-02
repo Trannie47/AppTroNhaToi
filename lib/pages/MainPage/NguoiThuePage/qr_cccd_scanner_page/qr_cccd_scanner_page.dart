@@ -1,3 +1,4 @@
+import 'package:AppTroNhaToi/modelviews/MainPage/NguoiThuePage/qr_cccd_scanner_page/qr_cccd_scanner_page.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
@@ -9,7 +10,26 @@ class QRCCCDScannerPage extends StatefulWidget {
 }
 
 class _QRCCCDScannerPageState extends State<QRCCCDScannerPage> {
-  bool scanned = false;
+  late QRCCCDScannerPageViewModel vm;
+
+  @override
+  void initState() {
+    super.initState();
+
+    vm = QRCCCDScannerPageViewModel();
+
+    vm.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    vm.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +40,8 @@ class _QRCCCDScannerPageState extends State<QRCCCDScannerPage> {
           // CAMERA
           MobileScanner(
             onDetect: (capture) {
-              if (scanned) return;
-              scanned = true;
+              if (vm.scanned) return;
+              vm.scanned = true;
 
               final code = capture.barcodes.first.rawValue;
               if (code == null) return;

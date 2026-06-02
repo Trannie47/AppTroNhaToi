@@ -1,8 +1,5 @@
-import 'package:AppTroNhaToi/pages/MainPage/KhacPage/khacPage.dart';
-import 'package:AppTroNhaToi/pages/MainPage/PhongPage/phongPage.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/MainPage.dart';
 import 'package:flutter/material.dart';
-import 'HomePage/HomePage.dart';
-import 'NguoiThuePage/nguoithuePage.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -12,27 +9,39 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  int currentIndex = 0;
+  late MainPageModelView vm;
 
-  final List<Widget> pages = [
-    const HomePage(),
-    const PhongPage(),
-    const NguoiThuePage(),
-    const KhacPage(),
-  ];
+  @override
+  void initState() {
+    super.initState();
+
+    vm = MainPageModelView();
+
+    vm.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    vm.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: pages[currentIndex],
+      body: vm.pages[vm.currentIndex],
 
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex,
+        currentIndex: vm.currentIndex,
         selectedItemColor: const Color(0xFF2D7A3A),
         unselectedItemColor: Colors.grey,
         onTap: (index) {
           setState(() {
-            currentIndex = index;
+            vm.currentIndex = index;
           });
         },
         items: const [

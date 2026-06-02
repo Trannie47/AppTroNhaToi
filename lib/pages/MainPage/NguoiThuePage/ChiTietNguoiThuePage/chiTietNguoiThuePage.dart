@@ -3,6 +3,7 @@ import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/models/phuong_tien.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/view_model/nguoi_thue_phong.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/NguoiThuePage/ChiTietNguoiThuePage/chiTietNguoiThuePage.dart';
 import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/NguoiThueForm/NguoiThueForm.dart';
 import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/PhuongTienNguoiThuePage/PhuongTienNguoiThuePage.dart';
 import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/hoaDonGuiXePage/hoaDonGuiXePage.dart';
@@ -31,35 +32,38 @@ class ChiTietNguoiThuePage extends StatefulWidget {
 }
 
 class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
-  List<PhuongTien> dsXe = [];
-
-  List<HoaDonGuiXe> dsHoaDon = [];
-  late final NguoiThue nguoiThue;
-  late final List<Phong> dsPhong;
+   late ChiTietNguoiThuePageViewModel vm;
 
   @override
   void initState() {
     super.initState();
 
-    setState(() {
-      nguoiThue = widget.nguoiThue;
-      dsPhong = widget.dsPhong;
+    vm = ChiTietNguoiThuePageViewModel(
+      nguoiThue: widget.nguoiThue,
+      dsPhong: widget.dsPhong,
+    );
+
+    vm.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
     });
   }
 
-  void Test() {
-    print("Hello");
+ @override
+  void dispose() {
+    vm.dispose();
+    super.dispose();
   }
 
   void openPhuongTienPage() {
     Navigator.push(
       context,
-
       MaterialPageRoute(
         builder: (context) {
           return PhuongTienNguoiThuePage(
-            nguoiThue: nguoiThue,
-            dsPhuongTien: dsXe,
+            nguoiThue: vm.nguoiThue,
+            dsPhuongTien: vm.dsXe,
           );
         },
       ),
@@ -198,7 +202,7 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                       alignment: Alignment.center,
 
                       child: Text(
-                        vietTat(nguoiThue.hoTen ?? ""),
+                        vietTat(vm.nguoiThue.hoTen ?? ""),
 
                         style: const TextStyle(
                           color: Colors.white,
@@ -211,7 +215,7 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                     const SizedBox(height: 12),
 
                     Text(
-                      nguoiThue.hoTen ?? "",
+                      vm.nguoiThue.hoTen ?? "",
 
                       style: const TextStyle(
                         fontSize: 24,
@@ -301,17 +305,17 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                       children: [
                         _itemInfo(
                           "Số điện thoại",
-                          nguoiThue.sdt ?? "",
+                          vm.nguoiThue.sdt ?? "",
                           isBlue: true,
                         ),
 
-                        _itemInfo("CCCD", nguoiThue.cccd ?? ""),
+                        _itemInfo("CCCD", vm.nguoiThue.cccd ?? ""),
 
-                        _itemInfo("Ngày sinh", formatDate(nguoiThue.ngaySinh)),
+                        _itemInfo("Ngày sinh", formatDate(vm.nguoiThue.ngaySinh)),
 
-                        _itemInfo("Quê quán", nguoiThue.queQuan ?? ""),
+                        _itemInfo("Quê quán", vm.nguoiThue.queQuan ?? ""),
 
-                        _itemInfo("Ghi chú", nguoiThue.ghiChu ?? ""),
+                        _itemInfo("Ghi chú", vm.nguoiThue.ghiChu ?? ""),
                       ],
                     ),
                   ),
@@ -319,12 +323,12 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                   const SizedBox(height: 18),
 
                   _section(
-                    title: "Phòng đang thuê (${dsPhong.length})",
+                    title: "Phòng đang thuê (${vm.dsPhong.length})",
 
                     action: "Xem thêm",
 
                     child: Column(
-                      children: dsPhong.asMap().entries.map((e) {
+                      children: vm.dsPhong.asMap().entries.map((e) {
                         final phong = e.value;
 
                         return Column(
@@ -337,7 +341,7 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                               "",
                             ),
 
-                            if (e.key != dsPhong.length - 1)
+                            if (e.key != vm.dsPhong.length - 1)
                               const Divider(height: 1),
                           ],
                         );

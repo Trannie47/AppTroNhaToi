@@ -1,5 +1,7 @@
+
 import 'package:AppTroNhaToi/models/loaiphong.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/HomePage/FormPhong/FormPhong.dart';
 import 'package:AppTroNhaToi/pages/MainPage/HomePage/FormLoaiPhong/FormLoaiPhong.dart';
 import 'package:AppTroNhaToi/widget/itemLoaiPhongSelectBox.dart';
 import 'package:flutter/material.dart';
@@ -14,63 +16,30 @@ class FormPhong extends StatefulWidget {
 }
 
 class _FormPhongState extends State<FormPhong> {
-  late TextEditingController nameController;
-  late TextEditingController descController;
-
-  int selectedType = 0;
-  int selectedStatus = 0;
-
-  final List<LoaiPhong> roomTypes = [
-    LoaiPhong(
-      maLoaiPhong: 1,
-      tenLoaiPhong: "Tiêu chuẩn",
-      dienTich: 18,
-      isMayLanh: false,
-      soNguoiToiDa: 2,
-      giaTien: 3200000,
-    ),
-    LoaiPhong(
-      maLoaiPhong: 2,
-      tenLoaiPhong: "VIP",
-      dienTich: 25,
-      isMayLanh: true,
-      soNguoiToiDa: 2,
-      giaTien: 4500000,
-    ),
-  ];
+  late FormPhongViewModel vm;
 
   @override
   void initState() {
     super.initState();
 
-    nameController = TextEditingController(text: widget.room?.tenPhong ?? "");
+    vm = FormPhongViewModel(widget.room);
 
-    descController = TextEditingController(text: widget.room?.moTa ?? "");
-
-    selectedStatus = widget.room?.trangThai ?? 0;
-    selectedType = widget.room?.maLoaiPhong ?? 0;
+    vm.addListener(() {
+      if (mounted) setState(() {});
+    });
   }
 
   @override
   void dispose() {
-    nameController.dispose();
-    descController.dispose();
+    vm.dispose();
     super.dispose();
   }
 
   void saveRoom() {
-    Phong room = Phong(
-      phongID: widget.room?.phongID ?? 0,
-      tenPhong: nameController.text,
-      trangThai: selectedStatus,
-      moTa: descController.text,
-      maLoaiPhong: selectedType,
-    );
-
+    final room = vm.buildPhong(widget.room?.phongID);
     Navigator.pop(context, room);
   }
 
-  //Tiến đến trang tạo mới loại phòng nếu có thêm mới thì sẽ cập nhật lại danh sách loại phòng
   void goToFormRoomType() async {
     final result = await Navigator.push(
       context,
@@ -78,10 +47,7 @@ class _FormPhongState extends State<FormPhong> {
     );
 
     if (result != null && result is LoaiPhong) {
-      setState(() {
-        roomTypes.add(result);
-        selectedType = roomTypes.length - 1;
-      });
+      vm.addRoomType(result);
     }
   }
 
@@ -91,14 +57,13 @@ class _FormPhongState extends State<FormPhong> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF6F7F8),
+
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.chevron_left, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           isEdit ? "Chỉnh sửa phòng" : "Thêm phòng trọ",
@@ -147,11 +112,9 @@ class _FormPhongState extends State<FormPhong> {
                     "Tên phòng",
                     style: TextStyle(fontWeight: FontWeight.w500),
                   ),
-
                   const SizedBox(height: 10),
-
                   TextField(
-                    controller: nameController,
+                    controller: vm.nameController,
                     decoration: InputDecoration(
                       hintText: "VD: 101, A01, Phòng 1...",
                       filled: true,
@@ -162,21 +125,17 @@ class _FormPhongState extends State<FormPhong> {
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 10),
-
                   const Text(
                     "Tên dùng để hiển thị và tìm kiếm phòng",
                     style: TextStyle(color: Colors.grey, fontSize: 12),
                   ),
-
                   const SizedBox(height: 20),
 
                   const Text(
                     "Trạng thái",
                     style: TextStyle(fontWeight: FontWeight.w500),
                   ),
-
                   const SizedBox(height: 10),
 
                   Row(
@@ -185,42 +144,26 @@ class _FormPhongState extends State<FormPhong> {
                         child: _statusItem(
                           title: "Còn trống",
                           color: Colors.green,
-                          selected: selectedStatus == 0,
-                          onTap: () {
-                            setState(() {
-                              selectedStatus = 0;
-                            });
-                          },
+                          selected: vm.selectedStatus == 0,
+                          onTap: () => vm.selectStatus(0),
                         ),
                       ),
-
                       const SizedBox(width: 10),
-
                       Expanded(
                         child: _statusItem(
                           title: "Đang thuê",
                           color: Colors.orange,
-                          selected: selectedStatus == 1,
-                          onTap: () {
-                            setState(() {
-                              selectedStatus = 1;
-                            });
-                          },
+                          selected: vm.selectedStatus == 1,
+                          onTap: () => vm.selectStatus(1),
                         ),
                       ),
-
                       const SizedBox(width: 10),
-
                       Expanded(
                         child: _statusItem(
                           title: "Đang sửa chữa",
                           color: Colors.red,
-                          selected: selectedStatus == 2,
-                          onTap: () {
-                            setState(() {
-                              selectedStatus = 2;
-                            });
-                          },
+                          selected: vm.selectedStatus == 2,
+                          onTap: () => vm.selectStatus(2),
                         ),
                       ),
                     ],
@@ -236,16 +179,12 @@ class _FormPhongState extends State<FormPhong> {
               title: "Loại phòng",
               child: Column(
                 children: [
-                  ...List.generate(roomTypes.length, (index) {
-                    final item = roomTypes[index];
-                    bool selected = selectedType == index;
+                  ...List.generate(vm.roomTypes.length, (index) {
+                    final item = vm.roomTypes[index];
+                    bool selected = vm.selectedType == index;
 
                     return GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          selectedType = index;
-                        });
-                      },
+                      onTap: () => vm.selectType(index),
                       child: itemLoaiPhongSelectBox(item, selected),
                     );
                   }),
@@ -288,7 +227,7 @@ class _FormPhongState extends State<FormPhong> {
             _section(
               title: "Mô tả",
               child: TextField(
-                controller: descController,
+                controller: vm.descController,
                 maxLines: 5,
                 decoration: InputDecoration(
                   filled: true,

@@ -1,6 +1,5 @@
 import 'package:AppTroNhaToi/models/hop_dong.dart';
 import 'package:AppTroNhaToi/pages/MainPage/KhacPage/taoHopDongForm/taoHopDongForm.dart';
-import 'package:AppTroNhaToi/widget/itemNTHopDong.dart';
 import 'package:flutter/material.dart';
 
 class HopDongPage extends StatefulWidget {
@@ -9,14 +8,11 @@ class HopDongPage extends StatefulWidget {
 
   @override
   State<HopDongPage> createState() => _HopDongPageState();
-
-
 }
 
 
 class _HopDongPageState extends State<HopDongPage> {
   String boLoc = "TAT_CA";
-  String tuKhoa = "";
 
   String taoMaHopDong(
       DateTime ngayKy,
@@ -121,13 +117,6 @@ class _HopDongPageState extends State<HopDongPage> {
         danhSachHienThi = danhSachHopDong;
     }
 
-    if (tuKhoa.isNotEmpty) {
-      danhSachHienThi = danhSachHienThi.where((hd) {
-        return hd.phongID
-            .toString()
-            .contains(tuKhoa);
-      }).toList();
-    }
 
 
     int tongHopDong = danhSachHopDong.length;
@@ -170,21 +159,16 @@ class _HopDongPageState extends State<HopDongPage> {
               ),
               child: Row(
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const Icon(
-                        Icons.arrow_back_ios_new,
-                        size: 18,
-                      ),
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Icon(
+                      Icons.arrow_back_ios_new,
+                      size: 18,
                     ),
                   ),
 
@@ -247,11 +231,6 @@ class _HopDongPageState extends State<HopDongPage> {
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: TextField(
-                  onChanged: (value) {
-                    setState(() {
-                      tuKhoa = value.toLowerCase();
-                    });
-                  },
                   decoration: InputDecoration(
                     hintText: "Tìm tên người thuê, phòng...",
                     hintStyle: TextStyle(
@@ -266,6 +245,7 @@ class _HopDongPageState extends State<HopDongPage> {
                 ),
               ),
             ),
+
             const SizedBox(height: 12),
 
             // FILTER
@@ -352,12 +332,8 @@ class _HopDongPageState extends State<HopDongPage> {
                 ),
                 itemCount: danhSachHienThi.length,
                 itemBuilder: (context, index) {
-
-                  return ItemNTHopDong(
-                    hopDong: danhSachHienThi[index],
-                    onTap: () {
-
-                    },
+                  return _buildHopDongCard(
+                    danhSachHienThi[index],
                   );
                 },
               ),
@@ -394,4 +370,114 @@ class _HopDongPageState extends State<HopDongPage> {
     );
   }
 
+  Widget _buildHopDongCard(HopDong hopDong) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 52,
+            height: 52,
+            decoration: const BoxDecoration(
+              color: Color(0xffE8EEF9),
+              shape: BoxShape.circle,
+            ),
+            alignment: Alignment.center,
+            child: const Text(
+              "NA",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: Color(0xff3467EB),
+              ),
+            ),
+          ),
+
+          const SizedBox(width: 14),
+
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Nguyễn Văn An",
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+
+                const SizedBox(height: 4),
+
+                Text(
+                 // "MÃ HĐ: ${taoMaHopDong(DateTime.now(), 1)}",
+                  "MÃ HĐ: ${hopDong.hopDongID}",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+
+                const SizedBox(height: 8),
+
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xffE8F5E9),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        "Phòng ${hopDong.phongID}",
+
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Color(0xff2E7D32),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(width: 10),
+
+                    Container(
+                      width: 1,
+                      height: 14,
+                      color: Color(0xffD9D9D9),
+                    ),
+
+                    const SizedBox(width: 10),
+
+                    Text(
+                      "${hopDong.giaPhongThucTe?.toStringAsFixed(0)}đ/tháng",
+
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xff2E7D32),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          const Icon(
+            Icons.chevron_right,
+            color: Colors.grey,
+          ),
+        ],
+      ),
+    );
+  }
 }

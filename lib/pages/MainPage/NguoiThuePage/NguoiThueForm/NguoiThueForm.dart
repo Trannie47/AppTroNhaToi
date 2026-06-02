@@ -1,4 +1,5 @@
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/NguoiThuePage/NguoiThueForm/NguoiThueForm.dart';
 import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/qr_cccd_scanner_page/qr_cccd_scanner_page.dart';
 import 'package:flutter/material.dart';
 
@@ -11,75 +12,27 @@ class NguoiThueForm extends StatefulWidget {
 }
 
 class _NguoiThueFormState extends State<NguoiThueForm> {
-  final TextEditingController txtSearch = TextEditingController();
+  late NguoiThueFormViewModel vm;
 
-  final TextEditingController txtHoTen = TextEditingController();
-
-  final TextEditingController txtSDT = TextEditingController();
-
-  final TextEditingController txtCCCD = TextEditingController();
-
-  final TextEditingController txtNgaySinh = TextEditingController();
-
-  final TextEditingController txtQueQuan = TextEditingController();
-
-  final TextEditingController txtPhong = TextEditingController();
-
-  final TextEditingController txtVaiTro = TextEditingController();
-
-  final TextEditingController txtGhiChu = TextEditingController();
-
-  bool? gioiTinh;
-  late NguoiThue nguoiThue;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    setState(() {
-      if (widget.nguoiThue != null) {
-        nguoiThue = widget.nguoiThue!;
-        txtHoTen.text = nguoiThue.hoTen ?? "";
-        txtSDT.text = nguoiThue.sdt ?? "";
-        txtCCCD.text = nguoiThue.cccd ?? "";
-        txtNgaySinh.text =
-            "${nguoiThue.ngaySinh?.day.toString().padLeft(2, '0')}/${nguoiThue.ngaySinh?.month.toString().padLeft(2, '0')}/${nguoiThue.ngaySinh?.year}";
-        txtQueQuan.text = nguoiThue.queQuan ?? "";
-        gioiTinh = nguoiThue.gioiTinh;
-        txtGhiChu.text = nguoiThue.ghiChu ?? "";
+
+    vm = NguoiThueFormViewModel(nguoiThueInput:widget.nguoiThue);
+
+    vm.addListener(() {
+      if (mounted) {
+        setState(() {});
       }
     });
   }
 
-  // Thêm hàm parse chuỗi QR CCCD
-  void _parseCCCDQR(String raw) {
-    // Format: CCCD||HoTen|NgaySinh|GioiTinh|QueQuan|NgayCap
-    // VD: 079201018856||Lê Hoàng Tuấn|21072001|Nam|90A Cô Giang...|29072022
-    final parts = raw.split('|');
-
-    if (parts.length < 6) return;
-
-    setState(() {
-      // CCCD - phần tử đầu tiên
-      txtCCCD.text = parts[0].trim();
-
-      // Họ tên - index 2 (sau dấu ||)
-      txtHoTen.text = parts[2].trim();
-
-      // Ngày sinh - index 3 (format: ddMMyyyy → dd/MM/yyyy)
-      final dob = parts[3].trim();
-      if (dob.length == 8) {
-        txtNgaySinh.text =
-            "${dob.substring(0, 2)}/${dob.substring(2, 4)}/${dob.substring(4, 8)}";
-      }
-
-      // Giới tính - index 4
-      final gender = parts[4].trim().toLowerCase();
-      gioiTinh = gender == 'nam' ? true : false;
-
-      // Quê quán - index 5
-      txtQueQuan.text = parts[5].trim();
-    });
+  @override
+  void dispose() {
+    vm.dispose();
+    super.dispose();
   }
+  
 
   //Function mở trang quét QR code CCCD
   Future<void> _openQRScanner() async {
@@ -91,7 +44,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
     );
 
     if (result != null && result.isNotEmpty) {
-      _parseCCCDQR(result);
+      vm.parseCCCDQR(result);
     }
   }
 
@@ -272,13 +225,13 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                   _input(
                     title: "Họ và tên",
                     hint: "Nhập họ và tên đầy đủ",
-                    controller: txtHoTen,
+                    controller: vm.txtHoTen,
                   ),
 
                   _input(
                     title: "Số điện thoại",
                     hint: "VD: 0901 234 567",
-                    controller: txtSDT,
+                    controller: vm.txtSDT,
                     keyboardType: TextInputType.phone,
                     subTitle: "Mã QR CCCD không chứa SĐT, vui lòng tự nhập",
                   ),
@@ -286,7 +239,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                   _input(
                     title: "Số CCCD ( Căn cước công dân)",
                     hint: "Nhập số CCCD/CMND",
-                    controller: txtCCCD,
+                    controller: vm.txtCCCD,
                     keyboardType: TextInputType.number,
                   ),
 
@@ -313,7 +266,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                               const SizedBox(height: 8),
 
                               TextField(
-                                controller: txtNgaySinh,
+                                controller: vm.txtNgaySinh,
 
                                 keyboardType: TextInputType.datetime,
 
@@ -338,8 +291,8 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                                     newText += text[i];
                                   }
 
-                                  if (newText != txtNgaySinh.text) {
-                                    txtNgaySinh.value = TextEditingValue(
+                                  if (newText != vm.txtNgaySinh.text) {
+                                    vm.txtNgaySinh.value = TextEditingValue(
                                       text: newText,
 
                                       selection: TextSelection.collapsed(
@@ -374,7 +327,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                                         lastDate: DateTime.now(),
                                       );
                                       if (picked != null) {
-                                        txtNgaySinh.text =
+                                        vm.txtNgaySinh.text =
                                             "${picked.day.toString().padLeft(2, '0')}/"
                                             "${picked.month.toString().padLeft(2, '0')}/"
                                             "${picked.year}";
@@ -441,7 +394,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
 
                                 child: DropdownButtonHideUnderline(
                                   child: DropdownButton<bool>(
-                                    value: gioiTinh,
+                                    value: vm.gioiTinh,
 
                                     isExpanded: true,
 
@@ -468,7 +421,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
 
                                     onChanged: (value) {
                                       setState(() {
-                                        gioiTinh = value;
+                                        vm.gioiTinh = value;
                                       });
                                     },
                                   ),
@@ -484,7 +437,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                   _input(
                     title: "Quê quán",
                     hint: "Tỉnh / Thành phố",
-                    controller: txtQueQuan,
+                    controller: vm.txtQueQuan,
                   ),
                 ],
               ),
@@ -501,8 +454,8 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                   const SizedBox(height: 12),
 
                   TextField(
-                    controller: txtGhiChu,
-                    maxLines: 5,
+                    controller: vm.txtGhiChu,
+                    maxLines: 2,
 
                     decoration: InputDecoration(
                       hintText: "",

@@ -1,348 +1,216 @@
-``
-`dart
+import 'package:AppTroNhaToi/pages/MainPage/KhacPage/hopDongPage/hopDongPage.dart';
 import 'package:flutter/material.dart';
 
-class TaoHopDongPage extends StatefulWidget {
-const TaoHopDongPage({super.key});
+class KhacPage extends StatelessWidget {
+  const KhacPage({super.key});
 
-@override
-State<TaoHopDongPage> createState() => _TaoHopDongPageState();
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF4F4F4),
+      body: Column(
+        children: [
+          Container(
+            color: Colors.white,
+            child: SafeArea(
+              bottom: false,
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.fromLTRB(
+                  16,
+                  12,
+                  16,
+                  20,
+                ),
+                child: const Text(
+                  "Khác",
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: ListView(
+                children: [
+                  const SizedBox(height: 0),
+
+                  _buildItem(
+                    icon: Icons.description_outlined,
+                    iconColor: Colors.indigo,
+                    iconBg: const Color(0xFFEDEBFF),
+                    title: "Hợp đồng",
+                    subtitle:
+                    "Quản lý hợp đồng thuê phòng,\ntheo dõi ngày hết hạn",
+                    status: "1 sắp hết hạn",
+                    statusColor: const Color(0xFFFFA726),
+
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => HopDongPage(),
+                        ),
+                      );
+                    },
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  _buildItem(
+                    icon: Icons.desktop_windows_outlined,
+                    iconColor: Colors.green,
+                    iconBg: const Color(0xFFE7F5EA),
+                    title: "Thiết bị",
+                    subtitle:
+                    "Quản lý thiết bị, theo dõi sửa\nchữa, nhập kho",
+                    status: "1 đang hỏng",
+                    statusColor: Colors.red,
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  _buildItem(
+                    icon: Icons.inventory_2_outlined,
+                    iconColor: Colors.orange,
+                    iconBg: const Color(0xFFFFF1D6),
+                    title: "Tạp hóa",
+                    subtitle:
+                    "Quản lý hàng hóa, lập hóa đơn,\ntheo dõi công nợ",
+                    status: "470,000đ công nợ",
+                    statusColor: Colors.red,
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  _buildItem(
+                    icon: Icons.bar_chart,
+                    iconColor: Colors.deepPurple,
+                    iconBg: const Color(0xFFF0E5FF),
+                    title: "Thống kê",
+                    subtitle:
+                    "Báo cáo doanh thu, chi phí,\nlợi nhuận theo tháng",
+                    status: "Tháng 4: 27.5 tr",
+                    statusColor: Colors.deepPurple,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildItem({
+    required IconData icon,
+    required Color iconColor,
+    required Color iconBg,
+    required String title,
+    required String subtitle,
+    required String status,
+    required Color statusColor,
+    VoidCallback? onTap,
+  }) {
+    return GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 14,
+            vertical: 10,
+          ),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(18),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: iconBg,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  icon,
+                  color: iconColor,
+                  size: 22,
+                ),
+              ),
+
+              const SizedBox(width: 15),
+
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+
+                      ),
+                    ),
+
+                    const SizedBox(height: 4),
+
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade600,
+                        height: 1.3,
+                      ),
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: statusColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        status,
+                        style: TextStyle(
+                          color: statusColor,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF5F5F5),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: const Icon(
+                  Icons.chevron_right,
+                  color: Colors.grey,
+                  size: 20,
+                ),
+              ),
+            ],
+          ),
+        ),
+    );
+  }
 }
-
-class _TaoHopDongPageState extends State<TaoHopDongPage> {
-final txtPhong = TextEditingController(text: "Phòng 101");
-final txtNguoiThue = TextEditingController(text: "Trần Văn Bảo");
-final txtNgayKy = TextEditingController(text: "20/05/2026");
-final txtNgayHetHan = TextEditingController(text: "01/01/2028");
-
-final txtTongGiaPhong = TextEditingController(text: "4,000,000");
-final txtGiaHopDong = TextEditingController(text: "2,500,000");
-final txtGiaDeXuat = TextEditingController(text: "1,500,000");
-
-final txtTienCoc = TextEditingController(text: "2,500,000");
-final txtGhiChu = TextEditingController();
-
-@override
-Widget build(BuildContext context) {
-return Scaffold(
-backgroundColor: const Color(0xffF3F3F3),
-
-appBar: AppBar(
-backgroundColor: Colors.white,
-elevation: 0,
-scrolledUnderElevation: 0,
-
-leading: IconButton(
-onPressed: () {
-Navigator.pop(context);
-},
-icon: const Icon(
-Icons.arrow_back_ios_new_rounded,
-color: Colors.black,
-size: 18,
-),
-),
-
-title: const Text(
-"Tạo hợp đồng",
-style: TextStyle(
-color: Colors.black,
-fontWeight: FontWeight.w700,
-fontSize: 22,
-),
-),
-),
-
-body: Padding(
-padding: const EdgeInsets.all(12),
-
-child: Column(
-children: [
-Expanded(
-child: SingleChildScrollView(
-child: Column(
-children: [
-/// THÔNG TIN THUÊ
-_section(
-title: "Thông tin thuê",
-child: Column(
-children: [
-_input(
-"Phòng thuê",
-txtPhong,
-),
-
-_input(
-"Người thuê chính",
-txtNguoiThue,
-),
-
-Row(
-children: [
-Expanded(
-child: _dateInput(
-"Ngày ký",
-txtNgayKy,
-),
-),
-
-const SizedBox(width: 10),
-
-Expanded(
-child: _dateInput(
-"Ngày hết hạn",
-txtNgayHetHan,
-),
-),
-],
-),
-],
-),
-),
-
-const SizedBox(height: 12),
-
-/// GIÁ THUÊ
-_section(
-title: "Thiết lập giá thuê",
-child: Column(
-children: [
-_moneyInput(
-"Tổng giá phòng",
-txtTongGiaPhong,
-),
-
-_moneyInput(
-"Giá thuê của hợp đồng",
-txtGiaHopDong,
-isGreen: true,
-),
-
-_moneyInput(
-"Giá thuê đề xuất cho người đang ở",
-txtGiaDeXuat,
-),
-],
-),
-),
-
-const SizedBox(height: 12),
-
-/// CỌC & GHI CHÚ
-_section(
-title: "Cọc & ghi chú",
-child: Column(
-children: [
-_moneyInput(
-"Tiền cọc",
-txtTienCoc,
-),
-
-const SizedBox(height: 12),
-
-const Align(
-alignment: Alignment.centerLeft,
-child: Text(
-"Ghi chú",
-style: TextStyle(
-fontSize: 12,
-fontWeight: FontWeight.w500,
-),
-),
-),
-
-const SizedBox(height: 6),
-
-TextField(
-controller: txtGhiChu,
-maxLines: 4,
-decoration: InputDecoration(
-filled: true,
-fillColor: const Color(0xffF4F4F4),
-
-border: OutlineInputBorder(
-borderRadius:
-BorderRadius.circular(10),
-borderSide: BorderSide.none,
-),
-),
-),
-],
-),
-),
-],
-),
-),
-),
-
-const SizedBox(height: 12),
-
-SizedBox(
-width: double.infinity,
-height: 52,
-
-child: ElevatedButton(
-style: ElevatedButton.styleFrom(
-backgroundColor: const Color(0xff2E7D32),
-shape: RoundedRectangleBorder(
-borderRadius: BorderRadius.circular(12),
-),
-),
-onPressed: () {},
-child: const Text(
-"Tạo hợp đồng",
-style: TextStyle(
-color: Colors.white,
-fontWeight: FontWeight.w700,
-),
-),
-),
-),
-
-const SizedBox(height: 10),
-
-SizedBox(
-width: double.infinity,
-height: 52,
-
-child: ElevatedButton(
-style: ElevatedButton.styleFrom(
-backgroundColor: const Color(0xffC62828),
-shape: RoundedRectangleBorder(
-borderRadius: BorderRadius.circular(12),
-),
-),
-onPressed: () {},
-child: const Text(
-"Hủy bỏ",
-style: TextStyle(
-color: Colors.white,
-fontWeight: FontWeight.w700,
-),
-),
-),
-),
-],
-),
-),
-);
-}
-
-Widget _section({
-required String title,
-required Widget child,
-}) {
-return Container(
-width: double.infinity,
-
-padding: const EdgeInsets.all(14),
-
-decoration: BoxDecoration(
-color: const Color(0xffECECEC),
-borderRadius: BorderRadius.circular(16),
-),
-
-child: Column(
-crossAxisAlignment: CrossAxisAlignment.start,
-children: [
-Text(
-title,
-style: const TextStyle(
-color: Color(0xff2E7D32),
-fontWeight: FontWeight.w700,
-fontSize: 12,
-),
-),
-
-const SizedBox(height: 10),
-
-child,
-],
-),
-);
-}
-
-Widget _input(
-String title,
-TextEditingController controller,
-) {
-return Padding(
-padding: const EdgeInsets.only(bottom: 12),
-
-child: Column(
-crossAxisAlignment: CrossAxisAlignment.start,
-
-children: [
-Text(title),
-
-const SizedBox(height: 6),
-
-TextField(
-controller: controller,
-
-decoration: InputDecoration(
-filled: true,
-fillColor: const Color(0xffF4F4F4),
-
-border: OutlineInputBorder(
-borderRadius: BorderRadius.circular(10),
-borderSide: BorderSide.none,
-),
-),
-),
-],
-),
-);
-}
-
-Widget _dateInput(
-String title,
-TextEditingController controller,
-) {
-return _input(title, controller);
-}
-
-Widget _moneyInput(
-String title,
-TextEditingController controller, {
-bool isGreen = false,
-}) {
-return Padding(
-padding: const EdgeInsets.only(bottom: 12),
-
-child: Column(
-crossAxisAlignment: CrossAxisAlignment.start,
-
-children: [
-Text(title),
-
-const SizedBox(height: 6),
-
-TextField(
-controller: controller,
-
-style: TextStyle(
-color: isGreen
-? const Color(0xff2E7D32)
-    : Colors.black,
-fontWeight: FontWeight.w600,
-),
-
-decoration: InputDecoration(
-suffixText: "đ/tháng",
-
-filled: true,
-fillColor: const Color(0xffF4F4F4),
-
-border: OutlineInputBorder(
-borderRadius: BorderRadius.circular(10),
-borderSide: BorderSide.none,
-),
-),
-),
-],
-),
-);
-}
-}
-

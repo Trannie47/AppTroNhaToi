@@ -1,16 +1,17 @@
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/models/phuong_tien.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/NguoiThuePage/PhuongTienForm/PhuongTienForm.dart';
 import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/hoaDonGuiXePage/hoaDonGuiXePage.dart';
 import 'package:flutter/material.dart';
 
-class ThemPhuongTienPage extends StatefulWidget {
+class PhuongTienForm extends StatefulWidget {
 
   final NguoiThue nguoiThue;
 
   final Function(PhuongTien)? onSave;
   final PhuongTien? phuongTienSua;
 
-  const ThemPhuongTienPage({
+  const PhuongTienForm({
     super.key,
     required this.nguoiThue,
     this.onSave,
@@ -18,54 +19,34 @@ class ThemPhuongTienPage extends StatefulWidget {
   });
 
   @override
-  State<ThemPhuongTienPage> createState() =>
-      _ThemPhuongTienPageState();
+  State<PhuongTienForm> createState() =>
+      _PhuongTienFormState();
 }
 
-class _ThemPhuongTienPageState
-    extends State<ThemPhuongTienPage> {
+class _PhuongTienFormState
+    extends State<PhuongTienForm> {
 
-  final txtHangXe =
-  TextEditingController();
-
-  final txtBienSo =
-  TextEditingController();
-
-  final txtMauSac =
-  TextEditingController();
-
-  final txtGiaGui =
-  TextEditingController();
-
-  int loaiXe = 0;
+  late PhuongTienFormViewModel vm;
 
   @override
   void initState() {
-
     super.initState();
 
-    if(widget.phuongTienSua != null) {
+    vm = PhuongTienFormViewModel(phuongTienSua:widget.phuongTienSua);
 
-      final xe =
-      widget.phuongTienSua!;
-
-      txtHangXe.text =
-          xe.hangXe ?? "";
-
-      txtBienSo.text =
-          xe.bienSo ?? "";
-
-      txtMauSac.text =
-          xe.mauSac ?? "";
-
-      txtGiaGui.text =
-          (xe.giaGui ?? 0)
-              .toString();
-
-      loaiXe =
-          xe.loaiXe ?? 0;
-    }
+    vm.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
+
+  @override
+  void dispose() {
+    vm.dispose();
+    super.dispose();
+  }
+  
   @override
   Widget build(BuildContext context) {
 
@@ -311,7 +292,7 @@ class _ThemPhuongTienPageState
 
                         _input(
                           controller:
-                          txtHangXe,
+                          vm.txtHangXe,
                           hint:
                           "VD: Honda, Yamaha...",
                         ),
@@ -324,7 +305,7 @@ class _ThemPhuongTienPageState
 
                         _input(
                           controller:
-                          txtBienSo,
+                          vm.txtBienSo,
                           hint:
                           "VD: 59B1-123.45",
                         ),
@@ -353,7 +334,7 @@ class _ThemPhuongTienPageState
 
                         _input(
                           controller:
-                          txtMauSac,
+                          vm.txtMauSac,
                           hint:
                           "VD: Đen, trắng...",
                         ),
@@ -475,7 +456,7 @@ class _ThemPhuongTienPageState
                                 TextField(
 
                                   controller:
-                                  txtGiaGui,
+                                  vm.txtGiaGui,
 
                                   keyboardType:
                                   TextInputType.number,
@@ -564,20 +545,20 @@ class _ThemPhuongTienPageState
                       .millisecondsSinceEpoch,
 
                   bienSo:
-                  txtBienSo.text,
+                  vm.txtBienSo.text,
 
                   hangXe:
-                  txtHangXe.text,
+                  vm.txtHangXe.text,
 
                   mauSac:
-                  txtMauSac.text,
+                  vm.txtMauSac.text,
 
                   giaGui:
                   double.tryParse(
-                    txtGiaGui.text,
+                    vm.txtGiaGui.text,
                   ),
 
-                  loaiXe: loaiXe,
+                  loaiXe: vm.loaiXe,
 
                   idnt:
                   widget.nguoiThue.idnt,
@@ -635,7 +616,7 @@ class _ThemPhuongTienPageState
   }) {
 
     final isSelected =
-        loaiXe == value;
+        vm.loaiXe == value;
 
     return Expanded(
 
@@ -645,7 +626,7 @@ class _ThemPhuongTienPageState
 
           setState(() {
 
-            loaiXe = value;
+            vm.loaiXe = value;
           });
         },
 

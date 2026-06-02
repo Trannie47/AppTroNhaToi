@@ -1,6 +1,8 @@
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/view_model/nguoi_thue_phong.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/NguoiThuePage/danhsachnguoithuepage/DanhSachNguoiThuePage.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/NguoiThuePage/danhsachphongthuepage/DanhSachPhongThuePage.dart';
 import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/ChiTietNguoiThuePage/chiTietNguoiThuePage.dart';
 import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/NguoiThueForm/NguoiThueForm.dart';
 import 'package:AppTroNhaToi/widget/itemNguoiThue.dart';
@@ -14,93 +16,26 @@ class DanhSachNguoiThuePage extends StatefulWidget {
 }
 
 class _DanhSachNguoiThuePageState extends State<DanhSachNguoiThuePage> {
-  final TextEditingController searchController = TextEditingController();
+   late  DanhSachNguoiThuePageViewModel vm;
+  
+   @override
+  void initState() {
+    super.initState();
 
-  final List<NguoiThuePhong> danhSachNguoiThue = [
-    NguoiThuePhong(
-      nguoiThue: NguoiThue(
-        idnt: 1,
-        hoTen: "Nguyễn Văn An",
-        cccd: "079001234567",
-        sdt: "0901 234 567",
-        ghiChu: "",
-      ),
+    vm = DanhSachNguoiThuePageViewModel();
 
-      phong: [
-        Phong(phongID: 1, tenPhong: "P101", trangThai: 1, maLoaiPhong: 1),
-      ],
-    ),
+    vm.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
 
-    NguoiThuePhong(
-      nguoiThue: NguoiThue(
-        idnt: 2,
-        hoTen: "Trần Văn Bảo",
-        cccd: "079001234890",
-        sdt: "0912 345 678",
-        ghiChu: "Ở ghép",
-      ),
-
-      phong: [
-        Phong(phongID: 1, tenPhong: "P101", trangThai: 1, maLoaiPhong: 1),
-      ],
-    ),
-
-    NguoiThuePhong(
-      nguoiThue: NguoiThue(
-        idnt: 3,
-        hoTen: "Nguyễn Văn B",
-        cccd: "079001234567",
-        sdt: "0901 234 567",
-        ghiChu: "",
-      ),
-
-      phong: [
-        Phong(phongID: 2, tenPhong: "P102", trangThai: 1, maLoaiPhong: 1),
-      ],
-    ),
-
-    NguoiThuePhong(
-      nguoiThue: NguoiThue(
-        idnt: 4,
-        hoTen: "Trần Văn C",
-        cccd: "079001234890",
-        sdt: "0912 345 678",
-        ghiChu: "Ở ghép",
-      ),
-
-      phong: [
-        Phong(phongID: 3, tenPhong: "P103", trangThai: 2, maLoaiPhong: 1),
-      ],
-    ),
-
-    NguoiThuePhong(
-      nguoiThue: NguoiThue(
-        idnt: 5,
-        hoTen: "Nguyễn Văn D",
-        cccd: "079001234567",
-        sdt: "0901 234 567",
-        ghiChu: "",
-      ),
-
-      phong: [
-        Phong(phongID: 3, tenPhong: "P103", trangThai: 1, maLoaiPhong: 2),
-      ],
-    ),
-
-    NguoiThuePhong(
-      nguoiThue: NguoiThue(
-        idnt: 6,
-        hoTen: "Trần Văn E",
-        cccd: "079001234890",
-        sdt: "0912 345 678",
-        ghiChu: "Ở ghép",
-      ),
-
-      phong: [
-        Phong(phongID: 3, tenPhong: "P103", trangThai: 1, maLoaiPhong: 1),
-      ],
-    ),
-  ];
+  @override
+  void dispose() {
+    vm.dispose();
+    super.dispose();
+  }
 
   /// THÊM NGƯỜI THUÊ
   void toThemNguoiThue() async {
@@ -116,19 +51,6 @@ class _DanhSachNguoiThuePageState extends State<DanhSachNguoiThuePage> {
 
   @override
   Widget build(BuildContext context) {
-    /// TỔNG
-    int tong = danhSachNguoiThue.length;
-
-    /// THUÊ CHÍNH
-    int thueChinh = danhSachNguoiThue
-        .where(
-          (e) =>
-              e.nguoiThue.ghiChu == null || e.nguoiThue.ghiChu!.trim().isEmpty,
-        )
-        .length;
-
-    /// Ở GHÉP
-    int oGhep = tong - thueChinh;
 
     return Scaffold(
       backgroundColor: const Color(0xffF5F6FA),
@@ -211,7 +133,7 @@ class _DanhSachNguoiThuePageState extends State<DanhSachNguoiThuePage> {
                 ),
 
                 child: TextField(
-                  controller: searchController,
+                  controller: vm.searchController,
 
                   decoration: InputDecoration(
                     border: InputBorder.none,
@@ -249,7 +171,7 @@ class _DanhSachNguoiThuePageState extends State<DanhSachNguoiThuePage> {
               child: Row(
                 children: [
                   _itemThongKe(
-                    title: "$tong",
+                    title: "${vm.tong}",
                     subTitle: "Tổng (chính + ghép)",
                     color: const Color(0xff222222),
                   ),
@@ -257,7 +179,7 @@ class _DanhSachNguoiThuePageState extends State<DanhSachNguoiThuePage> {
                   _divider(),
 
                   _itemThongKe(
-                    title: "$thueChinh",
+                    title: "${vm.thueChinh}",
                     subTitle: "Thuê chính",
                     color: const Color(0xff2D8B47),
                   ),
@@ -265,7 +187,7 @@ class _DanhSachNguoiThuePageState extends State<DanhSachNguoiThuePage> {
                   _divider(),
 
                   _itemThongKe(
-                    title: "$oGhep",
+                    title: "${vm.oGhep}",
                     subTitle: "Ở ghép",
                     color: const Color(0xff222222),
                   ),
@@ -280,13 +202,13 @@ class _DanhSachNguoiThuePageState extends State<DanhSachNguoiThuePage> {
               child: ListView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
 
-                itemCount: danhSachNguoiThue.length,
+                itemCount: vm.danhSachNguoiThue.length,
 
                 itemBuilder: (context, index) {
                   return ItemNguoiThue(
-                    nguoiThue: danhSachNguoiThue[index].nguoiThue,
+                    nguoiThue: vm.danhSachNguoiThue[index].nguoiThue,
 
-                    phong: danhSachNguoiThue[index].phong.first,
+                    phong: vm.danhSachNguoiThue[index].phong.first,
 
                     onTap: () {
                       Navigator.push(
@@ -294,9 +216,9 @@ class _DanhSachNguoiThuePageState extends State<DanhSachNguoiThuePage> {
 
                         MaterialPageRoute(
                           builder: (_) => ChiTietNguoiThuePage(
-                            nguoiThue: danhSachNguoiThue[index].nguoiThue,
+                            nguoiThue: vm.danhSachNguoiThue[index].nguoiThue,
 
-                            dsPhong: danhSachNguoiThue[index].phong,
+                            dsPhong: vm.danhSachNguoiThue[index].phong,
                           ),
                         ),
                       );

@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:AppTroNhaToi/models/loaiphong.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/HomePage/FormLoaiPhong/FormLoaiPhong.dart';
+import 'package:flutter/material.dart';
 
 class FormLoaiPhong extends StatefulWidget {
   final LoaiPhong? loaiPhong;
@@ -11,55 +12,27 @@ class FormLoaiPhong extends StatefulWidget {
 }
 
 class _FormLoaiPhongState extends State<FormLoaiPhong> {
-  late TextEditingController tenLoaiPhongController;
-  late TextEditingController dienTichController;
-  late TextEditingController soNguoiController;
-  late TextEditingController giaTienController;
-
-  bool isMayLanh = false;
+  late FormLoaiPhongViewModel vm;
 
   @override
   void initState() {
     super.initState();
 
-    tenLoaiPhongController = TextEditingController(
-      text: widget.loaiPhong?.tenLoaiPhong ?? "",
-    );
+    vm = FormLoaiPhongViewModel(widget.loaiPhong);
 
-    dienTichController = TextEditingController(
-      text: widget.loaiPhong?.dienTich.toString() ?? "",
-    );
-
-    soNguoiController = TextEditingController(
-      text: widget.loaiPhong?.soNguoiToiDa.toString() ?? "",
-    );
-
-    giaTienController = TextEditingController(
-      text: widget.loaiPhong?.giaTien.toStringAsFixed(0) ?? "",
-    );
-
-    isMayLanh = widget.loaiPhong?.isMayLanh ?? false;
+    vm.addListener(() {
+      if (mounted) setState(() {});
+    });
   }
 
   @override
   void dispose() {
-    tenLoaiPhongController.dispose();
-    dienTichController.dispose();
-    soNguoiController.dispose();
-    giaTienController.dispose();
+    vm.dispose();
     super.dispose();
   }
 
   void saveLoaiPhong() {
-    LoaiPhong loaiPhong = LoaiPhong(
-      tenLoaiPhong: tenLoaiPhongController.text,
-      dienTich: double.tryParse(dienTichController.text) ?? 0,
-      soNguoiToiDa: int.tryParse(soNguoiController.text) ?? 0,
-      giaTien: double.tryParse(giaTienController.text) ?? 0,
-      isMayLanh: isMayLanh,
-      maLoaiPhong: 12,
-    );
-
+    final loaiPhong = vm.buildLoaiPhong(12);
     Navigator.pop(context, loaiPhong);
   }
 
@@ -73,14 +46,10 @@ class _FormLoaiPhongState extends State<FormLoaiPhong> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-
         leading: IconButton(
           icon: const Icon(Icons.chevron_left, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
         ),
-
         title: Text(
           isEdit ? "Chỉnh sửa loại phòng" : "Thêm loại phòng",
           style: const TextStyle(
@@ -155,16 +124,13 @@ class _FormLoaiPhongState extends State<FormLoaiPhong> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  /// TÊN
                   const Text(
                     "Tên loại phòng",
                     style: TextStyle(fontWeight: FontWeight.w500),
                   ),
-
                   const SizedBox(height: 10),
-
                   TextField(
-                    controller: tenLoaiPhongController,
+                    controller: vm.tenLoaiPhongController,
                     decoration: InputDecoration(
                       hintText: "VD: Tiêu chuẩn, VIP, Phòng đôi...",
                       filled: true,
@@ -175,36 +141,30 @@ class _FormLoaiPhongState extends State<FormLoaiPhong> {
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 10),
-
                   const Text(
                     "Tên hiển thị khi chọn loại lúc thêm phòng",
                     style: TextStyle(color: Colors.grey, fontSize: 12),
                   ),
-
                   const SizedBox(height: 20),
 
-                  /// DIỆN TÍCH + SỐ NGƯỜI
                   Row(
                     children: [
                       Expanded(
                         child: _inputBox(
                           title: "Diện tích",
-                          controller: dienTichController,
-                          hintText: " VD : 2",
+                          controller: vm.dienTichController,
+                          hintText: "VD : 25",
                           suffix: "m²",
                         ),
                       ),
-
                       const SizedBox(width: 12),
-
                       Expanded(
                         child: _inputBox(
                           title: "Số người tối đa",
-                          controller: soNguoiController,
+                          controller: vm.soNguoiController,
                           suffix: "người",
-                          hintText: " VD : 5",
+                          hintText: "VD : 2",
                         ),
                       ),
                     ],
@@ -212,16 +172,13 @@ class _FormLoaiPhongState extends State<FormLoaiPhong> {
 
                   const SizedBox(height: 20),
 
-                  /// GIÁ TIỀN
                   _inputBox(
                     title: "Giá thuê",
-                    controller: giaTienController,
+                    controller: vm.giaTienController,
                     suffix: "đ/tháng",
-                    hintText: " VD : 2000000",
+                    hintText: "VD : 2000000",
                   ),
-
                   const SizedBox(height: 10),
-
                   const Text(
                     "Giá mặc định khi lập hợp đồng cho phòng thuộc loại này",
                     style: TextStyle(color: Colors.grey, fontSize: 12),
@@ -248,9 +205,7 @@ class _FormLoaiPhongState extends State<FormLoaiPhong> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-
                         SizedBox(height: 4),
-
                         Text(
                           "Phòng được trang bị máy lạnh sẵn",
                           style: TextStyle(color: Colors.grey),
@@ -258,25 +213,13 @@ class _FormLoaiPhongState extends State<FormLoaiPhong> {
                       ],
                     ),
                   ),
-
                   Switch(
-                    value: isMayLanh,
-                    // nền khi bật
+                    value: vm.isMayLanh,
                     activeTrackColor: const Color(0xFF2D7A3A),
-
-                    // nút tròn trắng
                     activeColor: Colors.white,
-
-                    // nền khi tắt
                     inactiveTrackColor: Colors.grey.shade300,
-
-                    // nút tròn trắng lúc tắt
                     inactiveThumbColor: Colors.white,
-                    onChanged: (value) {
-                      setState(() {
-                        isMayLanh = value;
-                      });
-                    },
+                    onChanged: vm.toggleMayLanh,
                   ),
                 ],
               ),
@@ -305,9 +248,7 @@ class _FormLoaiPhongState extends State<FormLoaiPhong> {
               fontWeight: FontWeight.bold,
             ),
           ),
-
           const SizedBox(height: 18),
-
           child,
         ],
       ),
@@ -324,19 +265,14 @@ class _FormLoaiPhongState extends State<FormLoaiPhong> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
-
         const SizedBox(height: 10),
-
         TextField(
           controller: controller,
           keyboardType: TextInputType.number,
           decoration: InputDecoration(
             filled: true,
             fillColor: const Color(0xFFF3F3F3),
-
             hintText: hintText,
-
-            // 👇 LUÔN HIỆN
             suffixIcon: Padding(
               padding: const EdgeInsets.only(right: 14),
               child: Center(
@@ -347,12 +283,10 @@ class _FormLoaiPhongState extends State<FormLoaiPhong> {
                 ),
               ),
             ),
-
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
               borderSide: BorderSide.none,
             ),
-
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
               vertical: 16,

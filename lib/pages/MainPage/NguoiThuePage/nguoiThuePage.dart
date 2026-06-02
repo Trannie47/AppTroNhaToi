@@ -1,6 +1,7 @@
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/view_model/nguoi_thue_phong.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/NguoiThuePage/nguoiThuePage.dart';
 import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/NguoiThueForm/NguoiThueForm.dart';
 import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/danhsachnguoithuepage/DanhSachNguoiThuePage.dart';
 import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/danhsachphongthuepage/DanhSachPhongThuePage.dart';
@@ -17,79 +18,26 @@ class NguoiThuePage extends StatefulWidget {
 }
 
 class _NguoiThuePageState extends State<NguoiThuePage> {
-  final List<NguoiThuePhong> danhSachNguoiThue = [
-    NguoiThuePhong(
-      nguoiThue: NguoiThue(
-        idnt: 1,
-        hoTen: "Nguyễn Văn An",
-        cccd: "079203001234",
-        sdt: "0909123456",
-        queQuan: "TP.HCM",
-        ghiChu: "",
-        ngaySinh: DateTime(2003, 5, 12),
-      ),
+  late NguoiThuePageViewModel vm;
 
-      //phongid 0	Trống  1	Đang thuê  2	Đang sửa
-      //         maLoaiPhong	1	Tiêu chuẩn  2	VIP  3	Studio
-      phong: [
-        Phong(phongID: 1, tenPhong: "P101", trangThai: 1, maLoaiPhong: 1),
+  @override
+  void initState() {
+    super.initState();
 
-        Phong(phongID: 2, tenPhong: "P102", trangThai: 2, maLoaiPhong: 2),
-        Phong(phongID: 5, tenPhong: "P105", trangThai: 0, maLoaiPhong: 3),
-        Phong(phongID: 4, tenPhong: "P104", trangThai: 3, maLoaiPhong: 1),
-      ],
-    ),
+    vm = NguoiThuePageViewModel();
 
-    NguoiThuePhong(
-      nguoiThue: NguoiThue(
-        idnt: 2,
-        hoTen: "Trần Thị B",
-        cccd: "079203001235",
-        sdt: "0909234567",
-        queQuan: "Hà Nội",
-        ghiChu: "Ở ghép",
-        ngaySinh: DateTime(2000, 8, 20),
-      ),
+    vm.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
 
-      phong: [
-        Phong(phongID: 1, tenPhong: "P102", trangThai: 1, maLoaiPhong: 1),
-      ],
-    ),
-
-    NguoiThuePhong(
-      nguoiThue: NguoiThue(
-        idnt: 3,
-        hoTen: "Lê Văn C",
-        cccd: "079203001236",
-        sdt: "0909345678",
-        queQuan: "Đà Nẵng",
-        ghiChu: "",
-        ngaySinh: DateTime(2001, 3, 15),
-      ),
-
-      phong: [
-        Phong(phongID: 2, tenPhong: "P102", trangThai: 1, maLoaiPhong: 1),
-      ],
-    ),
-
-    NguoiThuePhong(
-      nguoiThue: NguoiThue(
-        idnt: 4,
-        hoTen: "Lê Văn D",
-        cccd: "123456789966",
-        sdt: "0325896345",
-        queQuan: "Hà Tĩnh",
-        ghiChu: "",
-        ngaySinh: DateTime(2004, 8, 16),
-      ),
-
-      phong: [
-        Phong(phongID: 3, tenPhong: "P103", trangThai: 1, maLoaiPhong: 1),
-      ],
-    ),
-  ];
-
-  final TextEditingController searchController = TextEditingController();
+  @override
+  void dispose() {
+    vm.dispose();
+    super.dispose();
+  }
   void toChiTietNguoiThue(NguoiThuePhong nt) {
     Navigator.push(
       context,
@@ -173,7 +121,7 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
                 alignment: Alignment.center,
 
                 child: TextField(
-                  controller: searchController,
+                  controller: vm.searchController,
 
                   textAlignVertical: TextAlignVertical.center,
 
@@ -205,15 +153,15 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
               child: ListView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
 
-                itemCount: danhSachNguoiThue.length,
+                itemCount: vm.danhSachNguoiThue.length,
 
                 itemBuilder: (context, index) {
                   return ItemNguoiThue(
-                    nguoiThue: danhSachNguoiThue[index].nguoiThue,
+                    nguoiThue: vm.danhSachNguoiThue[index].nguoiThue,
 
-                    phong: danhSachNguoiThue[index].phong.first,
+                    phong: vm.danhSachNguoiThue[index].phong.first,
 
-                    onTap: () => toChiTietNguoiThue(danhSachNguoiThue[index]),
+                    onTap: () => toChiTietNguoiThue(vm.danhSachNguoiThue[index]),
                   );
                 },
               ),

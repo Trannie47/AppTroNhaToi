@@ -1,5 +1,6 @@
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/models/phuong_tien.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/NguoiThuePage/PhuongTienNguoiThuePage/PhuongTienNguoiThuePage.dart';
 import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/PhuongTienForm/PhuongTienForm.dart';
 import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/hoaDonGuiXePage/hoaDonGuiXePage.dart';
 import 'package:AppTroNhaToi/widget/itemPhuongTien.dart';
@@ -26,15 +27,26 @@ class PhuongTienNguoiThuePage extends StatefulWidget {
 class _PhuongTienNguoiThuePageState
     extends State<PhuongTienNguoiThuePage> {
 
-  late List<PhuongTien> dsPhuongTien;
+ late PhuongTienNguoiThuePageViewModel vm;
 
   @override
   void initState() {
     super.initState();
 
-    dsPhuongTien = widget.dsPhuongTien;
+    vm = PhuongTienNguoiThuePageViewModel(nguoiThue:widget.nguoiThue,dsPhuongTien:widget.dsPhuongTien);
+
+    vm.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
 
+  @override
+  void dispose() {
+    vm.dispose();
+    super.dispose();
+  }
   void themPhuongTien() {
 
     Navigator.push(
@@ -43,15 +55,15 @@ class _PhuongTienNguoiThuePageState
 
       MaterialPageRoute(
 
-        builder: (_) => ThemPhuongTienPage(
+        builder: (_) => PhuongTienForm(
 
-          nguoiThue: widget.nguoiThue,
+          nguoiThue: vm.nguoiThue,
 
           onSave: (xeMoi) {
 
             setState(() {
 
-              dsPhuongTien.add(xeMoi);
+              vm.dsPhuongTien.add(xeMoi);
 
             });
           },
@@ -69,7 +81,7 @@ class _PhuongTienNguoiThuePageState
       MaterialPageRoute(
         builder: (_) => HoaDonGuiXePage(
 
-          dsPhuongTien: dsPhuongTien,
+          dsPhuongTien: vm.dsPhuongTien,
 
         ),
       ),
@@ -248,66 +260,36 @@ class _PhuongTienNguoiThuePageState
                 children: [
 
                   /// XE MÁY
-                  if(dsPhuongTien
-                      .where(
-                        (e) =>
-                    e.loaiXe == 0,
-                  )
-                      .isNotEmpty)
+                  if(vm.xeMay.isNotEmpty)
 
                     _groupXe(
 
                       title: "Xe máy",
 
                       dsXe:
-                      dsPhuongTien
-                          .where(
-                            (e) =>
-                        e.loaiXe == 0,
-                      )
-                          .toList(),
+                      vm.xeMay,
                     ),
 
                   /// Ô TÔ
-                  if(dsPhuongTien
-                      .where(
-                        (e) =>
-                    e.loaiXe == 1,
-                  )
-                      .isNotEmpty)
+                  if(vm.oTo.isNotEmpty)
 
                     _groupXe(
 
                       title: "Xe ô tô",
 
                       dsXe:
-                      dsPhuongTien
-                          .where(
-                            (e) =>
-                        e.loaiXe == 1,
-                      )
-                          .toList(),
+                      vm.oTo
                     ),
 
                   /// XE ĐẠP
-                  if(dsPhuongTien
-                      .where(
-                        (e) =>
-                    e.loaiXe == 2,
-                  )
-                      .isNotEmpty)
+                  if(vm.xeDap.isNotEmpty)
 
                     _groupXe(
 
                       title: "Xe đạp",
 
                       dsXe:
-                      dsPhuongTien
-                          .where(
-                            (e) =>
-                        e.loaiXe == 2,
-                      )
-                          .toList(),
+                        vm.xeDap,
                     ),
                 ],
               ),
@@ -458,9 +440,7 @@ class _PhuongTienNguoiThuePageState
 
                   setState(() {
 
-                    dsPhuongTien.remove(
-                      xe,
-                    );
+                    vm.xoaPhuongTien(xe);
                   });
                 },
 
@@ -472,7 +452,7 @@ class _PhuongTienNguoiThuePageState
 
                     MaterialPageRoute(
 
-                      builder: (_) => ThemPhuongTienPage(
+                      builder: (_) => PhuongTienForm(
 
                         nguoiThue: widget.nguoiThue, phuongTienSua: xe,
                       ),
