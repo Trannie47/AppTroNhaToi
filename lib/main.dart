@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-import 'pages/page.dart';
+import 'views/page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

@@ -1,4 +1,4 @@
-import 'package:AppTroNhaToi/utils/date_formatter.dart';
+import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:flutter/material.dart';
 
 class HopDongFormModelView extends ChangeNotifier {

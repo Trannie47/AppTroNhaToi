@@ -1,7 +1,7 @@
 
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
-import 'package:AppTroNhaToi/models/view_model/nguoi_thue_phong.dart';
+import 'package:AppTroNhaToi/models/nguoi_thue_phong.dart';
 import 'package:flutter/material.dart';
 
 class DanhSachNguoiThuePageViewModel extends ChangeNotifier {

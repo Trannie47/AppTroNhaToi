@@ -1,11 +1,8 @@
 import 'dart:convert';
-
-import 'package:AppTroNhaToi/models/view_model/user_login.dart';
-import 'package:AppTroNhaToi/values/shareKey.dart';
+import 'package:AppTroNhaToi/models/user_login.dart';
+import 'package:AppTroNhaToi/core/values/shareKey.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../MainPage/MainPage.dart';
 
 class TrangDangNhapModelView extends ChangeNotifier {
   bool isHidden = true;

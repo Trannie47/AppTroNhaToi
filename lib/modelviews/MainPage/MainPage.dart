@@ -1,7 +1,7 @@
-import 'package:AppTroNhaToi/pages/MainPage/HomePage/HomePage.dart';
-import 'package:AppTroNhaToi/pages/MainPage/KhacPage/KhacPage.dart';
-import 'package:AppTroNhaToi/pages/MainPage/NguoiThuePage/nguoithuePage.dart';
-import 'package:AppTroNhaToi/pages/MainPage/PhongPage/phongPage.dart';
+import 'package:AppTroNhaToi/views/MainPage/HomePage/HomePage.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/KhacPage.dart';
+import 'package:AppTroNhaToi/views/MainPage/NguoiThuePage/nguoithuePage.dart';
+import 'package:AppTroNhaToi/views/MainPage/PhongPage/phongPage.dart';
 
 import 'package:flutter/material.dart';
 
