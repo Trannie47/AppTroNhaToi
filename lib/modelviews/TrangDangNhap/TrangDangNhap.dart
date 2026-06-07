@@ -46,40 +46,40 @@ class TrangDangNhapModelView extends ChangeNotifier {
     return false;
   }
 
-  if (remember) {
-    UserLogin userLogin = UserLogin(
-      email: userController.text,
-      password: passController.text,
-      remember: remember,
-    );
-
-    final prefs = await SharedPreferences.getInstance();
-
-    await prefs.setString(
-      ShareKeys.user,
-      jsonEncode(userLogin.toJson()),
-    );
-  }
+  // if (remember) {
+  //   UserLogin userLogin = UserLogin(
+  //     email: userController.text,
+  //     password: passController.text,
+  //     remember: remember,
+  //   );
+  //
+  //   final prefs = await SharedPreferences.getInstance();
+  //
+  //   await prefs.setString(
+  //     ShareKeys.user,
+  //     jsonEncode(userLogin.toJson()),
+  //   );
+  // }
 
   return true;
 }
 
-  Future<bool> checkRememberedLogin() async {
-    final prefs = await SharedPreferences.getInstance();
-    final userLoginString = prefs.getString(ShareKeys.user);
-    if (userLoginString != null) {
-      final userLoginJson = jsonDecode(userLoginString);
-      UserLogin userLogin = UserLogin.fromJson(userLoginJson);
-
-      if (userLogin.remember) {
-        userController.text = userLogin.email;
-        passController.text = userLogin.password;
-        dangNhap();
-        return true;
-      }
-    }
-    return false;
-  }
+  // Future<bool> checkRememberedLogin() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final userLoginString = prefs.getString(ShareKeys.user);
+  //   if (userLoginString != null) {
+  //     final userLoginJson = jsonDecode(userLoginString);
+  //     UserLogin userLogin = UserLogin.fromJson(userLoginJson);
+  //
+  //     if (userLogin.remember) {
+  //       userController.text = userLogin.email;
+  //       passController.text = userLogin.password;
+  //       dangNhap();
+  //       return true;
+  //     }
+  //   }
+  //   return false;
+  // }
 
   void togglePassword() {
     isHidden = !isHidden;

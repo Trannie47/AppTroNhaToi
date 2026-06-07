@@ -1,6 +1,5 @@
-import 'package:AppTroNhaToi/modelviews/TrangDangNhap/TrangDangNhap.dart';
+import 'package:AppTroNhaToi/view_models/auth_view_model.dart';
 import 'package:flutter/material.dart';
-
 import '../MainPage/MainPage.dart';
 
 class TrangDangNhap extends StatefulWidget {
@@ -11,7 +10,13 @@ class TrangDangNhap extends StatefulWidget {
 }
 
 class _TrangDangNhapState extends State<TrangDangNhap> {
-  final TrangDangNhapModelView vm = TrangDangNhapModelView();
+  final AuthViewModel vm = AuthViewModel();
+
+  // 🌟 2. Khai báo các Controller và biến giao diện trực tiếp tại View để dễ dọn dẹp bộ nhớ
+  final TextEditingController _userController = TextEditingController();
+  final TextEditingController _passController = TextEditingController();
+  bool _isHidden = true; // Biến kiểm soát ẩn hiện mật khẩu
+  String? _errorServer;  // Biến hứng lỗi từ Server trả về
 
   @override
   void initState() {
@@ -22,21 +27,6 @@ class _TrangDangNhapState extends State<TrangDangNhap> {
         setState(() {});
       }
     });
-
-    checkLogin();
-  }
-
-  Future<void> checkLogin() async {
-    bool success = await vm.checkRememberedLogin();
-
-    if (success && mounted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => const MainPage(),
-        ),
-      );
-    }
   }
 
   InputDecoration inputStyle(String hint, String? error) {
@@ -58,6 +48,8 @@ class _TrangDangNhapState extends State<TrangDangNhap> {
 
   @override
   void dispose() {
+    _userController.dispose();
+    _passController.dispose();
     vm.dispose();
     super.dispose();
   }
@@ -81,10 +73,11 @@ class _TrangDangNhapState extends State<TrangDangNhap> {
             ),
           ),
 
+          // Thanh thông báo lỗi giật từ trên đỉnh xuống
           AnimatedPositioned(
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
-            top: vm.errorServer != null ? 0 : -100,
+            top: _errorServer != null ? 0 : -100,
             left: 0,
             right: 0,
             child: SafeArea(
@@ -104,7 +97,7 @@ class _TrangDangNhapState extends State<TrangDangNhap> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        vm.errorServer ?? "",
+                        _errorServer ?? "",
                         style: const TextStyle(
                           color: Colors.red,
                           fontWeight: FontWeight.w500,
@@ -127,11 +120,11 @@ class _TrangDangNhapState extends State<TrangDangNhap> {
                   width: 140,
                   errorBuilder:
                       (context, error, stackTrace) =>
-                          const Icon(
-                            Icons.home,
-                            size: 100,
-                            color: Colors.white,
-                          ),
+                  const Icon(
+                    Icons.home,
+                    size: 100,
+                    color: Colors.white,
+                  ),
                 ),
 
                 const SizedBox(height: 20),
@@ -139,195 +132,130 @@ class _TrangDangNhapState extends State<TrangDangNhap> {
                 Expanded(
                   child: SingleChildScrollView(
                     keyboardDismissBehavior:
-                        ScrollViewKeyboardDismissBehavior
-                            .onDrag,
+                    ScrollViewKeyboardDismissBehavior.onDrag,
                     child: ConstrainedBox(
                       constraints: BoxConstraints(
-                        minHeight:
-                            MediaQuery.of(context)
-                                    .size
-                                    .height -
-                                MediaQuery.of(context)
-                                    .padding
-                                    .top -
-                                MediaQuery.of(context)
-                                    .padding
-                                    .bottom -
-                                220,
+                        minHeight: MediaQuery.of(context).size.height -
+                            MediaQuery.of(context).padding.top -
+                            MediaQuery.of(context).padding.bottom -
+                            220,
                       ),
                       child: Align(
-                        alignment:
-                            Alignment.bottomCenter,
+                        alignment: Alignment.bottomCenter,
                         child: AnimatedContainer(
-                          duration:
-                              const Duration(
-                                milliseconds: 250,
-                              ),
-                          margin:
-                              const EdgeInsets.fromLTRB(
-                                16,
-                                0,
-                                16,
-                                16,
-                              ),
-                          padding:
-                              const EdgeInsets.all(20),
+                          duration: const Duration(milliseconds: 250),
+                          margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                          padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            color: Colors.white
-                                .withValues(
-                                  alpha: 0.9,
-                                ),
-                            borderRadius:
-                                BorderRadius.circular(
-                                  20,
-                                ),
+                            color: Colors.white.withValues(alpha: 0.9),
+                            borderRadius: BorderRadius.circular(20),
                           ),
                           child: Column(
-                            mainAxisSize:
-                                MainAxisSize.min,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               const Align(
-                                alignment:
-                                    Alignment.centerLeft,
-                                child:
-                                    Text("Tài khoản"),
+                                alignment: Alignment.centerLeft,
+                                child: Text("Tài khoản", style: TextStyle(fontWeight: FontWeight.bold)),
                               ),
 
-                              const SizedBox(
-                                height: 8,
-                              ),
+                              const SizedBox(height: 8),
 
                               TextField(
-                                controller:
-                                    vm.userController,
-                                decoration:
-                                    inputStyle(
-                                      "Nhập tài khoản",
-                                      vm.errorUser,
-                                    ),
+                                controller: _userController,
+                                decoration: inputStyle(
+                                  "Nhập tài khoản hoặc email",
+                                  null,
+                                ),
                               ),
 
-                              const SizedBox(
-                                height: 16,
-                              ),
+                              const SizedBox(height: 16),
 
                               const Align(
-                                alignment:
-                                    Alignment.centerLeft,
-                                child:
-                                    Text("Mật khẩu"),
+                                alignment: Alignment.centerLeft,
+                                child: Text("Mật khẩu", style: TextStyle(fontWeight: FontWeight.bold)),
                               ),
 
-                              const SizedBox(
-                                height: 8,
-                              ),
+                              const SizedBox(height: 8),
 
+                              // Ô nhập mật khẩu
                               TextField(
-                                controller:
-                                    vm.passController,
-                                obscureText:
-                                    vm.isHidden,
-                                decoration:
-                                    inputStyle(
-                                      "Mật khẩu",
-                                      vm.errorPass,
-                                    ).copyWith(
-                                      suffixIcon:
-                                          IconButton(
-                                            icon: Icon(
-                                              vm.isHidden
-                                                  ? Icons
-                                                      .visibility_off
-                                                  : Icons
-                                                      .visibility,
-                                              color:
-                                                  Colors
-                                                      .grey,
-                                            ),
-                                            onPressed:
-                                                vm.togglePassword,
-                                          ),
+                                controller: _passController,
+                                obscureText: _isHidden,
+                                decoration: inputStyle(
+                                  "Mật khẩu",
+                                  null,
+                                ).copyWith(
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      _isHidden ? Icons.visibility_off : Icons.visibility,
+                                      color: Colors.grey,
                                     ),
-                              ),
-
-                              const SizedBox(
-                                height: 12,
-                              ),
-
-                              Row(
-                                children: [
-                                  Checkbox(
-                                    value:
-                                        vm.remember,
-                                    onChanged:
-                                        (value) {
-                                      vm.setRemember(
-                                        value!,
-                                      );
+                                    onPressed: () {
+                                      // Đảo trạng thái ẩn hiện mật khẩu trực tiếp tại View
+                                      setState(() {
+                                        _isHidden = !_isHidden;
+                                      });
                                     },
                                   ),
-                                  const Text(
-                                    "Ghi nhớ mật khẩu",
-                                  ),
-                                ],
+                                ),
                               ),
 
-                              const SizedBox(
-                                height: 10,
-                              ),
+                              const SizedBox(height: 24),
+
 
                               SizedBox(
-                                width:
-                                    double.infinity,
+                                width: double.infinity,
                                 height: 50,
-                                child:
-                                    ElevatedButton(
-                                      style:
-                                          ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                const Color(
-                                                  0xFF2D7A3A,
-                                                ),
-                                            shape:
-                                                RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                        10,
-                                                      ),
-                                                ),
-                                          ),
-                                      onPressed:
-                                          () async {
-                                        bool success =
-                                            await vm
-                                                .dangNhap();
-
-                                        if (success &&
-                                            mounted) {
-                                          Navigator.pushReplacement(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder:
-                                                  (
-                                                    context,
-                                                  ) =>
-                                                      const MainPage(),
-                                            ),
-                                          );
-                                        }
-                                      },
-                                      child:
-                                          const Text(
-                                            "Đăng nhập",
-                                            style:
-                                                TextStyle(
-                                                  fontWeight:
-                                                      FontWeight.bold,
-                                                  color:
-                                                      Colors.white,
-                                                ),
-                                          ),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF2D7A3A),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
                                     ),
+                                  ),
+                                  onPressed: () async {
+                                    // Xóa thông báo lỗi cũ trước khi bấm test lại
+                                    setState(() {
+                                      _errorServer = null;
+                                    });
+
+                                    // Lấy chữ thô từ 2 ô nhập liệu
+                                    final inputAccount = _userController.text.trim();
+                                    final inputPassword = _passController.text.trim();
+
+                                    if (inputAccount.isEmpty || inputPassword.isEmpty) {
+                                      setState(() {
+                                        _errorServer = "Vui lòng nhập đầy đủ thông tin!";
+                                      });
+                                      return;
+                                    }
+
+
+
+                                    final userResult = await vm.login(inputAccount, inputPassword);
+
+                                    if (userResult != null && mounted) {
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => const MainPage(),
+                                        ),
+                                      );
+                                    } else {
+                                      setState(() {
+                                        _errorServer = "Tài khoản hoặc mật khẩu không chính xác!";
+                                      });
+                                    }
+                                  },
+                                  child: const Text(
+                                    "Đăng nhập",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ],
                           ),
@@ -344,4 +272,3 @@ class _TrangDangNhapState extends State<TrangDangNhap> {
     );
   }
 }
-

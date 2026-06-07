@@ -1,23 +1,23 @@
 class UserLogin {
-  String email;
-  String password;
-  bool remember;
+  final int id;
+  final String username;
+  final String email;
 
   UserLogin({
-    required this.email,
-    required this.password,
-    this.remember = false,
+    required this.id,
+    required this.username,
+    required this.email
   });
 
   Map<String, dynamic> toJson() {
-    return {'email': email, 'password': password, 'remember': remember};
+    return {'id': id, 'username': username, 'email': email};
   }
 
   factory UserLogin.fromJson(Map<String, dynamic> json) {
     return UserLogin(
-      email: json['email'] as String,
-      password: json['password'] as String,
-      remember: json['remember'] as bool? ?? false,
+      id: json['id'] ?? 0,
+      username: json['username'] ?? '',
+      email: json['email'] ?? '',
     );
   }
 }
