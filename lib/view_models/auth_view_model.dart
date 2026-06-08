@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 class AuthViewModel extends ChangeNotifier{
   final AuthRepository _authRepository= AuthRepository();
 
-  Future<UserLogin?> login(String input, String pass) async {
+  Future<UserData?> login(String input, String pass) async {
     notifyListeners();
 
     String? finalUsername;

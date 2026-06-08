@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 class AuthApiClient{
   final Dio _dio= RetrofitClient().dio;
 
-  Future<UserLogin?> loginWithApi({
+  Future<UserData?> loginWithApi({
     String? username,
     String? email,
     required String password,
@@ -20,10 +20,9 @@ class AuthApiClient{
       if(email!=null && email.isNotEmpty){
         requestBody['email']=email;
       }
-      print(" CỤC BODY THẬT SỰ GỬI DDI: ${requestBody.toString()}");
       final response= await _dio.post('auth/login',data: requestBody);
       if(response.statusCode==200|| response.statusCode==201) {
-        return UserLogin.fromJson(response.data);
+        return UserData.fromJson(response.data);
       }
       return null;
     }on DioException catch(e){
