@@ -34,5 +34,18 @@ class AuthApiClient{
       return null;
     }
   }
+  
+  Future<UserLogin?> getProfile()async{
+    try{
+      final result= await _dio.get('auth/profile');
+          if(result.statusCode==200 || result.statusCode==201){
+            return UserLogin.fromJson(result.data);
+          }
+          return null;
+    }catch(e){
+      print("Loi $e");
+        return null;
+      }
+  }
 
 }

@@ -23,4 +23,12 @@ class AuthRepository{
     }
     return result;
   }
+
+  Future<UserLogin?> checkCurrentProfile()async{
+    final userCurrent=await _authApiClient.getProfile();
+    if(userCurrent== null){
+      await _storage.delete(key: "KEY_ACCESS_TOKEN");
+    }
+    return userCurrent;
+  }
 }

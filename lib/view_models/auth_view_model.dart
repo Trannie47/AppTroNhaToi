@@ -34,4 +34,9 @@ class AuthViewModel extends ChangeNotifier{
       return null;
     }
   }
+
+  Future<bool> checkAutoLoginStatus() async{
+    final profile= await _authRepository.checkCurrentProfile();
+    return profile != null;
+  }
 }
