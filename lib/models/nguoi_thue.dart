@@ -35,81 +35,45 @@ class NguoiThue {
     this.iPhong,
   });
 
-  factory NguoiThue.fromMap(
-      Map<String, dynamic> map,
-      ) {
+  factory NguoiThue.fromMap(Map<String, dynamic> map) {
     return NguoiThue(
+      idnt: map['idnt'] as int?,
 
-      idnt: map['IDNT'] as int?,
-
-      cccd: map['CCCD'] as String?,
+      cccd: map['cccd'] as String?,
 
       hoTen: map['hoTen'] as String?,
 
-      ngaySinh:
-      map['ngaySinh'] != null
-          ? DateTime.tryParse(
-        map['ngaySinh']
-        as String,
-      )
+      ngaySinh: map['ngaySinh'] != null
+          ? DateTime.tryParse(map['ngaySinh'] as String)
           : null,
 
-      sdt: map['SDT'] as String?,
+      sdt: map['sdt'] as String?,
+      queQuan: map['queQuan'] as String?,
+      ghiChu: map['ghiChu'] as String?,
 
-      queQuan:
-      map['queQuan'] as String?,
-
-      ghiChu:
-      map['ghiChu'] as String?,
-
-      gioiTinh:
-      map['gioiTinh'] != null
-          ? map['gioiTinh'] == 1 ||
-          map['gioiTinh'] ==
-              true
+      gioiTinh: map['gioiTinh'] != null
+          ? map['gioiTinh'] == 1 || map['gioiTinh'] == true
           : null,
 
-      idntc:
-      map['IDNTC'] as int?,
-
-      iPhong:
-      map['IPhong'] as int?,
+      idntc: map['idntc'] as int?,
+      iPhong: map['iPhong'] as int?,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-
-      if (idnt != null)
-        'IDNT': idnt,
-
-      'CCCD': cccd,
-
+      if (idnt != null) 'idnt': idnt,
+      'cccd': cccd,
       'hoTen': hoTen,
-
-      'ngaySinh':
-      ngaySinh
-          ?.toIso8601String()
-          .split('T')
-          .first,
-
-      'SDT': sdt,
-
+      'ngaySinh': ngaySinh?.toIso8601String().split('T').first,
+      'sdt': sdt,
       'queQuan': queQuan,
-
       'ghiChu': ghiChu,
-
-      'gioiTinh':
-      gioiTinh == true
-          ? 1
-          : 0,
-
-      'IDNTC': idntc,
-
-      'IPhong': iPhong,
+      'gioiTinh': gioiTinh == true ? 1 : 0,
+      'idntc': idntc,
+      'iPhong': iPhong,
     };
   }
-
   NguoiThue copyWith({
     int? idnt,
     String? cccd,

@@ -3,11 +3,14 @@ import 'package:AppTroNhaToi/modelviews/MainPage/NguoiThuePage/nguoiThuePage.dar
 import 'package:AppTroNhaToi/views/MainPage/NguoiThuePage/NguoiThueForm/NguoiThueForm.dart';
 import 'package:AppTroNhaToi/widgets/itemNguoiThue.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../../../view_models/nguoithue_view_model.dart';
 import 'ChiTietNguoiThuePage/chiTietNguoiThuePage.dart';
 
 class NguoiThuePage extends StatefulWidget {
   const NguoiThuePage({super.key});
+
 
   @override
   State<NguoiThuePage> createState() => _NguoiThuePageState();
@@ -15,12 +18,15 @@ class NguoiThuePage extends StatefulWidget {
 
 class _NguoiThuePageState extends State<NguoiThuePage> {
   late NguoiThuePageViewModel vm;
+  late NguoithueViewModel nguoithueViewModel;
 
   @override
   void initState() {
     super.initState();
 
     vm = NguoiThuePageViewModel();
+    nguoithueViewModel= Provider.of<NguoithueViewModel>(context, listen: false); //Nguồn dữ liệu list người thuê bên DB
+
 
     vm.addListener(() {
       if (mounted) {
