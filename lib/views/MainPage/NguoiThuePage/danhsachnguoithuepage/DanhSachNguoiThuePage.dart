@@ -214,7 +214,7 @@ class _DanhSachNguoiThuePageState extends State<DanhSachNguoiThuePage> {
                           builder: (_) => ChiTietNguoiThuePage(
                             nguoiThue: vm.danhSachNguoiThue[index].nguoiThue,
 
-                            dsPhong: vm.danhSachNguoiThue[index].phong,
+                            //dsPhong: vm.danhSachNguoiThue[index].phong,
                           ),
                         ),
                       );

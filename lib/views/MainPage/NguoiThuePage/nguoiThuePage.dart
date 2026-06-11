@@ -44,13 +44,13 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
   void dispose() {
     super.dispose();
   }
-  void toChiTietNguoiThue(NguoiThuePhong nt) {
+  void toChiTietNguoiThue(NguoiThue nt) {
     Navigator.push(
       context,
 
       MaterialPageRoute(
         builder: (_) =>
-            ChiTietNguoiThuePage(nguoiThue: nt.nguoiThue, dsPhong: nt.phong),
+            ChiTietNguoiThuePage(nguoiThue: nt),
       ),
     );
   }
@@ -160,13 +160,12 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-
                 itemCount: listNguoiThue.length,
-
                 itemBuilder: (context, index) {
+                  final tagetNguoiThue= listNguoiThue[index];
                   return ItemNguoiThue(
                     nguoiThue: listNguoiThue[index],
-                    //onTap: () => toChiTietNguoiThue(vm.danhSachNguoiThue[index]),
+                    onTap: () => toChiTietNguoiThue(tagetNguoiThue),
                   );
                 },
               ),

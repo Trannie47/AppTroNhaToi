@@ -52,7 +52,7 @@ class _DanhSachPhongThuePageState extends State<DanhSachPhongThuePage> {
           return ChiTietNguoiThuePage(
             nguoiThue: widget.nguoiThue,
 
-            dsPhong:widget.phong,
+            //dsPhong:widget.phong,
           );
         },
       ),

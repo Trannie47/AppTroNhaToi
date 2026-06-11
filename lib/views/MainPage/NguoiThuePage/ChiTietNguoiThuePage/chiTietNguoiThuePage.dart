@@ -12,12 +12,12 @@ import 'package:flutter/material.dart';
 class ChiTietNguoiThuePage extends StatefulWidget {
   final NguoiThue nguoiThue;
 
-  final List<Phong> dsPhong;
+  //final List<Phong> dsPhong;
 
   const ChiTietNguoiThuePage({
     super.key,
     required this.nguoiThue,
-    required this.dsPhong,
+    //required this.dsPhong,
   });
 
   @override
@@ -25,46 +25,47 @@ class ChiTietNguoiThuePage extends StatefulWidget {
 }
 
 class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
-  late ChiTietNguoiThuePageViewModel vm;
+  // late ChiTietNguoiThuePageViewModel vm;
+  //
+  // @override
+  // void initState() {
+  //   super.initState();
+  //
+  //   vm = ChiTietNguoiThuePageViewModel(
+  //     nguoiThue: widget.nguoiThue,
+  //     //dsPhong: widget.dsPhong,
+  //   );
+  //
+  //   vm.addListener(() {
+  //     if (mounted) {
+  //       setState(() {});
+  //     }
+  //   });
+  // }
+  //
+  // @override
+  // void dispose() {
+  //   vm.dispose();
+  //   super.dispose();
+  // }
 
-  @override
-  void initState() {
-    super.initState();
-
-    vm = ChiTietNguoiThuePageViewModel(
-      nguoiThue: widget.nguoiThue,
-      dsPhong: widget.dsPhong,
-    );
-
-    vm.addListener(() {
-      if (mounted) {
-        setState(() {});
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    vm.dispose();
-    super.dispose();
-  }
-
-  void openPhuongTienPage() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) {
-          return PhuongTienNguoiThuePage(
-            nguoiThue: vm.nguoiThue,
-            dsPhuongTien: vm.dsXe,
-          );
-        },
-      ),
-    );
-  }
+  // void openPhuongTienPage() {
+  //   Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (context) {
+  //         return PhuongTienNguoiThuePage(
+  //           nguoiThue: vm.nguoiThue,
+  //           dsPhuongTien: vm.dsXe,
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
+    final detail= widget.nguoiThue; // lấy dữ liệu người thuê được gửi từ mà trước qua
     return Scaffold(
       backgroundColor: const Color(0xffF7F8FC),
 
@@ -166,25 +167,25 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                       break;
 
                     case 'vehicle':
-                      openPhuongTienPage();
+                     //  openPhuongTienPage();
                       break;
 
                     case 'parking_bill':
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) {
-                            return HoaDonGuiXePage(dsPhuongTien: [...vm.dsXe]);
-                          },
-                        ),
-                      );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (_) {
+                      //       return HoaDonGuiXePage(dsPhuongTien: [...vm.dsXe]);
+                      //     },
+                      //   ),
+                      // );
                       break;
 
                     case 'guest':
                       break;
 
                     case 'delete':
-                      vm.showDeleteDialog(context);
+                     // vm.showDeleteDialog(context);
                       break;
                   }
                 },
@@ -300,7 +301,7 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                       alignment: Alignment.center,
 
                       child: Text(
-                        vietTat(vm.nguoiThue.hoTen ?? ""),
+                        vietTat(detail.hoTen ?? ""),
 
                         style: const TextStyle(
                           color: Colors.white,
@@ -313,7 +314,7 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                     const SizedBox(height: 12),
 
                     Text(
-                      vm.nguoiThue.hoTen ?? "",
+                      detail.hoTen ?? "",
 
                       style: const TextStyle(
                         fontSize: 24,
@@ -403,20 +404,20 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                       children: [
                         _itemInfo(
                           "Số điện thoại",
-                          vm.nguoiThue.sdt ?? "",
+                          detail.sdt ?? "",
                           isBlue: true,
                         ),
 
-                        _itemInfo("CCCD", vm.nguoiThue.cccd ?? ""),
+                        _itemInfo("CCCD", detail.sdt ?? ""),
 
                         _itemInfo(
                           "Ngày sinh",
-                          formatDate(vm.nguoiThue.ngaySinh),
+                          formatDate(detail.ngaySinh),
                         ),
 
-                        _itemInfo("Quê quán", vm.nguoiThue.queQuan ?? ""),
+                        _itemInfo("Quê quán", detail.queQuan ?? ""),
 
-                        _itemInfo("Ghi chú", vm.nguoiThue.ghiChu ?? ""),
+                        _itemInfo("Ghi chú", detail.ghiChu ?? ""),
                       ],
                     ),
                   ),
@@ -424,29 +425,29 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                   const SizedBox(height: 18),
 
                   _section(
-                    title: "Phòng đang thuê (${vm.dsPhong.length})",
-
+                    //title: "Phòng đang thuê (${vm.dsPhong.length})",
+                    title: "Phòng đang thuê (0)",
                     action: "Xem thêm",
 
                     child: Column(
-                      children: vm.dsPhong.asMap().entries.map((e) {
-                        final phong = e.value;
-
-                        return Column(
-                          children: [
-                            _itemPhong(
-                              phong.tenPhong,
-
-                              "Phòng ${phong.tenPhong.replaceAll("P", "")}",
-
-                              "",
-                            ),
-
-                            if (e.key != vm.dsPhong.length - 1)
-                              const Divider(height: 1),
-                          ],
-                        );
-                      }).toList(),
+                      // children: vm.dsPhong.asMap().entries.map((e) {
+                      //   final phong = e.value;
+                      //
+                      //   return Column(
+                      //     children: [
+                      //       _itemPhong(
+                      //         phong.tenPhong,
+                      //
+                      //         "Phòng ${phong.tenPhong.replaceAll("P", "")}",
+                      //
+                      //         "",
+                      //       ),
+                      //
+                      //       if (e.key != vm.dsPhong.length - 1)
+                      //         const Divider(height: 1),
+                      //     ],
+                      //   );
+                      // }).toList(),
                     ),
                   ),
 
