@@ -204,7 +204,7 @@ class _DanhSachNguoiThuePageState extends State<DanhSachNguoiThuePage> {
                   return ItemNguoiThue(
                     nguoiThue: vm.danhSachNguoiThue[index].nguoiThue,
 
-                    phong: vm.danhSachNguoiThue[index].phong.first,
+                    //phong: vm.danhSachNguoiThue[index].phong.first,
 
                     onTap: () {
                       Navigator.push(

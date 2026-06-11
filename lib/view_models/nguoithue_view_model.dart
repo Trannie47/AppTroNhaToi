@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 
 class NguoithueViewModel extends ChangeNotifier{
   final NguoithueRepository nguoithueRepository= NguoithueRepository();
+  final TextEditingController searchController = TextEditingController();
 
   List<NguoiThue> _listNguoiThue= [];
   List<NguoiThue> get listNguoithu=> _listNguoiThue;

@@ -1,18 +1,15 @@
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
-import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/core/utils/string_formatter.dart';
 import 'package:flutter/material.dart';
 
 class ItemNguoiThue extends StatelessWidget {
   final NguoiThue nguoiThue;
-  final Phong? phong;
   final bool isSelected;
   final Function()? onTap;
 
   const ItemNguoiThue({
     super.key,
     required this.nguoiThue,
-    this.phong,
     this.isSelected = false,
     this.onTap,
   });
@@ -22,32 +19,30 @@ class ItemNguoiThue extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: phong != null
-            ? const EdgeInsets.only(
-          bottom: 10,
-        )
-            : const EdgeInsets.symmetric(
-          vertical: 10,
-        ),
-        padding: EdgeInsets.symmetric(
-          horizontal: phong != null ? 16 : 4,
-          vertical: 14,
-        ),
+        // Cố định khoảng cách giữa các item cho đều và đẹp
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: phong != null
-              ? Border.all(
+          // Đổ bóng nhẹ cho card nhìn nổi bật và hiện đại hơn
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.02),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+          // Nếu item được chọn thì lên viền xanh, không thì viền xám nhạt tinh tế
+          border: Border.all(
             color: isSelected
                 ? const Color(0xff2F61E7)
-                : const Color(0xffEAEAEA),
+                : const Color(0xffF5F5F5),
             width: 1,
-          )
-              : null,
+          ),
         ),
         child: Row(
           children: [
-            /// AVATAR
             Container(
               width: 48,
               height: 48,
@@ -57,9 +52,7 @@ class ItemNguoiThue extends StatelessWidget {
               ),
               alignment: Alignment.center,
               child: Text(
-                vietTat(
-                  nguoiThue.hoTen ?? "",
-                ),
+                vietTat(nguoiThue.hoTen ?? ""),
                 style: const TextStyle(
                   color: Color(0xff2F61E7),
                   fontWeight: FontWeight.bold,
@@ -70,14 +63,14 @@ class ItemNguoiThue extends StatelessWidget {
 
             const SizedBox(width: 14),
 
-            /// THÔNG TIN
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  // Hiển thị Họ Tên
                   Text(
-                    nguoiThue.hoTen ?? "",
+                    nguoiThue.hoTen ?? "Chưa có tên",
                     style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
@@ -85,8 +78,9 @@ class ItemNguoiThue extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
+                  // Hiển thị Số điện thoại và CCCD
                   Text(
-                    "${nguoiThue.sdt} · CCCD: ${nguoiThue.cccd}",
+                    "${nguoiThue.sdt ?? "---"} · CCCD: ${nguoiThue.cccd ?? "---"}",
                     style: const TextStyle(
                       fontSize: 12,
                       color: Color(0xff9B9B9B),
@@ -96,6 +90,7 @@ class ItemNguoiThue extends StatelessWidget {
               ),
             ),
 
+            // Mũi tên dẫn đường sang màn hình chi tiết
             if (onTap != null)
               const Icon(
                 Icons.chevron_right_rounded,

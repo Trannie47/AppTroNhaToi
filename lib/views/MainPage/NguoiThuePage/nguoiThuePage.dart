@@ -1,3 +1,4 @@
+import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/models/nguoi_thue_phong.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/NguoiThuePage/nguoiThuePage.dart';
 import 'package:AppTroNhaToi/views/MainPage/NguoiThuePage/NguoiThueForm/NguoiThueForm.dart';
@@ -17,27 +18,30 @@ class NguoiThuePage extends StatefulWidget {
 }
 
 class _NguoiThuePageState extends State<NguoiThuePage> {
-  late NguoiThuePageViewModel vm;
+
   late NguoithueViewModel nguoithueViewModel;
 
   @override
   void initState() {
     super.initState();
+    //khởi tạo kích hoạt api lấy dữ liệu list người thuê về
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final vm = Provider.of<NguoithueViewModel>(context, listen: false);
+      nguoithueViewModel = vm;
+      vm.addListener(() {
+        if (mounted) {
+          setState(() {});
+        }
+      });
 
-    vm = NguoiThuePageViewModel();
-    nguoithueViewModel= Provider.of<NguoithueViewModel>(context, listen: false); //Nguồn dữ liệu list người thuê bên DB
+      vm.fetchAllNguoiThue();
 
-
-    vm.addListener(() {
-      if (mounted) {
-        setState(() {});
-      }
     });
-  }
 
+
+  }
   @override
   void dispose() {
-    vm.dispose();
     super.dispose();
   }
   void toChiTietNguoiThue(NguoiThuePhong nt) {
@@ -53,6 +57,8 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
 
   @override
   Widget build(BuildContext context) {
+    nguoithueViewModel= Provider.of<NguoithueViewModel>(context);
+    final listNguoiThue= nguoithueViewModel.listNguoithu;
     return Scaffold(
       backgroundColor: const Color(0xffF5F6FA),
 
@@ -123,7 +129,7 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
                 alignment: Alignment.center,
 
                 child: TextField(
-                  controller: vm.searchController,
+                  controller: nguoithueViewModel.searchController,
 
                   textAlignVertical: TextAlignVertical.center,
 
@@ -155,15 +161,12 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
               child: ListView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
 
-                itemCount: vm.danhSachNguoiThue.length,
+                itemCount: listNguoiThue.length,
 
                 itemBuilder: (context, index) {
                   return ItemNguoiThue(
-                    nguoiThue: vm.danhSachNguoiThue[index].nguoiThue,
-
-                    phong: vm.danhSachNguoiThue[index].phong.first,
-
-                    onTap: () => toChiTietNguoiThue(vm.danhSachNguoiThue[index]),
+                    nguoiThue: listNguoiThue[index],
+                    //onTap: () => toChiTietNguoiThue(vm.danhSachNguoiThue[index]),
                   );
                 },
               ),
