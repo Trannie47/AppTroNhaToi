@@ -39,6 +39,8 @@ class _MainPageState extends State<MainPage> {
         currentIndex: vm.currentIndex,
         selectedItemColor: const Color(0xFF2D7A3A),
         unselectedItemColor: Colors.grey,
+        unselectedLabelStyle: TextStyle(color: Colors.grey),
+        showUnselectedLabels: true,
         onTap: (index) {
           setState(() {
             vm.currentIndex = index;
