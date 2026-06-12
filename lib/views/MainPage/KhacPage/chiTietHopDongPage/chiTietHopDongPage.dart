@@ -120,12 +120,25 @@ class _ChiTietHopDongPageState extends State<ChiTietHopDongPage> {
                   const SizedBox(height: 20),
                   _thanhVienCungPhong(vm.danhSachChungPhong),
                   const SizedBox(height: 150),
-                  _chiTietPhongButton(),
-                  const SizedBox(height: 16),
-                  _ketThucHopDongButton(),
+                  // _chiTietPhongButton(),
+                  // const SizedBox(height: 16),
+                  // _ketThucHopDongButton(),
+                  // const SizedBox(height: 16),
                 ],
               ),
             ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: Container(
+        color: const Color(0xffF3F3F3),
+        padding: const EdgeInsets.fromLTRB(16, 10, 16, 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _chiTietPhongButton(),
+            const SizedBox(height: 16),
+            _ketThucHopDongButton(),
           ],
         ),
       ),
@@ -297,57 +310,61 @@ Widget _thanhVienCungPhong(List<chiTietHopDongModel> danhSachChungPhong) {
             final NguoiThue nguoiThue = item.nguoiThue;
             final HopDong hopDong = item.hopDong;
 
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 14),
-              child: Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: const Color(0xffDCE6FF),
-                      child: Text(vietTat(nguoiThue.hoTen ?? "")),
-                    ),
-                    const SizedBox(width: 15),
+            return Container(
+              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    backgroundColor: const Color(0xffDCE6FF),
+                    child: Text(vietTat(nguoiThue.hoTen ?? "")),
+                  ),
+                  const SizedBox(width: 15),
 
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            nguoiThue.hoTen ?? "",
-                            style: const TextStyle(fontWeight: FontWeight.bold),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          nguoiThue.hoTen ?? "",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
                           ),
-                          Text(
-                            "Mã HĐ: ${hopDong.hopDongID ?? ""}",
-                            style: const TextStyle(color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xffE8F3E7),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        formatMoney(hopDong.giaPhongThucTe ?? 0),
-                        style: const TextStyle(
-                          color: Color(0xff2E7D32),
-                          fontWeight: FontWeight.bold,
                         ),
+                        Text(
+                          "Mã HĐ: ${hopDong.hopDongID ?? ""}",
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 15,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xffE8F3E7),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      formatMoney(hopDong.giaPhongThucTe ?? 0),
+                      style: const TextStyle(
+                        color: Color(0xff2E7D32),
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             );
           }),
@@ -359,7 +376,7 @@ Widget _thanhVienCungPhong(List<chiTietHopDongModel> danhSachChungPhong) {
 Widget _chiTietPhongButton() {
   return SizedBox(
     width: double.infinity,
-    height: 60,
+    height: 52,
     child: ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.white,
@@ -370,7 +387,7 @@ Widget _chiTietPhongButton() {
         "Chi tiết Phòng 101",
         style: TextStyle(
           color: Color(0xff1D2433),
-          fontSize: 20,
+          fontSize: 15,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -381,17 +398,17 @@ Widget _chiTietPhongButton() {
 Widget _ketThucHopDongButton() {
   return SizedBox(
     width: double.infinity,
-    height: 60,
+    height: 52,
     child: ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xffD84A43),
+        backgroundColor: const Color(0xffE53E3E),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
       onPressed: () {},
       child: const Text(
         "Kết thúc hợp đồng",
         style: TextStyle(
-          fontSize: 20,
+          fontSize: 15,
           color: Colors.white,
           fontWeight: FontWeight.bold,
         ),
