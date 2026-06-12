@@ -1,4 +1,5 @@
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
+import 'package:AppTroNhaToi/models/hop_dong.dart';
 import 'package:flutter/material.dart';
 
 class HopDongFormModelView extends ChangeNotifier {
@@ -14,6 +15,27 @@ class HopDongFormModelView extends ChangeNotifier {
 
   final txtTienCoc = TextEditingController();
   final txtGhiChu = TextEditingController();
+
+  HopDong? hopDong;
+
+  bool get isEdit => hopDong != null;
+
+  void init({HopDong? hopDong}) {
+    this.hopDong = hopDong;
+
+    if (hopDong != null) {
+      txtNgayKy.text = formatDate(hopDong.ngayKy);
+      txtNgayHetHan.text = formatDate(hopDong.ngayHetHan);
+
+      txtGiaHopDong.text = (hopDong.giaPhongThucTe ?? 0).toString();
+
+      txtTienCoc.text = (hopDong.tienCoc ?? 0).toString();
+
+      txtGhiChu.text = "";
+    }
+
+    notifyListeners();
+  }
 
   DateTime? chuyenNgay(String ngay) {
     try {

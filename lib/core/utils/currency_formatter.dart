@@ -21,6 +21,9 @@ String _format(double number) {
 }
 
 //Format tiền tệ có dấu phân cách hàng nghìn
-String formatMoney(num value) {
+String formatMoney(num? value) {
+  if (value == null) {
+    return "0đ";
+  }
   return "${value.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}đ";
 }

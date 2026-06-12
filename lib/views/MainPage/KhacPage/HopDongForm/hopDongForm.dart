@@ -1,9 +1,11 @@
+import 'package:AppTroNhaToi/models/hop_dong.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/hopDongForm/hopDongForm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 
 class HopDongForm extends StatefulWidget {
-  const HopDongForm({super.key});
+  final HopDong? hopDong;
+  const HopDongForm({super.key, this.hopDong});
 
   @override
   State<HopDongForm> createState() => _TaoHopDongPageState();
@@ -17,7 +19,7 @@ class _TaoHopDongPageState extends State<HopDongForm> {
     super.initState();
 
     vm = HopDongFormModelView();
-
+    vm.init(hopDong: widget.hopDong);
     vm.addListener(() {
       if (mounted) {
         setState(() {});

@@ -1,5 +1,6 @@
 import 'package:AppTroNhaToi/models/hop_dong.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/HopDongForm/hopDongForm.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietHopDongPage/chiTietHopDongPage.dart';
 import 'package:AppTroNhaToi/widgets/itemNTHopDong.dart';
 import 'package:flutter/material.dart';
 
@@ -304,7 +305,16 @@ class _HopDongPageState extends State<HopDongPage> {
                   itemBuilder: (context, index) {
                     return ItemNTHopDong(
                       hopDong: danhSachHienThi[index],
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ChiTietHopDongPage(
+                              hopDong: danhSachHienThi[index],
+                            ),
+                          ),
+                        );
+                      },
                     );
                   },
                 ),

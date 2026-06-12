@@ -27,12 +27,14 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
   @override
   void initState() {
     super.initState();
-    hopdongViewModel= HopdongViewModel();
+    hopdongViewModel = HopdongViewModel();
     // vm = ChiTietNguoiThuePageViewModel(
     //   nguoiThue: widget.nguoiThue,
     //   //dsPhong: widget.dsPhong,
     // );
-    hopdongViewModel.fetchRoomByNguoiThue(widget.nguoiThue.idnt); // kích hoạt gọi api lấy ds phòng theo id người thuê
+    hopdongViewModel.fetchRoomByNguoiThue(
+      widget.nguoiThue.idnt!,
+    ); // kích hoạt gọi api lấy ds phòng theo id người thuê
 
     hopdongViewModel.addListener(() {
       if (mounted) {
@@ -63,7 +65,8 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
 
   @override
   Widget build(BuildContext context) {
-    final detail= widget.nguoiThue; // lấy dữ liệu người thuê được gửi từ mà trước qua
+    final detail =
+        widget.nguoiThue; // lấy dữ liệu người thuê được gửi từ mà trước qua
     return Scaffold(
       backgroundColor: const Color(0xffF7F8FC),
 
@@ -165,7 +168,7 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                       break;
 
                     case 'vehicle':
-                     //  openPhuongTienPage();
+                      //  openPhuongTienPage();
                       break;
 
                     case 'parking_bill':
@@ -183,7 +186,7 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                       break;
 
                     case 'delete':
-                     // vm.showDeleteDialog(context);
+                      // vm.showDeleteDialog(context);
                       break;
                   }
                 },
@@ -408,10 +411,7 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
 
                         _itemInfo("CCCD", detail.sdt ?? ""),
 
-                        _itemInfo(
-                          "Ngày sinh",
-                          formatDate(detail.ngaySinh),
-                        ),
+                        _itemInfo("Ngày sinh", formatDate(detail.ngaySinh)),
 
                         _itemInfo("Quê quán", detail.queQuan ?? ""),
 
