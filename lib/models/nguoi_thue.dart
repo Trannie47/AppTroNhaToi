@@ -1,5 +1,5 @@
 class NguoiThue {
-  final int? idnt;
+  final int idnt;
   final String? cccd;
   final String? hoTen;
   final DateTime? ngaySinh;
@@ -9,7 +9,7 @@ class NguoiThue {
   final bool? gioiTinh;
 
   NguoiThue({
-    this.idnt,
+    required this.idnt,
     this.cccd,
     this.hoTen,
     this.ngaySinh,
@@ -21,7 +21,7 @@ class NguoiThue {
 
   factory NguoiThue.fromMap(Map<String, dynamic> map) {
     return NguoiThue(
-      idnt: map['idnt'] as int?,
+      idnt: map['idnt'] as int,
       cccd: map['cccd'] as String?,
       hoTen: map['hoTen'] as String?,
       ngaySinh: map['ngaySinh'] != null

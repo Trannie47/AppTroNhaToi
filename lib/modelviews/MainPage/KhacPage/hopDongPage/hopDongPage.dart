@@ -30,28 +30,28 @@ class _HopDongPageState extends State<HopDongPage> {
 
   final List<HopDong> danhSachHopDong = [
     HopDong(
-      hopDongID: 1,
+      hopDongID: "1",
       phongID: 101,
       giaPhongThucTe: 3000000,
-      trangThai: "HIEU_LUC",
+      trangThai: 1,
       ngayHetHan: DateTime(2026, 12, 31),
     ),
 
-    HopDong(
-      hopDongID: 2,
-      phongID: 102,
-      giaPhongThucTe: 3500000,
-      trangThai: "SAP_HET_HAN",
-      ngayHetHan: DateTime.now().add(const Duration(days: 15)),
-    ),
-
-    HopDong(
-      hopDongID: 3,
-      phongID: 103,
-      giaPhongThucTe: 2800000,
-      trangThai: "DA_KET_THUC",
-      ngayHetHan: DateTime.now().subtract(const Duration(days: 10)),
-    ),
+    // HopDong(
+    //   hopDongID: 2,
+    //   phongID: 102,
+    //   giaPhongThucTe: 3500000,
+    //   trangThai: "SAP_HET_HAN",
+    //   ngayHetHan: DateTime.now().add(const Duration(days: 15)),
+    // ),
+    //
+    // HopDong(
+    //   hopDongID: 3,
+    //   phongID: 103,
+    //   giaPhongThucTe: 2800000,
+    //   trangThai: "DA_KET_THUC",
+    //   ngayHetHan: DateTime.now().subtract(const Duration(days: 10)),
+    // ),
   ];
 
   void moTrangTaoHopDong() {

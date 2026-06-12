@@ -19,16 +19,16 @@ class LoaiPhong {
     return LoaiPhong(
       maLoaiPhong: map['maLoaiPhong'] as int,
       tenLoaiPhong: map['tenLoaiPhong'] as String,
-      dienTich: (map['dienTich'] as num?)!.toDouble(),
+      dienTich: map['dienTich'] != null ? (double.tryParse(map['dienTich'].toString()) ?? 0.0) : 0.0,
       isMayLanh: map['isMayLanh'] == 1 || map['isMayLanh'] == true,
       soNguoiToiDa: map['soNguoiToiDa'] as int,
-      giaTien: (map['giaTien'] as num?)!.toDouble(),
+      giaTien: map['giaTien'] != null ? (double.tryParse(map['giaTien'].toString()) ?? 0.0) : 0.0,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      if (maLoaiPhong != null) 'maLoaiPhong': maLoaiPhong,
+      'maLoaiPhong': maLoaiPhong,
       'tenLoaiPhong': tenLoaiPhong,
       'dienTich': dienTich,
       'isMayLanh': isMayLanh == true ? 1 : 0,

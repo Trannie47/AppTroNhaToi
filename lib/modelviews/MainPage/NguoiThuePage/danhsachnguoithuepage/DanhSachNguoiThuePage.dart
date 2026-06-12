@@ -21,7 +21,7 @@ class DanhSachNguoiThuePageViewModel extends ChangeNotifier {
         Phong(
           phongID: 1,
           tenPhong: "P101",
-          trangThai: 1,
+          trangThai: "1",
           maLoaiPhong: 1,
         ),
       ],
@@ -39,7 +39,7 @@ class DanhSachNguoiThuePageViewModel extends ChangeNotifier {
         Phong(
           phongID: 1,
           tenPhong: "P101",
-          trangThai: 1,
+          trangThai: "1",
           maLoaiPhong: 1,
         ),
       ],
@@ -57,7 +57,7 @@ class DanhSachNguoiThuePageViewModel extends ChangeNotifier {
         Phong(
           phongID: 2,
           tenPhong: "P102",
-          trangThai: 1,
+          trangThai: "1",
           maLoaiPhong: 1,
         ),
       ],
@@ -75,7 +75,7 @@ class DanhSachNguoiThuePageViewModel extends ChangeNotifier {
         Phong(
           phongID: 3,
           tenPhong: "P103",
-          trangThai: 2,
+          trangThai: "2",
           maLoaiPhong: 1,
         ),
       ],
@@ -93,7 +93,7 @@ class DanhSachNguoiThuePageViewModel extends ChangeNotifier {
         Phong(
           phongID: 3,
           tenPhong: "P103",
-          trangThai: 1,
+          trangThai: "1",
           maLoaiPhong: 2,
         ),
       ],
@@ -111,7 +111,7 @@ class DanhSachNguoiThuePageViewModel extends ChangeNotifier {
         Phong(
           phongID: 3,
           tenPhong: "P103",
-          trangThai: 1,
+          trangThai: "1",
           maLoaiPhong: 1,
         ),
       ],

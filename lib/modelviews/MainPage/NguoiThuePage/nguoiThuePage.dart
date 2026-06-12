@@ -22,13 +22,13 @@ class NguoiThuePageViewModel extends ChangeNotifier {
         Phong(
           phongID: 1,
           tenPhong: "P101",
-          trangThai: 1,
+          trangThai: "1",
           maLoaiPhong: 1,
         ),
         Phong(
           phongID: 2,
           tenPhong: "P102",
-          trangThai: 2,
+          trangThai: "2",
           maLoaiPhong: 2,
         ),
       ],

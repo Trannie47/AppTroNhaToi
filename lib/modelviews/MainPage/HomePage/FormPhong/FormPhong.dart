@@ -7,7 +7,7 @@ class FormPhongViewModel extends ChangeNotifier {
   late TextEditingController descController;
 
   int selectedType = 0;
-  int selectedStatus = 0;
+  String selectedStatus = "";
 
   List<LoaiPhong> roomTypes = [
     LoaiPhong(
@@ -31,11 +31,11 @@ class FormPhongViewModel extends ChangeNotifier {
   FormPhongViewModel(Phong? room) {
     nameController = TextEditingController(text: room?.tenPhong ?? "");
     descController = TextEditingController(text: room?.moTa ?? "");
-    selectedStatus = room?.trangThai ?? 0;
+    selectedStatus = room?.trangThai ?? "";
     selectedType = room?.maLoaiPhong ?? 0;
   }
 
-  void selectStatus(int status) {
+  void selectStatus(String status) {
     selectedStatus = status;
     notifyListeners();
   }

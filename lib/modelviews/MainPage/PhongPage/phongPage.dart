@@ -39,10 +39,10 @@ class PhongPageModelView extends ChangeNotifier {
     ];
 
     dsPhong = [
-      Phong(phongID: 1, tenPhong: "P101", trangThai: 1, maLoaiPhong: 1),
-      Phong(phongID: 2, tenPhong: "P102", trangThai: 2, maLoaiPhong: 2),
-      Phong(phongID: 3, tenPhong: "P301", maLoaiPhong: 1, trangThai: 0),
-      Phong(phongID: 4, tenPhong: "P401", maLoaiPhong: 1, trangThai: 2),
+      Phong(phongID: 1, tenPhong: "P101", trangThai: "1", maLoaiPhong: 1),
+      Phong(phongID: 2, tenPhong: "P102", trangThai: "2", maLoaiPhong: 2),
+      Phong(phongID: 3, tenPhong: "P301", maLoaiPhong: 1, trangThai: "0"),
+      Phong(phongID: 4, tenPhong: "P401", maLoaiPhong: 1, trangThai: "2"),
     ];
 
     dsPhongFilter = dsPhong;

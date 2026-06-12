@@ -1,12 +1,15 @@
+import 'package:AppTroNhaToi/models/phong.dart';
+
 class HopDong {
-  final int? hopDongID;
+  final String? hopDongID;
   final int? idnt;
   final int? phongID;
   final DateTime? ngayKy;
   final DateTime? ngayHetHan;
   final double? tienCoc;
   final double? giaPhongThucTe;
-  final String? trangThai;
+  final int? trangThai;
+  final Phong? phong; // cái này dùng để lấy thông tin phòng hiển thị phòng trên chi tiết ngthue vì cần ngày ký
 
   HopDong({
     this.hopDongID,
@@ -17,22 +20,25 @@ class HopDong {
     this.tienCoc,
     this.giaPhongThucTe,
     this.trangThai,
+    this.phong
   });
 
   factory HopDong.fromMap(Map<String, dynamic> map) {
     return HopDong(
-      hopDongID: map['HopDongID'] as int?,
-      idnt: map['IDNT'] as int?,
-      phongID: map['PhongID'] as int?,
-      ngayKy: map['ngayKy'] != null
-          ? DateTime.tryParse(map['ngayKy'] as String)
-          : null,
-      ngayHetHan: map['ngayHetHan'] != null
-          ? DateTime.tryParse(map['ngayHetHan'] as String)
-          : null,
-      tienCoc: (map['tienCoc'] as num?)?.toDouble(),
-      giaPhongThucTe: (map['giaPhongThucTe'] as num?)?.toDouble(),
-      trangThai: map['trangThai'] as String?,
+        hopDongID: map['hopDongId'] as String?,
+        idnt: map['idnt'] as int?,
+        phongID: map['phongId'] as int?,
+
+        ngayKy: map['ngayKy'] != null
+            ? DateTime.tryParse(map['ngayKy'].toString())
+            : null,
+        ngayHetHan: map['ngayHetHan'] != null
+            ? DateTime.tryParse(map['ngayHetHan'].toString())
+            : null,
+        tienCoc: map['tienCoc'] != null ? double.tryParse(map['tienCoc'].toString()) : null,
+        giaPhongThucTe: map['giaPhongThucTe'] != null ? double.tryParse(map['giaPhongThucTe'].toString()) : null,
+        trangThai: map['trangThai'] as int?,
+        phong: map['phong'] != null ? Phong.fromMap(map['phong'] as Map<String, dynamic>) : null
     );
   }
 
@@ -50,14 +56,14 @@ class HopDong {
   }
 
   HopDong copyWith({
-    int? hopDongID,
+    String? hopDongID,
     int? idnt,
     int? phongID,
     DateTime? ngayKy,
     DateTime? ngayHetHan,
     double? tienCoc,
     double? giaPhongThucTe,
-    String? trangThai,
+    int? trangThai,
   }) {
     return HopDong(
       hopDongID: hopDongID ?? this.hopDongID,

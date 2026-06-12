@@ -1,9 +1,6 @@
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
-import 'package:AppTroNhaToi/models/phong.dart';
-import 'package:AppTroNhaToi/modelviews/MainPage/NguoiThuePage/ChiTietNguoiThuePage/chiTietNguoiThuePage.dart';
+import 'package:AppTroNhaToi/view_models/hopdong_view_model.dart';
 import 'package:AppTroNhaToi/views/MainPage/NguoiThuePage/NguoiThueForm/NguoiThueForm.dart';
-import 'package:AppTroNhaToi/views/MainPage/NguoiThuePage/PhuongTienNguoiThuePage/PhuongTienNguoiThuePage.dart';
-import 'package:AppTroNhaToi/views/MainPage/NguoiThuePage/hoaDonGuiXePage/hoaDonGuiXePage.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/string_formatter.dart';
 
@@ -26,22 +23,23 @@ class ChiTietNguoiThuePage extends StatefulWidget {
 
 class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
   // late ChiTietNguoiThuePageViewModel vm;
-  //
-  // @override
-  // void initState() {
-  //   super.initState();
-  //
-  //   vm = ChiTietNguoiThuePageViewModel(
-  //     nguoiThue: widget.nguoiThue,
-  //     //dsPhong: widget.dsPhong,
-  //   );
-  //
-  //   vm.addListener(() {
-  //     if (mounted) {
-  //       setState(() {});
-  //     }
-  //   });
-  // }
+  late HopdongViewModel hopdongViewModel;
+  @override
+  void initState() {
+    super.initState();
+    hopdongViewModel= HopdongViewModel();
+    // vm = ChiTietNguoiThuePageViewModel(
+    //   nguoiThue: widget.nguoiThue,
+    //   //dsPhong: widget.dsPhong,
+    // );
+    hopdongViewModel.fetchRoomByNguoiThue(widget.nguoiThue.idnt); // kích hoạt gọi api lấy ds phòng theo id người thuê
+
+    hopdongViewModel.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
   //
   // @override
   // void dispose() {
