@@ -1,3 +1,4 @@
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThietBiPage/thietBiPage.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/hopDongPage/hopDongPage.dart';
 import 'package:flutter/material.dart';
 
@@ -72,7 +73,17 @@ class KhacPage extends StatelessWidget {
                     "Quản lý thiết bị, theo dõi sửa\nchữa, nhập kho",
                     status: "1 đang hỏng",
                     statusColor: Colors.red,
+
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const ThietBiPage(),
+                        ),
+                      );
+                    },
                   ),
+
 
                   const SizedBox(height: 12),
 

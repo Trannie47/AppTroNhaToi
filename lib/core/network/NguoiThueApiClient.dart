@@ -22,7 +22,20 @@ class NguoiThueApiClient {
       }
       return [];
     }
+  }
 
+  Future<void> themNguoiThue(NguoiThue nguoiThue) async {
+    try {
+      await _dio.post(
+        "nguoi-thue/create",
+        data: jsonEncode(nguoiThue.toMap()),
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        print("Loi them nguoi thue $e");
+      }
 
+      rethrow;
+    }
   }
 }

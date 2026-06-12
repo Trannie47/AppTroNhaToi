@@ -9,4 +9,8 @@ class NguoithueRepository {
     final result= await nguoiThueApiClient.getListNguoiThue();
     return result ;
   }
+  Future<void> themNguoiThue(NguoiThue nguoiThue) async {
+    await nguoiThueApiClient.themNguoiThue(nguoiThue);
+  }
+
 }
