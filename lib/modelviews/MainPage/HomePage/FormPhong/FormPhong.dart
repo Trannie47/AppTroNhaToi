@@ -31,7 +31,7 @@ class FormPhongViewModel extends ChangeNotifier {
   FormPhongViewModel(Phong? room) {
     nameController = TextEditingController(text: room?.tenPhong ?? "");
     descController = TextEditingController(text: room?.moTa ?? "");
-    selectedStatus = room?.trangThai ?? "";
+    selectedStatus = room?.trangThai.toString() ?? "0";
     selectedType = room?.maLoaiPhong ?? 0;
   }
 
@@ -55,7 +55,7 @@ class FormPhongViewModel extends ChangeNotifier {
     return Phong(
       phongID: phongID ?? 0,
       tenPhong: nameController.text,
-      trangThai: selectedStatus,
+      trangThai: int.parse(selectedStatus),
       moTa: descController.text,
       maLoaiPhong: selectedType,
     );
