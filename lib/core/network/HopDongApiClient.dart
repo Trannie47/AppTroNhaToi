@@ -13,10 +13,14 @@ class HopDongApiClient {
         final List<dynamic> data= resquest.data;
         return data.map((json)=> HopDong.fromMap(json as Map<String, dynamic>)).toList();
       }
-      return [];
+      throw DioException(
+          requestOptions: resquest.requestOptions,
+        response: resquest,
+        type: DioExceptionType.badResponse
+      );
     }catch(e){
       print("Loi HopDongApiCline $e");
-      return [];
+      rethrow;
     }
   }
 }

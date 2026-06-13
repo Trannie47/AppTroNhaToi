@@ -7,6 +7,8 @@ import 'package:AppTroNhaToi/core/utils/string_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../states/chi_tiet_nguoi_thue_state.dart';
+
 class ChiTietNguoiThuePage extends StatefulWidget {
   final NguoiThue nguoiThue;
 
@@ -60,7 +62,6 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
   Widget build(BuildContext context) {
     final detail = widget.nguoiThue; // lấy dữ liệu người thuê được gửi từ mà trước qua
     hopdongViewModel= Provider.of<HopdongViewModel>(context);
-    final listHD= hopdongViewModel.listHopDongNguoiThue;
     return Scaffold(
       backgroundColor: const Color(0xffF7F8FC),
 
@@ -403,7 +404,7 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                           isBlue: true,
                         ),
 
-                        _itemInfo("CCCD", detail.sdt ?? ""),
+                        _itemInfo("CCCD", detail.cccd ?? ""),
 
                         _itemInfo("Ngày sinh", formatDate(detail.ngaySinh)),
 
@@ -416,52 +417,88 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
 
                   const SizedBox(height: 18),
                   _section(
-                    title: "Phòng đang thuê (${listHD.length})",
+                    title: switch(hopdongViewModel.chiTietNguoiThueState){
+                      ChiTietNguoiThueSuccess(listHD: final list) => "Phòng đang thuê (${list.length})",
+                      _ => "Phòng đang thuê (...)",
+                    },
                     action: "Xem thêm",
-                    child: hopdongViewModel.isLoading
-                        ? const Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: CircularProgressIndicator(color: Color(0xff2D7A3A)),
+                    child: switch(hopdongViewModel.chiTietNguoiThueState){
+                      ChiTietNguoiThueLoading() => const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: CircularProgressIndicator(color: Color(0xff2D7A3A)),
+                        ),
                       ),
-                    )
-                        : listHD.isEmpty
-                        ? const Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: Text("Người này hiện chưa thuê phòng nào", style: TextStyle(color: Colors.grey)),
-                    )
-                        : Column(
-                      children: listHD.asMap().entries.map((e) {
-                        final index = e.key;
-                        final hopDong = e.value;
-                        final phong = hopDong.phong;
-                        final loaiPhong = phong?.loaiPhong;
-
-                        // Định dạng ngày ký hợp đồng
-                        String chuoiNgay = "Chưa rõ ngày ký";
-                        if (hopDong.ngayKy != null) {
-                          chuoiNgay = "Đang thuê từ ${formatDate(hopDong.ngayKy)}";
-                        }
-
-                        return Column(
+                      ChiTietNguoithueError(message: final msg) => Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                        child: Column(
                           children: [
-                            _itemPhong(
-                              // Chữ viết tắt trong ô vuông
-                              phong?.tenPhong != null && phong!.tenPhong.contains(" ")
-                                  ? "P${phong.tenPhong.split(" ").last}"
-                                  : "P??",
-
-                              // Tên phòng kèm tên loại
-                              "${phong?.tenPhong ?? "Phòng"} · ${loaiPhong?.tenLoaiPhong ?? "Chưa rõ loại"}",
-
-                              chuoiNgay,
+                            const Icon(Icons.cloud_off_rounded, size: 40, color: Colors.orangeAccent),
+                            const SizedBox(height: 8),
+                            Text(
+                              msg,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 13,
+                                color: Color(0xff666666),
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
-                            if (index != listHD.length - 1)
-                              const Divider(height: 0.5),
+                            const SizedBox(height: 12),
+                            ElevatedButton.icon(
+                              onPressed: () {
+                                hopdongViewModel.fetchRoomByNguoiThue(widget.nguoiThue.idnt!);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xff2D7A3A),
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              ),
+                              icon: const Icon(Icons.refresh_rounded, size: 16),
+                              label: const Text("Thử lại", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                            ),
                           ],
-                        );
-                      }).toList(),
-                    ),
+                        ),
+                      ),
+
+                      ChiTietNguoiThueSuccess(listHD: final list) => list.isEmpty
+                          ? const Padding(
+                        padding: EdgeInsets.all(24.0),
+                        child: Text(
+                          "Người này hiện chưa thuê phòng nào",
+                          style: TextStyle(color: Colors.grey, fontSize: 13),
+                        ),
+                      )
+                          : Column(
+                        children: list.asMap().entries.map((e) {
+                          final index = e.key;
+                          final hopDong = e.value;
+                          final phong = hopDong.phong;
+                          final loaiPhong = phong?.loaiPhong;
+
+                          String chuoiNgay = "Chưa rõ ngày ký";
+                          if (hopDong.ngayKy != null) {
+                            chuoiNgay = "Đang thuê từ ${formatDate(hopDong.ngayKy)}";
+                          }
+
+                          return Column(
+                            children: [
+                              _itemPhong(
+                                phong?.tenPhong != null && phong!.tenPhong.contains(" ")
+                                    ? "P${phong.tenPhong.split(" ").last}"
+                                    : "P??",
+                                "${phong?.tenPhong ?? "Phòng"} · ${loaiPhong?.tenLoaiPhong ?? "Chưa rõ loại"}",
+                                chuoiNgay,
+                              ),
+                              if (index != list.length - 1)
+                                const Divider(height: 0.5),
+                            ],
+                          );
+                        }).toList(),
+                      ),
+
+                    }
                   ),
 
                   const SizedBox(height: 24),
