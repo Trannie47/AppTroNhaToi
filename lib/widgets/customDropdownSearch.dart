@@ -11,7 +11,7 @@ class CustomDropdownSearch<T> extends StatelessWidget {
 
   const CustomDropdownSearch({
     super.key,
-    required this.label,
+    this.label = '',
     required this.items,
     required this.itemAsString,
     this.selectedItem,
@@ -25,9 +25,11 @@ class CustomDropdownSearch<T> extends StatelessWidget {
       enabled: enabled,
 
       items: (filter, _) {
-        if (filter.isEmpty) return items;
-
         final f = filter.toLowerCase();
+
+        if (f.isEmpty) {
+          return items;
+        }
 
         return items
             .where((e) => itemAsString(e).toLowerCase().contains(f))
@@ -68,6 +70,10 @@ class CustomDropdownSearch<T> extends StatelessWidget {
       ),
 
       onSelected: onChanged,
+
+      compareFn: (a, b) {
+        return a == b;
+      },
     );
   }
 }
