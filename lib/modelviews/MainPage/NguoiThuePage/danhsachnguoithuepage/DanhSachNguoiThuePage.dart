@@ -1,12 +1,10 @@
-
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/nguoi_thue_phong.dart';
 import 'package:flutter/material.dart';
 
 class DanhSachNguoiThuePageViewModel extends ChangeNotifier {
-  final TextEditingController searchController =
-      TextEditingController();
+  final TextEditingController searchController = TextEditingController();
 
   final List<NguoiThuePhong> danhSachNguoiThue = [
     NguoiThuePhong(
@@ -18,12 +16,7 @@ class DanhSachNguoiThuePageViewModel extends ChangeNotifier {
         ghiChu: "",
       ),
       phong: [
-        Phong(
-          phongID: 1,
-          tenPhong: "P101",
-          trangThai: "1",
-          maLoaiPhong: 1,
-        ),
+        Phong(phongID: 1, tenPhong: "P101", trangThai: 1, maLoaiPhong: 1),
       ],
     ),
 
@@ -36,12 +29,7 @@ class DanhSachNguoiThuePageViewModel extends ChangeNotifier {
         ghiChu: "Ở ghép",
       ),
       phong: [
-        Phong(
-          phongID: 1,
-          tenPhong: "P101",
-          trangThai: "1",
-          maLoaiPhong: 1,
-        ),
+        Phong(phongID: 1, tenPhong: "P101", trangThai: 1, maLoaiPhong: 1),
       ],
     ),
 
@@ -54,12 +42,7 @@ class DanhSachNguoiThuePageViewModel extends ChangeNotifier {
         ghiChu: "",
       ),
       phong: [
-        Phong(
-          phongID: 2,
-          tenPhong: "P102",
-          trangThai: "1",
-          maLoaiPhong: 1,
-        ),
+        Phong(phongID: 2, tenPhong: "P102", trangThai: 1, maLoaiPhong: 1),
       ],
     ),
 
@@ -72,12 +55,7 @@ class DanhSachNguoiThuePageViewModel extends ChangeNotifier {
         ghiChu: "Ở ghép",
       ),
       phong: [
-        Phong(
-          phongID: 3,
-          tenPhong: "P103",
-          trangThai: "2",
-          maLoaiPhong: 1,
-        ),
+        Phong(phongID: 3, tenPhong: "P103", trangThai: 2, maLoaiPhong: 1),
       ],
     ),
 
@@ -90,12 +68,7 @@ class DanhSachNguoiThuePageViewModel extends ChangeNotifier {
         ghiChu: "",
       ),
       phong: [
-        Phong(
-          phongID: 3,
-          tenPhong: "P103",
-          trangThai: "1",
-          maLoaiPhong: 2,
-        ),
+        Phong(phongID: 3, tenPhong: "P103", trangThai: 1, maLoaiPhong: 2),
       ],
     ),
 
@@ -108,33 +81,24 @@ class DanhSachNguoiThuePageViewModel extends ChangeNotifier {
         ghiChu: "Ở ghép",
       ),
       phong: [
-        Phong(
-          phongID: 3,
-          tenPhong: "P103",
-          trangThai: "1",
-          maLoaiPhong: 1,
-        ),
+        Phong(phongID: 3, tenPhong: "P103", trangThai: 1, maLoaiPhong: 1),
       ],
     ),
   ];
 
   int get tong => danhSachNguoiThue.length;
 
-  int get thueChinh =>
-      danhSachNguoiThue
-          .where(
-            (e) =>
-                e.nguoiThue.ghiChu == null ||
-                e.nguoiThue.ghiChu!.trim().isEmpty,
-          )
-          .length;
+  int get thueChinh => danhSachNguoiThue
+      .where(
+        (e) => e.nguoiThue.ghiChu == null || e.nguoiThue.ghiChu!.trim().isEmpty,
+      )
+      .length;
 
   int get oGhep => tong - thueChinh;
-  
+
   @override
   void dispose() {
     searchController.dispose();
     super.dispose();
   }
 }
-

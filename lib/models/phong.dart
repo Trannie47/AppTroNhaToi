@@ -3,10 +3,11 @@ import 'package:AppTroNhaToi/models/loaiphong.dart';
 class Phong {
   final int phongID;
   final String tenPhong;
-  final String trangThai;
+  final int trangThai;
   final String? moTa;
   final int maLoaiPhong;
-  final LoaiPhong? loaiPhong; //cái này dùng để lấy kèm thông tin tên loại phòng để hiển thị lên item phòng trên chi tiết người thuê
+  final LoaiPhong?
+  loaiPhong; //cái này dùng để lấy kèm thông tin tên loại phòng để hiển thị lên item phòng trên chi tiết người thuê
 
   Phong({
     required this.phongID,
@@ -14,19 +15,19 @@ class Phong {
     required this.trangThai,
     this.moTa,
     required this.maLoaiPhong,
-    this.loaiPhong
+    this.loaiPhong,
   });
 
   factory Phong.fromMap(Map<String, dynamic> map) {
     return Phong(
-        phongID: map['phongId'] as int? ?? 0,
-        tenPhong: map['tenPhong'] as String? ?? "Phòng chưa đặt tên",
-        trangThai: map['trangThai'] as String? ?? "Trống",
-        moTa: map['moTa'] as String?,
-        maLoaiPhong: map['maLoaiPhong'] as int? ?? 0,
-        loaiPhong: map['loaiPhong'] != null
-            ? LoaiPhong.fromMap(map['loaiPhong'] as Map<String, dynamic>)
-            : null
+      phongID: map['phongId'] as int? ?? 0,
+      tenPhong: map['tenPhong'] as String? ?? "Phòng chưa đặt tên",
+      trangThai: map['trangThai'] as int? ?? 0,
+      moTa: map['moTa'] as String?,
+      maLoaiPhong: map['maLoaiPhong'] as int? ?? 0,
+      loaiPhong: map['loaiPhong'] != null
+          ? LoaiPhong.fromMap(map['loaiPhong'] as Map<String, dynamic>)
+          : null,
     );
   }
 
@@ -43,7 +44,7 @@ class Phong {
   Phong copyWith({
     int? phongID,
     String? tenPhong,
-    String? trangThai,
+    int? trangThai,
     String? moTa,
     int? maLoaiPhong,
   }) {

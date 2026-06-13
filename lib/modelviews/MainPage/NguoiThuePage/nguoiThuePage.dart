@@ -4,8 +4,7 @@ import 'package:AppTroNhaToi/models/nguoi_thue_phong.dart';
 import 'package:flutter/material.dart';
 
 class NguoiThuePageViewModel extends ChangeNotifier {
-  final TextEditingController searchController =
-      TextEditingController();
+  final TextEditingController searchController = TextEditingController();
 
   final List<NguoiThuePhong> danhSachNguoiThue = [
     NguoiThuePhong(
@@ -19,18 +18,8 @@ class NguoiThuePageViewModel extends ChangeNotifier {
         ngaySinh: DateTime(2003, 5, 12),
       ),
       phong: [
-        Phong(
-          phongID: 1,
-          tenPhong: "P101",
-          trangThai: "1",
-          maLoaiPhong: 1,
-        ),
-        Phong(
-          phongID: 2,
-          tenPhong: "P102",
-          trangThai: "2",
-          maLoaiPhong: 2,
-        ),
+        Phong(phongID: 1, tenPhong: "P101", trangThai: 1, maLoaiPhong: 1),
+        Phong(phongID: 2, tenPhong: "P102", trangThai: 2, maLoaiPhong: 2),
       ],
     ),
   ];
