@@ -5,6 +5,7 @@ import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/string_formatter.dart';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ChiTietNguoiThuePage extends StatefulWidget {
   final NguoiThue nguoiThue;
@@ -27,20 +28,12 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
   @override
   void initState() {
     super.initState();
-    hopdongViewModel = HopdongViewModel();
-    // vm = ChiTietNguoiThuePageViewModel(
-    //   nguoiThue: widget.nguoiThue,
-    //   //dsPhong: widget.dsPhong,
-    // );
-    hopdongViewModel.fetchRoomByNguoiThue(
-      widget.nguoiThue.idnt!,
-    ); // kích hoạt gọi api lấy ds phòng theo id người thuê
-
-    hopdongViewModel.addListener(() {
-      if (mounted) {
-        setState(() {});
-      }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      hopdongViewModel.fetchRoomByNguoiThue(
+        widget.nguoiThue.idnt!,
+      ); // kích hoạt gọi api lấy ds phòng theo id người thuê
     });
+
   }
   //
   // @override
@@ -65,8 +58,9 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
 
   @override
   Widget build(BuildContext context) {
-    final detail =
-        widget.nguoiThue; // lấy dữ liệu người thuê được gửi từ mà trước qua
+    final detail = widget.nguoiThue; // lấy dữ liệu người thuê được gửi từ mà trước qua
+    hopdongViewModel= Provider.of<HopdongViewModel>(context);
+    final listHD= hopdongViewModel.listHopDongNguoiThue;
     return Scaffold(
       backgroundColor: const Color(0xffF7F8FC),
 
@@ -421,31 +415,52 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                   ),
 
                   const SizedBox(height: 18),
-
                   _section(
-                    //title: "Phòng đang thuê (${vm.dsPhong.length})",
-                    title: "Phòng đang thuê (0)",
+                    title: "Phòng đang thuê (${listHD.length})",
                     action: "Xem thêm",
+                    child: hopdongViewModel.isLoading
+                        ? const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: CircularProgressIndicator(color: Color(0xff2D7A3A)),
+                      ),
+                    )
+                        : listHD.isEmpty
+                        ? const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text("Người này hiện chưa thuê phòng nào", style: TextStyle(color: Colors.grey)),
+                    )
+                        : Column(
+                      children: listHD.asMap().entries.map((e) {
+                        final index = e.key;
+                        final hopDong = e.value;
+                        final phong = hopDong.phong;
+                        final loaiPhong = phong?.loaiPhong;
 
-                    child: Column(
-                      // children: vm.dsPhong.asMap().entries.map((e) {
-                      //   final phong = e.value;
-                      //
-                      //   return Column(
-                      //     children: [
-                      //       _itemPhong(
-                      //         phong.tenPhong,
-                      //
-                      //         "Phòng ${phong.tenPhong.replaceAll("P", "")}",
-                      //
-                      //         "",
-                      //       ),
-                      //
-                      //       if (e.key != vm.dsPhong.length - 1)
-                      //         const Divider(height: 1),
-                      //     ],
-                      //   );
-                      // }).toList(),
+                        // Định dạng ngày ký hợp đồng
+                        String chuoiNgay = "Chưa rõ ngày ký";
+                        if (hopDong.ngayKy != null) {
+                          chuoiNgay = "Đang thuê từ ${formatDate(hopDong.ngayKy)}";
+                        }
+
+                        return Column(
+                          children: [
+                            _itemPhong(
+                              // Chữ viết tắt trong ô vuông
+                              phong?.tenPhong != null && phong!.tenPhong.contains(" ")
+                                  ? "P${phong.tenPhong.split(" ").last}"
+                                  : "P??",
+
+                              // Tên phòng kèm tên loại
+                              "${phong?.tenPhong ?? "Phòng"} · ${loaiPhong?.tenLoaiPhong ?? "Chưa rõ loại"}",
+
+                              chuoiNgay,
+                            ),
+                            if (index != listHD.length - 1)
+                              const Divider(height: 0.5),
+                          ],
+                        );
+                      }).toList(),
                     ),
                   ),
 
@@ -581,29 +596,21 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
   Widget _itemPhong(String maPhong, String tenPhong, String ngayThue) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
-
       child: Row(
         children: [
           Container(
-            width: 42,
-            height: 42,
-
+            width: 46,
+            height: 46,
             decoration: BoxDecoration(
               color: const Color(0xffEEF6EF),
-
               borderRadius: BorderRadius.circular(12),
             ),
-
             alignment: Alignment.center,
-
             child: Text(
               maPhong,
-
               style: const TextStyle(
                 color: Color(0xff2D7A3A),
-
                 fontWeight: FontWeight.w700,
-
                 fontSize: 12,
               ),
             ),
@@ -612,13 +619,34 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
           const SizedBox(width: 12),
 
           Expanded(
-            child: Text(
-              tenPhong,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  tenPhong,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xff1C1C1E),
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis, // Đề phòng tên phòng quá dài tự chấm chấm
+                ),
 
-              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+                const SizedBox(height: 4),
+
+                Text(
+                  ngayThue,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xff8E8E93),
+                  ),
+                ),
+              ],
             ),
           ),
-
           const Icon(Icons.chevron_right_rounded, color: Color(0xffC7C7CC)),
         ],
       ),

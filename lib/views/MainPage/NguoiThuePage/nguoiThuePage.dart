@@ -1,6 +1,7 @@
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/models/nguoi_thue_phong.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/NguoiThuePage/nguoiThuePage.dart';
+import 'package:AppTroNhaToi/view_models/hopdong_view_model.dart';
 import 'package:AppTroNhaToi/views/MainPage/NguoiThuePage/NguoiThueForm/NguoiThueForm.dart';
 import 'package:AppTroNhaToi/widgets/itemNguoiThue.dart';
 import 'package:flutter/material.dart';
@@ -49,8 +50,10 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
       context,
 
       MaterialPageRoute(
-        builder: (_) =>
-            ChiTietNguoiThuePage(nguoiThue: nt),
+        builder: (context) => ChangeNotifierProvider(
+            create: (_) => HopdongViewModel(),
+            child:  ChiTietNguoiThuePage(nguoiThue: nt),
+        ),
       ),
     );
   }

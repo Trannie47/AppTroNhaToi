@@ -8,9 +8,12 @@ class HopdongViewModel extends ChangeNotifier{
 
   List<HopDong> _listHopDongNguoiThue= [];
   List<HopDong> get listHopDongNguoiThue=> _listHopDongNguoiThue;
-
+  bool _isLoading= false;
+  bool get isLoading => _isLoading;
   Future<void> fetchRoomByNguoiThue(int idnt)async{
     try{
+      _isLoading=true;
+      notifyListeners();
       _listHopDongNguoiThue= await hopdongRepository.fetchRoomByNguoiThue(idnt);
       print("LIST HOP DONG LAY DUOC LA: $_listHopDongNguoiThue");
     }catch(e){
@@ -18,6 +21,7 @@ class HopdongViewModel extends ChangeNotifier{
       _listHopDongNguoiThue=[];
 
     }finally{
+      _isLoading= false;
       notifyListeners();
     }
   }
