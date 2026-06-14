@@ -7,6 +7,7 @@ import 'package:AppTroNhaToi/core/utils/string_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../core/utils/launcher_utils.dart';
 import '../../../../states/chi_tiet_nguoi_thue_state.dart';
 
 class ChiTietNguoiThuePage extends StatefulWidget {
@@ -334,37 +335,46 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                     Row(
                       children: [
                         Expanded(
-                          child: _actionButton(
-                            const Icon(
-                              Icons.call_outlined,
-                              color: Color(0xff2F61E7),
+                          child: GestureDetector(
+                            onTap: () => LauncherUtils.goidien(detail.sdt ?? ""),
+                            child: _actionButton(
+                              const Icon(
+                                Icons.call_outlined,
+                                color: Color(0xff2F61E7),
+                              ),
+                              "Gọi điện",
                             ),
-                            "Gọi điện",
                           ),
                         ),
 
                         const SizedBox(width: 12),
 
                         Expanded(
-                          child: _actionButton(
-                            const Icon(
-                              Icons.message_outlined,
-                              color: Color(0xff2F61E7),
+                          child: GestureDetector(
+                            onTap: () => LauncherUtils.nhantin(detail.sdt ?? ""),
+                            child: _actionButton(
+                              const Icon(
+                                Icons.message_outlined,
+                                color: Color(0xff2F61E7),
+                              ),
+                              "Nhắn tin",
                             ),
-                            "Nhắn tin",
                           ),
                         ),
 
                         const SizedBox(width: 12),
 
                         Expanded(
-                          child: _actionButton(
-                            Image.asset(
-                              "assets/images/zalo.png",
-                              width: 20,
-                              height: 20,
+                          child: GestureDetector(
+                            onTap: () => LauncherUtils.zalo(detail.sdt ?? ""),
+                            child: _actionButton(
+                              Image.asset(
+                                "assets/images/zalo.png",
+                                width: 20,
+                                height: 20,
+                              ),
+                              "Zalo",
                             ),
-                            "Zalo",
                           ),
                         ),
                       ],
