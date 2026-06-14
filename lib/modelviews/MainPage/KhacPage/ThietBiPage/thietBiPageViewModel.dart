@@ -1,9 +1,48 @@
+import 'package:AppTroNhaToi/models/lap_rap.dart';
+import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:flutter/material.dart';
 
 class ThietBiPageViewModel extends ChangeNotifier {
 
   int currentIndex = 0;
+  List<Phong> dsPhong = [
+
+    Phong(
+      phongID: 1,
+      tenPhong: "P101",
+      trangThai: 1,
+      maLoaiPhong: 1,
+    ),
+
+    Phong(
+      phongID: 2,
+      tenPhong: "P102",
+      trangThai: 1,
+      maLoaiPhong: 1,
+    ),
+  ];
+
+  List<LapRap> dsLapRap = [
+
+    LapRap(
+      id: 1,
+      phongID: 1,
+      thietBiID: 1,
+    ),
+
+    LapRap(
+      id: 2,
+      phongID: 1,
+      thietBiID: 2,
+    ),
+
+    LapRap(
+      id: 3,
+      phongID: 2,
+      thietBiID: 3,
+    ),
+  ];
 
   List<ThietBi> dsThietBi = [
 

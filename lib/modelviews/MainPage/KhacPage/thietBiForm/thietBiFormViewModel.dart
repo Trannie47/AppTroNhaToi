@@ -1,4 +1,5 @@
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
+import 'package:AppTroNhaToi/models/lap_rap.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:flutter/material.dart';
 
@@ -35,7 +36,10 @@ class ThietBiFormViewModel extends ChangeNotifier {
 
   final List<String> dsTrangThai = ["Tốt", "Đang sửa"];
 
-  ThietBiFormViewModel({ThietBi? thietBiInput}) {
+  ThietBiFormViewModel({
+    ThietBi? thietBiInput,
+    List<LapRap>? dsLapRap,
+  }) {
     if (thietBiInput != null) {
       thietBi = thietBiInput;
 
@@ -50,6 +54,14 @@ class ThietBiFormViewModel extends ChangeNotifier {
 
       loaiThietBi = thietBi.loai;
       trangThai = thietBi.trangThai;
+      if (dsLapRap != null) {
+
+        LapRap lapRap = dsLapRap.firstWhere(
+              (e) => e.thietBiID == thietBiInput!.thietBiID,
+        );
+
+        phongID = lapRap.phongID;
+      }
     }
   }
 
@@ -161,3 +173,4 @@ class ThietBiFormViewModel extends ChangeNotifier {
     }
   }
 }
+

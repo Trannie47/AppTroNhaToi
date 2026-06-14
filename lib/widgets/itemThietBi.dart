@@ -1,139 +1,131 @@
+
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class ItemThietBi extends StatelessWidget {
   final ThietBi thietBi;
 
+
   const ItemThietBi({
     super.key,
     required this.thietBi,
-  });
 
+  });
   @override
   Widget build(BuildContext context) {
-    final bool dangSua =
-        thietBi.trangThai?.toLowerCase() == "đang sửa";
+    final bool dangSua = thietBi.trangThai?.toLowerCase() == "đang sửa";
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
 
-      padding: const EdgeInsets.symmetric(
-        horizontal: 14,
-        vertical: 14,
-      ),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
 
-      decoration: BoxDecoration(
-        color: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
 
-        borderRadius: BorderRadius.circular(18),
+        decoration: BoxDecoration(
+          color: Colors.white,
 
-        border: dangSua
-            ? Border.all(
-          color: const Color(0xffFFD6D6),
-        )
-            : null,
-      ),
+          borderRadius: BorderRadius.circular(18),
 
-      child: Row(
-        children: [
-          Container(
-            width: 42,
-            height: 42,
+          border: dangSua ? Border.all(color: const Color(0xffFFD6D6)) : null,
+        ),
 
-            decoration: BoxDecoration(
-              color: dangSua
-                  ? const Color(0xffFFF2F2)
-                  : const Color(0xffF5F5F5),
+        child: Row(
+          children: [
+            Container(
+              width: 42,
+              height: 42,
 
-              borderRadius: BorderRadius.circular(12),
+              decoration: BoxDecoration(
+                color: dangSua
+                    ? const Color(0xffFFF2F2)
+                    : const Color(0xffF5F5F5),
+
+                borderRadius: BorderRadius.circular(12),
+              ),
+
+              child: Icon(
+                _getIcon(),
+                color: dangSua ? Colors.red : const Color(0xff2D7A3A),
+              ),
             ),
 
-            child: Icon(
-              _getIcon(),
-              color: dangSua
-                  ? Colors.red
-                  : const Color(0xff2D7A3A),
-            ),
-          ),
+            const SizedBox(width: 14),
 
-          const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
 
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-
-              children: [
-                Text(
-                  thietBi.tenThietBi ?? "",
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
+                children: [
+                  Text(
+                    thietBi.tenThietBi ?? "",
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
-                ),
 
-                const SizedBox(height: 2),
+                  const SizedBox(height: 2),
 
-                Text(
-                  "${thietBi.loai} · Mua ${DateFormat("MM/yyyy").format(thietBi.ngayMua!)}",
-                  style: const TextStyle(
-                    color: Color(0xff9A9A9A),
-                    fontSize: 12,
+                  Text(
+                    thietBi.ngayMua != null
+                        ? "${thietBi.loai} · Mua ${DateFormat("MM/yyyy").format(thietBi.ngayMua!)}"
+                        : "${thietBi.loai}",
+                    style: const TextStyle(
+                      color: Color(0xff9A9A9A),
+                      fontSize: 12,
+                    ),
                   ),
-                ),
 
-                const SizedBox(height: 4),
+                  const SizedBox(height: 4),
 
-                Row(
-                  children: [
-                    Text(
-                      thietBi.trangThai ?? "",
-                      style: TextStyle(
-                        color: dangSua
-                            ? Colors.red
-                            : const Color(0xff2D7A3A),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
+                  Row(
+                    children: [
+                      Text(
+                        thietBi.trangThai ?? "",
+                        style: TextStyle(
+                          color: dangSua ? Colors.red : const Color(0xff2D7A3A),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
 
-                    const SizedBox(width: 8),
+                      const SizedBox(width: 8),
 
-                    const Text(
-                      "|",
-                      style: TextStyle(
-                        color: Color(0xffC8C8C8),
-                        fontSize: 12,
+                      const Text(
+                        "|",
+                        style: TextStyle(
+                          color: Color(0xffC8C8C8),
+                          fontSize: 12,
+                        ),
                       ),
-                    ),
 
-                    const SizedBox(width: 8),
+                      const SizedBox(width: 8),
 
-                    Text(
-                      "${NumberFormat("#,###").format(thietBi.giaTri)}đ",
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: Color(0xff4F4F4F),
+                      Text(
+                        "${NumberFormat("#,###").format(thietBi.giaTri)}đ",
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: Color(0xff4F4F4F),
+                        ),
                       ),
-                    ),
-                  ],
-                )
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
 
-          const Icon(
-            Icons.chevron_right,
-            color: Color(0xffD2D2D2),
-          ),
-        ],
+            const Icon(Icons.chevron_right, color: Color(0xffD2D2D2)),
+          ],
+        ),
       ),
     );
   }
 
   IconData _getIcon() {
     switch (thietBi.loai?.toLowerCase()) {
-
       case "điều hòa":
         return Icons.ac_unit;
 

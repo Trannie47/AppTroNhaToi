@@ -1,4 +1,6 @@
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
+import 'package:AppTroNhaToi/models/lap_rap.dart';
+import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/thietBiForm/thietBiFormViewModel.dart';
 
@@ -6,10 +8,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 
-class ThietBiForm extends StatefulWidget {
-  final ThietBi? thietBi;
 
-  const ThietBiForm({super.key, this.thietBi});
+class ThietBiForm extends StatefulWidget {
+
+  final ThietBi? thietBi;
+  final List<LapRap> dsLapRap;
+  final List<Phong> dsPhong;
+
+  const ThietBiForm({
+    super.key,
+    this.thietBi,
+    required this.dsLapRap,
+    required this.dsPhong,
+  });
 
   @override
   State<ThietBiForm> createState() => _ThietBiFormState();
@@ -221,23 +232,12 @@ class _ThietBiFormState extends State<ThietBiForm> {
 
           hint: const Text("--Chọn phòng--"),
 
-          items: const [
-
-            DropdownMenuItem(
-              value: 1,
-              child: Text("P101"),
+          items: widget.dsPhong.map(
+                (e) => DropdownMenuItem<int>(
+              value: e.phongID,
+              child: Text(e.tenPhong),
             ),
-
-            DropdownMenuItem(
-              value: 2,
-              child: Text("P102"),
-            ),
-
-            DropdownMenuItem(
-              value: 3,
-              child: Text("P103"),
-            ),
-          ],
+          ).toList(),
 
           onChanged: (value) {
             setState(() {
@@ -248,7 +248,19 @@ class _ThietBiFormState extends State<ThietBiForm> {
       ],
     );
   }
+  DateTime? chuyenNgay(String ngay) {
+    try {
+      final tach = ngay.split('/');
 
+      return DateTime(
+        int.parse(tach[2]),
+        int.parse(tach[1]),
+        int.parse(tach[0]),
+      );
+    } catch (_) {
+      return null;
+    }
+  }
 
 
 
@@ -258,7 +270,11 @@ class _ThietBiFormState extends State<ThietBiForm> {
   void initState() {
     super.initState();
 
-    vm = ThietBiFormViewModel(thietBiInput: widget.thietBi);
+    vm = ThietBiFormViewModel(
+      thietBiInput: widget.thietBi,
+      dsLapRap: widget.dsLapRap,
+    );
+
   }
 
   @override
@@ -283,7 +299,10 @@ class _ThietBiFormState extends State<ThietBiForm> {
 
             child: IconButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pop(
+                  context,
+                  true,
+                );
               },
 
               icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 16),
@@ -323,9 +342,19 @@ class _ThietBiFormState extends State<ThietBiForm> {
                 return;
               }
 
+              ThietBi thietBiMoi = (widget.thietBi ?? ThietBi()).copyWith(
+                tenThietBi: vm.txtTenThietBi.text,
+                loai: vm.loaiThietBi,
+                trangThai: vm.trangThai,
+                giaTri: double.tryParse(vm.txtGiaTri.text),
+                ngayMua: chuyenNgay(
+                  vm.txtNgayMua.text,
+                ),
+              );
+
               Navigator.pop(
                 context,
-                true,
+                thietBiMoi,
               );
             },
 

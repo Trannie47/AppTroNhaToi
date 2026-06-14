@@ -1,6 +1,7 @@
 
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/ThietBiPage/thietBiPageViewModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThietBiForm/thietBiForm.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietThietBi/chiTietThietBi.dart';
 import 'package:AppTroNhaToi/widgets/itemThietBi.dart';
 import 'package:flutter/material.dart';
 
@@ -75,7 +76,10 @@ class _ThietBiPageState extends State<ThietBiPage> {
                 bool? result = await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => const ThietBiForm(),
+                    builder: (_) => ThietBiForm(
+                      dsLapRap: vm.dsLapRap,
+                      dsPhong: vm.dsPhong,
+                    ),
                   ),
                 );
 
@@ -141,15 +145,21 @@ class _ThietBiPageState extends State<ThietBiPage> {
                     onTap: () async {
 
                       bool? result = await Navigator.push(
+
                         context,
+
                         MaterialPageRoute(
-                          builder: (_) => ThietBiForm(
+                          builder: (_) => ChiTietThietBi(
                             thietBi: vm.dsHienThi[index],
+                            dsPhong: vm.dsPhong,
+                            dsLapRap: vm.dsLapRap,
+                            dsThietBi: vm.dsThietBi,
                           ),
                         ),
                       );
 
                       if (result == true) {
+
                         setState(() {});
                       }
                     },
