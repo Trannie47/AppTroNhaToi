@@ -649,7 +649,7 @@ class _ChiTietThietBiState extends State<ChiTietThietBi> {
 
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 11,
+                    fontSize: 13,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
