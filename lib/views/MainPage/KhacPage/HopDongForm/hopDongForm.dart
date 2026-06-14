@@ -1,5 +1,8 @@
 import 'package:AppTroNhaToi/models/hop_dong.dart';
+import 'package:AppTroNhaToi/models/nguoi_thue.dart';
+import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/hopDongForm/hopDongForm.dart';
+import 'package:AppTroNhaToi/widgets/customDropdownSearch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
@@ -79,19 +82,30 @@ class _TaoHopDongPageState extends State<HopDongForm> {
               child: Column(
                 children: [
                   _label("Phòng thuê"),
-                  _textfield(
-                    controller: vm.txtPhong,
-                    hint: "Nhập phòng thuê",
-                    errorText: vm.errPhong,
+                  CustomDropdownSearch<Phong>(
+                    items: vm.dsPhong,
+                    selectedItem: vm.selectedPhong,
+                    itemAsString: (item) => item.tenPhong,
+                    onChanged: (value) {
+                      setState(() {
+                        vm.selectedPhong = value;
+                        vm.onSelectedPhong(vm.selectedPhong);
+                      });
+                    },
                   ),
 
                   const SizedBox(height: 16),
 
                   _label("Người thuê chính"),
-                  _textfield(
-                    controller: vm.txtNguoiThue,
-                    hint: "Nhập người thuê",
-                    errorText: vm.errNguoiThue,
+                  CustomDropdownSearch<NguoiThue>(
+                    items: vm.dsNguoiThue,
+                    selectedItem: vm.selectedNguoiThue,
+                    itemAsString: (item) => item.hoTen!,
+                    onChanged: (value) {
+                      setState(() {
+                        vm.selectedNguoiThue = value;
+                      });
+                    },
                   ),
 
                   const SizedBox(height: 16),
@@ -308,6 +322,7 @@ class _TaoHopDongPageState extends State<HopDongForm> {
     int maxLines = 1,
     List<TextInputFormatter>? inputFormatters,
     Function(String)? onChanged,
+    bool enabled = false,
   }) {
     return Container(
       margin: const EdgeInsets.only(top: 6),
@@ -317,6 +332,7 @@ class _TaoHopDongPageState extends State<HopDongForm> {
         maxLines: maxLines,
         inputFormatters: inputFormatters,
         onChanged: onChanged,
+        enabled: enabled,
         decoration: InputDecoration(
           errorText: errorText,
           errorMaxLines: 2,

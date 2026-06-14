@@ -57,6 +57,20 @@ class Phong {
     );
   }
 
+  //Hiển thị trạng thái thông qua số
+  String get trangThaiText {
+    switch (trangThai) {
+      case 0:
+        return 'Trống';
+      case 1:
+        return 'Đã thuê';
+      case 2:
+        return 'Đang sửa chữa';
+      default:
+        return 'Không xác định';
+    }
+  }
+
   @override
   String toString() {
     return 'Phong(phongID: $phongID, tenPhong: $tenPhong, '
