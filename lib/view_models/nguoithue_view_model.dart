@@ -92,4 +92,29 @@ class NguoithueViewModel extends ChangeNotifier{
     gioiTinh = null;
   }
 
+  void parseCCCDQR(String raw) {
+    final parts = raw.split('|');
+
+    if (parts.length < 6) return;
+
+    txtCCCD.text = parts[0].trim();
+
+    txtHoTen.text = parts[2].trim();
+
+    final dob = parts[3].trim();
+
+    if (dob.length == 8) {
+      txtNgaySinh.text =
+      "${dob.substring(0, 2)}/${dob.substring(2, 4)}/${dob.substring(4, 8)}";
+    }
+
+    final gender = parts[4].trim().toLowerCase();
+
+    gioiTinh = gender == "nam";
+
+    txtQueQuan.text = parts[5].trim();
+
+    notifyListeners();
+  }
+
 }

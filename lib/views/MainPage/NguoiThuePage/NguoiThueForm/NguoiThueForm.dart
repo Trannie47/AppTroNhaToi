@@ -2,8 +2,6 @@ import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/views/MainPage/NguoiThuePage/qr_cccd_scanner_page/qr_cccd_scanner_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../../../../modelviews/MainPage/NguoiThuePage/NguoiThueForm/NguoiThueFormViewModel.dart';
 import '../../../../view_models/nguoithue_view_model.dart';
 
 class NguoiThueForm extends StatefulWidget {
@@ -16,20 +14,15 @@ class NguoiThueForm extends StatefulWidget {
 }
 
 class _NguoiThueFormState extends State<NguoiThueForm> {
-  late NguoiThueFormViewModel vm;
   late NguoithueViewModel nguoithueViewModel;
 
   @override
   void initState() {
     super.initState();
-
-    vm = NguoiThueFormViewModel(nguoiThueInput: widget.nguoiThue);
-
   }
 
   @override
   void dispose() {
-    vm.dispose();
     super.dispose();
   }
 
@@ -43,7 +36,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
     );
 
     if (result != null && result.isNotEmpty) {
-      vm.parseCCCDQR(result);
+      nguoithueViewModel.parseCCCDQR(result);
     }
   }
 
