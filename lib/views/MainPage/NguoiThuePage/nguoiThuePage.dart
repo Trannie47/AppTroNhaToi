@@ -29,11 +29,6 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final vm = Provider.of<NguoithueViewModel>(context, listen: false);
       nguoithueViewModel = vm;
-      vm.addListener(() {
-        if (mounted) {
-          setState(() {});
-        }
-      });
 
       vm.fetchAllNguoiThue();
 
@@ -90,16 +85,18 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
                     children: [
                       /// ADD
                       GestureDetector(
-                        onTap: () {
-                          Navigator.push(
+                        onTap: () async {
+                         final check= await Navigator.push<bool>(
                             context,
-
                             MaterialPageRoute(
                               builder: (context) {
                                 return const NguoiThueForm();
                               },
                             ),
                           );
+                         if(check ==true && context.mounted){
+                           Provider.of<NguoithueViewModel>(context,listen: false).fetchAllNguoiThue();
+                         }
                         },
 
                         child: Image.asset(

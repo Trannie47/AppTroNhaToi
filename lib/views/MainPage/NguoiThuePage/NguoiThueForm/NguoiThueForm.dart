@@ -117,7 +117,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Thêm người thuê thành công!')),
                   );
-                  Navigator.pop(context);
+                  Navigator.pop(context, true);
                 } else if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Thêm thất bại, có lỗi từ hệ thống!')),
