@@ -1,7 +1,10 @@
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
-import 'package:AppTroNhaToi/modelviews/MainPage/NguoiThuePage/NguoiThueForm/NguoiThueFormViewModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/NguoiThuePage/qr_cccd_scanner_page/qr_cccd_scanner_page.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../../../modelviews/MainPage/NguoiThuePage/NguoiThueForm/NguoiThueFormViewModel.dart';
+import '../../../../view_models/nguoithue_view_model.dart';
 
 class NguoiThueForm extends StatefulWidget {
   final NguoiThue? nguoiThue;
@@ -14,6 +17,7 @@ class NguoiThueForm extends StatefulWidget {
 
 class _NguoiThueFormState extends State<NguoiThueForm> {
   late NguoiThueFormViewModel vm;
+  late NguoithueViewModel nguoithueViewModel;
 
   @override
   void initState() {
@@ -21,11 +25,6 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
 
     vm = NguoiThueFormViewModel(nguoiThueInput: widget.nguoiThue);
 
-    vm.addListener(() {
-      if (mounted) {
-        setState(() {});
-      }
-    });
   }
 
   @override
@@ -50,6 +49,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
 
   @override
   Widget build(BuildContext context) {
+    nguoithueViewModel= Provider.of<NguoithueViewModel>(context); // lấy viewmodel dùng chung với màn load ds người thuê
     return Scaffold(
       backgroundColor: const Color(0xffF7F9F7),
 
@@ -110,31 +110,46 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
 
       bottomNavigationBar: Container(
         padding: const EdgeInsets.fromLTRB(12, 8, 12, 18),
-
         decoration: const BoxDecoration(color: Color(0xffF7F9FC)),
-
         child: SizedBox(
           height: 52,
-
           child: ElevatedButton(
-            onPressed: () async {
-              if (vm.formKey.currentState!.validate()) {
-                await vm.luuNguoiThue(context);
+            onPressed: nguoithueViewModel.isLoading
+                ? null
+                : () async {
+              if (nguoithueViewModel.formKey.currentState!.validate()) {
+                bool isSuccess = await nguoithueViewModel.luuNguoiThue();
+
+                if (isSuccess && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Thêm người thuê thành công!')),
+                  );
+                  Navigator.pop(context);
+                } else if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Thêm thất bại, có lỗi từ hệ thống!')),
+                  );
+                }
               }
             },
-
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xff2D7A3A),
               elevation: 0,
-
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14),
               ),
             ),
-
-            child: const Text(
+            child: nguoithueViewModel.isLoading
+                ? const SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                color: Colors.white,
+                strokeWidth: 2,
+              ),
+            )
+                : const Text(
               "Lưu người thuê",
-
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
@@ -146,7 +161,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
       ),
 
       body: Form(
-        key: vm.formKey,
+        key: nguoithueViewModel.formKey,
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(12, 4, 12, 16),
 
@@ -231,7 +246,8 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                     _input(
                       title: "Họ và tên",
                       hint: "Nhập họ và tên đầy đủ",
-                      controller: vm.txtHoTen,
+                      //controller: vm.txtHoTen,
+                      controller: nguoithueViewModel.txtHoTen,
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
                           return "Vui lòng nhập họ tên";
@@ -243,7 +259,8 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                     _input(
                       title: "Số điện thoại",
                       hint: "VD: 0901 234 567",
-                      controller: vm.txtSDT,
+                      //controller: vm.txtSDT,
+                      controller: nguoithueViewModel.txtSDT,
                       keyboardType: TextInputType.phone,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -261,7 +278,8 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                     _input(
                       title: "Số CCCD ( Căn cước công dân)",
                       hint: "Nhập số CCCD/CMND",
-                      controller: vm.txtCCCD,
+                      //controller: vm.txtCCCD,
+                      controller: nguoithueViewModel.txtCCCD,
                       keyboardType: TextInputType.number,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -299,14 +317,16 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                                 const SizedBox(height: 8),
 
                                 TextFormField(
-                                  controller: vm.txtNgaySinh,
-
+                                  //controller: vm.txtNgaySinh,
+                                  controller: nguoithueViewModel.txtNgaySinh,
                                   validator: (value) {
+
                                     if (value == null || value.isEmpty) {
                                       return "Vui lòng nhập ngày sinh";
                                     }
 
                                     try {
+
                                       List<String> arr = value.split('/');
 
                                       if (arr.length != 3) {
@@ -325,21 +345,18 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                                         return "Ngày sinh không hợp lệ";
                                       }
 
-                                      int tuoi =
-                                          DateTime.now().year - ngaySinh.year;
+                                      int tuoi = DateTime.now().year - ngaySinh.year;
 
-                                      if (DateTime.now().month <
-                                              ngaySinh.month ||
-                                          (DateTime.now().month ==
-                                                  ngaySinh.month &&
-                                              DateTime.now().day <
-                                                  ngaySinh.day)) {
+                                      if (DateTime.now().month < ngaySinh.month ||
+                                          (DateTime.now().month == ngaySinh.month &&
+                                              DateTime.now().day < ngaySinh.day)) {
                                         tuoi--;
                                       }
 
                                       if (tuoi < 0 || tuoi > 120) {
                                         return "Tuổi không hợp lệ";
                                       }
+
                                     } catch (_) {
                                       return "Ngày sinh không hợp lệ";
                                     }
@@ -370,8 +387,8 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                                       newText += text[i];
                                     }
 
-                                    if (newText != vm.txtNgaySinh.text) {
-                                      vm.txtNgaySinh.value = TextEditingValue(
+                                    if (newText != nguoithueViewModel.txtNgaySinh.text) {
+                                      nguoithueViewModel.txtNgaySinh.value = TextEditingValue(
                                         text: newText,
 
                                         selection: TextSelection.collapsed(
@@ -406,8 +423,8 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                                           lastDate: DateTime.now(),
                                         );
                                         if (picked != null) {
-                                          vm.txtNgaySinh.text =
-                                              "${picked.day.toString().padLeft(2, '0')}/"
+                                          nguoithueViewModel.txtNgaySinh.text =
+                                          "${picked.day.toString().padLeft(2, '0')}/"
                                               "${picked.month.toString().padLeft(2, '0')}/"
                                               "${picked.year}";
                                         }
@@ -463,7 +480,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
 
                                 FormField<bool>(
                                   validator: (value) {
-                                    if (vm.gioiTinh == null) {
+                                    if (nguoithueViewModel.gioiTinh == null) {
                                       return "Vui lòng chọn giới tính";
                                     }
                                     return null;
@@ -471,8 +488,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
 
                                   builder: (state) {
                                     return Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Container(
                                           padding: const EdgeInsets.symmetric(
@@ -481,14 +497,12 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
 
                                           decoration: BoxDecoration(
                                             color: const Color(0xffF8F8F8),
-                                            borderRadius: BorderRadius.circular(
-                                              14,
-                                            ),
+                                            borderRadius: BorderRadius.circular(14),
                                           ),
 
                                           child: DropdownButtonHideUnderline(
                                             child: DropdownButton<bool>(
-                                              value: vm.gioiTinh,
+                                              value: nguoithueViewModel.gioiTinh,
 
                                               isExpanded: true,
 
@@ -512,11 +526,10 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                                               ],
 
                                               onChanged: (value) {
-                                                setState(() {
-                                                  vm.gioiTinh = value;
-                                                });
-
-                                                state.didChange(value);
+                                                if (value != null) {
+                                                  nguoithueViewModel.gioiTinh = value; // Gán data vào VM chung
+                                                  state.didChange(value); // Báo hiệu FormField cập nhật
+                                                }
                                               },
                                             ),
                                           ),
@@ -524,9 +537,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
 
                                         if (state.hasError)
                                           Padding(
-                                            padding: const EdgeInsets.only(
-                                              top: 5,
-                                            ),
+                                            padding: const EdgeInsets.only(top: 5),
                                             child: Text(
                                               state.errorText!,
                                               style: const TextStyle(
@@ -538,7 +549,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                                       ],
                                     );
                                   },
-                                ),
+                                )
                               ],
                             ),
                           ),
@@ -549,7 +560,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                     _input(
                       title: "Quê quán",
                       hint: "Tỉnh / Thành phố",
-                      controller: vm.txtQueQuan,
+                      controller: nguoithueViewModel.txtQueQuan,
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
                           return "Vui lòng nhập quê quán";
@@ -573,7 +584,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                     const SizedBox(height: 12),
 
                     TextFormField(
-                      controller: vm.txtGhiChu,
+                      controller: nguoithueViewModel.txtGhiChu,
                       maxLines: 2,
 
                       decoration: InputDecoration(
@@ -727,3 +738,4 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
     );
   }
 }
+

@@ -24,18 +24,22 @@ class NguoiThueApiClient {
     }
   }
 
-  Future<void> themNguoiThue(NguoiThue nguoiThue) async {
+  Future<bool> themNguoiThue(NguoiThue nguoiThue) async {
     try {
-      await _dio.post(
+     final result= await _dio.post(
         "nguoi-thue/create",
-        data: jsonEncode(nguoiThue.toMap()),
+        data: nguoiThue.toMap(),
       );
+     if(result.statusCode==200 || result.statusCode==201){
+       return true;
+     }
+     return false;
     } catch (e) {
       if (kDebugMode) {
         print("Loi them nguoi thue $e");
       }
 
-      rethrow;
+      return false;
     }
   }
 }

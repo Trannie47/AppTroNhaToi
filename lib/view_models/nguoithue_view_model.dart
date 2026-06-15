@@ -6,6 +6,16 @@ class NguoithueViewModel extends ChangeNotifier{
   final NguoithueRepository nguoithueRepository= NguoithueRepository();
   final TextEditingController searchController = TextEditingController();
 
+  final TextEditingController txtHoTen = TextEditingController();
+  final TextEditingController txtSDT = TextEditingController();
+  final TextEditingController txtCCCD = TextEditingController();
+  final TextEditingController txtNgaySinh = TextEditingController();
+  final TextEditingController txtQueQuan = TextEditingController();
+  final TextEditingController txtVaiTro = TextEditingController();
+  final TextEditingController txtGhiChu = TextEditingController();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  bool? gioiTinh;
+
   List<NguoiThue> _listNguoiThue= [];
   List<NguoiThue> get listNguoithu=> _listNguoiThue;
 
@@ -30,6 +40,56 @@ class NguoithueViewModel extends ChangeNotifier{
     }
   }
 
+  Future<bool> luuNguoiThue() async{
+    if( _isLoading) return false;
+    _isLoading= true;
+    notifyListeners();
 
+    try{
+      DateTime? ngaySinhParsed;
+      if (txtNgaySinh.text.isNotEmpty) {
+        List<String> arr = txtNgaySinh.text.split('/');
+        if (arr.length == 3) {
+          ngaySinhParsed = DateTime(
+            int.parse(arr[2]), // Năm
+            int.parse(arr[1]), // Tháng
+            int.parse(arr[0]), // Ngày
+          );
+        }
+      }
+      NguoiThue nguoiThue=NguoiThue(
+        hoTen: txtHoTen.text.trim(),
+        cccd: txtCCCD.text.trim(),
+        sdt: txtSDT.text.trim(),
+        ngaySinh: ngaySinhParsed,
+        gioiTinh: gioiTinh ?? true,
+        ghiChu: txtGhiChu.text.trim(),
+        queQuan: txtQueQuan.text.trim()
+      );
+      bool result = await nguoithueRepository.themNguoiThue(nguoiThue);
+      if(result){
+        await fetchAllNguoiThue();
+        clearAllFileds();
+        return true;
+      }
+      return false;
+    }catch(e){
+      print("Lỗi người thuê $e");
+      return false;
+    }finally{
+      _isLoading= false;
+      notifyListeners();
+    }
+  }
+
+  void clearAllFileds(){
+    txtHoTen.clear();
+    txtSDT.clear();
+    txtCCCD.clear();
+    txtNgaySinh.clear();
+    txtQueQuan.clear();
+    txtGhiChu.clear();
+    gioiTinh = null;
+  }
 
 }
