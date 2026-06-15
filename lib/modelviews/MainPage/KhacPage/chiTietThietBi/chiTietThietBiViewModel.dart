@@ -1,5 +1,6 @@
 import 'package:AppTroNhaToi/models/lap_rap.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
+import 'package:AppTroNhaToi/models/sua_chua.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:flutter/material.dart';
 
@@ -23,6 +24,8 @@ class ChiTietThietBiViewModel extends ChangeNotifier {
     dsLapRap = lapRapList;
     dsThietBi = thietBiList;
   }
+
+
 
   bool get dangSua {
 
@@ -146,6 +149,20 @@ class ChiTietThietBiViewModel extends ChangeNotifier {
   void xoaLichSu(int index) {
 
     lichSuSuaChua.removeAt(index);
+
+    notifyListeners();
+  }
+
+  void themLichSuSuaChua(SuaChua suaChua) {
+
+    lichSuSuaChua.insert(0, {
+      "noiDung": suaChua.nguyenNhan,
+      "ngay":
+      "${suaChua.ngaySuaChua!.day.toString().padLeft(2, '0')}/"
+          "${suaChua.ngaySuaChua!.month.toString().padLeft(2, '0')}/"
+          "${suaChua.ngaySuaChua!.year}",
+      "trangThai": "Đang sửa",
+    });
 
     notifyListeners();
   }

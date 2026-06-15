@@ -1,6 +1,7 @@
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/models/lap_rap.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
+import 'package:AppTroNhaToi/models/sua_chua.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/chiTietThietBi/chiTietThietBiViewModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/PhieuSuaChuaForm/PhieuSuaChuaForm.dart';
@@ -119,282 +120,339 @@ class _ChiTietThietBiState extends State<ChiTietThietBi> {
         ],
       ),
 
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+      body: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: () {
+          if (hienMenu) {
+            setState(() {
+              hienMenu = false;
+            });
+          }
+        },
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
 
-            child: Column(
-              children: [
-                if (dangSua)
+              child: Column(
+                children: [
+                  if (dangSua)
+                    Container(
+                      width: double.infinity,
+
+                      padding: const EdgeInsets.all(16),
+
+                      decoration: BoxDecoration(
+                        color: const Color(0xffFFF1F1),
+
+                        borderRadius: BorderRadius.circular(18),
+
+                        border: Border.all(color: const Color(0xffFFD4D4)),
+                      ),
+
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 42,
+                            height: 42,
+
+                            decoration: BoxDecoration(
+                              color: const Color(0xffFFE5E5),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+
+                            child: const Icon(Icons.build, color: Colors.red),
+                          ),
+
+                          const SizedBox(width: 14),
+
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+
+                            children: [
+                              const Text(
+                                "Đang sửa chữa",
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 15,
+                                ),
+                              ),
+
+                              const SizedBox(height: 3),
+
+                              Text(
+                                "Từ ngày ${formatDate(DateTime.now())}",
+
+                                style: const TextStyle(
+                                  color: Color(0xff8D8D8D),
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+
+                  const SizedBox(height: 16),
+
                   Container(
                     width: double.infinity,
 
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(18),
 
                     decoration: BoxDecoration(
-                      color: const Color(0xffFFF1F1),
+                      color: Colors.white,
 
-                      borderRadius: BorderRadius.circular(18),
-
-                      border: Border.all(color: const Color(0xffFFD4D4)),
+                      borderRadius: BorderRadius.circular(20),
                     ),
 
-                    child: Row(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+
                       children: [
-                        Container(
-                          width: 42,
-                          height: 42,
-
-                          decoration: BoxDecoration(
-                            color: const Color(0xffFFE5E5),
-                            borderRadius: BorderRadius.circular(12),
+                        const Text(
+                          "Thông tin thiết bị",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xff2D7A3A),
                           ),
-
-                          child: const Icon(Icons.build, color: Colors.red),
                         ),
 
-                        const SizedBox(width: 14),
+                        const SizedBox(height: 22),
 
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        _rowThongTin(
+                          "Tên thiết bị",
+                          vm.thietBi.tenThietBi ?? "",
+                        ),
 
-                          children: [
-                            const Text(
-                              "Đang sửa chữa",
-                              style: TextStyle(
-                                color: Colors.red,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 15,
-                              ),
-                            ),
+                        _rowThongTin("Loại", vm.thietBi.loai ?? ""),
 
-                            const SizedBox(height: 3),
+                        _rowThongTin("Phòng lắp đặt", vm.tenPhong),
 
-                            Text(
-                              "Từ ngày ${formatDate(DateTime.now())}",
+                        _rowThongTin(
+                          "Ngày mua",
+                          DateFormat("MM/yyyy").format(vm.thietBi.ngayMua!),
+                        ),
 
-                              style: const TextStyle(
-                                color: Color(0xff8D8D8D),
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
+                        _rowThongTin(
+                          "Giá trị",
+                          "${NumberFormat("#,###").format(vm.thietBi.giaTri)}đ",
+                        ),
+
+                        _rowThongTin(
+                          "Trạng thái",
+                          vm.trangThai,
+                          mau: dangSua ? Colors.red : const Color(0xff2D7A3A),
                         ),
                       ],
                     ),
                   ),
 
-                const SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
-                Container(
-                  width: double.infinity,
+                  Container(
+                    width: double.infinity,
 
-                  padding: const EdgeInsets.all(18),
+                    padding: const EdgeInsets.all(18),
 
-                  decoration: BoxDecoration(
-                    color: Colors.white,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
 
-                    borderRadius: BorderRadius.circular(20),
-                  ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
 
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-
-                    children: [
-                      const Text(
-                        "Thông tin thiết bị",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xff2D7A3A),
-                        ),
-                      ),
-
-                      const SizedBox(height: 22),
-
-                      _rowThongTin("Tên thiết bị", vm.thietBi.tenThietBi ?? ""),
-
-                      _rowThongTin("Loại", vm.thietBi.loai ?? ""),
-
-                      _rowThongTin("Phòng lắp đặt", vm.tenPhong),
-
-                      _rowThongTin(
-                        "Ngày mua",
-                        DateFormat("MM/yyyy").format(vm.thietBi.ngayMua!),
-                      ),
-
-                      _rowThongTin(
-                        "Giá trị",
-                        "${NumberFormat("#,###").format(vm.thietBi.giaTri)}đ",
-                      ),
-
-                      _rowThongTin(
-                        "Trạng thái",
-                        vm.trangThai,
-                        mau: dangSua ? Colors.red : const Color(0xff2D7A3A),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-
-                Container(
-                  width: double.infinity,
-
-                  padding: const EdgeInsets.all(18),
-
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-
-                    children: [
-                      Row(
-                        children: [
-                          const Text(
-                            "Lịch sử sửa chữa",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xff2D7A3A),
-                            ),
-                          ),
-
-                          const Spacer(),
-
-                          TextButton(
-                            onPressed: () {},
-
-                            child: const Text(
-                              "Xem thêm",
+                      children: [
+                        Row(
+                          children: [
+                            const Text(
+                              "Lịch sử sửa chữa",
                               style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
                                 color: Color(0xff2D7A3A),
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
                               ),
                             ),
+
+                            const Spacer(),
+
+                            TextButton(
+                              onPressed: () {},
+
+                              child: const Text(
+                                "Xem thêm",
+                                style: TextStyle(
+                                  color: Color(0xff2D7A3A),
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 16),
+
+                        // Container(
+                        //   padding: const EdgeInsets.all(14),
+                        //
+                        //   decoration: BoxDecoration(
+                        //     color: const Color(0xffFAFAFA),
+                        //
+                        //     borderRadius: BorderRadius.circular(14),
+                        //   ),
+                        //
+                        //   child: Column(
+                        //     crossAxisAlignment: CrossAxisAlignment.start,
+                        //
+                        //     children: [
+                        //       const Text(
+                        //         "Không lạnh, không khởi động",
+                        //
+                        //         style: TextStyle(
+                        //           fontWeight: FontWeight.w700,
+                        //           fontSize: 14,
+                        //         ),
+                        //       ),
+                        //
+                        //       const SizedBox(height: 4),
+                        //
+                        //       Text(
+                        //         "${formatDate(DateTime.now())} - Đang sửa",
+                        //
+                        //         style: const TextStyle(
+                        //           color: Colors.red,
+                        //           fontSize: 12,
+                        //         ),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
+                        //
+                        // const SizedBox(height: 12),
+                        //
+                        // Container(
+                        //   padding: const EdgeInsets.all(14),
+                        //
+                        //   decoration: BoxDecoration(
+                        //     color: const Color(0xffFAFAFA),
+                        //
+                        //     borderRadius: BorderRadius.circular(14),
+                        //   ),
+                        //
+                        //   child: Column(
+                        //     crossAxisAlignment: CrossAxisAlignment.start,
+                        //
+                        //     children: [
+                        //       const Text(
+                        //         "Vệ sinh dàn lạnh",
+                        //
+                        //         style: TextStyle(
+                        //           fontWeight: FontWeight.w700,
+                        //           fontSize: 14,
+                        //         ),
+                        //       ),
+                        //
+                        //       const SizedBox(height: 4),
+                        //
+                        //       const Text(
+                        //         "15/08/2024 · Chi phí 150,000đ",
+                        //
+                        //         style: TextStyle(
+                        //           color: Color(0xff8E8E8E),
+                        //           fontSize: 12,
+                        //         ),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
+                        Column(
+                          children: List.generate(
+                            vm.lichSuSuaChua.length,
+                                (index) {
+                              final item = vm.lichSuSuaChua[index];
+
+                              return Container(
+                                margin: const EdgeInsets.only(bottom: 12),
+                                padding: const EdgeInsets.all(14),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xffFAFAFA),
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+
+                                    Text(
+                                      item["noiDung"],
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+
+                                    const SizedBox(height: 4),
+
+                                    Text(
+                                      item["trangThai"] != null
+                                          ? "${item["ngay"]} - ${item["trangThai"]}"
+                                          : "${item["ngay"]} · Chi phí ${item["chiPhi"]}",
+                                      style: TextStyle(
+                                        color: item["trangThai"] == "Đang sửa"
+                                            ? Colors.red
+                                            : Colors.grey,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
                           ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 16),
-
-                      Container(
-                        padding: const EdgeInsets.all(14),
-
-                        decoration: BoxDecoration(
-                          color: const Color(0xffFAFAFA),
-
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-
-                          children: [
-                            const Text(
-                              "Không lạnh, không khởi động",
-
-                              style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 14,
-                              ),
-                            ),
-
-                            const SizedBox(height: 4),
-
-                            Text(
-                              "${formatDate(DateTime.now())} - Đang sửa",
-
-                              style: const TextStyle(
-                                color: Colors.red,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(height: 12),
-
-                      Container(
-                        padding: const EdgeInsets.all(14),
-
-                        decoration: BoxDecoration(
-                          color: const Color(0xffFAFAFA),
-
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-
-                          children: [
-                            const Text(
-                              "Vệ sinh dàn lạnh",
-
-                              style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 14,
-                              ),
-                            ),
-
-                            const SizedBox(height: 4),
-
-                            const Text(
-                              "15/08/2024 · Chi phí 150,000đ",
-
-                              style: TextStyle(
-                                color: Color(0xff8E8E8E),
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 30),
-
-                SizedBox(
-                  width: double.infinity,
-                  height: 55,
-
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      elevation: 0,
-
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
+                        )
+                      ],
                     ),
+                  ),
 
-                    onPressed: () {},
+                  const SizedBox(height: 30),
 
-                    child: const Text(
-                      "Xóa thiết bị",
+                  SizedBox(
+                    width: double.infinity,
+                    height: 55,
 
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        elevation: 0,
+
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+
+                      onPressed: _showXoaDialog,
+
+                      child: const Text(
+                        "Xóa thiết bị",
+
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          if (hienMenu) Positioned(top: 12, right: 16, child: _buildMenu()),
-        ],
+            if (hienMenu) Positioned(top: 12, right: 16, child: _buildMenu()),
+          ],
+        ),
       ),
     );
   }
@@ -623,7 +681,7 @@ class _ChiTietThietBiState extends State<ChiTietThietBi> {
                 ),
 
                 onPressed: () async {
-                  bool? result = await Navigator.push(
+                  final result = await Navigator.push(
                     context,
 
                     MaterialPageRoute(
@@ -637,10 +695,12 @@ class _ChiTietThietBiState extends State<ChiTietThietBi> {
                     ),
                   );
 
-                  if (result == true) {
+                  if (result is SuaChua) {
                     vm.capNhatTrangThai("Đang sửa");
 
-                    Navigator.pop(context, true);
+                    vm.themLichSuSuaChua(result);
+
+                    setState(() {});
                   }
                 },
 

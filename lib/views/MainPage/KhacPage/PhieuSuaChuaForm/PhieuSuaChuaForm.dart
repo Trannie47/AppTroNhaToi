@@ -233,7 +233,7 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
                     content: Text("Lưu phiếu sửa chữa thành công"),
                   ),
                 );
-                Navigator.pop(context, true);
+                Navigator.pop(context, suaChua);
               }
 
               setState(() {});
