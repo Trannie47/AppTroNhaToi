@@ -1,3 +1,4 @@
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/TapHoaPage/TapHoaPage.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThietBiPage/thietBiPage.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/hopDongPage/hopDongPage.dart';
 import 'package:flutter/material.dart';
@@ -96,6 +97,17 @@ class KhacPage extends StatelessWidget {
                     "Quản lý hàng hóa, lập hóa đơn,\ntheo dõi công nợ",
                     status: "470,000đ công nợ",
                     statusColor: Colors.red,
+
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const TapHoaPage(),
+                        ),
+
+                      );
+
+                    },
                   ),
 
                   const SizedBox(height: 12),

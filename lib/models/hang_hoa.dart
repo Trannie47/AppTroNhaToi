@@ -3,8 +3,15 @@ class HangHoa {
   final String? tenHangHoa;
   final double? giaNhap;
   final double? giaBan;
+  final String? donViTinh;
 
-  HangHoa({this.maHangHoa, this.tenHangHoa, this.giaNhap, this.giaBan});
+  HangHoa({
+    this.maHangHoa,
+    this.tenHangHoa,
+    this.giaNhap,
+    this.giaBan,
+    this.donViTinh,
+  });
 
   factory HangHoa.fromMap(Map<String, dynamic> map) {
     return HangHoa(
@@ -12,6 +19,7 @@ class HangHoa {
       tenHangHoa: map['tenHangHoa'] as String?,
       giaNhap: (map['giaNhap'] as num?)?.toDouble(),
       giaBan: (map['giaBan'] as num?)?.toDouble(),
+      donViTinh: map['donViTinh'] as String?,
     );
   }
 
@@ -21,6 +29,7 @@ class HangHoa {
       'tenHangHoa': tenHangHoa,
       'giaNhap': giaNhap,
       'giaBan': giaBan,
+      'donViTinh': donViTinh,
     };
   }
 
@@ -29,18 +38,25 @@ class HangHoa {
     String? tenHangHoa,
     double? giaNhap,
     double? giaBan,
+    String? donViTinh,
   }) {
     return HangHoa(
       maHangHoa: maHangHoa ?? this.maHangHoa,
       tenHangHoa: tenHangHoa ?? this.tenHangHoa,
       giaNhap: giaNhap ?? this.giaNhap,
       giaBan: giaBan ?? this.giaBan,
+      donViTinh: donViTinh ?? this.donViTinh,
     );
   }
 
   @override
   String toString() {
-    return 'HangHoa(maHangHoa: $maHangHoa, tenHangHoa: $tenHangHoa, '
-        'giaNhap: $giaNhap, giaBan: $giaBan)';
+    return 'HangHoa('
+        'maHangHoa: $maHangHoa, '
+        'tenHangHoa: $tenHangHoa, '
+        'giaNhap: $giaNhap, '
+        'giaBan: $giaBan, '
+        'donViTinh: $donViTinh'
+        ')';
   }
 }
