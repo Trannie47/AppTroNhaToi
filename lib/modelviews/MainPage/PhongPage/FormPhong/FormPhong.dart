@@ -8,6 +8,8 @@ class FormPhongViewModel extends ChangeNotifier {
 
   int selectedType = 0;
   String selectedStatus = "";
+  String? errTenPhong;
+  String? errLoaiPhong;
 
   List<LoaiPhong> roomTypes = [
     LoaiPhong(
@@ -49,6 +51,31 @@ class FormPhongViewModel extends ChangeNotifier {
     roomTypes.add(loaiPhong);
     selectedType = roomTypes.length - 1;
     notifyListeners();
+  }
+
+  bool kiemTraDuLieu() {
+
+    errTenPhong = null;
+
+
+    bool hopLe = true;
+
+    if (nameController.text.trim().isEmpty) {
+
+      errTenPhong = "Vui lòng nhập tên phòng";
+
+      hopLe = false;
+    }
+    else if (nameController.text.trim().length < 2) {
+
+      errTenPhong = "Tên phòng phải có ít nhất 2 ký tự";
+
+      hopLe = false;
+    }
+
+    notifyListeners();
+
+    return hopLe;
   }
 
   Phong buildPhong(int? phongID) {

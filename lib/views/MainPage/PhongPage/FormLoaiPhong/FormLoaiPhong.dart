@@ -1,11 +1,18 @@
 import 'package:AppTroNhaToi/models/loaiphong.dart';
-import 'package:AppTroNhaToi/modelviews/MainPage/HomePage/FormLoaiPhong/FormLoaiPhong.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/loaiPhongModelViewsForm/FormLoaiPhong.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class FormLoaiPhong extends StatefulWidget {
-  final LoaiPhong? loaiPhong;
+  final Function(LoaiPhong)? onAdd;
 
-  const FormLoaiPhong({super.key, this.loaiPhong});
+  const FormLoaiPhong({
+    super.key,
+    this.loaiPhong,
+    this.onAdd,
+  });
+  final LoaiPhong? loaiPhong;
 
   @override
   State<FormLoaiPhong> createState() => _FormLoaiPhongState();
@@ -13,6 +20,7 @@ class FormLoaiPhong extends StatefulWidget {
 
 class _FormLoaiPhongState extends State<FormLoaiPhong> {
   late FormLoaiPhongViewModel vm;
+  List<LoaiPhong> dsLoaiPhongMoi = [];
 
   @override
   void initState() {
@@ -25,6 +33,21 @@ class _FormLoaiPhongState extends State<FormLoaiPhong> {
     });
   }
 
+  void saveAndContinue() {
+
+    if (!vm.kiemTraDuLieu()) return;
+
+    final loaiPhong = vm.buildLoaiPhong(
+      dsLoaiPhongMoi.length + 100,
+    );
+
+    widget.onAdd?.call(loaiPhong);
+
+    vm.clear();
+  }
+
+
+
   @override
   void dispose() {
     vm.dispose();
@@ -32,9 +55,21 @@ class _FormLoaiPhongState extends State<FormLoaiPhong> {
   }
 
   void saveLoaiPhong() {
-    final loaiPhong = vm.buildLoaiPhong(12);
-    Navigator.pop(context, loaiPhong);
+
+    if (!vm.kiemTraDuLieu()) return;
+
+    final loaiPhong = vm.buildLoaiPhong(
+      dsLoaiPhongMoi.length + 100,
+    );
+
+    dsLoaiPhongMoi.add(loaiPhong);
+
+    Navigator.pop(context, dsLoaiPhongMoi);
   }
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +135,7 @@ class _FormLoaiPhongState extends State<FormLoaiPhong> {
                       borderRadius: BorderRadius.circular(18),
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: saveAndContinue,
                   child: const Text(
                     "Lưu & thêm loại phòng khác",
                     style: TextStyle(
@@ -131,10 +166,12 @@ class _FormLoaiPhongState extends State<FormLoaiPhong> {
                   const SizedBox(height: 10),
                   TextField(
                     controller: vm.tenLoaiPhongController,
+
                     decoration: InputDecoration(
                       hintText: "VD: Tiêu chuẩn, VIP, Phòng đôi...",
                       filled: true,
                       fillColor: const Color(0xFFF3F3F3),
+                      errorText: vm.errTenLoaiPhong,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
                         borderSide: BorderSide.none,
@@ -156,6 +193,12 @@ class _FormLoaiPhongState extends State<FormLoaiPhong> {
                           controller: vm.dienTichController,
                           hintText: "VD : 25",
                           suffix: "m²",
+                          errorText: vm.errDienTich,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                              RegExp(r'^\d*\.?\d*'),
+                            ),
+                          ],
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -165,6 +208,10 @@ class _FormLoaiPhongState extends State<FormLoaiPhong> {
                           controller: vm.soNguoiController,
                           suffix: "người",
                           hintText: "VD : 2",
+                          errorText: vm.errSoNguoi,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                          ],
                         ),
                       ),
                     ],
@@ -177,6 +224,8 @@ class _FormLoaiPhongState extends State<FormLoaiPhong> {
                     controller: vm.giaTienController,
                     suffix: "đ/tháng",
                     hintText: "VD : 2000000",
+                    errorText: vm.errGiaTien,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   ),
                   const SizedBox(height: 10),
                   const Text(
@@ -260,6 +309,8 @@ class _FormLoaiPhongState extends State<FormLoaiPhong> {
     required TextEditingController controller,
     required String suffix,
     String? hintText,
+    String? errorText,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -268,11 +319,14 @@ class _FormLoaiPhongState extends State<FormLoaiPhong> {
         const SizedBox(height: 10),
         TextField(
           controller: controller,
-          keyboardType: TextInputType.number,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          inputFormatters: inputFormatters,
           decoration: InputDecoration(
             filled: true,
             fillColor: const Color(0xFFF3F3F3),
             hintText: hintText,
+            errorMaxLines: 2,
+            errorText: errorText,
             suffixIcon: Padding(
               padding: const EdgeInsets.only(right: 14),
               child: Center(

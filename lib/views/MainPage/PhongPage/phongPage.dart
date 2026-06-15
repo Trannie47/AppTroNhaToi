@@ -1,7 +1,10 @@
+import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/phongPage.dart';
 import 'package:AppTroNhaToi/widgets/itemPhong.dart';
 import 'package:flutter/material.dart';
-import '../HomePage/FormPhong/FormPhong.dart';
+
+import 'FormPhong/FormPhong.dart';
+
 
 class PhongPage extends StatefulWidget {
   const PhongPage({super.key});
@@ -31,10 +34,22 @@ class _PhongPageState extends State<PhongPage> {
   }
 
   void toThemPhong() async {
-    await Navigator.push(
+
+    final Phong? room = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const FormPhong()),
+      MaterialPageRoute(
+        builder: (context) => const FormPhong(),
+      ),
     );
+
+    if (room != null) {
+
+      vm.dsPhong.add(room);
+
+      vm.dsPhongFilter = vm.dsPhong;
+
+      setState(() {});
+    }
   }
 
   @override

@@ -1,6 +1,7 @@
 import 'package:AppTroNhaToi/models/cong_no.dart';
 import 'package:AppTroNhaToi/models/thong_bao.dart';
-import 'package:AppTroNhaToi/views/MainPage/HomePage/FormPhong/FormPhong.dart';
+import 'package:AppTroNhaToi/views/MainPage/PhongPage/FormPhong/FormPhong.dart';
+
 import 'package:flutter/material.dart';
 
 class HomePageModelView extends ChangeNotifier {

@@ -1,8 +1,9 @@
 
 import 'package:AppTroNhaToi/models/loaiphong.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
-import 'package:AppTroNhaToi/modelviews/MainPage/HomePage/FormPhong/FormPhong.dart';
-import 'package:AppTroNhaToi/views/MainPage/HomePage/FormLoaiPhong/FormLoaiPhong.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/FormPhong/FormPhong.dart';
+
+import 'package:AppTroNhaToi/views/MainPage/PhongPage/FormLoaiPhong/FormLoaiPhong.dart';
 import 'package:AppTroNhaToi/widgets/itemLoaiPhongSelectBox.dart';
 import 'package:flutter/material.dart';
 
@@ -36,18 +37,42 @@ class _FormPhongState extends State<FormPhong> {
   }
 
   void saveRoom() {
+
+    print("Đã bấm lưu");
+
+    if (!vm.kiemTraDuLieu()) {
+      print("Sai dữ liệu");
+      return;
+    }
+
+    print("Chuẩn bị build");
+
     final room = vm.buildPhong(widget.room?.phongID);
+
+    print(room);
+
     Navigator.pop(context, room);
+
   }
 
   void goToFormRoomType() async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const FormLoaiPhong()),
-    );
+        MaterialPageRoute(
+          builder: (context) => FormLoaiPhong(
+            onAdd: (loaiPhong) {
+              vm.addRoomType(loaiPhong);
+            },
+          ),
+        )
+        );
 
-    if (result != null && result is LoaiPhong) {
-      vm.addRoomType(result);
+    if (result != null && result is List<LoaiPhong>) {
+
+      for (var item in result) {
+        vm.addRoomType(item);
+      }
+
     }
   }
 
@@ -119,6 +144,7 @@ class _FormPhongState extends State<FormPhong> {
                       hintText: "VD: 101, A01, Phòng 1...",
                       filled: true,
                       fillColor: const Color(0xFFF3F3F3),
+                      errorText: vm.errTenPhong,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
                         borderSide: BorderSide.none,
@@ -144,7 +170,7 @@ class _FormPhongState extends State<FormPhong> {
                         child: _statusItem(
                           title: "Còn trống",
                           color: Colors.green,
-                          selected: vm.selectedStatus == 0,
+                          selected: vm.selectedStatus == "0",
                           onTap: () => vm.selectStatus("0"),
                         ),
                       ),
@@ -153,7 +179,7 @@ class _FormPhongState extends State<FormPhong> {
                         child: _statusItem(
                           title: "Đang thuê",
                           color: Colors.orange,
-                          selected: vm.selectedStatus == 1,
+                          selected: vm.selectedStatus == "1",
                           onTap: () => vm.selectStatus("1"),
                         ),
                       ),
@@ -162,7 +188,7 @@ class _FormPhongState extends State<FormPhong> {
                         child: _statusItem(
                           title: "Đang sửa chữa",
                           color: Colors.red,
-                          selected: vm.selectedStatus == 2,
+                          selected: vm.selectedStatus == "2",
                           onTap: () => vm.selectStatus("2"),
                         ),
                       ),
@@ -228,7 +254,7 @@ class _FormPhongState extends State<FormPhong> {
               title: "Mô tả",
               child: TextField(
                 controller: vm.descController,
-                maxLines: 5,
+                maxLines: 2,
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: const Color(0xFFF3F3F3),
