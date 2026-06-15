@@ -1,7 +1,10 @@
-import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/phongPage.dart';
+import 'package:AppTroNhaToi/models/phong.dart';
+import 'package:AppTroNhaToi/views/MainPage/PhongPage/FormPhong/FormPhong.dart';
 import 'package:AppTroNhaToi/widgets/itemPhong.dart';
 import 'package:flutter/material.dart';
-import '../HomePage/FormPhong/FormPhong.dart';
+
+import '../../../modelviews/MainPage/PhongPage/PhongPageModelView.dart';
+
 
 class PhongPage extends StatefulWidget {
   const PhongPage({super.key});
