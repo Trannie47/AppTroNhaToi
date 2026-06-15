@@ -1,4 +1,3 @@
-
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 
 import 'package:flutter/material.dart';
@@ -7,18 +6,12 @@ import 'package:intl/intl.dart';
 class ItemThietBi extends StatelessWidget {
   final ThietBi thietBi;
 
-
-  const ItemThietBi({
-    super.key,
-    required this.thietBi,
-
-  });
+  const ItemThietBi({super.key, required this.thietBi});
   @override
   Widget build(BuildContext context) {
-    final bool dangSua = thietBi.trangThai?.toLowerCase() == "đang sửa";
+    final bool dangSua = thietBi.trangThaiText.toLowerCase() == "đang sửa";
 
     return Container(
-
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
 
@@ -84,7 +77,7 @@ class ItemThietBi extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        thietBi.trangThai ?? "",
+                        thietBi.trangThaiText ?? "",
                         style: TextStyle(
                           color: dangSua ? Colors.red : const Color(0xff2D7A3A),
                           fontSize: 12,

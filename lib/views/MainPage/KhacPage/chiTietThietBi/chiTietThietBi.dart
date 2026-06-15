@@ -44,7 +44,7 @@ class _ChiTietThietBiState extends State<ChiTietThietBi> {
 
   @override
   Widget build(BuildContext context) {
-    bool dangSua = vm.thietBi.trangThai?.toLowerCase() == "đang sửa";
+    bool dangSua = vm.thietBi.trangThaiText.toLowerCase() == "đang sửa";
 
     return Scaffold(
       backgroundColor: const Color(0xffF7F9F7),
@@ -371,49 +371,47 @@ class _ChiTietThietBiState extends State<ChiTietThietBi> {
                         //   ),
                         // ),
                         Column(
-                          children: List.generate(
-                            vm.lichSuSuaChua.length,
-                                (index) {
-                              final item = vm.lichSuSuaChua[index];
+                          children: List.generate(vm.lichSuSuaChua.length, (
+                            index,
+                          ) {
+                            final item = vm.lichSuSuaChua[index];
 
-                              return Container(
-                                margin: const EdgeInsets.only(bottom: 12),
-                                padding: const EdgeInsets.all(14),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xffFAFAFA),
-                                  borderRadius: BorderRadius.circular(14),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-
-                                    Text(
-                                      item["noiDung"],
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 14,
-                                      ),
+                            return Container(
+                              margin: const EdgeInsets.only(bottom: 12),
+                              padding: const EdgeInsets.all(14),
+                              decoration: BoxDecoration(
+                                color: const Color(0xffFAFAFA),
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    item["noiDung"],
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 14,
                                     ),
+                                  ),
 
-                                    const SizedBox(height: 4),
+                                  const SizedBox(height: 4),
 
-                                    Text(
-                                      item["trangThai"] != null
-                                          ? "${item["ngay"]} - ${item["trangThai"]}"
-                                          : "${item["ngay"]} · Chi phí ${item["chiPhi"]}",
-                                      style: TextStyle(
-                                        color: item["trangThai"] == "Đang sửa"
-                                            ? Colors.red
-                                            : Colors.grey,
-                                        fontSize: 12,
-                                      ),
+                                  Text(
+                                    item["trangThai"] != null
+                                        ? "${item["ngay"]} - ${item["trangThai"]}"
+                                        : "${item["ngay"]} · Chi phí ${item["chiPhi"]}",
+                                    style: TextStyle(
+                                      color: item["trangThai"] == "Đang sửa"
+                                          ? Colors.red
+                                          : Colors.grey,
+                                      fontSize: 12,
                                     ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                        )
+                                  ),
+                                ],
+                              ),
+                            );
+                          }),
+                        ),
                       ],
                     ),
                   ),

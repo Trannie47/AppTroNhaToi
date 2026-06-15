@@ -36,10 +36,7 @@ class ThietBiFormViewModel extends ChangeNotifier {
 
   final List<String> dsTrangThai = ["Tốt", "Đang sửa"];
 
-  ThietBiFormViewModel({
-    ThietBi? thietBiInput,
-    List<LapRap>? dsLapRap,
-  }) {
+  ThietBiFormViewModel({ThietBi? thietBiInput, List<LapRap>? dsLapRap}) {
     if (thietBiInput != null) {
       thietBi = thietBiInput;
 
@@ -53,11 +50,10 @@ class ThietBiFormViewModel extends ChangeNotifier {
           "${thietBi.ngayMua?.year}";
 
       loaiThietBi = thietBi.loai;
-      trangThai = thietBi.trangThai;
+      trangThai = thietBi.trangThaiText;
       if (dsLapRap != null) {
-
         LapRap lapRap = dsLapRap.firstWhere(
-              (e) => e.thietBiID == thietBiInput!.thietBiID,
+          (e) => e.thietBiID == thietBiInput!.thietBiID,
         );
 
         phongID = lapRap.phongID;
@@ -95,12 +91,9 @@ class ThietBiFormViewModel extends ChangeNotifier {
 
     // Ngày mua
     if (txtNgayMua.text.trim().isEmpty) {
-
       errNgayMua = "Vui lòng nhập ngày mua";
       hopLe = false;
-
     } else {
-
       errNgayMua = kiemTraNgay(
         txtNgayMua.text,
         minYear: 2000,
@@ -149,10 +142,9 @@ class ThietBiFormViewModel extends ChangeNotifier {
   }
 
   Future<void> chonNgay(
-      BuildContext context,
-      TextEditingController controller,
-      ) async {
-
+    BuildContext context,
+    TextEditingController controller,
+  ) async {
     DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -161,16 +153,12 @@ class ThietBiFormViewModel extends ChangeNotifier {
     );
 
     if (pickedDate != null) {
-
       controller.text =
-      "${pickedDate.day.toString().padLeft(2, '0')}/"
+          "${pickedDate.day.toString().padLeft(2, '0')}/"
           "${pickedDate.month.toString().padLeft(2, '0')}/"
           "${pickedDate.year}";
 
       notifyListeners();
-
-
     }
   }
 }
-

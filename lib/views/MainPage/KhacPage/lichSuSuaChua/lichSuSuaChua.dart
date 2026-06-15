@@ -43,7 +43,7 @@ class _ChiTietThietBiState extends State<ChiTietThietBi> {
 
   @override
   Widget build(BuildContext context) {
-    bool dangSua = vm.thietBi.trangThai?.toLowerCase() == "đang sửa";
+    bool dangSua = vm.thietBi.trangThaiText.toLowerCase() == "đang sửa";
 
     return Scaffold(
       backgroundColor: const Color(0xffF7F9F7),

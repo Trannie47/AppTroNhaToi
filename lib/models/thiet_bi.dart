@@ -4,7 +4,7 @@ class ThietBi {
   final String? loai;
   final double? giaTri;
   final DateTime? ngayMua;
-  final String? trangThai;
+  final int? trangThai;
 
   ThietBi({
     this.thietBiID,
@@ -24,7 +24,7 @@ class ThietBi {
       ngayMua: map['ngayMua'] != null
           ? DateTime.tryParse(map['ngayMua'] as String)
           : null,
-      trangThai: map['trangThai'] as String?,
+      trangThai: map['trangThai'] as int?,
     );
   }
 
@@ -45,7 +45,7 @@ class ThietBi {
     String? loai,
     double? giaTri,
     DateTime? ngayMua,
-    String? trangThai,
+    int? trangThai,
   }) {
     return ThietBi(
       thietBiID: thietBiID ?? this.thietBiID,
@@ -55,6 +55,18 @@ class ThietBi {
       ngayMua: ngayMua ?? this.ngayMua,
       trangThai: trangThai ?? this.trangThai,
     );
+  }
+
+  // 0: Tốt, 1: Đang sửa
+  String get trangThaiText {
+    switch (trangThai) {
+      case 0:
+        return "Tốt";
+      case 1:
+        return "Đang sửa";
+      default:
+        return "Không xác định";
+    }
   }
 
   @override

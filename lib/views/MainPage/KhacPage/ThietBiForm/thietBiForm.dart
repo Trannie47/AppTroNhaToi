@@ -8,9 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 
-
 class ThietBiForm extends StatefulWidget {
-
   final ThietBi? thietBi;
   final List<LapRap> dsLapRap;
   final List<Phong> dsPhong;
@@ -47,10 +45,7 @@ class _ThietBiFormState extends State<ThietBiForm> {
         children: [
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-            ),
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
           ),
 
           const SizedBox(height: 8),
@@ -66,9 +61,7 @@ class _ThietBiFormState extends State<ThietBiForm> {
               errorText: errorText,
 
               errorMaxLines: 2,
-              errorStyle: const TextStyle(
-                fontSize: 11,
-                height: 1.2,),
+              errorStyle: const TextStyle(fontSize: 11, height: 1.2),
 
               filled: true,
               fillColor: const Color(0xffF8F8F8),
@@ -85,9 +78,7 @@ class _ThietBiFormState extends State<ThietBiForm> {
 
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: const BorderSide(
-                  color: Color(0xff2E7D32),
-                ),
+                borderSide: const BorderSide(color: Color(0xff2E7D32)),
               ),
             ),
           ),
@@ -103,10 +94,7 @@ class _ThietBiFormState extends State<ThietBiForm> {
       children: [
         const Text(
           "Loại thiết bị",
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
         ),
 
         const SizedBox(height: 8),
@@ -129,12 +117,7 @@ class _ThietBiFormState extends State<ThietBiForm> {
           hint: const Text("--Chọn loại thiết bị--"),
 
           items: vm.dsLoaiThietBi
-              .map(
-                (e) => DropdownMenuItem(
-              value: e,
-              child: Text(e),
-            ),
-          )
+              .map((e) => DropdownMenuItem(value: e, child: Text(e)))
               .toList(),
 
           onChanged: (value) {
@@ -147,7 +130,6 @@ class _ThietBiFormState extends State<ThietBiForm> {
     );
   }
 
-
   Widget _dropDownTrangThai() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -155,10 +137,7 @@ class _ThietBiFormState extends State<ThietBiForm> {
       children: [
         const Text(
           "Trạng thái",
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
         ),
 
         const SizedBox(height: 8),
@@ -181,12 +160,7 @@ class _ThietBiFormState extends State<ThietBiForm> {
           hint: const Text("--Chọn trạng thái--"),
 
           items: vm.dsTrangThai
-              .map(
-                (e) => DropdownMenuItem(
-              value: e,
-              child: Text(e),
-            ),
-          )
+              .map((e) => DropdownMenuItem(value: e, child: Text(e)))
               .toList(),
 
           onChanged: (value) {
@@ -199,7 +173,6 @@ class _ThietBiFormState extends State<ThietBiForm> {
     );
   }
 
-
   Widget _dropDownPhong() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -207,10 +180,7 @@ class _ThietBiFormState extends State<ThietBiForm> {
       children: [
         const Text(
           "Phòng lắp đặt",
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
         ),
 
         const SizedBox(height: 8),
@@ -232,12 +202,14 @@ class _ThietBiFormState extends State<ThietBiForm> {
 
           hint: const Text("--Chọn phòng--"),
 
-          items: widget.dsPhong.map(
+          items: widget.dsPhong
+              .map(
                 (e) => DropdownMenuItem<int>(
-              value: e.phongID,
-              child: Text(e.tenPhong),
-            ),
-          ).toList(),
+                  value: e.phongID,
+                  child: Text(e.tenPhong),
+                ),
+              )
+              .toList(),
 
           onChanged: (value) {
             setState(() {
@@ -248,6 +220,7 @@ class _ThietBiFormState extends State<ThietBiForm> {
       ],
     );
   }
+
   DateTime? chuyenNgay(String ngay) {
     try {
       final tach = ngay.split('/');
@@ -262,10 +235,6 @@ class _ThietBiFormState extends State<ThietBiForm> {
     }
   }
 
-
-
-
-
   @override
   void initState() {
     super.initState();
@@ -274,7 +243,6 @@ class _ThietBiFormState extends State<ThietBiForm> {
       thietBiInput: widget.thietBi,
       dsLapRap: widget.dsLapRap,
     );
-
   }
 
   @override
@@ -299,10 +267,7 @@ class _ThietBiFormState extends State<ThietBiForm> {
 
             child: IconButton(
               onPressed: () {
-                Navigator.pop(
-                  context,
-                  true,
-                );
+                Navigator.pop(context, true);
               },
 
               icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 16),
@@ -333,7 +298,6 @@ class _ThietBiFormState extends State<ThietBiForm> {
             ),
 
             onPressed: () {
-
               bool hopLe = vm.kiemTraDuLieu();
 
               setState(() {});
@@ -345,17 +309,12 @@ class _ThietBiFormState extends State<ThietBiForm> {
               ThietBi thietBiMoi = (widget.thietBi ?? ThietBi()).copyWith(
                 tenThietBi: vm.txtTenThietBi.text,
                 loai: vm.loaiThietBi,
-                trangThai: vm.trangThai,
+                trangThai: vm.trangThai == "Tốt" ? 0 : 1,
                 giaTri: double.tryParse(vm.txtGiaTri.text),
-                ngayMua: chuyenNgay(
-                  vm.txtNgayMua.text,
-                ),
+                ngayMua: chuyenNgay(vm.txtNgayMua.text),
               );
 
-              Navigator.pop(
-                context,
-                thietBiMoi,
-              );
+              Navigator.pop(context, thietBiMoi);
             },
 
             child: Text(
@@ -422,11 +381,7 @@ class _ThietBiFormState extends State<ThietBiForm> {
 
                       keyboardType: TextInputType.number,
 
-                      inputFormatters: [
-                        MaskedInputFormatter(
-                          '##/##/####',
-                        ),
-                      ],
+                      inputFormatters: [MaskedInputFormatter('##/##/####')],
 
                       suffixIcon: IconButton(
                         icon: const Icon(
@@ -435,7 +390,6 @@ class _ThietBiFormState extends State<ThietBiForm> {
                         ),
 
                         onPressed: () async {
-
                           DateTime? pickedDate = await showDatePicker(
                             context: context,
                             initialDate: DateTime.now(),
@@ -444,10 +398,7 @@ class _ThietBiFormState extends State<ThietBiForm> {
                           );
 
                           if (pickedDate != null) {
-
-                            vm.txtNgayMua.text = formatDate(
-                              pickedDate,
-                            );
+                            vm.txtNgayMua.text = formatDate(pickedDate);
 
                             setState(() {});
                           }
@@ -473,8 +424,6 @@ class _ThietBiFormState extends State<ThietBiForm> {
               const SizedBox(height: 16),
 
               _dropDownTrangThai(),
-
-
             ],
           ),
         ),
