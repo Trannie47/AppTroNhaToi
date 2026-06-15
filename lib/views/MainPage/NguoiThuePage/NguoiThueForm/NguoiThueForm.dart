@@ -1,5 +1,5 @@
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
-import 'package:AppTroNhaToi/modelviews/MainPage/NguoiThuePage/NguoiThueForm/NguoiThueForm.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/NguoiThuePage/NguoiThueForm/NguoiThueFormViewModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/NguoiThuePage/qr_cccd_scanner_page/qr_cccd_scanner_page.dart';
 import 'package:flutter/material.dart';
 
@@ -302,13 +302,11 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                                   controller: vm.txtNgaySinh,
 
                                   validator: (value) {
-
                                     if (value == null || value.isEmpty) {
                                       return "Vui lòng nhập ngày sinh";
                                     }
 
                                     try {
-
                                       List<String> arr = value.split('/');
 
                                       if (arr.length != 3) {
@@ -327,18 +325,21 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                                         return "Ngày sinh không hợp lệ";
                                       }
 
-                                      int tuoi = DateTime.now().year - ngaySinh.year;
+                                      int tuoi =
+                                          DateTime.now().year - ngaySinh.year;
 
-                                      if (DateTime.now().month < ngaySinh.month ||
-                                          (DateTime.now().month == ngaySinh.month &&
-                                              DateTime.now().day < ngaySinh.day)) {
+                                      if (DateTime.now().month <
+                                              ngaySinh.month ||
+                                          (DateTime.now().month ==
+                                                  ngaySinh.month &&
+                                              DateTime.now().day <
+                                                  ngaySinh.day)) {
                                         tuoi--;
                                       }
 
                                       if (tuoi < 0 || tuoi > 120) {
                                         return "Tuổi không hợp lệ";
                                       }
-
                                     } catch (_) {
                                       return "Ngày sinh không hợp lệ";
                                     }
@@ -470,7 +471,8 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
 
                                   builder: (state) {
                                     return Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Container(
                                           padding: const EdgeInsets.symmetric(
@@ -479,7 +481,9 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
 
                                           decoration: BoxDecoration(
                                             color: const Color(0xffF8F8F8),
-                                            borderRadius: BorderRadius.circular(14),
+                                            borderRadius: BorderRadius.circular(
+                                              14,
+                                            ),
                                           ),
 
                                           child: DropdownButtonHideUnderline(
@@ -520,7 +524,9 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
 
                                         if (state.hasError)
                                           Padding(
-                                            padding: const EdgeInsets.only(top: 5),
+                                            padding: const EdgeInsets.only(
+                                              top: 5,
+                                            ),
                                             child: Text(
                                               state.errorText!,
                                               style: const TextStyle(
@@ -532,7 +538,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                                       ],
                                     );
                                   },
-                                )
+                                ),
                               ],
                             ),
                           ),

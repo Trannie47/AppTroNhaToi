@@ -1,8 +1,6 @@
-
 import 'package:AppTroNhaToi/models/loaiphong.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
-import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/FormPhong/FormPhong.dart';
-
+import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/FormPhong/FormPhongViewModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/PhongPage/FormLoaiPhong/FormLoaiPhong.dart';
 import 'package:AppTroNhaToi/widgets/itemLoaiPhongSelectBox.dart';
 import 'package:flutter/material.dart';

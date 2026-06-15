@@ -1,20 +1,16 @@
-
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/sua_chua.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
-import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/PhieuSuaChuaViewModelForm/PhieuSuaChuaViewModelForm.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/PhieuSuaChuaForm/PhieuSuaChuaFormViewModel.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 
-
 class PhieuSuaChuaForm extends StatefulWidget {
-
   final ThietBi thietBi;
   final int? phongID;
   final String tenPhong;
-
 
   const PhieuSuaChuaForm({
     super.key,
@@ -23,26 +19,19 @@ class PhieuSuaChuaForm extends StatefulWidget {
     required this.tenPhong,
   });
 
-
   @override
-  State<PhieuSuaChuaForm> createState() =>
-      _PhieuSuaChuaFormState();
+  State<PhieuSuaChuaForm> createState() => _PhieuSuaChuaFormState();
 }
 
-class _PhieuSuaChuaFormState
-    extends State<PhieuSuaChuaForm> {
-
+class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
   final vm = PhieuSuaChuaViewModel();
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-
       backgroundColor: const Color(0xffF7F9F7),
 
       appBar: AppBar(
-
         backgroundColor: Colors.white,
 
         elevation: 0,
@@ -50,22 +39,15 @@ class _PhieuSuaChuaFormState
         leadingWidth: 70,
 
         leading: Padding(
-
-          padding: const EdgeInsets.only(
-            left: 18,
-            top: 8,
-            bottom: 8,
-          ),
+          padding: const EdgeInsets.only(left: 18, top: 8, bottom: 8),
 
           child: Container(
-
             decoration: const BoxDecoration(
               color: Color(0xffF5F5F5),
               shape: BoxShape.circle,
             ),
 
             child: IconButton(
-
               icon: const Icon(
                 Icons.arrow_back_ios_new,
                 size: 18,
@@ -73,25 +55,19 @@ class _PhieuSuaChuaFormState
               ),
 
               onPressed: () {
-
                 Navigator.pop(context);
               },
             ),
           ),
         ),
 
-
         titleSpacing: 0,
 
         title: Column(
-
-          crossAxisAlignment:
-          CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
 
           children: [
-
             const Text(
-
               "Lập phiếu sửa chữa",
 
               style: TextStyle(
@@ -99,53 +75,38 @@ class _PhieuSuaChuaFormState
                 fontWeight: FontWeight.w700,
                 fontSize: 18,
               ),
-
             ),
 
             Text(
-
               "${widget.thietBi.tenThietBi} · ${widget.tenPhong}",
 
-              style: TextStyle(
-                color: Colors.grey.shade500,
-                fontSize: 11,
-              ),
+              style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
             ),
           ],
         ),
       ),
 
       body: SingleChildScrollView(
-
         padding: const EdgeInsets.all(16),
 
         child: Column(
-
           children: [
-
             Container(
-
               width: double.infinity,
 
               padding: const EdgeInsets.all(18),
 
               decoration: BoxDecoration(
-
                 color: Colors.white,
 
-                borderRadius:
-                BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(20),
               ),
 
               child: Column(
-
-                crossAxisAlignment:
-                CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
 
                 children: [
-
                   const Text(
-
                     "Thông tin sự cố",
 
                     style: TextStyle(
@@ -158,39 +119,23 @@ class _PhieuSuaChuaFormState
                   const SizedBox(height: 20),
 
                   _input(
-
                     title: "Ngày sửa chữa",
 
                     hint: "dd/MM/yyyy",
 
-                    controller:
-                    vm.txtNgaySuaChua,
+                    controller: vm.txtNgaySuaChua,
 
-                    errorText:
-                    vm.errNgaySuaChua,
+                    errorText: vm.errNgaySuaChua,
 
-                    keyboardType:
-                    TextInputType.number,
+                    keyboardType: TextInputType.number,
 
-                    inputFormatters: [
-                      MaskedInputFormatter(
-                        '##/##/####',
-                      ),
-                    ],
+                    inputFormatters: [MaskedInputFormatter('##/##/####')],
 
                     suffixIcon: IconButton(
-
-                      icon: const Icon(
-                        Icons.calendar_today_outlined,
-                        size: 20,
-                      ),
+                      icon: const Icon(Icons.calendar_today_outlined, size: 20),
 
                       onPressed: () async {
-
-                        await vm.chonNgay(
-                          context,
-                          vm.txtNgaySuaChua,
-                        );
+                        await vm.chonNgay(context, vm.txtNgaySuaChua);
 
                         setState(() {});
                       },
@@ -200,15 +145,11 @@ class _PhieuSuaChuaFormState
                   const SizedBox(height: 20),
 
                   _input(
+                    title: "Nguyên nhân / Triệu chứng",
 
-                    title:
-                    "Nguyên nhân / Triệu chứng",
+                    controller: vm.txtNguyenNhan,
 
-                    controller:
-                    vm.txtNguyenNhan,
-
-                    errorText:
-                    vm.errNguyenNhan,
+                    errorText: vm.errNguyenNhan,
 
                     maxLines: 4,
                   ),
@@ -216,9 +157,7 @@ class _PhieuSuaChuaFormState
                   const SizedBox(height: 16),
 
                   SwitchListTile(
-
-                    contentPadding:
-                    EdgeInsets.zero,
+                    contentPadding: EdgeInsets.zero,
 
                     title: const Text(
                       "Đã sửa xong",
@@ -231,16 +170,11 @@ class _PhieuSuaChuaFormState
 
                     value: vm.daSuaXong,
 
-                    activeColor:
-                    const Color(0xff2E7D32),
+                    activeColor: const Color(0xff2E7D32),
 
                     onChanged: (value) {
-
                       setState(() {
-
-                        vm.doiTrangThaiSuaXong(
-                          value,
-                        );
+                        vm.doiTrangThaiSuaXong(value);
                       });
                     },
                   ),
@@ -248,20 +182,15 @@ class _PhieuSuaChuaFormState
                   const SizedBox(height: 10),
 
                   _input(
-
-                    title:
-                    "Chi phí sửa chữa",
+                    title: "Chi phí sửa chữa",
 
                     hint: "0",
 
-                    controller:
-                    vm.txtChiPhi,
+                    controller: vm.txtChiPhi,
 
-                    errorText:
-                    vm.errChiPhi,
+                    errorText: vm.errChiPhi,
 
-                    keyboardType:
-                    TextInputType.number,
+                    keyboardType: TextInputType.number,
                   ),
                 ],
               ),
@@ -271,56 +200,37 @@ class _PhieuSuaChuaFormState
       ),
 
       bottomNavigationBar: Padding(
-
-        padding: const EdgeInsets.fromLTRB(
-          16,
-          10,
-          16,
-          20,
-        ),
+        padding: const EdgeInsets.fromLTRB(16, 10, 16, 20),
 
         child: SizedBox(
-
           height: 54,
 
           child: ElevatedButton(
-
             style: ElevatedButton.styleFrom(
-
-              backgroundColor:
-              const Color(0xff2E7D32),
+              backgroundColor: const Color(0xff2E7D32),
 
               elevation: 0,
 
               shape: RoundedRectangleBorder(
-
-                borderRadius:
-                BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(16),
               ),
             ),
 
             onPressed: () {
-
               if (vm.kiemTraDuLieu()) {
-
                 SuaChua suaChua = SuaChua(
-
                   phongID: widget.phongID,
 
                   nguyenNhan: vm.txtNguyenNhan.text,
 
-                  ngaySuaChua:
-                  vm.chuyenNgay(vm.txtNgaySuaChua.text),
+                  ngaySuaChua: vm.chuyenNgay(vm.txtNgaySuaChua.text),
                 );
 
                 print(suaChua);
 
                 ScaffoldMessenger.of(context).showSnackBar(
-
                   const SnackBar(
-                    content: Text(
-                      "Lưu phiếu sửa chữa thành công",
-                    ),
+                    content: Text("Lưu phiếu sửa chữa thành công"),
                   ),
                 );
                 Navigator.pop(context, true);
@@ -330,7 +240,6 @@ class _PhieuSuaChuaFormState
             },
 
             child: const Text(
-
               "Lưu phiếu sửa chữa",
 
               style: TextStyle(
@@ -347,7 +256,6 @@ class _PhieuSuaChuaFormState
 
   @override
   void dispose() {
-
     vm.dispose();
 
     super.dispose();
@@ -363,15 +271,11 @@ class _PhieuSuaChuaFormState
     TextInputType keyboardType = TextInputType.text,
     List<TextInputFormatter>? inputFormatters,
   }) {
-
     return Column(
-
       crossAxisAlignment: CrossAxisAlignment.start,
 
       children: [
-
         Text(
-
           title,
 
           style: const TextStyle(
@@ -384,11 +288,9 @@ class _PhieuSuaChuaFormState
         const SizedBox(height: 8),
 
         SizedBox(
-
           height: maxLines == 1 ? 65 : 99,
 
           child: TextField(
-
             controller: controller,
 
             maxLines: maxLines == 1 ? 1 : null,
@@ -400,7 +302,6 @@ class _PhieuSuaChuaFormState
             inputFormatters: inputFormatters,
 
             decoration: InputDecoration(
-
               hintText: hint,
 
               suffixIcon: suffixIcon,
@@ -415,52 +316,34 @@ class _PhieuSuaChuaFormState
               ),
 
               enabledBorder: OutlineInputBorder(
-
                 borderRadius: BorderRadius.circular(12),
 
-                borderSide: const BorderSide(
-                  color: Color(0xffE5E5E5),
-                ),
+                borderSide: const BorderSide(color: Color(0xffE5E5E5)),
               ),
 
               focusedBorder: OutlineInputBorder(
-
                 borderRadius: BorderRadius.circular(12),
 
-                borderSide: const BorderSide(
-                  color: Color(0xff2D7A3A),
-                ),
+                borderSide: const BorderSide(color: Color(0xff2D7A3A)),
               ),
 
               errorBorder: OutlineInputBorder(
-
                 borderRadius: BorderRadius.circular(12),
 
-                borderSide: const BorderSide(
-                  color: Colors.red,
-                ),
+                borderSide: const BorderSide(color: Colors.red),
               ),
             ),
           ),
         ),
 
         if (errorText != null)
-
           Padding(
-
-            padding: const EdgeInsets.only(
-              top: 4,
-              left: 8,
-            ),
+            padding: const EdgeInsets.only(top: 4, left: 8),
 
             child: Text(
-
               errorText,
 
-              style: const TextStyle(
-                color: Colors.red,
-                fontSize: 11,
-              ),
+              style: const TextStyle(color: Colors.red, fontSize: 11),
             ),
           ),
       ],

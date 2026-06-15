@@ -1,4 +1,4 @@
-import 'package:AppTroNhaToi/modelviews/MainPage/MainPage.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/MainPageModelView.dart';
 import 'package:flutter/material.dart';
 
 class MainPage extends StatefulWidget {
