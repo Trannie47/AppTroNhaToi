@@ -2,7 +2,7 @@ import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/models/lap_rap.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
-import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/chiTietThietBiViewModel/chiTietThietBiViewModel.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/chiTietThietBi/chiTietThietBiViewModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/PhieuSuaChuaForm/PhieuSuaChuaForm.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThietBiForm/thietBiForm.dart';
 import 'package:flutter/material.dart';

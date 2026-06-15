@@ -1,7 +1,7 @@
 import 'package:AppTroNhaToi/models/hop_dong.dart';
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
-import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/hopDongForm/hopDongForm.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/hopDongForm/HopDongFormViewModel.dart';
 import 'package:AppTroNhaToi/widgets/customDropdownSearch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,13 +17,13 @@ class HopDongForm extends StatefulWidget {
 }
 
 class _TaoHopDongPageState extends State<HopDongForm> {
-  late HopDongFormModelView vm;
+  late HopDongFormViewModel vm;
 
   @override
   void initState() {
     super.initState();
 
-    vm = HopDongFormModelView();
+    vm = HopDongFormViewModel();
     vm.init(hopDong: widget.hopDong);
     vm.addListener(() {
       if (mounted) {

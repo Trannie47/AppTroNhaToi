@@ -1,4 +1,4 @@
-import 'package:AppTroNhaToi/modelviews/MainPage/NguoiThuePage/danhsachnguoithuepage/DanhSachNguoiThuePage.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/NguoiThuePage/danhsachnguoithuepage/danhSachNguoiThuePageViewModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/NguoiThuePage/ChiTietNguoiThuePage/chiTietNguoiThuePage.dart';
 import 'package:AppTroNhaToi/views/MainPage/NguoiThuePage/NguoiThueForm/NguoiThueForm.dart';
 import 'package:AppTroNhaToi/widgets/itemNguoiThue.dart';
@@ -12,9 +12,9 @@ class DanhSachNguoiThuePage extends StatefulWidget {
 }
 
 class _DanhSachNguoiThuePageState extends State<DanhSachNguoiThuePage> {
-   late  DanhSachNguoiThuePageViewModel vm;
-  
-   @override
+  late DanhSachNguoiThuePageViewModel vm;
+
+  @override
   void initState() {
     super.initState();
 
@@ -47,7 +47,6 @@ class _DanhSachNguoiThuePageState extends State<DanhSachNguoiThuePage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: const Color(0xffF5F6FA),
 
@@ -205,7 +204,6 @@ class _DanhSachNguoiThuePageState extends State<DanhSachNguoiThuePage> {
                     nguoiThue: vm.danhSachNguoiThue[index].nguoiThue,
 
                     //phong: vm.danhSachNguoiThue[index].phong.first,
-
                     onTap: () {
                       Navigator.push(
                         context,

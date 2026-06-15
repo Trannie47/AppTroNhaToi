@@ -5,7 +5,7 @@ import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:flutter/material.dart';
 
-class HopDongFormModelView extends ChangeNotifier {
+class HopDongFormViewModel extends ChangeNotifier {
   final txtPhong = TextEditingController();
   final txtNguoiThue = TextEditingController();
 

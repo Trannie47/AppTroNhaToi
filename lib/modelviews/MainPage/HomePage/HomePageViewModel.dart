@@ -3,7 +3,7 @@ import 'package:AppTroNhaToi/models/thong_bao.dart';
 import 'package:AppTroNhaToi/views/MainPage/PhongPage/FormPhong/FormPhong.dart';
 import 'package:flutter/material.dart';
 
-class HomePageModelView extends ChangeNotifier {
+class HomePageViewModel extends ChangeNotifier {
   double roomCount = 0;
   double emptyRoomCount = 0;
   double occupiedRoomCount = 0;

@@ -1,7 +1,7 @@
 import 'package:AppTroNhaToi/models/loaiphong.dart';
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
-import 'package:AppTroNhaToi/modelviews/MainPage/NguoiThuePage/danhsachphongthuepage/DanhSachPhongThuePage.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/NguoiThuePage/danhsachphongthuepage/danhSachPhongThuePageViewModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/NguoiThuePage/ChiTietNguoiThuePage/chiTietNguoiThuePage.dart';
 import 'package:AppTroNhaToi/widgets/itemPhong.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +22,7 @@ class DanhSachPhongThuePage extends StatefulWidget {
 }
 
 class _DanhSachPhongThuePageState extends State<DanhSachPhongThuePage> {
-  late DanhSachPhongThuePageViewModel vm ;
+  late DanhSachPhongThuePageViewModel vm;
 
   @override
   void initState() {

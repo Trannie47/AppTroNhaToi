@@ -3,7 +3,7 @@ import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/string_formatter.dart';
 import 'package:AppTroNhaToi/models/hop_dong.dart';
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
-import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/chiTietHopDongPage/chiTietHopDongPage.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/chiTietHopDongPage/chiTietHopDongViewModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietHopDongPage/chiTietHopDong_Model.dart';
 import 'package:flutter/material.dart';
 

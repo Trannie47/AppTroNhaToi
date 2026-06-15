@@ -1,5 +1,5 @@
 import 'package:AppTroNhaToi/models/loaiphong.dart';
-import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/FormLoaiPhong/FormLoaiPhong.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/FormLoaiPhong/FormLoaiPhongViewModel.dart';
 import 'package:flutter/material.dart';
 
 class FormLoaiPhong extends StatefulWidget {
