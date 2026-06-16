@@ -40,10 +40,9 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
   void dispose() {
     super.dispose();
   }
-  void toChiTietNguoiThue(NguoiThue nt) {
-    Navigator.push(
+  void toChiTietNguoiThue(NguoiThue nt) async{
+    final check= await Navigator.push(
       context,
-
       MaterialPageRoute(
         builder: (context) => ChangeNotifierProvider(
             create: (_) => HopdongViewModel(),
@@ -51,6 +50,9 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
         ),
       ),
     );
+    if(check==true || context.mounted){
+      Provider.of<NguoithueViewModel>(context, listen: false).fetchAllNguoiThue();
+    }
   }
 
   @override

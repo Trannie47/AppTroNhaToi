@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:AppTroNhaToi/core/network/NguoiThueApiClient.dart';
 
 import '../models/nguoi_thue.dart';
@@ -11,6 +13,10 @@ class NguoithueRepository {
   }
   Future<bool> themNguoiThue(NguoiThue nguoiThue) async {
    return await nguoiThueApiClient.themNguoiThue(nguoiThue);
+  }
+
+  Future<bool> xoaNguoiThue(int idnt) async{
+    return await nguoiThueApiClient.xoaNguoiThue(idnt);
   }
 
 }

@@ -68,7 +68,6 @@ class NguoithueViewModel extends ChangeNotifier{
       );
       bool result = await nguoithueRepository.themNguoiThue(nguoiThue);
       if(result){
-        await fetchAllNguoiThue();
         clearAllFileds();
         return true;
       }
@@ -115,6 +114,25 @@ class NguoithueViewModel extends ChangeNotifier{
     txtQueQuan.text = parts[5].trim();
 
     notifyListeners();
+  }
+  Future<bool> xoaNguoiThue(int idnt) async{
+    if(_isLoading) return false;
+    _isLoading= true;
+    notifyListeners();
+    try {
+      final result = await nguoithueRepository.xoaNguoiThue(idnt);
+
+      if (result) {
+        return true;
+      }
+      return false;
+    }catch(e){
+      print("Loi viemodel khi xoa $e");
+      rethrow;
+    }finally{
+      _isLoading=false;
+      notifyListeners();
+    }
   }
 
 }

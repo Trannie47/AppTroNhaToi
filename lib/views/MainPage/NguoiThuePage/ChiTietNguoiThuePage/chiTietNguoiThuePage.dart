@@ -1,8 +1,10 @@
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/view_models/hopdong_view_model.dart';
+import 'package:AppTroNhaToi/view_models/nguoithue_view_model.dart';
 import 'package:AppTroNhaToi/views/MainPage/NguoiThuePage/NguoiThueForm/NguoiThueForm.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/string_formatter.dart';
+import 'package:dio/dio.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -524,7 +526,57 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                     ),
 
                     child: TextButton.icon(
-                      onPressed: () {},
+                      onPressed: () async {
+                        bool? confirmDelete= await showDialog(
+                            context: context,
+                            builder: (context)=> AlertDialog(
+                              title: const Text("Xác nhận xóa "),
+                              content: const Text("Bạn có chắc muốn xóa người thuê này không?"),
+                              actions: [
+                                TextButton(
+                                    onPressed: ()=>  Navigator.pop(context,false),
+                                    child: const Text("Hủy"),
+                                ),
+                                TextButton(
+                                    onPressed: () => Navigator.pop(context,true),
+                                    child: const Text("Xóa", style: TextStyle(color: Colors.red)),
+                                )
+                              ],
+                            ),
+                        );
+                        if(confirmDelete!= true) return;
+                        try{
+                          final idnt= widget.nguoiThue.idnt;
+                          if(idnt!=null) {
+                            bool isSuccess = await Provider
+                                .of<
+                                NguoithueViewModel>(context, listen: false)
+                                .xoaNguoiThue(idnt);
+
+                            if(isSuccess && context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text(
+                                    'Xóa người thuê thành công!')),
+                              );
+                              Navigator.pop(context,true);
+                            }
+                          }
+                        }catch(e){
+                            String  errorMessage= "Không thể xóa người thuê này!";
+                            if(e is DioException && e.response?.data!=null){
+                              final data = e.response?.data;
+                              if (data is Map && data.containsKey('message')) {
+                                errorMessage = data['message'].toString();
+                              }
+                            }
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(errorMessage),
+                                backgroundColor: Colors.red.shade700,
+                              ),
+                            );
+                        }
+                      },
 
                       icon: const Icon(
                         Icons.delete_outline_rounded,
@@ -541,6 +593,7 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                         ),
                       ),
                     ),
+
                   ),
                 ],
               ),

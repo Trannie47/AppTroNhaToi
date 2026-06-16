@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:AppTroNhaToi/core/network/retrofit_client.dart';
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
@@ -40,6 +41,21 @@ class NguoiThueApiClient {
       }
 
       return false;
+    }
+  }
+  Future<bool> xoaNguoiThue(int idnt) async{
+
+    try{
+      final response= await _dio.delete("nguoi-thue/$idnt");
+      if(response.statusCode==200|| response.statusCode==201){
+        return true;
+      }
+      return false;
+    }catch(e){
+      if (kDebugMode) {
+        print('Lỗi xóa người thuê $e');
+      }
+      rethrow;
     }
   }
 }
