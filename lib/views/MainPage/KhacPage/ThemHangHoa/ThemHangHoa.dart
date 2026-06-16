@@ -3,7 +3,13 @@ import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/ThemHangHoaViewModel/T
 import 'package:flutter/material.dart';
 
 class ThemHangHoa extends StatefulWidget {
-  const ThemHangHoa({super.key});
+
+  final HangHoa? hangHoa;
+
+  const ThemHangHoa({
+    super.key,
+    this.hangHoa,
+  });
 
   @override
   State<ThemHangHoa> createState() => _ThemHangHoaState();
@@ -15,6 +21,22 @@ class _ThemHangHoaState extends State<ThemHangHoa> {
   @override
   void initState() {
     super.initState();
+
+    if (widget.hangHoa != null) {
+
+      vm.txtTenHangHoa.text =
+          widget.hangHoa!.tenHangHoa ?? "";
+
+      vm.txtGiaBan.text =
+          widget.hangHoa!.giaBan?.toStringAsFixed(0) ?? "";
+
+      vm.txtGiaNhap.text =
+          widget.hangHoa!.giaNhap?.toStringAsFixed(0) ?? "";
+
+      vm.txtDonVi.text =
+          widget.hangHoa!.donViTinh ?? "";
+
+    }
 
     vm.addListener(() {
       if (mounted) {
@@ -77,9 +99,29 @@ class _ThemHangHoaState extends State<ThemHangHoa> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: const Text(
-          "Thêm hàng hóa",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+
+            Text(
+              widget.hangHoa == null
+                  ? "Thêm hàng hóa"
+                  : "Chỉnh sửa hàng hóa",
+              style: const TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            if (widget.hangHoa != null)
+              Text(
+                widget.hangHoa!.tenHangHoa ?? "",
+                style: TextStyle(
+                  color: Colors.grey.shade500,
+                  fontSize: 13,
+                ),
+              ),
+          ],
         ),
         leading: IconButton(
           onPressed: () {
@@ -197,43 +239,84 @@ class _ThemHangHoaState extends State<ThemHangHoa> {
 
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16),
-        child: SizedBox(
-          height: 56,
-          width: double.infinity,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xff2D7A3A),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18),
-              ),
-            ),
-            onPressed: () {
-              if (vm.kiemTraDuLieu()) {
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
 
-                Navigator.pop(
-                  context,
-                  HangHoa(
-                    maHangHoa: DateTime.now().millisecondsSinceEpoch,
-                    tenHangHoa: vm.txtTenHangHoa.text,
-                    giaNhap: double.parse(vm.txtGiaNhap.text),
-                    giaBan: double.parse(vm.txtGiaBan.text),
-                    donViTinh: vm.txtDonVi.text,
+            SizedBox(
+              width: double.infinity,
+              height: 56,
+              child: ElevatedButton(
+                onPressed: () {
+
+                  if (vm.kiemTraDuLieu()) {
+
+                    Navigator.pop(
+                      context,
+                      HangHoa(
+                        maHangHoa:
+                        widget.hangHoa?.maHangHoa ??
+                            DateTime.now().millisecondsSinceEpoch,
+
+                        tenHangHoa: vm.txtTenHangHoa.text,
+                        giaBan: double.parse(vm.txtGiaBan.text),
+                        giaNhap: double.parse(vm.txtGiaNhap.text),
+                        donViTinh: vm.txtDonVi.text,
+                      ),
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xff2D7A3A),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
                   ),
-                );
-
-              }
-
-              setState(() {});
-            },
-            child: const Text(
-              "Lưu hàng hóa",
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
+                ),
+                child: Text(
+                  widget.hangHoa == null
+                      ? "Lưu hàng hóa"
+                      : "Lưu thay đổi",
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
-          ),
+
+            if (widget.hangHoa != null) ...[
+              const SizedBox(height: 12),
+
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: () {
+
+                    Navigator.pop(
+                      context,
+                      "xoa",
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                  ),
+                  child: const Text(
+                    "Xóa hàng hóa này",
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ]
+          ],
         ),
       ),
     );

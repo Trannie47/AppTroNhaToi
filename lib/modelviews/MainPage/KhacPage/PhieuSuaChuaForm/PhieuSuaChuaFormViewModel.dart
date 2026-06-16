@@ -8,13 +8,39 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
   final txtNguyenNhan = TextEditingController();
 
   final txtChiPhi = TextEditingController();
-
+  int sttHoaDon = 1;
+  bool taoHoaDon = false;
+  bool daTaoHoaDon = false;
+  final txtNgayHoaDon = TextEditingController();
+  String maHoaDon = "";
+  String? errNgayHoaDon;
+  String? loaiSuaChua = "Sửa chữa nhỏ";
+  String? trangThai = "Đang sửa chữa";
   String? errNgaySuaChua;
-
   String? errNguyenNhan;
-
   String? errChiPhi;
-  bool daSuaXong = false;
+
+  List<String> dsLoaiSuaChua = [
+    "Sửa chữa nhỏ",
+    "Sửa chữa lớn",
+    "Bảo trì định kỳ",
+    "Thay thế linh kiện",
+    "Vệ sinh thiết bị",
+    "Khắc phục sự cố điện",
+    "Khắc phục sự cố nước",
+    "Sửa chữa khẩn cấp",
+    "Nâng cấp thiết bị",
+    "Khác",
+  ];
+
+  List<String> dsTrangThai = [
+    "Đang sửa chữa",
+    "Đã hoàn thành",
+    "Đã thanh toán",
+    "Đã hủy",
+  ];
+
+
 
   DateTime? chuyenNgay(String ngay) {
 
@@ -42,8 +68,8 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
     DateTime? ngay = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2100),
     );
 
     if (ngay != null) {
@@ -56,16 +82,52 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
 
   bool kiemTraDuLieu() {
 
+    bool hopLe = true;
+
     errNgaySuaChua = null;
     errNguyenNhan = null;
     errChiPhi = null;
+    errNgayHoaDon = null;
 
-    bool hopLe = true;
+    if (taoHoaDon) {
 
-    errNgaySuaChua = kiemTraNgay(
-      txtNgaySuaChua.text,
-      minYear: 2000,
-    );
+      DateTime? ngaySua =
+      chuyenNgay(txtNgaySuaChua.text);
+
+      DateTime? ngayHoaDon =
+      chuyenNgay(txtNgayHoaDon.text);
+
+      if (ngaySua != null &&
+          ngayHoaDon != null &&
+          ngaySua.isAfter(ngayHoaDon)) {
+
+        errNgayHoaDon =
+        "Ngày lập hóa đơn phải lớn hơn hoặc bằng ngày sửa chữa";
+
+        hopLe = false;
+      }
+
+      errNgayHoaDon = kiemTraNgay(
+        txtNgayHoaDon.text,
+        minYear: 2000,
+      );
+
+      if (errNgayHoaDon != null) {
+        hopLe = false;
+      }
+
+      if (loaiSuaChua == null) {
+        hopLe = false;
+      }
+
+      if (trangThai == null) {
+        hopLe = false;
+      }
+      errNgaySuaChua = kiemTraNgay(
+        txtNgaySuaChua.text,
+        minYear: 2000,
+      );
+    }
 
     if (errNgaySuaChua != null) {
 
@@ -73,6 +135,7 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
     }
 
     else {
+
 
       DateTime? ngaySua =
       chuyenNgay(txtNgaySuaChua.text);
@@ -105,7 +168,7 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
       hopLe = false;
     }
 
-    if (daSuaXong) {
+    if (taoHoaDon) {
 
       if (txtChiPhi.text.trim().isEmpty) {
 
@@ -118,21 +181,20 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
 
     if (txtChiPhi.text.trim().isNotEmpty) {
 
-      double? chiPhi =
-      double.tryParse(txtChiPhi.text);
-
+      int? chiPhi =
+      int.tryParse(txtChiPhi.text);
       if (chiPhi == null) {
 
         errChiPhi =
-        "Chi phí chỉ được nhập số";
+        "Chi phí chỉ được nhập số nguyên";
 
         hopLe = false;
       }
 
-      else if (chiPhi < 0) {
+      else if (chiPhi <= 0) {
 
         errChiPhi =
-        "Chi phí phải lớn hơn hoặc bằng 0";
+        "Chi phí phải lớn hơn 0";
 
         hopLe = false;
       }
@@ -142,28 +204,64 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
 
     return hopLe;
   }
+  PhieuSuaChuaViewModel() {
+
+    txtNgaySuaChua.text =
+        formatDate(DateTime.now());
+
+    txtNgayHoaDon.text =
+        txtNgaySuaChua.text;
+  }
 
   @override
   void dispose() {
 
     txtNgaySuaChua.dispose();
-
     txtNguyenNhan.dispose();
-
     txtChiPhi.dispose();
+    txtNgayHoaDon.dispose();
+
 
     super.dispose();
   }
 
-  void doiTrangThaiSuaXong(bool value) {
+  void doiTrangThaiTaoHoaDon(bool value) {
 
-    daSuaXong = value;
+    if (daTaoHoaDon && value == false) {
+      return;
+    }
 
-    if (!daSuaXong) {
+    taoHoaDon = value;
+
+    if (!taoHoaDon) {
 
       errChiPhi = null;
+
+      errNgayHoaDon = null;
     }
 
     notifyListeners();
   }
+
+  void taoMaHoaDon() {
+
+    DateTime now = DateTime.now();
+
+    String nam = now.year.toString();
+
+    String thang =
+    now.month.toString().padLeft(2, '0');
+
+    String ngay =
+    now.day.toString().padLeft(2, '0');
+
+    String stt =
+    sttHoaDon.toString().padLeft(3, '0');
+
+    maHoaDon =
+    "PSC${nam}${thang}${ngay}$stt";
+
+    sttHoaDon++;
+  }
+
 }

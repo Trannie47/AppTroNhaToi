@@ -30,118 +30,98 @@ class ItemHangHoa extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(20),
       ),
-      child: Column(
+      child: Row(
         children: [
-          Row(
-            children: [
-              Container(
-                width: 42,
-                height: 42,
-                decoration: BoxDecoration(
-                  color: const Color(0xffEDF5EE),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(
-                  Icons.grid_view_rounded,
-                  color: Color(0xff2D7A3A),
-                ),
-              ),
-
-              const SizedBox(width: 12),
-
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      hangHoa.tenHangHoa ?? "",
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-
-                    const SizedBox(height: 3),
-
-                    Text(
-                      "Tồn kho: $tonKho ${hangHoa.donViTinh ?? ""}",
-                      style: TextStyle(
-                        color: Colors.grey.shade500,
-                        fontSize: 13,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              Text(
-                "${formatTien(hangHoa.giaBan)}đ/${hangHoa.donViTinh ?? ""}",
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 17,
-                ),
-              ),
-
-            ],
+          /// Icon hàng hóa
+          Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              color: const Color(0xffEDF5EE),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: const Icon(
+              Icons.grid_view_rounded,
+              color: Color(0xff2D7A3A),
+              size: 24,
+            ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(width: 14),
 
-          Row(
-            children: [
-              Expanded(
-                child: SizedBox(
-                  height: 38,
-                  child: ElevatedButton(
-                    onPressed: onSua,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xffEDF5EE),
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: const Text(
-                      "Chỉnh sửa",
-                      style: TextStyle(
-                        color: Color(0xff2D7A3A),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+          /// Tên hàng hóa + giá
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  hangHoa.tenHangHoa ?? "",
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
                   ),
                 ),
-              ),
 
-              const SizedBox(width: 12),
+                const SizedBox(height: 6),
 
-              Expanded(
-                child: SizedBox(
-                  height: 38,
-                  child: ElevatedButton(
-                    onPressed: onXoa,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xffFFF0F0),
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: const Text(
-                      "Xóa",
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                Text(
+                  "${formatTien(hangHoa.giaBan)}đ/${hangHoa.donViTinh ?? ""}",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey.shade600,
                   ),
                 ),
+              ],
+            ),
+          ),
+
+          const SizedBox(width: 12),
+
+          /// Nút sửa
+          InkWell(
+            onTap: onSua,
+            borderRadius: BorderRadius.circular(14),
+            child: Container(
+              width: 46,
+              height: 46,
+              decoration: BoxDecoration(
+                color: const Color(0xffEDF5EE),
+                borderRadius: BorderRadius.circular(14),
               ),
-            ],
+              child: const Icon(
+                Icons.edit_outlined,
+                color: Color(0xff2D7A3A),
+              ),
+            ),
+          ),
+
+          const SizedBox(width: 10),
+
+          /// Nút xóa
+          InkWell(
+            onTap: onXoa,
+            borderRadius: BorderRadius.circular(14),
+            child: Container(
+              width: 46,
+              height: 46,
+              decoration: BoxDecoration(
+                color: const Color(0xffFFF0F0),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: const Icon(
+                Icons.delete_outline,
+                color: Colors.red,
+              ),
+            ),
           ),
         ],
       ),

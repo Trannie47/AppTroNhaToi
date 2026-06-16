@@ -207,11 +207,73 @@ class _TapHoaPageState extends State<TapHoaPage> {
                   return ItemHangHoa(
                     hangHoa: vm.dsHangHoa[index],
                     tonKho: vm.getTonKho(vm.dsHangHoa[index]),
-                    onSua: () {},
-                    onXoa: () {
-                      vm.xoaHangHoa(
-                        vm.dsHangHoa[index].maHangHoa!,
+                    onSua: () async {
+
+                      final HangHoa? hangHoaSua =
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ThemHangHoa(
+                            hangHoa: vm.dsHangHoa[index],
+                          ),
+                        ),
                       );
+
+                      if (hangHoaSua != null) {
+
+                        vm.dsHangHoa[index] = hangHoaSua;
+
+                        vm.notifyListeners();
+                      }
+                    },
+                    onXoa: () async {
+
+                      bool? xacNhan = await showDialog<bool>(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            title: const Text("Xóa hàng hóa"),
+                            content: Text(
+                              "Bạn có muốn xóa '${vm.dsHangHoa[index].tenHangHoa}' không?",
+                            ),
+                            actions: [
+
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context, false);
+                                },
+                                child: const Text(
+                                  "Hủy",
+                                ),
+                              ),
+
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(context, true);
+                                },
+                                child: const Text(
+                                  "Xóa",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+
+                      if (xacNhan == true) {
+                        vm.xoaHangHoa(
+                          vm.dsHangHoa[index].maHangHoa!,
+                        );
+                      }
                     },
                   );
                 },
@@ -242,6 +304,7 @@ class _TapHoaPageState extends State<TapHoaPage> {
                     vm.notifyListeners();
                   }
                 },
+
                 style: OutlinedButton.styleFrom(
                   side: const BorderSide(
                     color: Color(0xffB9DDBF),
