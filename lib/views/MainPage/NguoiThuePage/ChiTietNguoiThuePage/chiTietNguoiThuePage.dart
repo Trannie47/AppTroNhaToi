@@ -527,22 +527,109 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
 
                     child: TextButton.icon(
                       onPressed: () async {
-                        bool? confirmDelete= await showDialog(
-                            context: context,
-                            builder: (context)=> AlertDialog(
-                              title: const Text("Xác nhận xóa "),
-                              content: const Text("Bạn có chắc muốn xóa người thuê này không?"),
-                              actions: [
-                                TextButton(
-                                    onPressed: ()=>  Navigator.pop(context,false),
-                                    child: const Text("Hủy"),
+                        bool? confirmDelete = await showDialog<bool>(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            backgroundColor: Colors.white,
+                            surfaceTintColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(24),
+                            ),
+                            contentPadding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: 56,
+                                  height: 56,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xffFFF1F1),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.delete_forever_rounded,
+                                    color: Colors.red,
+                                    size: 28,
+                                  ),
                                 ),
-                                TextButton(
-                                    onPressed: () => Navigator.pop(context,true),
-                                    child: const Text("Xóa", style: TextStyle(color: Colors.red)),
-                                )
+                                const SizedBox(height: 16),
+
+                                // Tiêu đề font đậm
+                                const Text(
+                                  "Xác nhận xóa",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w800,
+                                    color: Color(0xff1C1C1E),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+
+                                // Nội dung mô tả ngắn gọn
+                                const Text(
+                                  "Bạn có chắc muốn xóa người thuê này không? Hành động này không thể hoàn tác.",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Color(0xff666666),
+                                    height: 1.4,
+                                  ),
+                                ),
                               ],
                             ),
+                            actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                            actions: [
+                              Row(
+                                children: [
+                                  // Nút HỦY
+                                  Expanded(
+                                    child: OutlinedButton(
+                                      onPressed: () => Navigator.pop(context, false),
+                                      style: OutlinedButton.styleFrom(
+                                        minimumSize: const Size.fromHeight(44),
+                                        side: BorderSide(color: Colors.grey.shade300),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                      ),
+                                      child: const Text(
+                                        "Hủy",
+                                        style: TextStyle(
+                                          color: Color(0xff666666),
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+
+                                  // Nút XÓA
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      onPressed: () => Navigator.pop(context, true),
+                                      style: ElevatedButton.styleFrom(
+                                        minimumSize: const Size.fromHeight(44),
+                                        backgroundColor: Colors.red,
+                                        foregroundColor: Colors.white,
+                                        elevation: 0,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                      ),
+                                      child: const Text(
+                                        "Xóa",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         );
                         if(confirmDelete!= true) return;
                         try{
