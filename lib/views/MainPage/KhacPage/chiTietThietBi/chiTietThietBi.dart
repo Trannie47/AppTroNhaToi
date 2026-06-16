@@ -297,87 +297,16 @@ class _ChiTietThietBiState extends State<ChiTietThietBi> {
 
                         const SizedBox(height: 16),
 
-                        // Container(
-                        //   padding: const EdgeInsets.all(14),
-                        //
-                        //   decoration: BoxDecoration(
-                        //     color: const Color(0xffFAFAFA),
-                        //
-                        //     borderRadius: BorderRadius.circular(14),
-                        //   ),
-                        //
-                        //   child: Column(
-                        //     crossAxisAlignment: CrossAxisAlignment.start,
-                        //
-                        //     children: [
-                        //       const Text(
-                        //         "Không lạnh, không khởi động",
-                        //
-                        //         style: TextStyle(
-                        //           fontWeight: FontWeight.w700,
-                        //           fontSize: 14,
-                        //         ),
-                        //       ),
-                        //
-                        //       const SizedBox(height: 4),
-                        //
-                        //       Text(
-                        //         "${formatDate(DateTime.now())} - Đang sửa",
-                        //
-                        //         style: const TextStyle(
-                        //           color: Colors.red,
-                        //           fontSize: 12,
-                        //         ),
-                        //       ),
-                        //     ],
-                        //   ),
-                        // ),
-                        //
-                        // const SizedBox(height: 12),
-                        //
-                        // Container(
-                        //   padding: const EdgeInsets.all(14),
-                        //
-                        //   decoration: BoxDecoration(
-                        //     color: const Color(0xffFAFAFA),
-                        //
-                        //     borderRadius: BorderRadius.circular(14),
-                        //   ),
-                        //
-                        //   child: Column(
-                        //     crossAxisAlignment: CrossAxisAlignment.start,
-                        //
-                        //     children: [
-                        //       const Text(
-                        //         "Vệ sinh dàn lạnh",
-                        //
-                        //         style: TextStyle(
-                        //           fontWeight: FontWeight.w700,
-                        //           fontSize: 14,
-                        //         ),
-                        //       ),
-                        //
-                        //       const SizedBox(height: 4),
-                        //
-                        //       const Text(
-                        //         "15/08/2024 · Chi phí 150,000đ",
-                        //
-                        //         style: TextStyle(
-                        //           color: Color(0xff8E8E8E),
-                        //           fontSize: 12,
-                        //         ),
-                        //       ),
-                        //     ],
-                        //   ),
-                        // ),
                         Column(
+                          spacing: 10,
                           children: List.generate(vm.lichSuSuaChua.length, (
                             index,
                           ) {
                             final item = vm.lichSuSuaChua[index];
 
                             return Container(
-                              margin: const EdgeInsets.only(bottom: 12),
+                              width: double.infinity,
+                              // margin: EdgeInsets.only(bottom: index == vm.lichSuSuaChua.length - 1 ? 0 : 12),
                               padding: const EdgeInsets.all(14),
                               decoration: BoxDecoration(
                                 color: const Color(0xffFAFAFA),
