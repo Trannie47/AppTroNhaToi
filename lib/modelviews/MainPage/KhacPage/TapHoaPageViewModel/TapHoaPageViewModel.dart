@@ -1,10 +1,13 @@
 import 'package:AppTroNhaToi/models/hang_hoa.dart';
+import 'package:AppTroNhaToi/models/hoa_don_tap_hoa.dart';
 import 'package:flutter/material.dart';
 
 class TapHoaPageViewModel extends ChangeNotifier {
   int currentTab = 0;
+  int sttHoaDon = 1;
 
   List<HangHoa> dsHangHoa = [];
+  List<HoaDonTapHoa> dsHoaDon = [];
 
   TapHoaPageViewModel() {
     loadData();
@@ -56,18 +59,72 @@ class TapHoaPageViewModel extends ChangeNotifier {
       ),
     ];
 
+    dsHoaDon = [
+      HoaDonTapHoa(
+        maHoaDon: taoMaHoaDon(),
+        tongTien: 50000,
+      ),
+
+      HoaDonTapHoa(
+        maHoaDon: taoMaHoaDon(),
+        tongTien: 120000,
+      ),
+
+      HoaDonTapHoa(
+        maHoaDon: taoMaHoaDon(),
+        tongTien: 80000,
+      ),
+    ];
+
     notifyListeners();
+  }
+
+  /// mặc định mã tự động
+  int taoMaHoaDon() {
+
+    DateTime now = DateTime.now();
+
+    String nam = now.year.toString();
+
+    String thang =
+    now.month.toString().padLeft(2, '0');
+
+    String ngay =
+    now.day.toString().padLeft(2, '0');
+
+    String stt =
+    sttHoaDon.toString().padLeft(3, '0');
+
+    sttHoaDon++;
+
+    return int.parse(
+      "$nam$thang$ngay$stt",
+    );
   }
 
   /// tab
   void changeTab(int index) {
     currentTab = index;
+
+    print("currentTab = $currentTab");
+
     notifyListeners();
   }
 
   /// thêm hàng hóa
-  void themHangHoa(HangHoa hangHoa) {
-    dsHangHoa.add(hangHoa);
+  void themHoaDon(
+      double tongTien,
+      ) {
+
+    dsHoaDon.insert(
+      0,
+      HoaDonTapHoa(
+        maHoaDon: taoMaHoaDon(),
+        ngayBan: DateTime.now(),
+        tongTien: tongTien,
+      ),
+    );
+
     notifyListeners();
   }
 
@@ -106,6 +163,11 @@ class TapHoaPageViewModel extends ChangeNotifier {
   int get soCongNo {
     return 2;
   }
+
+  int get tongHoaDon {
+    return dsHoaDon.length;
+  }
+
 
   /// tồn kho demo
   String getTonKho(HangHoa hangHoa) {

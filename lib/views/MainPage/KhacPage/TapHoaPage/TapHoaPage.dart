@@ -3,7 +3,9 @@ import 'package:AppTroNhaToi/models/hang_hoa.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/TapHoaPageViewModel/TapHoaPageViewModel.dart';
 
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThemHangHoa/ThemHangHoa.dart';
+import 'package:AppTroNhaToi/widgets/itemCongNo.dart';
 import 'package:AppTroNhaToi/widgets/itemHangHoa.dart';
+import 'package:AppTroNhaToi/widgets/itemHoaDonTapHoa.dart';
 import 'package:flutter/material.dart';
 
 class TapHoaPage extends StatefulWidget {
@@ -202,80 +204,119 @@ class _TapHoaPageState extends State<TapHoaPage> {
             /// DANH SÁCH HÀNG
             Expanded(
               child: ListView.builder(
-                itemCount: vm.dsHangHoa.length,
+
+                // itemCount: vm.currentTab == 0
+                //     ? vm.dsHangHoa.length
+                //     : vm.dsHoaDon.length,
+
+                itemCount:
+                vm.currentTab == 0
+                    ? vm.dsHangHoa.length
+                    : vm.currentTab == 2
+                    ? vm.dsHoaDon.length
+                    : 0,
+
                 itemBuilder: (context, index) {
-                  return ItemHangHoa(
-                    hangHoa: vm.dsHangHoa[index],
-                    tonKho: vm.getTonKho(vm.dsHangHoa[index]),
-                    onSua: () async {
 
-                      final HangHoa? hangHoaSua =
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => ThemHangHoa(
-                            hangHoa: vm.dsHangHoa[index],
+                  /// HÀNG HÓA
+                  if (vm.currentTab == 0) {
+
+                    return ItemHangHoa(
+                      hangHoa: vm.dsHangHoa[index],
+                      tonKho: vm.getTonKho(vm.dsHangHoa[index]),
+
+                      onSua: () async {
+
+                        final HangHoa? hangHoaSua =
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ThemHangHoa(
+                              hangHoa: vm.dsHangHoa[index],
+                            ),
                           ),
-                        ),
-                      );
+                        );
 
-                      if (hangHoaSua != null) {
+                        if (hangHoaSua != null) {
 
-                        vm.dsHangHoa[index] = hangHoaSua;
+                          vm.dsHangHoa[index] = hangHoaSua;
 
-                        vm.notifyListeners();
-                      }
-                    },
-                    onXoa: () async {
+                          vm.notifyListeners();
+                        }
+                      },
 
-                      bool? xacNhan = await showDialog<bool>(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            title: const Text("Xóa hàng hóa"),
-                            content: Text(
-                              "Bạn có muốn xóa '${vm.dsHangHoa[index].tenHangHoa}' không?",
-                            ),
-                            actions: [
+                      onXoa: () async {
 
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context, false);
-                                },
-                                child: const Text(
-                                  "Hủy",
-                                ),
+                        bool? xacNhan =
+                        await showDialog<bool>(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text("Xóa hàng hóa"),
+                              content: Text(
+                                "Bạn có muốn xóa '${vm.dsHangHoa[index].tenHangHoa}' không?",
                               ),
 
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.red,
+                              actions: [
+
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context, false);
+                                  },
+                                  child: const Text("Hủy"),
                                 ),
-                                onPressed: () {
-                                  Navigator.pop(context, true);
-                                },
-                                child: const Text(
-                                  "Xóa",
-                                  style: TextStyle(
-                                    color: Colors.white,
+
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red,
+                                  ),
+                                  onPressed: () {
+                                    Navigator.pop(context, true);
+                                  },
+                                  child: const Text(
+                                    "Xóa",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-
-                      if (xacNhan == true) {
-                        vm.xoaHangHoa(
-                          vm.dsHangHoa[index].maHangHoa!,
+                              ],
+                            );
+                          },
                         );
-                      }
-                    },
-                  );
+
+                        if (xacNhan == true) {
+
+                          vm.xoaHangHoa(
+                            vm.dsHangHoa[index].maHangHoa!,
+                          );
+                        }
+                      },
+                    );
+                  }
+
+                  /// HÓA ĐƠN
+                  if (vm.currentTab == 2) {
+
+                    return ItemHoaDonTapHoa(
+                      hoaDon: vm.dsHoaDon[index],
+
+                      onSua: () {
+
+                      },
+
+                      onXoa: () {
+
+                      },
+                    );
+                  }
+
+                  return const SizedBox();
+
+                  /// CÔNG NỢ
+                  // return ItemCongNo(
+                  //   congNo: vm.dsCongNo[index],
+                  // );
                 },
               ),
             ),
@@ -283,10 +324,11 @@ class _TapHoaPageState extends State<TapHoaPage> {
             const SizedBox(height: 16),
 
             /// THÊM HÀNG HÓA
-            SizedBox(
-              width: double.infinity,
-              height: 56,
-              child: OutlinedButton.icon(
+            if (vm.currentTab == 0)
+              SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: OutlinedButton.icon(
                 onPressed: () async {
 
                   final HangHoa? hangHoaMoi =
