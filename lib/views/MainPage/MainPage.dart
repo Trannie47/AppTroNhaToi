@@ -33,7 +33,10 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: vm.pages[vm.currentIndex],
+      body: IndexedStack(
+        index: vm.currentIndex,
+        children: vm.pages, // Nạp ds các pages vào đây để chuyển tab tránh việc gọi lại init
+      ),
 
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: vm.currentIndex,
