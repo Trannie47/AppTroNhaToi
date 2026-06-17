@@ -1,41 +1,31 @@
 import 'package:AppTroNhaToi/models/hang_hoa.dart';
-import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/ThemHangHoaViewModel/ThemHangHoaViewModel.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/HangHoaFormViewModel/HangHoaFormViewModel.dart';
 import 'package:flutter/material.dart';
 
-class ThemHangHoa extends StatefulWidget {
-
+class HangHoaForm extends StatefulWidget {
   final HangHoa? hangHoa;
 
-  const ThemHangHoa({
-    super.key,
-    this.hangHoa,
-  });
+  const HangHoaForm({super.key, this.hangHoa});
 
   @override
-  State<ThemHangHoa> createState() => _ThemHangHoaState();
+  State<HangHoaForm> createState() => _HangHoaFormState();
 }
 
-class _ThemHangHoaState extends State<ThemHangHoa> {
-  final vm = ThemHangHoaViewModel();
+class _HangHoaFormState extends State<HangHoaForm> {
+  final vm = HangHoaFormViewModel();
 
   @override
   void initState() {
     super.initState();
 
     if (widget.hangHoa != null) {
+      vm.txtTenHangHoa.text = widget.hangHoa!.tenHangHoa ?? "";
 
-      vm.txtTenHangHoa.text =
-          widget.hangHoa!.tenHangHoa ?? "";
+      vm.txtGiaBan.text = widget.hangHoa!.giaBan?.toStringAsFixed(0) ?? "";
 
-      vm.txtGiaBan.text =
-          widget.hangHoa!.giaBan?.toStringAsFixed(0) ?? "";
+      vm.txtGiaNhap.text = widget.hangHoa!.giaNhap?.toStringAsFixed(0) ?? "";
 
-      vm.txtGiaNhap.text =
-          widget.hangHoa!.giaNhap?.toStringAsFixed(0) ?? "";
-
-      vm.txtDonVi.text =
-          widget.hangHoa!.donViTinh ?? "";
-
+      vm.txtDonVi.text = widget.hangHoa!.donViTinh ?? "";
     }
 
     vm.addListener(() {
@@ -102,11 +92,8 @@ class _ThemHangHoaState extends State<ThemHangHoa> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             Text(
-              widget.hangHoa == null
-                  ? "Thêm hàng hóa"
-                  : "Chỉnh sửa hàng hóa",
+              widget.hangHoa == null ? "Thêm hàng hóa" : "Chỉnh sửa hàng hóa",
               style: const TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
@@ -116,10 +103,7 @@ class _ThemHangHoaState extends State<ThemHangHoa> {
             if (widget.hangHoa != null)
               Text(
                 widget.hangHoa!.tenHangHoa ?? "",
-                style: TextStyle(
-                  color: Colors.grey.shade500,
-                  fontSize: 13,
-                ),
+                style: TextStyle(color: Colors.grey.shade500, fontSize: 13),
               ),
           ],
         ),
@@ -242,20 +226,17 @@ class _ThemHangHoaState extends State<ThemHangHoa> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-
             SizedBox(
               width: double.infinity,
               height: 56,
               child: ElevatedButton(
                 onPressed: () {
-
                   if (vm.kiemTraDuLieu()) {
-
                     Navigator.pop(
                       context,
                       HangHoa(
                         maHangHoa:
-                        widget.hangHoa?.maHangHoa ??
+                            widget.hangHoa?.maHangHoa ??
                             DateTime.now().millisecondsSinceEpoch,
 
                         tenHangHoa: vm.txtTenHangHoa.text,
@@ -273,9 +254,7 @@ class _ThemHangHoaState extends State<ThemHangHoa> {
                   ),
                 ),
                 child: Text(
-                  widget.hangHoa == null
-                      ? "Lưu hàng hóa"
-                      : "Lưu thay đổi",
+                  widget.hangHoa == null ? "Lưu hàng hóa" : "Lưu thay đổi",
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -293,11 +272,7 @@ class _ThemHangHoaState extends State<ThemHangHoa> {
                 height: 50,
                 child: ElevatedButton(
                   onPressed: () {
-
-                    Navigator.pop(
-                      context,
-                      "xoa",
-                    );
+                    Navigator.pop(context, "xoa");
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
@@ -315,7 +290,7 @@ class _ThemHangHoaState extends State<ThemHangHoa> {
                   ),
                 ),
               ),
-            ]
+            ],
           ],
         ),
       ),

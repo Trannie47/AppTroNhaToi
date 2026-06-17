@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class ThemHangHoaViewModel extends ChangeNotifier {
+class HangHoaFormViewModel extends ChangeNotifier {
   final txtTenHangHoa = TextEditingController();
   final txtGiaBan = TextEditingController();
   final txtGiaNhap = TextEditingController();
@@ -84,5 +84,4 @@ class ThemHangHoaViewModel extends ChangeNotifier {
     txtDonVi.dispose();
     super.dispose();
   }
-
 }
