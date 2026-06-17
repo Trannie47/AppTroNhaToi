@@ -1,4 +1,5 @@
 import 'package:AppTroNhaToi/view_models/nguoithue_view_model.dart';
+import 'package:AppTroNhaToi/view_models/phong_view_model.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -15,6 +16,7 @@ void main() {
         providers: [
           //Khai báo ở đây để làm Global, mặc định Flutter chạy chế độ Lazy (khi nào gọi mới đẻ)
           ChangeNotifierProvider(create: (_) => NguoithueViewModel()),
+          ChangeNotifierProvider(create: (_)=> PhongViewModel())
         ],
         child: const MyApp(),
       ),

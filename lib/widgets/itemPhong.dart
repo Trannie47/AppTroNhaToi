@@ -86,7 +86,7 @@ class ItemPhong extends StatelessWidget {
                   ),
 
                   child: Text(
-                    phong.tenPhong,
+                    "P${phong.tenPhong}",
 
                     style: const TextStyle(
                       fontSize: 15,
@@ -107,7 +107,7 @@ class ItemPhong extends StatelessWidget {
                     children: [
                       /// TÊN PHÒNG
                       Text(
-                        "Phòng ${phong.tenPhong.replaceAll("P", "")}",
+                        "Phòng ${phong.tenPhong}",
 
                         style: const TextStyle(
                           fontSize: 15,

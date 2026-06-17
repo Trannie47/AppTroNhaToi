@@ -1,8 +1,11 @@
 import 'package:AppTroNhaToi/models/phong.dart';
+import 'package:AppTroNhaToi/view_models/phong_view_model.dart';
 import 'package:AppTroNhaToi/views/MainPage/PhongPage/FormPhong/FormPhong.dart';
 import 'package:AppTroNhaToi/widgets/itemPhong.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../../../models/loaiphong.dart';
 import '../../../modelviews/MainPage/PhongPage/PhongPageModelView.dart';
 
 
@@ -15,11 +18,13 @@ class PhongPage extends StatefulWidget {
 
 class _PhongPageState extends State<PhongPage> {
   final PhongPageModelView vm = PhongPageModelView();
-
+  late PhongViewModel phongViewModel;
   @override
   void initState() {
     super.initState();
-
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      Provider.of<PhongViewModel>(context, listen: false).fetchPhong();
+    });
     vm.addListener(() {
       if (mounted) {
         setState(() {});
@@ -54,6 +59,8 @@ class _PhongPageState extends State<PhongPage> {
 
   @override
   Widget build(BuildContext context) {
+    phongViewModel= Provider.of<PhongViewModel>(context);
+    final listPhong= phongViewModel.listPhong;
     return Scaffold(
       backgroundColor: const Color(0xffF6F6F6),
 
@@ -210,13 +217,29 @@ class _PhongPageState extends State<PhongPage> {
                         vertical: 8,
                       ),
                       child: ListView.builder(
-                        itemCount: vm.dsPhongFilter.length,
+                        itemCount: listPhong.length,
                         itemBuilder: (context, index) {
-                          final phong = vm.dsPhongFilter[index];
-                          final loaiPhong = vm.getLoaiPhong(phong.maLoaiPhong);
+                          // final phong = vm.dsPhongFilter[index];
+                          // final loaiPhong = vm.getLoaiPhong(phong.maLoaiPhong);
+                          final itemBackend = listPhong[index];
+                          final currentPhong = Phong(
+                            phongID: itemBackend.phongId,
+                            tenPhong: itemBackend.tenPhong,
+                            trangThai: itemBackend.trangThai,
+                            moTa: itemBackend.moTa,
+                            maLoaiPhong: itemBackend.maLoaiPhong,
+                          );
+                          final currentLoaiPhong = LoaiPhong(
+                            maLoaiPhong: itemBackend.loaiPhong.maLoaiPhong,
+                            tenLoaiPhong: itemBackend.loaiPhong.tenLoaiPhong,
+                            dienTich: itemBackend.loaiPhong.dienTich,
+                            isMayLanh: itemBackend.loaiPhong.isMayLanh,
+                            soNguoiToiDa: itemBackend.loaiPhong.soNguoiToiDa,
+                            giaTien: itemBackend.giahientai,
+                          );
                           return ItemPhong(
-                            phong: phong,
-                            loaiPhong: loaiPhong,
+                            phong: currentPhong,
+                            loaiPhong: currentLoaiPhong,
                             onTap: () {},
                           );
                         },
