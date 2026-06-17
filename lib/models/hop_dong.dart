@@ -8,8 +8,9 @@ class HopDong {
   final DateTime? ngayHetHan;
   final double? tienCoc;
   final double? giaPhongThucTe;
-  final int? trangThai;
-  final Phong? phong; // cái này dùng để lấy thông tin phòng hiển thị phòng trên chi tiết ngthue vì cần ngày ký
+  final int? trangThai; //0: Khởi tạo , 1 Đã ký , 2: Hết hạn
+  final Phong?
+  phong; // cái này dùng để lấy thông tin phòng hiển thị phòng trên chi tiết ngthue vì cần ngày ký
 
   HopDong({
     this.hopDongID,
@@ -20,25 +21,31 @@ class HopDong {
     this.tienCoc,
     this.giaPhongThucTe,
     this.trangThai,
-    this.phong
+    this.phong,
   });
 
   factory HopDong.fromMap(Map<String, dynamic> map) {
     return HopDong(
-        hopDongID: map['hopDongId'] as String?,
-        idnt: map['idnt'] as int?,
-        phongID: map['phongId'] as int?,
+      hopDongID: map['hopDongId'] as String?,
+      idnt: map['idnt'] as int?,
+      phongID: map['phongId'] as int?,
 
-        ngayKy: map['ngayKy'] != null
-            ? DateTime.tryParse(map['ngayKy'].toString())
-            : null,
-        ngayHetHan: map['ngayHetHan'] != null
-            ? DateTime.tryParse(map['ngayHetHan'].toString())
-            : null,
-        tienCoc: map['tienCoc'] != null ? double.tryParse(map['tienCoc'].toString()) : null,
-        giaPhongThucTe: map['giaPhongThucTe'] != null ? double.tryParse(map['giaPhongThucTe'].toString()) : null,
-        trangThai: map['trangThai'] as int?,
-        phong: map['phong'] != null ? Phong.fromMap(map['phong'] as Map<String, dynamic>) : null
+      ngayKy: map['ngayKy'] != null
+          ? DateTime.tryParse(map['ngayKy'].toString())
+          : null,
+      ngayHetHan: map['ngayHetHan'] != null
+          ? DateTime.tryParse(map['ngayHetHan'].toString())
+          : null,
+      tienCoc: map['tienCoc'] != null
+          ? double.tryParse(map['tienCoc'].toString())
+          : null,
+      giaPhongThucTe: map['giaPhongThucTe'] != null
+          ? double.tryParse(map['giaPhongThucTe'].toString())
+          : null,
+      trangThai: map['trangThai'] as int?,
+      phong: map['phong'] != null
+          ? Phong.fromMap(map['phong'] as Map<String, dynamic>)
+          : null,
     );
   }
 

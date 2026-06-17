@@ -4,7 +4,7 @@ import 'package:AppTroNhaToi/models/phieu_thu_hd_th.dart';
 //SQL
 //Select HoaDon.*, PhieuThuHdTh.*, NguoiThue.hoTen as  tenNguoiMua
 //FROM HoaDon
-//JOIN PhieuThuHdTh ON PhieuThuHdTh.maHoaDon = HoaDon.maHoaDon
+//LEFT JOIN PhieuThuHdTh ON PhieuThuHdTh.maHoaDon = HoaDon.maHoaDon
 //LEFT JOIN NguoiThue as NT On HoaDon.idnt = NguoiThue.id
 class HoaDonTapHoaModel {
   final HoaDonTapHoa hoaDon;
