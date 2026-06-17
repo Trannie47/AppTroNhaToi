@@ -1,5 +1,5 @@
 class HoaDonTapHoa {
-  final int? maHoaDon;
+  final String? maHoaDon; //13 ký tự 'TH'+YYYYMMDD + STT
   final int? idnt; // FK -> nguoithue.IDNT
   final DateTime? ngayBan;
   final double? tongTien;
@@ -8,7 +8,7 @@ class HoaDonTapHoa {
 
   factory HoaDonTapHoa.fromMap(Map<String, dynamic> map) {
     return HoaDonTapHoa(
-      maHoaDon: map['maHoaDon'] as int?,
+      maHoaDon: map['maHoaDon'] as String?,
       idnt: map['IDNT'] as int?,
       ngayBan: map['ngayBan'] != null
           ? DateTime.tryParse(map['ngayBan'] as String)
@@ -27,7 +27,7 @@ class HoaDonTapHoa {
   }
 
   HoaDonTapHoa copyWith({
-    int? maHoaDon,
+    String? maHoaDon,
     int? idnt,
     DateTime? ngayBan,
     double? tongTien,
