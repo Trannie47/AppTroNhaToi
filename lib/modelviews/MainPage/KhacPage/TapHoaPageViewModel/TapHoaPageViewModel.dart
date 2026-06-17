@@ -1,5 +1,7 @@
 import 'package:AppTroNhaToi/models/hang_hoa.dart';
 import 'package:AppTroNhaToi/models/hoa_don_tap_hoa.dart';
+import 'package:AppTroNhaToi/models/phieu_thu_hd_th.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/TapHoaPage/HoaDonTapHoaModel.dart';
 import 'package:flutter/material.dart';
 
 class TapHoaPageViewModel extends ChangeNotifier {
@@ -7,7 +9,8 @@ class TapHoaPageViewModel extends ChangeNotifier {
   int sttHoaDon = 1;
 
   List<HangHoa> dsHangHoa = [];
-  List<HoaDonTapHoa> dsHoaDon = [];
+  List<HoaDonTapHoaModel> dsHoaDonTapHoa = [];
+  List<HoaDonTapHoaModel> dsCongNoTapHoa = [];
 
   TapHoaPageViewModel() {
     loadData();
@@ -59,47 +62,89 @@ class TapHoaPageViewModel extends ChangeNotifier {
       ),
     ];
 
-    dsHoaDon = [
-      HoaDonTapHoa(
-        maHoaDon: taoMaHoaDon(),
-        tongTien: 50000,
+    //tạo 5 record trong dsHoaDonTapHoa
+    dsHoaDonTapHoa = [
+      HoaDonTapHoaModel(
+        hoaDon: HoaDonTapHoa(
+          maHoaDon: taoMaHoaDon(),
+          ngayBan: DateTime.now(),
+          tongTien: 50000,
+          idnt: 1,
+        ),
+        phieuThu: null,
+        tenNguoiMua: 'Trần Văn A',
       ),
-
-      HoaDonTapHoa(
-        maHoaDon: taoMaHoaDon(),
-        tongTien: 120000,
+      HoaDonTapHoaModel(
+        hoaDon: HoaDonTapHoa(
+          maHoaDon: taoMaHoaDon(),
+          ngayBan: DateTime.now().subtract(Duration(days: 1)),
+          tongTien: 120000,
+          idnt: 2,
+        ),
+        phieuThu: null,
+        tenNguoiMua: 'Nguyễn Thị B',
       ),
-
-      HoaDonTapHoa(
-        maHoaDon: taoMaHoaDon(),
-        tongTien: 80000,
+      HoaDonTapHoaModel(
+        hoaDon: HoaDonTapHoa(
+          maHoaDon: taoMaHoaDon(),
+          ngayBan: DateTime.now().subtract(Duration(days: 3)),
+          tongTien: 80000,
+        ),
+        phieuThu: PhieuThuHdTh(
+          maPhieuThu: 1002,
+          ngayThu: DateTime.now().subtract(Duration(days: 2)),
+          soTien: 80000,
+          nguoiDong: 'Lê Văn C',
+        ),
+        tenNguoiMua: 'Lê Văn C',
+      ),
+      HoaDonTapHoaModel(
+        hoaDon: HoaDonTapHoa(
+          maHoaDon: taoMaHoaDon(),
+          ngayBan: DateTime.now(),
+          tongTien: 30000,
+        ),
+        phieuThu: null,
+        tenNguoiMua: 'Phạm Thị D',
+      ),
+      HoaDonTapHoaModel(
+        hoaDon: HoaDonTapHoa(
+          maHoaDon: taoMaHoaDon(),
+          ngayBan: DateTime.now().subtract(Duration(days: 7)),
+          tongTien: 150000,
+        ),
+        phieuThu: PhieuThuHdTh(
+          maPhieuThu: 1003,
+          ngayThu: DateTime.now().subtract(Duration(days: 6)),
+          soTien: 50000,
+          nguoiDong: 'Hoàng Văn E',
+        ),
+        tenNguoiMua: 'Hoàng Văn E',
       ),
     ];
+    //Nếu hoá đơn tạp hoá chưa có phiếu thu trở thành danh sách công nợ và id người thuê trên hoá đơn phải khác null
+    dsCongNoTapHoa = dsHoaDonTapHoa
+        .where((item) => (item.phieuThu == null) && (item.hoaDon.idnt != null))
+        .toList();
 
     notifyListeners();
   }
 
   /// mặc định mã tự động
-  int taoMaHoaDon() {
-
+  String taoMaHoaDon() {
     DateTime now = DateTime.now();
 
     String nam = now.year.toString();
 
-    String thang =
-    now.month.toString().padLeft(2, '0');
+    String thang = now.month.toString().padLeft(2, '0');
 
-    String ngay =
-    now.day.toString().padLeft(2, '0');
+    String ngay = now.day.toString().padLeft(2, '0');
 
-    String stt =
-    sttHoaDon.toString().padLeft(3, '0');
+    String stt = sttHoaDon.toString().padLeft(3, '0');
 
     sttHoaDon++;
 
-    return int.parse(
-      "$nam$thang$ngay$stt",
-    );
+    return "$nam$thang$ngay$stt";
   }
 
   /// tab
@@ -112,27 +157,22 @@ class TapHoaPageViewModel extends ChangeNotifier {
   }
 
   /// thêm hàng hóa
-  void themHoaDon(
-      double tongTien,
-      ) {
+  void themHoaDon(double tongTien) {
+    // dsHoaDon.insert(
+    //   0,
+    //   HoaDonTapHoa(
+    //     maHoaDon: taoMaHoaDon(),
+    //     ngayBan: DateTime.now(),
+    //     tongTien: tongTien,
+    //   ),
+    // );
 
-    dsHoaDon.insert(
-      0,
-      HoaDonTapHoa(
-        maHoaDon: taoMaHoaDon(),
-        ngayBan: DateTime.now(),
-        tongTien: tongTien,
-      ),
-    );
-
-    notifyListeners();
+    // notifyListeners();
   }
 
   /// sửa hàng hóa
   void suaHangHoa(HangHoa hangHoa) {
-    int index = dsHangHoa.indexWhere(
-          (e) => e.maHangHoa == hangHoa.maHangHoa,
-    );
+    int index = dsHangHoa.indexWhere((e) => e.maHangHoa == hangHoa.maHangHoa);
 
     if (index != -1) {
       dsHangHoa[index] = hangHoa;
@@ -142,9 +182,7 @@ class TapHoaPageViewModel extends ChangeNotifier {
 
   /// xóa hàng hóa
   void xoaHangHoa(int maHangHoa) {
-    dsHangHoa.removeWhere(
-          (e) => e.maHangHoa == maHangHoa,
-    );
+    dsHangHoa.removeWhere((e) => e.maHangHoa == maHangHoa);
 
     notifyListeners();
   }
@@ -154,20 +192,22 @@ class TapHoaPageViewModel extends ChangeNotifier {
     return dsHangHoa.length;
   }
 
-  /// tổng công nợ (demo)
-  double get tongCongNo {
-    return 470000;
+  //// Tính số lượng công nợ
+  int get soCongNo {
+    return dsCongNoTapHoa.length;
   }
 
-  /// số công nợ (demo)
-  int get soCongNo {
-    return 2;
+  //// Tính tổng số tiền công nợ
+  double get tongCongNo {
+    return dsCongNoTapHoa.fold<double>(
+      0,
+      (sum, item) => sum + (item.hoaDon.tongTien ?? 0),
+    );
   }
 
   int get tongHoaDon {
-    return dsHoaDon.length;
+    return dsHoaDonTapHoa.length;
   }
-
 
   /// tồn kho demo
   String getTonKho(HangHoa hangHoa) {
@@ -184,15 +224,5 @@ class TapHoaPageViewModel extends ChangeNotifier {
       default:
         return "0";
     }
-  }
-
-  /// format tiền
-  String formatTien(double tien) {
-    return tien
-        .toStringAsFixed(0)
-        .replaceAllMapped(
-      RegExp(r'\B(?=(\d{3})+(?!\d))'),
-          (match) => ',',
-    );
   }
 }

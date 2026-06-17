@@ -1,26 +1,23 @@
+import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/models/hoa_don_tap_hoa.dart';
+import 'package:AppTroNhaToi/models/phieu_thu_hd_th.dart';
 import 'package:flutter/material.dart';
 
 class ItemHoaDonTapHoa extends StatelessWidget {
   final HoaDonTapHoa hoaDon;
+  final PhieuThuHdTh? phieuThu;
+  final String? tenNguoiThue;
   final VoidCallback? onSua;
   final VoidCallback? onXoa;
 
   const ItemHoaDonTapHoa({
     super.key,
     required this.hoaDon,
+    this.phieuThu,
+    this.tenNguoiThue,
     this.onSua,
     this.onXoa,
   });
-
-  String formatTien(double tien) {
-    return tien
-        .toStringAsFixed(0)
-        .replaceAllMapped(
-      RegExp(r'\B(?=(\d{3})+(?!\d))'),
-          (match) => ',',
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,13 +31,11 @@ class ItemHoaDonTapHoa extends StatelessWidget {
 
       child: Row(
         children: [
-
           /// Nội dung bên trái
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 /// Mã hóa đơn
                 Text(
                   "${hoaDon.maHoaDon}",
@@ -53,7 +48,7 @@ class ItemHoaDonTapHoa extends StatelessWidget {
                 const SizedBox(height: 6),
 
                 Text(
-                  "Lê Văn Tèo - ${formatTien(hoaDon.tongTien ?? 0)}đ",
+                  "${tenNguoiThue ?? 'Khác vãng lai'} - ${formatMoney(hoaDon.tongTien ?? 0)}",
                   style: TextStyle(
                     color: Colors.grey.shade600,
                     fontSize: 17,
@@ -63,8 +58,8 @@ class ItemHoaDonTapHoa extends StatelessWidget {
 
                 const SizedBox(height: 5),
 
-                const Text(
-                  "Chưa thu",
+                Text(
+                  "${(phieuThu != null) || (hoaDon.idnt == null) ? "Đã thu" : "Chưa thu"}",
                   style: TextStyle(
                     color: Colors.grey,
                     fontSize: 17,
