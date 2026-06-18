@@ -86,6 +86,32 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
       ),
     ];
   }
+  // đổi trạng thái phiếu thu
+  void doiTrangThaiPhieuThu(bool value) {
+
+    coPhieuThu = value;
+
+    if (!coPhieuThu) {
+
+      txtNguoiDongTien.clear();
+    }
+
+    notifyListeners();
+  }
+
+
+// ĐỔI TRẠNG THÁI người thuê
+  void doiTrangThaiNguoiThueTro(bool value) {
+
+    nguoiThueTro = value;
+
+    if (!nguoiThueTro) {
+
+      txtNguoiMua.clear();
+    }
+
+    notifyListeners();
+  }
 
   /// thêm hàng hóa
   void themHangHoa(HangHoa hangHoa) {
