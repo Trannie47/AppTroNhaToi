@@ -497,10 +497,10 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                           return Column(
                             children: [
                               _itemPhong(
-                                phong?.tenPhong != null && phong!.tenPhong.contains(" ")
-                                    ? "P${phong.tenPhong.split(" ").last}"
+                                phong?.tenPhong != null
+                                    ? "P${phong?.tenPhong}"
                                     : "P??",
-                                "${phong?.tenPhong ?? "Phòng"} · ${loaiPhong?.tenLoaiPhong ?? "Chưa rõ loại"}",
+                                "Phòng ${phong?.tenPhong ?? "P??"} · ${loaiPhong?.tenLoaiPhong ?? "Chưa rõ loại"}",
                                 chuoiNgay,
                               ),
                               if (index != list.length - 1)
