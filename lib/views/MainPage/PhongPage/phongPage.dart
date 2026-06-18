@@ -149,28 +149,28 @@ class _PhongPageState extends State<PhongPage> {
                               children: [
                                 _itemFilter(
                                   filter: -1,
-                                  text: "Tất cả (${vm.dsPhong.length})",
+                                  text: "Tất cả (${listPhong.length})",
                                   bgColor: const Color(0xffECECEC),
                                   textColor: Colors.black87,
                                 ),
                                 const SizedBox(width: 10),
                                 _itemFilter(
                                   filter: 0,
-                                  text: "Còn trống (${vm.countByStatus(0)})",
+                                  text: "Còn trống (${phongViewModel.listPhongTrong.length})",
                                   bgColor: const Color(0xffEAF3EB),
                                   textColor: const Color(0xff2D7A3A),
                                 ),
                                 const SizedBox(width: 10),
                                 _itemFilter(
                                   filter: 1,
-                                  text: "Đang thuê (${vm.countByStatus(1)})",
+                                  text: "Đang thuê (${phongViewModel.listPhongDangThue.length})",
                                   bgColor: const Color(0xffFFF1E1),
                                   textColor: const Color(0xffFF8A00),
                                 ),
                                 const SizedBox(width: 10),
                                 _itemFilter(
                                   filter: 2,
-                                  text: "Đang sửa (${vm.countByStatus(2)})",
+                                  text: "Đang sửa (${phongViewModel.listPhongDangSua.length})",
                                   bgColor: const Color(0xffFFEAEA),
                                   textColor: Colors.red,
                                 ),
@@ -183,22 +183,22 @@ class _PhongPageState extends State<PhongPage> {
                           Row(
                             children: [
                               _itemThongKe(
-                                title: "${vm.dsPhong.length}",
+                                title: "${listPhong.length}",
                                 subTitle: "Tổng phòng",
                                 color: const Color(0xff222222),
                               ),
                               _itemThongKe(
-                                title: "${vm.countByStatus(0)}",
+                                title: "${phongViewModel.listPhongTrong.length}",
                                 subTitle: "Còn trống",
                                 color: const Color(0xff2D7A3A),
                               ),
                               _itemThongKe(
-                                title: "${vm.countByStatus(1)}",
+                                title: "${phongViewModel.listPhongDangThue.length}",
                                 subTitle: "Đang thuê",
                                 color: const Color(0xffFF8A00),
                               ),
                               _itemThongKe(
-                                title: "${vm.countByStatus(2)}",
+                                title: "${phongViewModel.listPhongDangSua.length}",
                                 subTitle: "Đang sửa",
                                 color: Colors.red,
                               ),
