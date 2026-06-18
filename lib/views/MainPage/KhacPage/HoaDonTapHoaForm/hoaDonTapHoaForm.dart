@@ -50,47 +50,43 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
 
   Widget inputBox({
     required String title,
-
     required TextEditingController controller,
-
     String? hint,
-
     Widget? suffixIcon,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-
       children: [
+
         Text(
           title,
-
-          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+          style: const TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 15,
+          ),
         ),
 
         const SizedBox(height: 8),
 
-        TextField(
-          controller: controller,
-
-          decoration: InputDecoration(
-            hintText: hint,
-
-            suffixIcon: suffixIcon,
-
-            filled: true,
-
-            fillColor: Colors.white,
-
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-
-              vertical: 16,
+        Container(
+          height: 56,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: const Color(0xff2D7A3A),
             ),
-
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-
-              borderSide: BorderSide.none,
+          ),
+          child: TextField(
+            controller: controller,
+            decoration: InputDecoration(
+              hintText: hint,
+              suffixIcon: suffixIcon,
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 16,
+              ),
             ),
           ),
         ),
@@ -141,7 +137,7 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              "Hóa đơn hàng hóa",
+              "Hóa đơn Tạp Hóa",
               style: TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.w700,
@@ -230,15 +226,29 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
 
                   const SizedBox(height: 20),
 
-                  CustomDropdownSearch<NguoiThue>(
-                    items: vm.dsNguoiThue,
-                    selectedItem: vm.selectedNguoiThue,
-                    itemAsString: (item) => item.hoTen!,
-                    onChanged: (value) {
-                      setState(() {
-                        vm.selectedNguoiThue = value;
-                      });
-                    },
+                  IgnorePointer(
+                    ignoring: !vm.nguoiThueTro,
+                    child: Opacity(
+                      opacity: vm.nguoiThueTro ? 1 : 0.5,
+                      child: CustomDropdownSearch<NguoiThue>(
+                        items: vm.dsNguoiThue,
+                        selectedItem: vm.selectedNguoiThue,
+                        itemAsString: (item) => item.hoTen!,
+                        onChanged: (value) {
+                          setState(() {
+                            Switch(
+                              value: vm.nguoiThueTro,
+                              activeColor: const Color(0xff2D7A3A),
+                              onChanged: (value) {
+                                setState(() {
+                                  vm.doiTrangThaiNguoiThueTro(value);
+                                });
+                              },
+                            );
+                          });
+                        },
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 20),
 
@@ -283,12 +293,10 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
 
                       Switch(
                         value: vm.coPhieuThu,
-
                         activeColor: const Color(0xff2D7A3A),
-
                         onChanged: (value) {
                           setState(() {
-                            vm.coPhieuThu = value;
+                            vm.doiTrangThaiPhieuThu(value);
                           });
                         },
                       ),
@@ -297,10 +305,15 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
 
                   const SizedBox(height: 20),
 
-                  inputBox(
-                    title: "Người đóng tiền",
-
-                    controller: vm.txtNguoiDongTien,
+                  Opacity(
+                    opacity: vm.coPhieuThu ? 1 : 0.5,
+                    child: IgnorePointer(
+                      ignoring: !vm.coPhieuThu,
+                      child: inputBox(
+                        title: "Người đóng tiền",
+                        controller: vm.txtNguoiDongTien,
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -361,7 +374,7 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 30),
 
             Container(
               width: double.infinity,
@@ -389,7 +402,7 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
 
             SizedBox(
               width: double.infinity,
