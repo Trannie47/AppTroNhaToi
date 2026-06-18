@@ -18,7 +18,7 @@ const List<_TabItem> _kTabs = [
 
 class _TabItem {
   final IconData icon;
-  final String label;
+  final String label;1
   const _TabItem({required this.icon, required this.label});
 }
 
