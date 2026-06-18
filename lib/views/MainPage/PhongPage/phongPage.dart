@@ -216,12 +216,13 @@ class _PhongPageState extends State<PhongPage> {
                         horizontal: 16,
                         vertical: 8,
                       ),
-                      child: ListView.builder(
-                        itemCount: listPhong.length,
+                      child: phongViewModel.listPhongHienThi.isEmpty
+                      ? const Center(child: Text("Không có phòng trọ nào thuộc trạng thái này"))
+                      :
+                      ListView.builder(
+                        itemCount: phongViewModel.listPhongHienThi.length,
                         itemBuilder: (context, index) {
-                          // final phong = vm.dsPhongFilter[index];
-                          // final loaiPhong = vm.getLoaiPhong(phong.maLoaiPhong);
-                          final itemBackend = listPhong[index];
+                          final itemBackend = phongViewModel.listPhongHienThi[index];
                           final currentPhong = Phong(
                             phongID: itemBackend.phongId,
                             tenPhong: itemBackend.tenPhong,
@@ -258,21 +259,27 @@ class _PhongPageState extends State<PhongPage> {
     required Color textColor,
     required int filter,
   }) {
-    return GestureDetector(
-      onTap: () => vm.applyFilter(filter),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 5.5),
-        decoration: BoxDecoration(
-          color: bgColor,
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 250),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
           borderRadius: BorderRadius.circular(30),
-        ),
-        child: Text(
-          text,
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-            color: textColor,
+          onTap: () => phongViewModel.setFilter(filter),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 5.5),
+            child: Text(
+              text,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: textColor,
+              ),
+            ),
           ),
         ),
       ),
