@@ -1,25 +1,24 @@
 import 'package:AppTroNhaToi/models/hang_hoa.dart';
 import 'package:AppTroNhaToi/models/hoa_don_tap_hoa.dart';
-import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/hoaDonHangHoa/hoaDonHangHoaViewModel.dart';
+import 'package:AppTroNhaToi/models/nguoi_thue.dart';
+import 'package:AppTroNhaToi/models/phong.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/HoaDonTapHoaForm/hoaDonTapHoaViewModel.dart';
+import 'package:AppTroNhaToi/widgets/customDropdownSearch.dart';
 import 'package:AppTroNhaToi/widgets/itemHangHoaChon.dart';
 import 'package:flutter/material.dart';
 
-class HoaDonHangHoaPage extends StatefulWidget {
-  const HoaDonHangHoaPage({super.key});
+class HoaDonTapHoaForm extends StatefulWidget {
+  const HoaDonTapHoaForm({super.key});
 
   @override
-  State<HoaDonHangHoaPage> createState() =>
-      _HoaDonHangHoaPageState();
+  State<HoaDonTapHoaForm> createState() => _HoaDonTapHoaFormState();
 }
 
-class _HoaDonHangHoaPageState
-    extends State<HoaDonHangHoaPage> {
-
-  final vm = HoaDonHangHoaViewModel();
+class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
+  final vm = HoaDonTapHoaFormViewModel();
 
   @override
   void initState() {
-
     super.initState();
 
     vm.themHangHoa(
@@ -39,22 +38,17 @@ class _HoaDonHangHoaPageState
         donViTinh: "gói",
       ),
     );
-
+    vm.LoadData();
   }
-
-
 
   @override
   void dispose() {
-
     vm.dispose();
 
     super.dispose();
   }
 
-
   Widget inputBox({
-
     required String title,
 
     required TextEditingController controller,
@@ -62,35 +56,23 @@ class _HoaDonHangHoaPageState
     String? hint,
 
     Widget? suffixIcon,
-
   }) {
-
     return Column(
-
       crossAxisAlignment: CrossAxisAlignment.start,
 
       children: [
-
         Text(
-
           title,
 
-          style: const TextStyle(
-
-            fontWeight: FontWeight.w600,
-
-            fontSize: 15,
-          ),
+          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
         ),
 
         const SizedBox(height: 8),
 
         TextField(
-
           controller: controller,
 
           decoration: InputDecoration(
-
             hintText: hint,
 
             suffixIcon: suffixIcon,
@@ -100,14 +82,12 @@ class _HoaDonHangHoaPageState
             fillColor: Colors.white,
 
             contentPadding: const EdgeInsets.symmetric(
-
               horizontal: 16,
 
               vertical: 16,
             ),
 
             border: OutlineInputBorder(
-
               borderRadius: BorderRadius.circular(16),
 
               borderSide: BorderSide.none,
@@ -120,9 +100,7 @@ class _HoaDonHangHoaPageState
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-
       backgroundColor: const Color(0xffF7F7F7),
 
       appBar: AppBar(
@@ -133,11 +111,7 @@ class _HoaDonHangHoaPageState
         leadingWidth: 52,
 
         leading: Padding(
-          padding: const EdgeInsets.only(
-            left: 12,
-            top: 12,
-            bottom: 12,
-          ),
+          padding: const EdgeInsets.only(left: 12, top: 12, bottom: 12),
           child: InkWell(
             borderRadius: BorderRadius.circular(20),
             onTap: () {
@@ -178,43 +152,32 @@ class _HoaDonHangHoaPageState
             if (vm.maHoaDon.isNotEmpty)
               Text(
                 vm.maHoaDon,
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: Colors.grey, fontSize: 12),
               ),
           ],
         ),
       ),
 
       body: SingleChildScrollView(
-
         padding: const EdgeInsets.all(16),
 
         child: Column(
-
           children: [
-
             Container(
-
               width: double.infinity,
 
               padding: const EdgeInsets.all(18),
 
               decoration: BoxDecoration(
-
                 color: Colors.white,
 
                 borderRadius: BorderRadius.circular(20),
               ),
 
               child: Column(
-
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
 
                 children: [
-
                   const Text(
                     "Thông tin hóa đơn",
                     style: TextStyle(
@@ -227,23 +190,15 @@ class _HoaDonHangHoaPageState
                   const SizedBox(height: 20),
 
                   Row(
-
                     children: [
-
                       const Expanded(
-
                         child: Column(
-
-                          crossAxisAlignment:
-                              CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
 
                           children: [
-
                             Text(
                               "Người thuê trọ",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                              ),
+                              style: TextStyle(fontWeight: FontWeight.w600),
                             ),
 
                             SizedBox(height: 3),
@@ -260,18 +215,13 @@ class _HoaDonHangHoaPageState
                       ),
 
                       Switch(
-
                         value: vm.nguoiThueTro,
 
-                        activeColor:
-                            const Color(0xff2D7A3A),
+                        activeColor: const Color(0xff2D7A3A),
 
                         onChanged: (value) {
-
                           setState(() {
-
                             vm.nguoiThueTro = value;
-
                           });
                         },
                       ),
@@ -280,77 +230,42 @@ class _HoaDonHangHoaPageState
 
                   const SizedBox(height: 20),
 
-                  Container(
-
-                    width: double.infinity,
-
-                    height: 56,
-
-                    decoration: BoxDecoration(
-
-                      borderRadius:
-                          BorderRadius.circular(14),
-
-                      border: Border.all(
-                        color: const Color(0xffE5E5E5),
-                      ),
-                    ),
-
-                    child: ListTile(
-
-                      title: const Text(
-                        "Người mua",
-                      ),
-
-                      trailing: const Icon(
-                        Icons.keyboard_arrow_down,
-                      ),
-
-                      onTap: () {
-
-                      },
-                    ),
+                  CustomDropdownSearch<NguoiThue>(
+                    items: vm.dsNguoiThue,
+                    selectedItem: vm.selectedNguoiThue,
+                    itemAsString: (item) => item.hoTen!,
+                    onChanged: (value) {
+                      setState(() {
+                        vm.selectedNguoiThue = value;
+                      });
+                    },
                   ),
                   const SizedBox(height: 20),
 
                   inputBox(
-
                     title: "Ngày mua",
 
                     controller: vm.txtNgayMua,
 
                     suffixIcon: IconButton(
+                      onPressed: () {},
 
-                      onPressed: () {
-
-                      },
-
-                      icon: const Icon(
-                        Icons.calendar_today_outlined,
-                      ),
+                      icon: const Icon(Icons.calendar_today_outlined),
                     ),
                   ),
 
                   const SizedBox(height: 20),
 
                   Row(
-
                     children: [
-
                       const Expanded(
-
                         child: Column(
-
-                          crossAxisAlignment:
-                          CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
 
                           children: [
-
                             Text(
                               "Có xuất phiếu thu",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                              ),
+                              style: TextStyle(fontWeight: FontWeight.w600),
                             ),
 
                             SizedBox(height: 3),
@@ -367,18 +282,13 @@ class _HoaDonHangHoaPageState
                       ),
 
                       Switch(
-
                         value: vm.coPhieuThu,
 
-                        activeColor:
-                        const Color(0xff2D7A3A),
+                        activeColor: const Color(0xff2D7A3A),
 
                         onChanged: (value) {
-
                           setState(() {
-
                             vm.coPhieuThu = value;
-
                           });
                         },
                       ),
@@ -388,7 +298,6 @@ class _HoaDonHangHoaPageState
                   const SizedBox(height: 20),
 
                   inputBox(
-
                     title: "Người đóng tiền",
 
                     controller: vm.txtNguoiDongTien,
@@ -400,61 +309,42 @@ class _HoaDonHangHoaPageState
             const SizedBox(height: 18),
 
             Column(
-
-              children:
-
-              vm.dsHangHoaChon.map((e) {
-
+              children: vm.dsHangHoaChon.map((e) {
                 return ItemHangHoaChon(
-
                   hangHoa: e,
 
                   soLuong: vm.laySoLuong(e),
 
                   onTang: () {
-
                     setState(() {
-
                       vm.tangSoLuong(e);
-
                     });
                   },
 
                   onGiam: () {
-
                     setState(() {
-
                       vm.giamSoLuong(e);
-
                     });
                   },
                 );
-
               }).toList(),
             ),
 
             const SizedBox(height: 18),
 
             SizedBox(
-
               width: double.infinity,
 
               height: 55,
 
               child: OutlinedButton.icon(
-
                 style: OutlinedButton.styleFrom(
-
                   shape: RoundedRectangleBorder(
-
-                    borderRadius:
-                    BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(16),
                   ),
                 ),
 
-                onPressed: () {
-
-                },
+                onPressed: () {},
 
                 icon: const Icon(
                   Icons.add_circle_outline,
@@ -474,7 +364,6 @@ class _HoaDonHangHoaPageState
             const SizedBox(height: 20),
 
             Container(
-
               width: double.infinity,
 
               height: 56,
@@ -482,19 +371,15 @@ class _HoaDonHangHoaPageState
               alignment: Alignment.center,
 
               decoration: BoxDecoration(
-
                 color: const Color(0xffFFF4E4),
 
-                borderRadius:
-                BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(16),
               ),
 
               child: Text(
-
                 "${vm.formatTien(vm.tongTien)}đ",
 
                 style: const TextStyle(
-
                   color: Colors.orange,
 
                   fontWeight: FontWeight.bold,
@@ -507,29 +392,21 @@ class _HoaDonHangHoaPageState
             const SizedBox(height: 20),
 
             SizedBox(
-
               width: double.infinity,
 
               height: 56,
 
               child: ElevatedButton(
-
                 style: ElevatedButton.styleFrom(
-
-                  backgroundColor:
-                  const Color(0xff2D7A3A),
+                  backgroundColor: const Color(0xff2D7A3A),
 
                   shape: RoundedRectangleBorder(
-
-                    borderRadius:
-                    BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(16),
                   ),
                 ),
 
                 onPressed: () {
-
                   HoaDonTapHoa hoaDon = HoaDonTapHoa(
-
                     maHoaDon: vm.maHoaDon,
 
                     ngayBan: DateTime.now(),
@@ -537,29 +414,20 @@ class _HoaDonHangHoaPageState
                     tongTien: vm.tongTien,
                   );
 
-                  Navigator.pop(
-                    context,
-                    hoaDon,
-                  );
+                  Navigator.pop(context, hoaDon);
                 },
 
-
                 child: const Text(
-
                   "Lưu hàng hóa",
 
                   style: TextStyle(
-
                     color: Colors.white,
 
                     fontSize: 16,
 
                     fontWeight: FontWeight.w700,
                   ),
-
                 ),
-
-
               ),
             ),
           ],
@@ -568,6 +436,3 @@ class _HoaDonHangHoaPageState
     );
   }
 }
-
-
-

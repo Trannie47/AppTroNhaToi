@@ -3,7 +3,7 @@ import 'package:AppTroNhaToi/models/hang_hoa.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/TapHoaPageViewModel/TapHoaPageViewModel.dart';
 
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/HangHoaForm/HangHoaForm.dart';
-import 'package:AppTroNhaToi/views/MainPage/KhacPage/hoaDonHangHoa/hoaDonHangHoa.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/HoaDonTapHoaForm/hoaDonTapHoaForm.dart';
 import 'package:AppTroNhaToi/widgets/itemCongNo.dart';
 import 'package:AppTroNhaToi/widgets/itemHangHoa.dart';
 import 'package:AppTroNhaToi/widgets/itemHoaDonTapHoa.dart';
@@ -51,11 +51,7 @@ class _TapHoaPageState extends State<TapHoaPage> {
         leadingWidth: 52,
 
         leading: Padding(
-          padding: const EdgeInsets.only(
-            left: 12,
-            top: 12,
-            bottom: 12,
-          ),
+          padding: const EdgeInsets.only(left: 12, top: 12, bottom: 12),
           child: InkWell(
             borderRadius: BorderRadius.circular(20),
             onTap: () {
@@ -89,20 +85,14 @@ class _TapHoaPageState extends State<TapHoaPage> {
           Padding(
             padding: const EdgeInsets.only(right: 16),
             child: ElevatedButton.icon(
-
               onPressed: () async {
-
                 final hoaDonMoi = await Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) => const HoaDonHangHoaPage(),
-                  ),
+                  MaterialPageRoute(builder: (_) => const HoaDonTapHoaForm()),
                 );
 
                 if (hoaDonMoi != null) {
-
                   vm.themHoaDon(hoaDonMoi);
-
                 }
               },
 
@@ -175,7 +165,10 @@ class _TapHoaPageState extends State<TapHoaPage> {
                       children: [
                         const Text(
                           "Tổng mặt hàng",
-                          style: TextStyle(color: Color(0xff2D7A3A), fontSize: 12),
+                          style: TextStyle(
+                            color: Color(0xff2D7A3A),
+                            fontSize: 12,
+                          ),
                         ),
                         const SizedBox(height: 6),
                         Text(
@@ -205,7 +198,10 @@ class _TapHoaPageState extends State<TapHoaPage> {
                       children: [
                         const Text(
                           "Công nợ",
-                          style: TextStyle(color: Color(0xffE53E3E), fontSize: 12),
+                          style: TextStyle(
+                            color: Color(0xffE53E3E),
+                            fontSize: 12,
+                          ),
                         ),
                         const SizedBox(height: 6),
                         Text(
