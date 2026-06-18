@@ -3,6 +3,7 @@ import 'package:AppTroNhaToi/models/hang_hoa.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/TapHoaPageViewModel/TapHoaPageViewModel.dart';
 
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/HangHoaForm/HangHoaForm.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/hoaDonHangHoa/hoaDonHangHoa.dart';
 import 'package:AppTroNhaToi/widgets/itemCongNo.dart';
 import 'package:AppTroNhaToi/widgets/itemHangHoa.dart';
 import 'package:AppTroNhaToi/widgets/itemHoaDonTapHoa.dart';
@@ -45,27 +46,66 @@ class _TapHoaPageState extends State<TapHoaPage> {
         surfaceTintColor: Colors.white,
         elevation: 0,
 
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: const Icon(
-            Icons.arrow_back_ios_new,
-            size: 18,
-            color: Colors.black,
+        toolbarHeight: 60,
+
+        leadingWidth: 52,
+
+        leading: Padding(
+          padding: const EdgeInsets.only(
+            left: 12,
+            top: 12,
+            bottom: 12,
+          ),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(20),
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Container(
+              width: 30,
+              height: 30,
+              decoration: const BoxDecoration(
+                color: Color(0xffF5F5F5),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.arrow_back_ios_new,
+                size: 13,
+                color: Colors.black,
+              ),
+            ),
           ),
         ),
 
         title: const Text(
           "Tạp hóa",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700),
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w700,
+            fontSize: 18,
+          ),
         ),
-
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16),
             child: ElevatedButton.icon(
-              onPressed: () {},
+
+              onPressed: () async {
+
+                final hoaDonMoi = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const HoaDonHangHoaPage(),
+                  ),
+                );
+
+                if (hoaDonMoi != null) {
+
+                  vm.themHoaDon(hoaDonMoi);
+
+                }
+              },
+
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xff2D7A3A),
                 shape: RoundedRectangleBorder(
@@ -87,34 +127,35 @@ class _TapHoaPageState extends State<TapHoaPage> {
         child: Column(
           children: [
             /// TAB
-            Row(
-              children: [
-                _tabButton(
-                  "Hàng hóa",
-                  0,
-                  const Color(0xffEAF5EC),
-                  // const Color(0xff555555),
-                  const Color(0xff2D7A3A),
-                ),
+            Center(
+              child: Row(
+                children: [
+                  _tabButton(
+                    "Hàng hóa",
+                    0,
+                    const Color(0xffEAF3EB),
+                    const Color(0xff2D7A3A),
+                  ),
 
-                const SizedBox(width: 8),
+                  const SizedBox(width: 8),
 
-                _tabButton(
-                  "Công nợ (${vm.soCongNo})",
-                  1,
-                  const Color(0xffFFF0E0),
-                  Colors.orange,
-                ),
+                  _tabButton(
+                    "Công nợ (${vm.soCongNo})",
+                    1,
+                    const Color(0xffFFF3E0),
+                    const Color(0xffD97706),
+                  ),
 
-                const SizedBox(width: 8),
+                  const SizedBox(width: 8),
 
-                _tabButton(
-                  "Hóa đơn",
-                  2,
-                  const Color(0xffEEEEEE),
-                  Colors.black87,
-                ),
-              ],
+                  _tabButton(
+                    "Hóa đơn",
+                    2,
+                    const Color(0xffFDECEA),
+                    const Color(0xffE53E3E),
+                  ),
+                ],
+              ),
             ),
 
             const SizedBox(height: 16),
@@ -134,7 +175,7 @@ class _TapHoaPageState extends State<TapHoaPage> {
                       children: [
                         const Text(
                           "Tổng mặt hàng",
-                          style: TextStyle(color: Colors.grey, fontSize: 12),
+                          style: TextStyle(color: Color(0xff2D7A3A), fontSize: 12),
                         ),
                         const SizedBox(height: 6),
                         Text(
@@ -164,7 +205,7 @@ class _TapHoaPageState extends State<TapHoaPage> {
                       children: [
                         const Text(
                           "Công nợ",
-                          style: TextStyle(color: Colors.grey, fontSize: 12),
+                          style: TextStyle(color: Color(0xffE53E3E), fontSize: 12),
                         ),
                         const SizedBox(height: 6),
                         Text(
@@ -336,21 +377,26 @@ class _TapHoaPageState extends State<TapHoaPage> {
   Widget _tabButton(String title, int index, Color bgColor, Color textColor) {
     bool selected = vm.currentTab == index;
 
-    return GestureDetector(
-      onTap: () {
-        vm.changeTab(index);
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: selected ? bgColor : Colors.white,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Text(
-          title,
-          style: TextStyle(
-            color: selected ? textColor : Colors.grey,
-            fontWeight: FontWeight.w600,
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          vm.changeTab(index);
+        },
+        child: Container(
+          height: 42,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: selected ? bgColor : Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Text(
+            title,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 15, // tăng cỡ chữ
+              color: selected ? textColor : Colors.grey,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ),
