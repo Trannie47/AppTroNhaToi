@@ -3,7 +3,7 @@ import 'package:AppTroNhaToi/models/lap_rap.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/sua_chua.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
-import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/chiTietThietBi/chiTietThietBiViewModel.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/chiTietThietBiPage/chiTietThietBiPageViewModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/PhieuSuaChuaForm/PhieuSuaChuaForm.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThietBiForm/thietBiForm.dart';
 import 'package:flutter/material.dart';
@@ -30,14 +30,14 @@ class ChiTietThietBiPage extends StatefulWidget {
 }
 
 class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
-  late ChiTietThietBiViewModel vm;
+  late ChiTietThietBiPageViewModel vm;
   bool hienMenu = false;
 
   @override
   void initState() {
     super.initState();
 
-    vm = ChiTietThietBiViewModel();
+    vm = ChiTietThietBiPageViewModel();
 
     vm.init(widget.thietBi, widget.dsPhong, widget.dsLapRap, widget.dsThietBi);
   }

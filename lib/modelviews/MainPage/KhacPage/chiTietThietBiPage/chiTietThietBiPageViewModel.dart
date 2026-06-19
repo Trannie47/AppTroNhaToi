@@ -4,7 +4,7 @@ import 'package:AppTroNhaToi/models/sua_chua.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:flutter/material.dart';
 
-class ChiTietThietBiViewModel extends ChangeNotifier {
+class ChiTietThietBiPageViewModel extends ChangeNotifier {
   late List<Phong> dsPhong;
   late List<LapRap> dsLapRap;
   late ThietBi thietBi;
