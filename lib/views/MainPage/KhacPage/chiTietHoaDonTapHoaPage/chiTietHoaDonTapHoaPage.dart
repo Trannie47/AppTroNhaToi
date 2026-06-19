@@ -1,6 +1,6 @@
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
-import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/chiTietHoaDonTapHoa/chiTietHoaDonTapHoaViewModel.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/chiTietHoaDonTapHoaPage/chiTietHoaDonTapHoaPageViewModel.dart';
 import 'package:AppTroNhaToi/widgets/itemHangHoaChon.dart';
 import 'package:flutter/material.dart';
 import 'package:AppTroNhaToi/models/hoa_don_tap_hoa.dart';
@@ -23,13 +23,13 @@ class ChiTietHoaDonTapHoa extends StatefulWidget {
 }
 
 class _ChiTietHoaDonTapHoaState extends State<ChiTietHoaDonTapHoa> {
-  late ChiTietHoaDonTapHoaViewModel vm;
+  late ChiTietHoaDonTapHoaPageViewModel vm;
 
   @override
   void initState() {
     super.initState();
 
-    vm = ChiTietHoaDonTapHoaViewModel(
+    vm = ChiTietHoaDonTapHoaPageViewModel(
       hoaDon: widget.hoaDon,
       phieuThu: widget.phieuThu,
       tenNguoiMua: widget.tenNguoiMua,

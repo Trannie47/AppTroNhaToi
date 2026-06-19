@@ -9,11 +9,11 @@ import 'package:AppTroNhaToi/models/hang_hoa.dart';
 
 //$MaHoaDon tham soos Truyền vào
 
-class chiTietHoaDonTapHoaModel {
+class chiTietHoaDonTapHoaPageModel {
   final ChiTietTapHoa chiTietTapHoa; //Chính
   final HangHoa hangHoa;
 
-  chiTietHoaDonTapHoaModel({
+  chiTietHoaDonTapHoaPageModel({
     required this.chiTietTapHoa,
     required this.hangHoa,
   });

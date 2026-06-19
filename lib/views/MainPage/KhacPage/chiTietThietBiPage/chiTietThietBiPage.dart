@@ -9,7 +9,7 @@ import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThietBiForm/thietBiForm.dar
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class ChiTietThietBi extends StatefulWidget {
+class ChiTietThietBiPage extends StatefulWidget {
   final ThietBi thietBi;
 
   final List<Phong> dsPhong;
@@ -17,7 +17,7 @@ class ChiTietThietBi extends StatefulWidget {
   final List<LapRap> dsLapRap;
   final List<ThietBi> dsThietBi;
 
-  const ChiTietThietBi({
+  const ChiTietThietBiPage({
     super.key,
     required this.thietBi,
     required this.dsPhong,
@@ -26,10 +26,10 @@ class ChiTietThietBi extends StatefulWidget {
   });
 
   @override
-  State<ChiTietThietBi> createState() => _ChiTietThietBiState();
+  State<ChiTietThietBiPage> createState() => _ChiTietThietBiPageState();
 }
 
-class _ChiTietThietBiState extends State<ChiTietThietBi> {
+class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
   late ChiTietThietBiViewModel vm;
   bool hienMenu = false;
 

@@ -6,14 +6,14 @@ import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietHoaDonTapHoaPage/chi
 
 import 'package:flutter/material.dart';
 
-class ChiTietHoaDonTapHoaViewModel extends ChangeNotifier {
+class ChiTietHoaDonTapHoaPageViewModel extends ChangeNotifier {
   final HoaDonTapHoa hoaDon;
   final PhieuThuHdTh? phieuThu;
   final String? tenNguoiMua;
 
   List<chiTietHoaDonTapHoaPageModel> dsChiTietHoaDonTapHoa = [];
 
-  ChiTietHoaDonTapHoaViewModel({
+  ChiTietHoaDonTapHoaPageViewModel({
     required this.hoaDon,
     this.phieuThu,
     this.tenNguoiMua = 'Khách vãng lai',

@@ -1,7 +1,6 @@
-
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/ThietBiPage/thietBiPageViewModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThietBiForm/thietBiForm.dart';
-import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietThietBi/chiTietThietBi.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietThietBiPage/chiTietThietBiPage.dart';
 import 'package:AppTroNhaToi/widgets/itemThietBi.dart';
 import 'package:flutter/material.dart';
 
@@ -13,14 +12,11 @@ class ThietBiPage extends StatefulWidget {
 }
 
 class _ThietBiPageState extends State<ThietBiPage> {
-
   final vm = ThietBiPageViewModel();
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-
       backgroundColor: const Color(0xffF7F9F7),
 
       appBar: AppBar(
@@ -35,7 +31,6 @@ class _ThietBiPageState extends State<ThietBiPage> {
             top: 8,
             bottom: 8,
           ),
-
 
           child: Container(
             decoration: const BoxDecoration(
@@ -70,16 +65,13 @@ class _ThietBiPageState extends State<ThietBiPage> {
           Padding(
             padding: const EdgeInsets.only(right: 16),
 
-            child:ElevatedButton.icon(
+            child: ElevatedButton.icon(
               onPressed: () async {
-
                 bool? result = await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => ThietBiForm(
-                      dsLapRap: vm.dsLapRap,
-                      dsPhong: vm.dsPhong,
-                    ),
+                    builder: (_) =>
+                        ThietBiForm(dsLapRap: vm.dsLapRap, dsPhong: vm.dsPhong),
                   ),
                 );
 
@@ -99,7 +91,7 @@ class _ThietBiPageState extends State<ThietBiPage> {
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
 
@@ -108,26 +100,15 @@ class _ThietBiPageState extends State<ThietBiPage> {
 
         child: Column(
           children: [
-
             const SizedBox(height: 16),
 
             Row(
               children: [
+                _tab("Tất cả (${vm.tongSoThietBi})", 0),
 
-                _tab(
-                  "Tất cả (${vm.tongSoThietBi})",
-                  0,
-                ),
+                _tab("Đang dùng (${vm.tongDangDung})", 1),
 
-                _tab(
-                  "Đang dùng (${vm.tongDangDung})",
-                  1,
-                ),
-
-                _tab(
-                  "Hỏng/Sửa (${vm.tongHongSua})",
-                  2,
-                ),
+                _tab("Hỏng/Sửa (${vm.tongHongSua})", 2),
               ],
             ),
 
@@ -135,21 +116,16 @@ class _ThietBiPageState extends State<ThietBiPage> {
 
             Expanded(
               child: ListView.builder(
-
                 itemCount: vm.dsHienThi.length,
 
-                itemBuilder: (context,index){
-
+                itemBuilder: (context, index) {
                   return GestureDetector(
-
                     onTap: () async {
-
                       bool? result = await Navigator.push(
-
                         context,
 
                         MaterialPageRoute(
-                          builder: (_) => ChiTietThietBi(
+                          builder: (_) => ChiTietThietBiPage(
                             thietBi: vm.dsHienThi[index],
                             dsPhong: vm.dsPhong,
                             dsLapRap: vm.dsLapRap,
@@ -159,14 +135,11 @@ class _ThietBiPageState extends State<ThietBiPage> {
                       );
 
                       if (result == true) {
-
                         setState(() {});
                       }
                     },
 
-                    child: ItemThietBi(
-                      thietBi: vm.dsHienThi[index],
-                    ),
+                    child: ItemThietBi(thietBi: vm.dsHienThi[index]),
                   );
                 },
               ),
@@ -211,10 +184,7 @@ class _ThietBiPageState extends State<ThietBiPage> {
       child: Container(
         margin: const EdgeInsets.only(right: 8),
 
-        padding: const EdgeInsets.symmetric(
-          horizontal: 12,
-          vertical: 6,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
 
         decoration: BoxDecoration(
           color: backgroundColor,
