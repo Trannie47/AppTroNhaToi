@@ -208,21 +208,4 @@ class TapHoaPageViewModel extends ChangeNotifier {
   int get tongHoaDon {
     return dsHoaDonTapHoa.length;
   }
-
-  /// tồn kho demo
-  String getTonKho(HangHoa hangHoa) {
-    switch (hangHoa.maHangHoa) {
-      case 1:
-        return "48 gói";
-
-      case 2:
-        return "24 chai";
-
-      case 3:
-        return "30 quả";
-
-      default:
-        return "0";
-    }
-  }
 }

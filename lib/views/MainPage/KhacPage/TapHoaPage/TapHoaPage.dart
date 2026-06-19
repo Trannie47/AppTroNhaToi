@@ -239,7 +239,6 @@ class _TapHoaPageState extends State<TapHoaPage> {
                   if (vm.currentTab == 0) {
                     return ItemHangHoa(
                       hangHoa: vm.dsHangHoa[index],
-                      tonKho: vm.getTonKho(vm.dsHangHoa[index]),
 
                       onSua: () async {
                         final HangHoa? hangHoaSua = await Navigator.push(

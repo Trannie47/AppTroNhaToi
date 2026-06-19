@@ -1,0 +1,87 @@
+import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/ChonHangHoaPage/chonHangHoaPageViewModel.dart';
+import 'package:AppTroNhaToi/widgets/itemHangHoa.dart';
+import 'package:flutter/material.dart';
+
+class ChonHangHoaPage extends StatefulWidget {
+  const ChonHangHoaPage({super.key});
+
+  @override
+  State<ChonHangHoaPage> createState() => _ChonHangHoaPageState();
+}
+
+class _ChonHangHoaPageState extends State<ChonHangHoaPage> {
+  late ChonHangHoaPageModelView vm;
+
+  @override
+  void initState() {
+    super.initState();
+
+    vm = ChonHangHoaPageModelView();
+
+    vm.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    vm.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xffF5F5F5),
+
+      appBar: AppBar(
+        backgroundColor: const Color(0xffF5F5F5),
+        title: const Text("Thêm hàng hoá vào hoá đơn"),
+      ),
+
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            /// Search
+            Container(
+              height: 52,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: TextField(
+                controller: vm.txtSearch,
+                decoration: const InputDecoration(
+                  border: InputBorder.none,
+                  icon: Icon(Icons.search),
+                  hintText: "Tìm mặt hàng",
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            Expanded(
+              child: ListView.builder(
+                itemCount: vm.dsHangHoaHienThi.length,
+                itemBuilder: (context, index) {
+                  final hangHoa = vm.dsHangHoaHienThi[index];
+                  return ItemHangHoa(
+                    hangHoa: hangHoa,
+                    onTap: () {
+                      Navigator.pop(context, hangHoa);
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

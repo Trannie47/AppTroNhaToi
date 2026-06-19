@@ -109,20 +109,19 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// thêm hàng hóa
   void themHangHoa(HangHoa hangHoa) {
+    // Guard: bỏ qua nếu không có mã
+    if (hangHoa.maHangHoa == null) return;
+
     int index = dsHangHoaChon.indexWhere(
       (e) => e.maHangHoa == hangHoa.maHangHoa,
     );
-
+    print(hangHoa);
     if (index == -1) {
       dsHangHoaChon.add(hangHoa);
-
       soLuong[hangHoa.maHangHoa!] = 1;
     } else {
-      tangSoLuong(hangHoa);
-
-      return;
+      soLuong[hangHoa.maHangHoa!] = (soLuong[hangHoa.maHangHoa!] ?? 0) + 1;
     }
 
     notifyListeners();

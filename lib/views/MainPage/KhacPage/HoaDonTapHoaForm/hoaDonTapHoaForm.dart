@@ -3,6 +3,7 @@ import 'package:AppTroNhaToi/models/hoa_don_tap_hoa.dart';
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/HoaDonTapHoaForm/hoaDonTapHoaViewModel.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/ChonHangHoaPage/chonHangHoaPage.dart';
 import 'package:AppTroNhaToi/widgets/customDropdownSearch.dart';
 import 'package:AppTroNhaToi/widgets/itemHangHoaChon.dart';
 import 'package:flutter/material.dart';
@@ -20,24 +21,6 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
   @override
   void initState() {
     super.initState();
-
-    vm.themHangHoa(
-      HangHoa(
-        maHangHoa: 1,
-        tenHangHoa: "Mì gói Hảo Hảo",
-        giaBan: 5000,
-        donViTinh: "gói",
-      ),
-    );
-
-    vm.themHangHoa(
-      HangHoa(
-        maHangHoa: 2,
-        tenHangHoa: "Mì gói Cocomi",
-        giaBan: 5000,
-        donViTinh: "gói",
-      ),
-    );
     vm.LoadData();
   }
 
@@ -357,7 +340,18 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
                   ),
                 ),
 
-                onPressed: () {},
+                onPressed: () async {
+                  final HangHoa? result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const ChonHangHoaPage()),
+                  );
+
+                  if (result != null) {
+                    setState(() {
+                      vm.themHangHoa(result);
+                    });
+                  }
+                },
 
                 icon: const Icon(
                   Icons.add_circle_outline,
