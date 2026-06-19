@@ -1,5 +1,5 @@
 import 'package:AppTroNhaToi/models/hang_hoa.dart';
-import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/HangHoaFormViewModel/HangHoaFormViewModel.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/HangHoaForm/HangHoaFormViewModel.dart';
 import 'package:flutter/material.dart';
 
 class HangHoaForm extends StatefulWidget {
