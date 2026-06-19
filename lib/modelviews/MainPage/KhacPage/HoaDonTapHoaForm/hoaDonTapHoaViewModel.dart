@@ -86,27 +86,23 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
       ),
     ];
   }
+
   // đổi trạng thái phiếu thu
   void doiTrangThaiPhieuThu(bool value) {
-
     coPhieuThu = value;
 
     if (!coPhieuThu) {
-
       txtNguoiDongTien.clear();
     }
 
     notifyListeners();
   }
 
-
-// ĐỔI TRẠNG THÁI người thuê
+  // ĐỔI TRẠNG THÁI người thuê
   void doiTrangThaiNguoiThueTro(bool value) {
-
     nguoiThueTro = value;
 
     if (!nguoiThueTro) {
-
       txtNguoiMua.clear();
     }
 
@@ -135,6 +131,17 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
   /// tăng số lượng
   void tangSoLuong(HangHoa hangHoa) {
     soLuong[hangHoa.maHangHoa!] = (soLuong[hangHoa.maHangHoa] ?? 0) + 1;
+
+    notifyListeners();
+  }
+
+  //Cập nhật số lượng
+  void capNhatSoLuong(HangHoa hangHoa, int value) {
+    if (value <= 0) {
+      value = 1;
+    }
+
+    soLuong[hangHoa.maHangHoa!] = value;
 
     notifyListeners();
   }

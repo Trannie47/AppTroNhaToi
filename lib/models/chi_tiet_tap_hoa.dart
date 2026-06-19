@@ -1,6 +1,6 @@
 class ChiTietTapHoa {
   final int? maChiTietHoaDon;
-  final int? maHoaDon; // FK -> hoadontaphoa.maHoaDon
+  final String? maHoaDon; // FK -> hoadontaphoa.maHoaDon
   final int? maHangHoa; // FK -> hanghoa.maHangHoa
   final int? soLuong;
 
@@ -14,7 +14,7 @@ class ChiTietTapHoa {
   factory ChiTietTapHoa.fromMap(Map<String, dynamic> map) {
     return ChiTietTapHoa(
       maChiTietHoaDon: map['maChiTietHoaDon'] as int?,
-      maHoaDon: map['maHoaDon'] as int?,
+      maHoaDon: map['maHoaDon'] as String?,
       maHangHoa: map['maHangHoa'] as int?,
       soLuong: map['soLuong'] as int?,
     );
@@ -31,7 +31,7 @@ class ChiTietTapHoa {
 
   ChiTietTapHoa copyWith({
     int? maChiTietHoaDon,
-    int? maHoaDon,
+    String? maHoaDon,
     int? maHangHoa,
     int? soLuong,
   }) {

@@ -7,6 +7,8 @@ class ItemHoaDonTapHoa extends StatelessWidget {
   final HoaDonTapHoa hoaDon;
   final PhieuThuHdTh? phieuThu;
   final String? tenNguoiThue;
+
+  final VoidCallback? onChiTiet;
   final VoidCallback? onSua;
   final VoidCallback? onXoa;
 
@@ -15,99 +17,108 @@ class ItemHoaDonTapHoa extends StatelessWidget {
     required this.hoaDon,
     this.phieuThu,
     this.tenNguoiThue,
+    this.onChiTiet,
     this.onSua,
     this.onXoa,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 14),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-      ),
+    return InkWell(
+      borderRadius: BorderRadius.circular(20),
+      onTap: onChiTiet,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 14),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+        ),
 
-      child: Row(
-        children: [
-          /// Nội dung bên trái
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                /// Mã hóa đơn
-                Text(
-                  "${hoaDon.maHoaDon}",
-                  style: const TextStyle(
-                    fontSize: 19,
-                    fontWeight: FontWeight.w700,
+        child: Row(
+          children: [
+            /// Nội dung bên trái
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// Mã hóa đơn
+                  Text(
+                    "${hoaDon.maHoaDon}",
+                    style: const TextStyle(
+                      fontSize: 19,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
-                ),
 
-                const SizedBox(height: 6),
+                  const SizedBox(height: 6),
 
-                Text(
-                  "${tenNguoiThue ?? 'Khác vãng lai'} - ${formatMoney(hoaDon.tongTien ?? 0)}",
-                  style: TextStyle(
-                    color: Colors.grey.shade600,
-                    fontSize: 17,
-                    fontWeight: FontWeight.w500,
+                  Text(
+                    "${tenNguoiThue ?? 'Khách vãng lai'} - ${formatMoney(hoaDon.tongTien ?? 0)}",
+                    style: TextStyle(
+                      color: Colors.grey.shade600,
+                      fontSize: 17,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
 
-                const SizedBox(height: 5),
+                  const SizedBox(height: 5),
 
-                Text(
-                  "${(phieuThu != null) || (hoaDon.idnt == null) ? "Đã thu" : "Chưa thu"}",
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 17,
-                    fontWeight: FontWeight.w600,
+                  Text(
+                    (phieuThu != null || hoaDon.idnt == null)
+                        ? "Đã thu"
+                        : "Chưa thu",
+                    style: const TextStyle(
+                      color: Colors.grey,
+                      fontSize: 17,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ),
-
-          /// Nút sửa
-          Container(
-            width: 42,
-            height: 42,
-            decoration: BoxDecoration(
-              color: const Color(0xffEAF5EC),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: IconButton(
-              onPressed: onSua,
-              icon: const Icon(
-                Icons.edit_outlined,
-                color: Color(0xff2D7A3A),
-                size: 20,
+                ],
               ),
             ),
-          ),
 
-          const SizedBox(width: 10),
-
-          /// Nút xóa
-          Container(
-            width: 42,
-            height: 42,
-            decoration: BoxDecoration(
-              color: const Color(0xffFFF0F0),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: IconButton(
-              onPressed: onXoa,
-              icon: const Icon(
-                Icons.delete_outline,
-                color: Colors.red,
-                size: 20,
+            /// Sửa
+            if (onSua != null)
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: const Color(0xffEAF5EC),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: IconButton(
+                  onPressed: onSua,
+                  icon: const Icon(
+                    Icons.edit_outlined,
+                    color: Color(0xff2D7A3A),
+                    size: 20,
+                  ),
+                ),
               ),
-            ),
-          ),
-        ],
+
+            if (onSua != null && onXoa != null) const SizedBox(width: 10),
+
+            /// Xóa
+            if (onXoa != null)
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: const Color(0xffFFF0F0),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: IconButton(
+                  onPressed: onXoa,
+                  icon: const Icon(
+                    Icons.delete_outline,
+                    color: Colors.red,
+                    size: 20,
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

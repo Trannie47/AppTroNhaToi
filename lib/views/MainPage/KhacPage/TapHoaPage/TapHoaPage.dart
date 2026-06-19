@@ -4,6 +4,7 @@ import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/TapHoaPageViewModel/Ta
 
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/HangHoaForm/HangHoaForm.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/HoaDonTapHoaForm/hoaDonTapHoaForm.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietHoaDonTapHoa/chiTietHoaDonTapHoa.dart';
 import 'package:AppTroNhaToi/widgets/itemCongNo.dart';
 import 'package:AppTroNhaToi/widgets/itemHangHoa.dart';
 import 'package:AppTroNhaToi/widgets/itemHoaDonTapHoa.dart';
@@ -305,7 +306,18 @@ class _TapHoaPageState extends State<TapHoaPage> {
                       phieuThu: vm.dsHoaDonTapHoa[index].phieuThu,
                       tenNguoiThue: vm.dsHoaDonTapHoa[index].tenNguoiMua,
                       onSua: () {},
-
+                      onChiTiet: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ChiTietHoaDonTapHoa(
+                              hoaDon: vm.dsHoaDonTapHoa[index].hoaDon,
+                              phieuThu: vm.dsHoaDonTapHoa[index].phieuThu,
+                              tenNguoiMua: vm.dsHoaDonTapHoa[index].tenNguoiMua,
+                            ),
+                          ),
+                        );
+                      },
                       onXoa: () {},
                     );
                   }
@@ -316,7 +328,18 @@ class _TapHoaPageState extends State<TapHoaPage> {
                       phieuThu: vm.dsCongNoTapHoa[index].phieuThu,
                       tenNguoiThue: vm.dsCongNoTapHoa[index].tenNguoiMua,
                       onSua: () {},
-
+                      onChiTiet: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ChiTietHoaDonTapHoa(
+                              hoaDon: vm.dsHoaDonTapHoa[index].hoaDon,
+                              phieuThu: vm.dsHoaDonTapHoa[index].phieuThu,
+                              tenNguoiMua: vm.dsHoaDonTapHoa[index].tenNguoiMua,
+                            ),
+                          ),
+                        );
+                      },
                       onXoa: () {},
                     );
                   }

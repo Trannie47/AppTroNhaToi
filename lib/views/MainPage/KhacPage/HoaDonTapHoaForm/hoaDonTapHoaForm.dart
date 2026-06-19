@@ -57,13 +57,9 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-
         Text(
           title,
-          style: const TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 15,
-          ),
+          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
         ),
 
         const SizedBox(height: 8),
@@ -73,9 +69,7 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: const Color(0xff2D7A3A),
-            ),
+            border: Border.all(color: const Color(0xff2D7A3A)),
           ),
           child: TextField(
             controller: controller,
@@ -331,6 +325,12 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
                   onTang: () {
                     setState(() {
                       vm.tangSoLuong(e);
+                    });
+                  },
+
+                  onChanged: (value) {
+                    setState(() {
+                      vm.capNhatSoLuong(e, value);
                     });
                   },
 
