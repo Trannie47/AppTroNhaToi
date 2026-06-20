@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/LichSuSuaChuaPage/LichSuSuaChuaPageViewModel.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietLichSuSuaChuaPage/chiTietLichSuSuaChuaPage.dart';
 import 'package:AppTroNhaToi/widgets/itemLichSuSuaChua.dart';
 import 'package:flutter/material.dart';
 
@@ -146,6 +147,11 @@ class _LichSuSuaChuaPageState extends State<LichSuSuaChuaPage> {
                     color: Colors.grey,
                     size: 18,
                   ),
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  disabledBorder: InputBorder.none,
+
                   isDense: true,
                   contentPadding: const EdgeInsets.symmetric(vertical: 10),
                 ),
@@ -169,6 +175,19 @@ class _LichSuSuaChuaPageState extends State<LichSuSuaChuaPage> {
                   return ItemLichSuSuaChua(
                     suaChua: item.suaChua!,
                     hoaDonSuaChua: item.hoaDonSuaChua,
+                    onClick: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ChiTietLichSuSuaChuaPage(
+                            suaChua: item.suaChua!,
+                            hoaDonSuaChua: item.hoaDonSuaChua,
+                            phong: widget.phong,
+                            thietBi: widget.thietBi,
+                          ),
+                        ),
+                      );
+                    },
                   );
                 },
               ),

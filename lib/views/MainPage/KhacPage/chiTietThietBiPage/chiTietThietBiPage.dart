@@ -8,6 +8,7 @@ import 'package:AppTroNhaToi/views/MainPage/KhacPage/LichSuSuaChuaPage/LichSuSua
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/LichSuSuaChuaPage/LichSuSuaChuaPageModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/PhieuSuaChuaForm/PhieuSuaChuaForm.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThietBiForm/thietBiForm.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietLichSuSuaChuaPage/chiTietLichSuSuaChuaPage.dart';
 import 'package:AppTroNhaToi/widgets/itemLichSuSuaChua.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -327,6 +328,19 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
                             return ItemLichSuSuaChua(
                               suaChua: item.suaChua,
                               hoaDonSuaChua: item.hoaDonSuaChua,
+                              onClick: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => ChiTietLichSuSuaChuaPage(
+                                      suaChua: item.suaChua!,
+                                      hoaDonSuaChua: item.hoaDonSuaChua,
+                                      phong: vm.phongHienTai!,
+                                      thietBi: widget.thietBi,
+                                    ),
+                                  ),
+                                );
+                              },
                             );
                           }),
                         ),

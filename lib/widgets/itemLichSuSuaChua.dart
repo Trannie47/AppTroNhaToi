@@ -7,19 +7,19 @@ import 'package:flutter/material.dart';
 class ItemLichSuSuaChua extends StatelessWidget {
   final SuaChua suaChua;
   final HoaDonSuaChua? hoaDonSuaChua;
-  final VoidCallback? onSelect;
+  final VoidCallback? onClick;
 
   const ItemLichSuSuaChua({
     super.key,
     required this.suaChua,
     this.hoaDonSuaChua,
-    this.onSelect,
+    this.onClick,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onSelect,
+      onTap: onClick,
       borderRadius: BorderRadius.circular(16),
       child: Container(
         width: double.infinity,
@@ -57,7 +57,7 @@ class ItemLichSuSuaChua extends StatelessWidget {
               ),
             ),
 
-            if (onSelect != null)
+            if (onClick != null)
               Icon(Icons.chevron_right, color: Colors.grey.shade400, size: 24),
           ],
         ),
