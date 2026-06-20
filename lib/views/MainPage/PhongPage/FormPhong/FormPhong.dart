@@ -1,9 +1,14 @@
 import 'package:AppTroNhaToi/models/loaiphong.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/FormPhong/FormPhongViewModel.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/loaiPhongModelViewsForm/FormLoaiPhong.dart';
+import 'package:AppTroNhaToi/repositories/loaiphong_repository.dart';
+import 'package:AppTroNhaToi/states/loaiphong_state.dart';
 import 'package:AppTroNhaToi/views/MainPage/PhongPage/FormLoaiPhong/FormLoaiPhong.dart';
 import 'package:AppTroNhaToi/widgets/itemLoaiPhongSelectBox.dart';
 import 'package:flutter/material.dart';
+
+import '../../../../view_models/loaiphong_view_model.dart';
 
 class FormPhong extends StatefulWidget {
   final Phong? room;
@@ -16,11 +21,15 @@ class FormPhong extends StatefulWidget {
 
 class _FormPhongState extends State<FormPhong> {
   late FormPhongViewModel vm;
+  late LoaiPhongViewModel  loaiPhongViewModel;
 
   @override
   void initState() {
     super.initState();
-
+    loaiPhongViewModel= LoaiPhongViewModel();
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      loaiPhongViewModel.getListLoaiPhong();
+    });
     vm = FormPhongViewModel(widget.room);
 
     vm.addListener(() {
@@ -197,52 +206,131 @@ class _FormPhongState extends State<FormPhong> {
             ),
 
             const SizedBox(height: 16),
-
-            /// LOẠI PHÒNG
+            //Xử lý các trạng thái khi gọi api load Loại phòng lên
             _section(
-              title: "Loại phòng",
-              child: Column(
-                children: [
-                  ...List.generate(vm.roomTypes.length, (index) {
-                    final item = vm.roomTypes[index];
-                    bool selected = vm.selectedType == index;
+                title: "Loại phòng",
+                child: AnimatedBuilder(
+                  animation: loaiPhongViewModel,
+                    builder: (context, _) {
+                      final state = loaiPhongViewModel.loaiphongState;
 
-                    return GestureDetector(
-                      onTap: () => vm.selectType(index),
-                      child: itemLoaiPhongSelectBox(item, selected),
-                    );
-                  }),
-
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: const Color(0xFFB6DDBE)),
-                    ),
-                    child: InkWell(
-                      onTap: goToFormRoomType,
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.add_circle_outline,
-                            color: Color(0xFF2D7A3A),
-                          ),
-                          SizedBox(width: 8),
-                          Text(
-                            "Thêm loại phòng mới",
-                            style: TextStyle(
-                              color: Color(0xFF2D7A3A),
-                              fontWeight: FontWeight.w600,
+                      switch (state) {
+                        //Load phòng lên
+                        case LoaiPhongLoading():
+                          return const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 20),
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF2D7A3A)),
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                          );
+                          //Load Loại phòng lên gặp lỗi
+                        case LoaiPhongError():
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            child: Container(
+                              width: double.infinity,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Icon(Icons.error_outline, color: Colors.red, size: 28),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    "Lỗi: ${state.messageError}",
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(color: Colors.red, fontSize: 13),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  ElevatedButton.icon(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red.withOpacity(0.08),
+                                      foregroundColor: Colors.red.shade700,
+                                      elevation: 0,
+                                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                    ),
+                                    onPressed: () => loaiPhongViewModel.getListLoaiPhong(),
+                                    icon: const Icon(Icons.refresh, size: 16),
+                                    label: const Text(
+                                      "Thử lại",
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
+                        //Load phòng thành công
+                        case LoaiPhongSuccess():
+                          final danhSachLoai = state.listLoaiPhong;
+
+                          if (danhSachLoai.isEmpty) {
+                            return const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                              child: Center(
+                                child: Text(
+                                  "Chưa có loại phòng nào dưới hệ thống.",
+                                  style: TextStyle(color: Colors.grey, fontSize: 13),
+                                ),
+                              ),
+                            );
+                          }
+
+                          return Column(
+                            children: [
+                              ...List.generate(danhSachLoai.length, (index) {
+                                final item = danhSachLoai[index];
+                                bool selected = vm.selectedType == index;
+
+                                return GestureDetector(
+                                  onTap: () => vm.selectType(index),
+                                  child: itemLoaiPhongSelectBox(item, selected),
+                                );
+                              }),
+                              const SizedBox(height: 12),
+
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(color: const Color(0xFFB6DDBE)),
+                                ),
+                                child: InkWell(
+                                  onTap: goToFormRoomType,
+                                  child: const Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.add_circle_outline,
+                                        color: Color(0xFF2D7A3A),
+                                      ),
+                                      SizedBox(width: 8),
+                                      Text(
+                                        "Thêm loại phòng mới",
+                                        style: TextStyle(
+                                          color: Color(0xFF2D7A3A),
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+
+                      }
+
+                    }
+                )
             ),
 
             const SizedBox(height: 16),
