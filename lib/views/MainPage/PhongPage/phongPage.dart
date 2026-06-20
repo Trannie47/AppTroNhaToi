@@ -236,7 +236,7 @@ class _PhongPageState extends State<PhongPage> {
                             dienTich: itemBackend.loaiPhong.dienTich,
                             isMayLanh: itemBackend.loaiPhong.isMayLanh,
                             soNguoiToiDa: itemBackend.loaiPhong.soNguoiToiDa,
-                            giaTien: itemBackend.giahientai,
+                            giaTien: itemBackend.loaiPhong.giaTien, // item phòng phải hiển thị giá loại phòng lên
                           );
                           return ItemPhong(
                             phong: currentPhong,

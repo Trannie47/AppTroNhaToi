@@ -52,19 +52,6 @@ class ItemPhong {
     return 'ItemPhong(phongId: $phongId, tenPhong: $tenPhong, trangThai: $trangThai, giaHienTai: $giahientai, loai: ${loaiPhong.tenLoaiPhong})';
   }
 
-
-  String get trangThaiText {
-    switch (trangThai) {
-      case 0:
-        return 'Phòng trống';
-      case 1:
-        return 'Đang thuê';
-      case 2:
-        return 'Đang sửa';
-      default:
-        return 'Không xác định';
-    }
-  }
 }
 class hopDongTrongPhong{
   final String hopDongId;
