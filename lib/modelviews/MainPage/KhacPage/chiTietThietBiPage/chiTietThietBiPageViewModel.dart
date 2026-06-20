@@ -1,7 +1,10 @@
 import 'package:AppTroNhaToi/models/lap_rap.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/sua_chua.dart';
+import 'package:AppTroNhaToi/models/hoa_don_sua_chua.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/LichSuSuaChuaPage/LichSuSuaChuaPage.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/LichSuSuaChuaPage/LichSuSuaChuaPageModel.dart';
 import 'package:flutter/material.dart';
 
 class ChiTietThietBiPageViewModel extends ChangeNotifier {
@@ -21,8 +24,11 @@ class ChiTietThietBiPageViewModel extends ChangeNotifier {
     dsPhong = phongList;
     dsLapRap = lapRapList;
     dsThietBi = thietBiList;
+    // load fake repair history for this device
+    _loadFakeLichSuSuaChua();
   }
 
+  List<LichSuSuaChuaPageModel> lichSuSuaChua = [];
   bool get dangSua {
     return thietBi.trangThaiText.toLowerCase() == "đang sửa";
   }
@@ -93,16 +99,6 @@ class ChiTietThietBiPageViewModel extends ChangeNotifier {
     }
   }
 
-  List<Map<String, dynamic>> lichSuSuaChua = [
-    {
-      "noiDung": "Không lạnh, không khởi động",
-      "ngay": "15/05/2026",
-      "trangThai": "Đang sửa",
-    },
-
-    {"noiDung": "Vệ sinh dàn lạnh", "ngay": "15/08/2024", "chiPhi": "150,000đ"},
-  ];
-
   void xoaLichSu(int index) {
     lichSuSuaChua.removeAt(index);
 
@@ -110,16 +106,59 @@ class ChiTietThietBiPageViewModel extends ChangeNotifier {
   }
 
   void themLichSuSuaChua(SuaChua suaChua) {
-    lichSuSuaChua.insert(0, {
-      "noiDung": suaChua.nguyenNhan,
-      "ngay":
-          "${suaChua.ngaySuaChua!.day.toString().padLeft(2, '0')}/"
-          "${suaChua.ngaySuaChua!.month.toString().padLeft(2, '0')}/"
-          "${suaChua.ngaySuaChua!.year}",
-      "trangThai": "Đang sửa",
-    });
+    // add a new history item without an invoice
+    lichSuSuaChua.insert(
+      0,
+      LichSuSuaChuaPageModel(suaChua: suaChua, hoaDonSuaChua: null),
+    );
 
     notifyListeners();
+  }
+
+  void _loadFakeLichSuSuaChua() {
+    // create some sample repair records for the current device
+    final s1 = SuaChua(
+      id: 101,
+      phongID: dsPhong.isNotEmpty ? dsPhong.first.phongID : 0,
+      nguyenNhan: 'Lỗi nguồn',
+      ngaySuaChua: DateTime(2024, 1, 15),
+    );
+    final hd1 = HoaDonSuaChua(
+      maHoaDonSC: 5001,
+      trangThai: 2,
+      giaTien: 750000,
+      loaiSua: 3,
+      ngayLapHoaDonSC: DateTime(2024, 1, 16),
+      idSuaChua: 101,
+    );
+
+    final s2 = SuaChua(
+      id: 102,
+      phongID: dsPhong.isNotEmpty ? dsPhong.first.phongID : 0,
+      nguyenNhan: 'Thay linh kiện',
+      ngaySuaChua: DateTime(2023, 11, 5),
+    );
+    final hd2 = HoaDonSuaChua(
+      maHoaDonSC: 5002,
+      trangThai: 1,
+      giaTien: 450000,
+      loaiSua: 1,
+      ngayLapHoaDonSC: DateTime(2023, 11, 6),
+      idSuaChua: 102,
+    );
+
+    final s3 = SuaChua(
+      id: 103,
+      phongID: dsPhong.isNotEmpty ? dsPhong.first.phongID : 0,
+      nguyenNhan: 'Bảo trì định kỳ',
+      ngaySuaChua: DateTime(2023, 6, 20),
+    );
+
+    lichSuSuaChua = [
+      LichSuSuaChuaPageModel(suaChua: s1, hoaDonSuaChua: hd1),
+      LichSuSuaChuaPageModel(suaChua: s2, hoaDonSuaChua: hd2),
+      LichSuSuaChuaPageModel(suaChua: s3, hoaDonSuaChua: null),
+    ];
   }
 
   @override

@@ -4,8 +4,11 @@ import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/sua_chua.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/chiTietThietBiPage/chiTietThietBiPageViewModel.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/LichSuSuaChuaPage/LichSuSuaChuaPage.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/LichSuSuaChuaPage/LichSuSuaChuaPageModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/PhieuSuaChuaForm/PhieuSuaChuaForm.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThietBiForm/thietBiForm.dart';
+import 'package:AppTroNhaToi/widgets/itemLichSuSuaChua.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -256,7 +259,10 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
                   Container(
                     width: double.infinity,
 
-                    padding: const EdgeInsets.all(18),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 0,
+                      vertical: 16,
+                    ),
 
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -267,32 +273,45 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
 
                       children: [
-                        Row(
-                          children: [
-                            const Text(
-                              "Lịch sử sửa chữa",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xff2D7A3A),
-                              ),
-                            ),
-
-                            const Spacer(),
-
-                            TextButton(
-                              onPressed: () {},
-
-                              child: const Text(
-                                "Xem thêm",
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Row(
+                            children: [
+                              const Text(
+                                "Lịch sử sửa chữa",
                                 style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
                                   color: Color(0xff2D7A3A),
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
-                            ),
-                          ],
+
+                              const Spacer(),
+
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => LichSuSuaChuaPage(
+                                        thietBi: vm.thietBi,
+                                        phong: vm.phongHienTai!,
+                                      ),
+                                    ),
+                                  );
+                                },
+
+                                child: const Text(
+                                  "Xem thêm",
+                                  style: TextStyle(
+                                    color: Color(0xff2D7A3A),
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
 
                         const SizedBox(height: 16),
@@ -302,42 +321,12 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
                           children: List.generate(vm.lichSuSuaChua.length, (
                             index,
                           ) {
-                            final item = vm.lichSuSuaChua[index];
+                            final LichSuSuaChuaPageModel item =
+                                vm.lichSuSuaChua[index];
 
-                            return Container(
-                              width: double.infinity,
-                              // margin: EdgeInsets.only(bottom: index == vm.lichSuSuaChua.length - 1 ? 0 : 12),
-                              padding: const EdgeInsets.all(14),
-                              decoration: BoxDecoration(
-                                color: const Color(0xffFAFAFA),
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    item["noiDung"],
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-
-                                  const SizedBox(height: 4),
-
-                                  Text(
-                                    item["trangThai"] != null
-                                        ? "${item["ngay"]} - ${item["trangThai"]}"
-                                        : "${item["ngay"]} · Chi phí ${item["chiPhi"]}",
-                                    style: TextStyle(
-                                      color: item["trangThai"] == "Đang sửa"
-                                          ? Colors.red
-                                          : Colors.grey,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                            return ItemLichSuSuaChua(
+                              suaChua: item.suaChua,
+                              hoaDonSuaChua: item.hoaDonSuaChua,
                             );
                           }),
                         ),
