@@ -1,8 +1,6 @@
 import 'package:AppTroNhaToi/models/loaiphong.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/FormPhong/FormPhongViewModel.dart';
-import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/loaiPhongModelViewsForm/FormLoaiPhong.dart';
-import 'package:AppTroNhaToi/repositories/loaiphong_repository.dart';
 import 'package:AppTroNhaToi/states/loaiphong_state.dart';
 import 'package:AppTroNhaToi/views/MainPage/PhongPage/FormLoaiPhong/FormLoaiPhong.dart';
 import 'package:AppTroNhaToi/widgets/itemLoaiPhongSelectBox.dart';
@@ -44,21 +42,13 @@ class _FormPhongState extends State<FormPhong> {
   }
 
   void saveRoom() {
-
-    print("Đã bấm lưu");
-
-    if (!vm.kiemTraDuLieu()) {
-      print("Sai dữ liệu");
+    if (!loaiPhongViewModel.kiemTraDuLieu()) {
+       print("Sai dữ liệu");
       return;
     }
+    loaiPhongViewModel.saveRoom();
 
-    print("Chuẩn bị build");
-
-    final room = vm.buildPhong(widget.room?.phongID);
-
-    print(room);
-
-    Navigator.pop(context, room);
+    //Navigator.pop(context, room);
 
   }
 
@@ -145,18 +135,23 @@ class _FormPhongState extends State<FormPhong> {
                     style: TextStyle(fontWeight: FontWeight.w500),
                   ),
                   const SizedBox(height: 10),
-                  TextField(
-                    controller: vm.nameController,
-                    decoration: InputDecoration(
-                      hintText: "VD: 101, A01, Phòng 1...",
-                      filled: true,
-                      fillColor: const Color(0xFFF3F3F3),
-                      errorText: vm.errTenPhong,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
+                  AnimatedBuilder(
+                    animation: loaiPhongViewModel,
+                    builder: (context, _) {
+                      return TextField(
+                        controller: loaiPhongViewModel.nameController,
+                        decoration: InputDecoration(
+                          hintText: "VD: 101, A01, Phòng 1...",
+                          filled: true,
+                          fillColor: const Color(0xFFF3F3F3),
+                          errorText: loaiPhongViewModel.errTenPhong,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                   const SizedBox(height: 10),
                   const Text(
@@ -171,35 +166,40 @@ class _FormPhongState extends State<FormPhong> {
                   ),
                   const SizedBox(height: 10),
 
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _statusItem(
-                          title: "Còn trống",
-                          color: Colors.green,
-                          selected: vm.selectedStatus == "0",
-                          onTap: () => vm.selectStatus("0"),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: _statusItem(
-                          title: "Đang thuê",
-                          color: Colors.orange,
-                          selected: vm.selectedStatus == "1",
-                          onTap: () => vm.selectStatus("1"),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: _statusItem(
-                          title: "Đang sửa chữa",
-                          color: Colors.red,
-                          selected: vm.selectedStatus == "2",
-                          onTap: () => vm.selectStatus("2"),
-                        ),
-                      ),
-                    ],
+                  AnimatedBuilder(
+                    animation: loaiPhongViewModel,
+                    builder: (context, _) {
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: _statusItem(
+                              title: "Còn trống",
+                              color: Colors.green,
+                              selected: loaiPhongViewModel.trangThai == 0,
+                              onTap: () => loaiPhongViewModel.setTrangThai(0),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: _statusItem(
+                              title: "Đang thuê",
+                              color: Colors.orange,
+                              selected: loaiPhongViewModel.trangThai == 1,
+                              onTap: () => loaiPhongViewModel.setTrangThai(1),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: _statusItem(
+                              title: "Đang sửa chữa",
+                              color: Colors.red,
+                              selected: loaiPhongViewModel.trangThai == 2,
+                              onTap: () => loaiPhongViewModel.setTrangThai(2),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                 ],
               ),
@@ -287,10 +287,10 @@ class _FormPhongState extends State<FormPhong> {
                             children: [
                               ...List.generate(danhSachLoai.length, (index) {
                                 final item = danhSachLoai[index];
-                                bool selected = vm.selectedType == index;
+                                bool selected = loaiPhongViewModel.idLoaiPhong == index;
 
                                 return GestureDetector(
-                                  onTap: () => vm.selectType(index),
+                                  onTap: () => loaiPhongViewModel.setIdLoaiPhong(index),
                                   child: itemLoaiPhongSelectBox(item, selected),
                                 );
                               }),
@@ -339,7 +339,7 @@ class _FormPhongState extends State<FormPhong> {
             _section(
               title: "Mô tả",
               child: TextField(
-                controller: vm.descController,
+                controller: loaiPhongViewModel.descController,
                 maxLines: 2,
                 decoration: InputDecoration(
                   filled: true,
