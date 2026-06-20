@@ -2,6 +2,7 @@ import 'package:AppTroNhaToi/models/loaiphong.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/FormPhong/FormPhongViewModel.dart';
 import 'package:AppTroNhaToi/states/loaiphong_state.dart';
+import 'package:AppTroNhaToi/view_models/phong_view_model.dart';
 import 'package:AppTroNhaToi/views/MainPage/PhongPage/FormLoaiPhong/FormLoaiPhong.dart';
 import 'package:AppTroNhaToi/widgets/itemLoaiPhongSelectBox.dart';
 import 'package:flutter/material.dart';
@@ -20,11 +21,13 @@ class FormPhong extends StatefulWidget {
 class _FormPhongState extends State<FormPhong> {
   late FormPhongViewModel vm;
   late LoaiPhongViewModel  loaiPhongViewModel;
+  late PhongViewModel phongViewModel;
 
   @override
   void initState() {
     super.initState();
     loaiPhongViewModel= LoaiPhongViewModel();
+    phongViewModel= PhongViewModel();
     WidgetsBinding.instance.addPostFrameCallback((_){
       loaiPhongViewModel.getListLoaiPhong();
     });
@@ -42,11 +45,11 @@ class _FormPhongState extends State<FormPhong> {
   }
 
   void saveRoom() {
-    if (!loaiPhongViewModel.kiemTraDuLieu()) {
+    if (!phongViewModel.kiemTraDuLieu()) {
        print("Sai dữ liệu");
       return;
     }
-    loaiPhongViewModel.saveRoom();
+    phongViewModel.saveRoom();
 
     //Navigator.pop(context, room);
 
@@ -139,12 +142,12 @@ class _FormPhongState extends State<FormPhong> {
                     animation: loaiPhongViewModel,
                     builder: (context, _) {
                       return TextField(
-                        controller: loaiPhongViewModel.nameController,
+                        controller: phongViewModel.nameController,
                         decoration: InputDecoration(
                           hintText: "VD: 101, A01, Phòng 1...",
                           filled: true,
                           fillColor: const Color(0xFFF3F3F3),
-                          errorText: loaiPhongViewModel.errTenPhong,
+                          errorText: phongViewModel.errTenPhong,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(14),
                             borderSide: BorderSide.none,
@@ -167,7 +170,7 @@ class _FormPhongState extends State<FormPhong> {
                   const SizedBox(height: 10),
 
                   AnimatedBuilder(
-                    animation: loaiPhongViewModel,
+                    animation: phongViewModel,
                     builder: (context, _) {
                       return Row(
                         children: [
@@ -175,8 +178,8 @@ class _FormPhongState extends State<FormPhong> {
                             child: _statusItem(
                               title: "Còn trống",
                               color: Colors.green,
-                              selected: loaiPhongViewModel.trangThai == 0,
-                              onTap: () => loaiPhongViewModel.setTrangThai(0),
+                              selected: phongViewModel.trangThai == 0,
+                              onTap: () => phongViewModel.setTrangThai(0),
                             ),
                           ),
                           const SizedBox(width: 10),
@@ -184,8 +187,8 @@ class _FormPhongState extends State<FormPhong> {
                             child: _statusItem(
                               title: "Đang thuê",
                               color: Colors.orange,
-                              selected: loaiPhongViewModel.trangThai == 1,
-                              onTap: () => loaiPhongViewModel.setTrangThai(1),
+                              selected: phongViewModel.trangThai == 1,
+                              onTap: () => phongViewModel.setTrangThai(1),
                             ),
                           ),
                           const SizedBox(width: 10),
@@ -193,8 +196,8 @@ class _FormPhongState extends State<FormPhong> {
                             child: _statusItem(
                               title: "Đang sửa chữa",
                               color: Colors.red,
-                              selected: loaiPhongViewModel.trangThai == 2,
-                              onTap: () => loaiPhongViewModel.setTrangThai(2),
+                              selected: phongViewModel.trangThai == 2,
+                              onTap: () => phongViewModel.setTrangThai(2),
                             ),
                           ),
                         ],
@@ -283,48 +286,48 @@ class _FormPhongState extends State<FormPhong> {
                             );
                           }
 
-                          return Column(
-                            children: [
-                              ...List.generate(danhSachLoai.length, (index) {
-                                final item = danhSachLoai[index];
-                                bool selected = loaiPhongViewModel.idLoaiPhong == index;
+                          return AnimatedBuilder(
+                            animation: phongViewModel,
+                            builder: (context, _) {
+                              return Column(
+                                children: [
+                                  ...List.generate(danhSachLoai.length, (index) {
+                                    final item = danhSachLoai[index];
 
-                                return GestureDetector(
-                                  onTap: () => loaiPhongViewModel.setIdLoaiPhong(index),
-                                  child: itemLoaiPhongSelectBox(item, selected),
-                                );
-                              }),
-                              const SizedBox(height: 12),
+                                    bool selected = phongViewModel.idLoaiPhong == index;
 
-                              Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.symmetric(vertical: 16),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(color: const Color(0xFFB6DDBE)),
-                                ),
-                                child: InkWell(
-                                  onTap: goToFormRoomType,
-                                  child: const Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.add_circle_outline,
-                                        color: Color(0xFF2D7A3A),
+                                    return GestureDetector(
+                                      onTap: () {
+                                        phongViewModel.setIdLoaiPhong(index);
+                                      },
+                                      child: itemLoaiPhongSelectBox(item, selected),
+                                    );
+                                  }),
+                                  const SizedBox(height: 12),
+
+                                  // Nút thêm loại phòng mới giữ nguyên...
+                                  Container(
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.symmetric(vertical: 16),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(16),
+                                      border: Border.all(color: const Color(0xFFB6DDBE)),
+                                    ),
+                                    child: InkWell(
+                                      onTap: goToFormRoomType,
+                                      child: const Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.add_circle_outline, color: Color(0xFF2D7A3A)),
+                                          SizedBox(width: 8),
+                                          Text("Thêm loại phòng mới", style: TextStyle(color: Color(0xFF2D7A3A), fontWeight: FontWeight.w600)),
+                                        ],
                                       ),
-                                      SizedBox(width: 8),
-                                      Text(
-                                        "Thêm loại phòng mới",
-                                        style: TextStyle(
-                                          color: Color(0xFF2D7A3A),
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
+                                    ),
                                   ),
-                                ),
-                              ),
-                            ],
+                                ],
+                              );
+                            },
                           );
 
                       }
@@ -339,7 +342,7 @@ class _FormPhongState extends State<FormPhong> {
             _section(
               title: "Mô tả",
               child: TextField(
-                controller: loaiPhongViewModel.descController,
+                controller: phongViewModel.descController,
                 maxLines: 2,
                 decoration: InputDecoration(
                   filled: true,

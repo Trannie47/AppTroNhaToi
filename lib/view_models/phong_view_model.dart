@@ -1,6 +1,9 @@
 import 'package:AppTroNhaToi/models/item_phong.dart';
 import 'package:AppTroNhaToi/repositories/phong_repository.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+
+import '../models/phong.dart';
 
 class PhongViewModel extends ChangeNotifier{
   final PhongRepository phongRepository= PhongRepository();
@@ -16,6 +19,18 @@ class PhongViewModel extends ChangeNotifier{
 
   bool _isLoading= false;
   bool get isLoading  => _isLoading;
+
+  TextEditingController nameController= TextEditingController();
+  TextEditingController descController=TextEditingController();
+
+  int _idLoaiPhong= 0;
+  int get idLoaiPhong=> _idLoaiPhong;
+
+  int _trangThai=0;
+  int get trangThai => _trangThai;
+
+  String? _errTenPhong;
+  String? get errTenPhong => _errTenPhong;
 
   Future<void> fetchPhong() async{
     if(_isLoading) return;
@@ -54,5 +69,31 @@ class PhongViewModel extends ChangeNotifier{
     if(_currentFilter== filterValue) return;
     _currentFilter= filterValue;
     notifyListeners();
+  }
+
+  void setIdLoaiPhong(int idLoaiPhong){
+    _idLoaiPhong= idLoaiPhong;
+    notifyListeners();
+  }
+  void setTrangThai(int trangThai){
+    _trangThai=trangThai;
+    notifyListeners();
+  }
+  // hàm lưu phòng chưa hoàn thành
+  void saveRoom(){
+    Phong p= Phong(phongID: 10, tenPhong: nameController.text.toString(), trangThai: _trangThai, maLoaiPhong: _idLoaiPhong,moTa: descController.text.toString());
+    print("Phong lays được là $p");
+  }
+
+  bool kiemTraDuLieu() {
+    bool hopLe = true;
+    if (nameController.text.trim().isEmpty) {
+      _errTenPhong = "Vui lòng nhập tên phòng trọ!";
+      hopLe = false;
+    } else {
+      _errTenPhong = null;
+    }
+    notifyListeners();
+    return hopLe;
   }
 }

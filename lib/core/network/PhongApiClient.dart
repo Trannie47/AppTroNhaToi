@@ -1,5 +1,6 @@
 import 'package:AppTroNhaToi/core/network/retrofit_client.dart';
 import 'package:AppTroNhaToi/models/item_phong.dart';
+import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
@@ -19,6 +20,44 @@ class PhongApiClient {
         print("Lỗi PhongApiClient $e");
       }
       rethrow;
+    }
+  }
+
+  Future<bool> SaveRoom(Phong room)async{
+    try{
+      final response= await _dio.post("phong", data: room.toMap());
+      if(response.statusCode==200 || response.statusCode==201){
+        return true;
+      }
+      return false;
+    }on DioException catch(e){
+      if (kDebugMode) {
+        print("Lỗi PhongApiClient");
+      }
+      throw Exception(_mapErrorToMessage(e));
+    }
+    catch(e){
+      if (kDebugMode) {
+        print("Lỗi không xác định PhongApiClient: $e");
+      }
+      throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
+    }
+  }
+
+  String _mapErrorToMessage(DioException e){
+    if (e.type == DioExceptionType.connectionError ||
+        e.type == DioExceptionType.connectionTimeout ||
+        e.type == DioExceptionType.receiveTimeout ||
+        e.type == DioExceptionType.sendTimeout) {
+      return "Không có kết nối mạng, vui lòng thử lại";
+    }
+    final statusCode= e.response?.statusCode;
+    switch(statusCode){
+      case 500:
+        return "Hệ thống đang gặp sự cố, vui lòng thử lại sau";
+      default:
+        return "Đã có lỗi xảy ra, vui lòng thử lại sau";
+
     }
   }
 }
