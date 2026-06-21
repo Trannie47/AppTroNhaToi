@@ -93,7 +93,7 @@ class PhongViewModel extends ChangeNotifier{
       final result= await phongRepository.saveRoom(p);
       if(result!=null){
         print("Phòng Lưu được là $result");
-        _phongSaveState= PhongSaveSuccess();
+        _phongSaveState= PhongSaveSuccess(result);
       }else{
         _phongSaveState= PhongSaveError("Không nhận được phản hồi từ hệ thống!");
       }
@@ -115,5 +115,9 @@ class PhongViewModel extends ChangeNotifier{
     }
     notifyListeners();
     return hopLe;
+  }
+  void addRoom(ItemPhong room){
+    _listPhong.insert(0,room);
+    notifyListeners();
   }
 }

@@ -40,7 +40,7 @@ class _PhongPageState extends State<PhongPage> {
 
   void toThemPhong() async {
 
-    final Phong? room = await Navigator.push(
+    final room = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => const FormPhong(),
@@ -48,11 +48,7 @@ class _PhongPageState extends State<PhongPage> {
     );
 
     if (room != null) {
-
-      vm.dsPhong.add(room);
-
-      vm.dsPhongFilter = vm.dsPhong;
-
+      phongViewModel.addRoom(room);
       setState(() {});
     }
   }

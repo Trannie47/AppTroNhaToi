@@ -1,3 +1,4 @@
+import 'package:AppTroNhaToi/models/item_phong.dart';
 import 'package:AppTroNhaToi/models/loaiphong.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/FormPhong/FormPhongViewModel.dart';
@@ -57,11 +58,34 @@ class _FormPhongState extends State<FormPhong> {
       print("Sai dữ liệu");
       return;
     }
-    final navigator = Navigator.of(context);
     await phongViewModel.saveRoom();
     if (!mounted) return;
     final state = phongViewModel.phongSaveState;
     if (state is PhongSaveSuccess) {
+      LoaiPhong selectedLoai = LoaiPhong(
+          maLoaiPhong: phongViewModel.idLoaiPhong,
+          tenLoaiPhong: 'Chưa rõ',
+          dienTich: 0,
+          soNguoiToiDa: 0,
+          giaTien: 0
+      );
+      final loaiState= loaiPhongViewModel.loaiphongState;
+      if(loaiState is LoaiPhongSuccess){
+        selectedLoai= loaiState.listLoaiPhong.firstWhere(
+                (element)=> element.maLoaiPhong== phongViewModel.idLoaiPhong,
+        );
+      }
+    // Nêu lưu phòng thành công thì tạo 1 đối tượng và gửi nó quay lại màn trc để add vào ds
+      ItemPhong itemPhong= ItemPhong(
+        phongId: state.phong.phongID,
+        tenPhong: state.phong.tenPhong,
+        trangThai: state.phong.trangThai,
+        moTa: state.phong.moTa ?? '',
+        maLoaiPhong: state.phong.maLoaiPhong,
+        loaiPhong: selectedLoai!,
+        dsHopDong: [],
+        giahientai: selectedLoai.giaTien.toDouble()
+      );
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Thêm phòng trọ mới thành công!"),
@@ -69,8 +93,7 @@ class _FormPhongState extends State<FormPhong> {
           duration: Duration(seconds: 2),
         ),
       );
-      //Navigator.pop(context, room);
-      navigator.pop(true);
+      Navigator.pop(context, itemPhong);
     } else if (state is PhongSaveError) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
