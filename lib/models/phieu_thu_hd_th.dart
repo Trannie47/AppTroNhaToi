@@ -3,7 +3,7 @@ class PhieuThuHdTh {
   final DateTime? ngayThu;
   final double? soTien;
   final String? nguoiDong;
-  final int? maHoaDon; // FK -> hoadontaphoa.maHoaDon
+  final String? maHoaDon; // FK -> hoadontaphoa.maHoaDon
 
   PhieuThuHdTh({
     this.maPhieuThu,
@@ -21,7 +21,7 @@ class PhieuThuHdTh {
           : null,
       soTien: (map['soTien'] as num?)?.toDouble(),
       nguoiDong: map['nguoiDong'] as String?,
-      maHoaDon: map['maHoaDon'] as int?,
+      maHoaDon: map['maHoaDon'] as String?,
     );
   }
 
@@ -40,7 +40,7 @@ class PhieuThuHdTh {
     DateTime? ngayThu,
     double? soTien,
     String? nguoiDong,
-    int? maHoaDon,
+    String? maHoaDon,
   }) {
     return PhieuThuHdTh(
       maPhieuThu: maPhieuThu ?? this.maPhieuThu,

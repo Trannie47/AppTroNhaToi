@@ -20,7 +20,7 @@ class TapHoaPageViewModel extends ChangeNotifier {
     dsHangHoa = [
       HangHoa(
         maHangHoa: 1,
-        tenHangHoa: "Mì Hảo Hảo",
+        tenHangHoa: "Mì Hảo Hảo Hảo tam thái tử ba vì miền tây nam bộ",
         giaNhap: 3000,
         giaBan: 5000,
         donViTinh: "gói",
@@ -62,7 +62,7 @@ class TapHoaPageViewModel extends ChangeNotifier {
       ),
     ];
 
-    //tạo 5 record trong dsHoaDonTapHoa
+    // tạo 5 record trong dsHoaDonTapHoa
     dsHoaDonTapHoa = [
       HoaDonTapHoaModel(
         hoaDon: HoaDonTapHoa(
@@ -73,31 +73,64 @@ class TapHoaPageViewModel extends ChangeNotifier {
         ),
         phieuThu: null,
         tenNguoiMua: 'Trần Văn A',
+
+        dsHangHoa: [
+          dsHangHoa[0], // Mì Hảo Hảo
+          dsHangHoa[1], // Coca Cola
+        ],
+
+        soLuong: {
+          dsHangHoa[0].maHangHoa!: 2,
+          dsHangHoa[1].maHangHoa!: 3,
+        },
       ),
+
       HoaDonTapHoaModel(
         hoaDon: HoaDonTapHoa(
           maHoaDon: taoMaHoaDon(),
-          ngayBan: DateTime.now().subtract(Duration(days: 1)),
+          ngayBan: DateTime.now().subtract(const Duration(days: 1)),
           tongTien: 120000,
           idnt: 2,
         ),
         phieuThu: null,
         tenNguoiMua: 'Nguyễn Thị B',
+
+        dsHangHoa: [
+          dsHangHoa[2], // Nước suối
+          dsHangHoa[3], // Sữa Vinamilk
+        ],
+
+        soLuong: {
+          dsHangHoa[2].maHangHoa!: 5,
+          dsHangHoa[3].maHangHoa!: 2,
+        },
       ),
+
       HoaDonTapHoaModel(
         hoaDon: HoaDonTapHoa(
           maHoaDon: taoMaHoaDon(),
-          ngayBan: DateTime.now().subtract(Duration(days: 3)),
+          ngayBan: DateTime.now().subtract(const Duration(days: 3)),
           tongTien: 80000,
         ),
         phieuThu: PhieuThuHdTh(
           maPhieuThu: 1002,
-          ngayThu: DateTime.now().subtract(Duration(days: 2)),
+          ngayThu: DateTime.now().subtract(const Duration(days: 2)),
           soTien: 80000,
           nguoiDong: 'Lê Văn C',
         ),
         tenNguoiMua: 'Lê Văn C',
+
+        dsHangHoa: [
+          dsHangHoa[4], // Bánh Oreo
+          dsHangHoa[5], // Trứng gà
+        ],
+
+        soLuong: {
+          dsHangHoa[4].maHangHoa!: 2,
+          dsHangHoa[5].maHangHoa!: 1,
+        },
       ),
+
       HoaDonTapHoaModel(
         hoaDon: HoaDonTapHoa(
           maHoaDon: taoMaHoaDon(),
@@ -106,26 +139,63 @@ class TapHoaPageViewModel extends ChangeNotifier {
         ),
         phieuThu: null,
         tenNguoiMua: 'Phạm Thị D',
+
+        dsHangHoa: [
+          dsHangHoa[1], // Coca Cola
+          dsHangHoa[2], // Nước suối
+        ],
+
+        soLuong: {
+          dsHangHoa[1].maHangHoa!: 1,
+          dsHangHoa[2].maHangHoa!: 2,
+        },
       ),
+
       HoaDonTapHoaModel(
         hoaDon: HoaDonTapHoa(
           maHoaDon: taoMaHoaDon(),
-          ngayBan: DateTime.now().subtract(Duration(days: 7)),
+          ngayBan: DateTime.now().subtract(const Duration(days: 7)),
           tongTien: 150000,
         ),
         phieuThu: PhieuThuHdTh(
           maPhieuThu: 1003,
-          ngayThu: DateTime.now().subtract(Duration(days: 6)),
+          ngayThu: DateTime.now().subtract(const Duration(days: 6)),
           soTien: 50000,
           nguoiDong: 'Hoàng Văn E',
         ),
         tenNguoiMua: 'Hoàng Văn E',
+
+        dsHangHoa: [
+          dsHangHoa[0], // Mì Hảo Hảo
+          dsHangHoa[3], // Sữa Vinamilk
+          dsHangHoa[5], // Trứng gà
+        ],
+
+        soLuong: {
+          dsHangHoa[0].maHangHoa!: 5,
+          dsHangHoa[3].maHangHoa!: 2,
+          dsHangHoa[5].maHangHoa!: 1,
+        },
       ),
     ];
     //Nếu hoá đơn tạp hoá chưa có phiếu thu trở thành danh sách công nợ và id người thuê trên hoá đơn phải khác null
     dsCongNoTapHoa = dsHoaDonTapHoa
         .where((item) => (item.phieuThu == null) && (item.hoaDon.idnt != null))
         .toList();
+
+    notifyListeners();
+  }
+
+// xoa hóa đơn và công nợ
+  void xoaHoaDon(String maHoaDon) {
+
+    dsHoaDonTapHoa.removeWhere(
+          (e) => e.hoaDon.maHoaDon == maHoaDon,
+    );
+
+    dsCongNoTapHoa.removeWhere(
+          (e) => e.hoaDon.maHoaDon == maHoaDon,
+    );
 
     notifyListeners();
   }
@@ -157,17 +227,24 @@ class TapHoaPageViewModel extends ChangeNotifier {
   }
 
   /// thêm hàng hóa
-  void themHoaDon(double tongTien) {
-    // dsHoaDon.insert(
-    //   0,
-    //   HoaDonTapHoa(
-    //     maHoaDon: taoMaHoaDon(),
-    //     ngayBan: DateTime.now(),
-    //     tongTien: tongTien,
-    //   ),
-    // );
+  void themHoaDon(HoaDonTapHoaModel hoaDonModel) {
 
-    // notifyListeners();
+    dsHoaDonTapHoa.insert(
+      0,
+      hoaDonModel,
+    );
+
+    // Nếu chưa có phiếu thu và có id người thuê
+    if (hoaDonModel.phieuThu == null &&
+        hoaDonModel.hoaDon.idnt != null) {
+
+      dsCongNoTapHoa.insert(
+        0,
+        hoaDonModel,
+      );
+    }
+
+    notifyListeners();
   }
 
   /// sửa hàng hóa

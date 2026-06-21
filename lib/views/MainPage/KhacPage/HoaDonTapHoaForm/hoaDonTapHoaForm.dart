@@ -1,27 +1,62 @@
 import 'package:AppTroNhaToi/models/hang_hoa.dart';
 import 'package:AppTroNhaToi/models/hoa_don_tap_hoa.dart';
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
+import 'package:AppTroNhaToi/models/phieu_thu_hd_th.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/HoaDonTapHoaForm/hoaDonTapHoaViewModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/ChonHangHoaPage/chonHangHoaPage.dart';
+
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/TapHoaPage/HoaDonTapHoaModel.dart';
 import 'package:AppTroNhaToi/widgets/customDropdownSearch.dart';
 import 'package:AppTroNhaToi/widgets/itemHangHoaChon.dart';
 import 'package:flutter/material.dart';
 
 class HoaDonTapHoaForm extends StatefulWidget {
-  const HoaDonTapHoaForm({super.key});
+
+  final HoaDonTapHoaModel? hoaDonModel;
+
+  const HoaDonTapHoaForm({
+    super.key,
+    this.hoaDonModel,
+  });
 
   @override
-  State<HoaDonTapHoaForm> createState() => _HoaDonTapHoaFormState();
+  State<HoaDonTapHoaForm> createState() =>
+      _HoaDonTapHoaFormState();
 }
-
 class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
   final vm = HoaDonTapHoaFormViewModel();
 
   @override
   void initState() {
     super.initState();
+
     vm.LoadData();
+
+    if (widget.hoaDonModel != null) {
+
+      vm.maHoaDon = widget.hoaDonModel!.hoaDon.maHoaDon!;
+
+      vm.selectedNguoiThue = vm.dsNguoiThue.firstWhere(
+            (e) => e.idnt == widget.hoaDonModel!.hoaDon.idnt,
+        orElse: () => vm.dsNguoiThue.first,
+      );
+
+      vm.nguoiThueTro =
+          widget.hoaDonModel!.hoaDon.idnt != null;
+
+      vm.coPhieuThu =
+          widget.hoaDonModel!.phieuThu != null;
+
+      vm.txtNguoiDongTien.text =
+          widget.hoaDonModel!.phieuThu?.nguoiDong ?? "";
+
+      vm.dsHangHoaChon =
+          List.from(widget.hoaDonModel!.dsHangHoa);
+
+      vm.soLuong =
+          Map.from(widget.hoaDonModel!.soLuong);
+    }
   }
 
   @override
@@ -48,7 +83,7 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
         const SizedBox(height: 8),
 
         Container(
-          height: 56,
+          height: 48,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
@@ -122,10 +157,13 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
               ),
             ),
 
-            if (vm.maHoaDon.isNotEmpty)
+            if (vm.maHoaDon != 0)
               Text(
-                vm.maHoaDon,
-                style: TextStyle(color: Colors.grey, fontSize: 12),
+                vm.maHoaDon.toString(),
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 12,
+                ),
               ),
           ],
         ),
@@ -172,12 +210,13 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
                             Text(
                               "Người thuê trọ",
                               style: TextStyle(fontWeight: FontWeight.w600),
+
                             ),
 
                             SizedBox(height: 3),
 
                             Text(
-                              "Khách vãng lai chỉ nhập sản phẩm,\nkhông nhập các thông tin khác.",
+                              "Khách vãng lai chỉ thêm sản phẩm,\nkhông nhập các thông tin khác.",
                               style: TextStyle(
                                 color: Colors.grey,
                                 fontSize: 11,
@@ -189,44 +228,63 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
 
                       Switch(
                         value: vm.nguoiThueTro,
-
                         activeColor: const Color(0xff2D7A3A),
-
                         onChanged: (value) {
+
                           setState(() {
-                            vm.nguoiThueTro = value;
+
+                            vm.doiTrangThaiNguoiThueTro(value);
+
                           });
+
                         },
                       ),
                     ],
                   ),
 
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 8),
 
-                  IgnorePointer(
-                    ignoring: !vm.nguoiThueTro,
-                    child: Opacity(
-                      opacity: vm.nguoiThueTro ? 1 : 0.5,
+                  if (vm.nguoiThueTro) ...[
+
+                    SizedBox(
+                      height: 48,
                       child: CustomDropdownSearch<NguoiThue>(
+
                         items: vm.dsNguoiThue,
                         selectedItem: vm.selectedNguoiThue,
                         itemAsString: (item) => item.hoTen!,
+
                         onChanged: (value) {
+
                           setState(() {
-                            Switch(
-                              value: vm.nguoiThueTro,
-                              activeColor: const Color(0xff2D7A3A),
-                              onChanged: (value) {
-                                setState(() {
-                                  vm.doiTrangThaiNguoiThueTro(value);
-                                });
-                              },
-                            );
+
+                            vm.selectedNguoiThue = value;
+                            vm.errNguoiThue = null;
+
                           });
+
                         },
                       ),
+
                     ),
-                  ),
+
+                    if (vm.errNguoiThue != null) ...[
+                      const SizedBox(height: 4),
+
+                      Padding(
+                        padding: const EdgeInsets.only(left: 6),
+                        child: Text(
+                          vm.errNguoiThue!,
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    ],
+
+                  ],
+
                   const SizedBox(height: 20),
 
                   inputBox(
@@ -271,27 +329,29 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
                       Switch(
                         value: vm.coPhieuThu,
                         activeColor: const Color(0xff2D7A3A),
+
                         onChanged: (value) {
+
                           setState(() {
+
                             vm.doiTrangThaiPhieuThu(value);
+
                           });
+
                         },
-                      ),
+                      )
                     ],
                   ),
 
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
 
-                  Opacity(
-                    opacity: vm.coPhieuThu ? 1 : 0.5,
-                    child: IgnorePointer(
-                      ignoring: !vm.coPhieuThu,
-                      child: inputBox(
-                        title: "Người đóng tiền",
-                        controller: vm.txtNguoiDongTien,
-                      ),
+                  if (vm.nguoiThueTro && vm.coPhieuThu) ...[
+                    inputBox(
+                      title: "Người đóng tiền",
+                      controller: vm.txtNguoiDongTien,
                     ),
-                  ),
+
+                  ]
                 ],
               ),
             ),
@@ -349,6 +409,7 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
                   if (result != null) {
                     setState(() {
                       vm.themHangHoa(result);
+                      vm.errHangHoa = null;
                     });
                   }
                 },
@@ -366,7 +427,26 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
                   ),
                 ),
               ),
+
             ),
+            if (vm.errHangHoa != null) ...[
+              const SizedBox(height: 6),
+
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 6),
+                  child: Text(
+                    vm.errHangHoa!,
+                    style: const TextStyle(
+                      color: Colors.red,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+
 
             const SizedBox(height: 30),
 
@@ -413,15 +493,52 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
                 ),
 
                 onPressed: () {
+
+                  if (!vm.kiemTraDuLieu()) {
+                    setState(() {});
+                    return;
+                  }
+
+                  if (vm.maHoaDon == "") {
+                    vm.taoMaHoaDon();
+                  }
+
                   HoaDonTapHoa hoaDon = HoaDonTapHoa(
                     maHoaDon: vm.maHoaDon,
-
+                    idnt: vm.nguoiThueTro
+                        ? vm.selectedNguoiThue?.idnt
+                        : null,
                     ngayBan: DateTime.now(),
-
                     tongTien: vm.tongTien,
                   );
 
-                  Navigator.pop(context, hoaDon);
+                  PhieuThuHdTh? phieuThu;
+
+                  if (vm.coPhieuThu) {
+
+                    phieuThu = PhieuThuHdTh(
+                      maHoaDon: vm.maHoaDon,
+                      nguoiDong: vm.txtNguoiDongTien.text,
+                      soTien: vm.tongTien,
+                      ngayThu: DateTime.now(),
+                    );
+                  }
+
+                  Navigator.pop(
+                    context,
+                    HoaDonTapHoaModel(
+                      hoaDon: hoaDon,
+
+                      phieuThu: phieuThu,
+
+                      tenNguoiMua:
+                      vm.selectedNguoiThue?.hoTen ?? "Khách vãng lai",
+
+                      dsHangHoa: List.from(vm.dsHangHoaChon),
+
+                      soLuong: Map.from(vm.soLuong),
+                    ),
+                  );
                 },
 
                 child: const Text(

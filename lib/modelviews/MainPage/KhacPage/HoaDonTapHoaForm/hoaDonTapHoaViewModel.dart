@@ -6,6 +6,8 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
   bool nguoiThueTro = true;
 
   bool coPhieuThu = true;
+  String? errNguoiThue;
+  String? errHangHoa;
 
   final txtNgayMua = TextEditingController();
 
@@ -87,11 +89,51 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
     ];
   }
 
+  // kiểm tra dữ liệu
+  bool kiemTraDuLieu() {
+
+    errNguoiThue = null;
+    errHangHoa = null;
+
+    bool hopLe = true;
+
+    // Người thuê trọ bật thì bắt buộc phải chọn người thuê
+    if (nguoiThueTro && selectedNguoiThue == null) {
+
+      errNguoiThue = "Vui lòng chọn người thuê.";
+
+      hopLe = false;
+    }
+
+    // Hóa đơn phải có ít nhất 1 mặt hàng
+    if (dsHangHoaChon.isEmpty) {
+
+      errHangHoa = "Vui lòng thêm ít nhất một hàng hóa.";
+
+      hopLe = false;
+    }
+
+    notifyListeners();
+
+    return hopLe;
+  }
+
+
   // đổi trạng thái phiếu thu
   void doiTrangThaiPhieuThu(bool value) {
-    coPhieuThu = value;
+
+    if (!nguoiThueTro) {
+
+      // Khách vãng lai luôn bật phiếu thu
+      coPhieuThu = true;
+    }
+    else {
+
+      coPhieuThu = value;
+    }
 
     if (!coPhieuThu) {
+
       txtNguoiDongTien.clear();
     }
 
@@ -99,11 +141,24 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
   }
 
   // ĐỔI TRẠNG THÁI người thuê
+
   void doiTrangThaiNguoiThueTro(bool value) {
+
     nguoiThueTro = value;
 
     if (!nguoiThueTro) {
+
+      selectedNguoiThue = null;
+
       txtNguoiMua.clear();
+
+      // Khách vãng lai luôn có phiếu thu
+      coPhieuThu = true;
+
+      // Xóa người đóng tiền
+      txtNguoiDongTien.clear();
+
+      errNguoiThue = null;
     }
 
     notifyListeners();
@@ -196,6 +251,7 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
     String stt = sttHoaDon.toString().padLeft(3, '0');
 
     maHoaDon = "TH$nam$thang$ngay$stt";
+
 
     sttHoaDon++;
 

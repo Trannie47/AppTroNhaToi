@@ -4,20 +4,19 @@ class HangHoaFormViewModel extends ChangeNotifier {
   final txtTenHangHoa = TextEditingController();
   final txtGiaBan = TextEditingController();
   final txtGiaNhap = TextEditingController();
-  final txtSoLuong = TextEditingController();
   final txtDonVi = TextEditingController();
 
   String? errTenHangHoa;
   String? errGiaBan;
   String? errGiaNhap;
-  String? errSoLuong;
+
   String? errDonVi;
 
   bool kiemTraDuLieu() {
     errTenHangHoa = null;
     errGiaBan = null;
     errGiaNhap = null;
-    errSoLuong = null;
+
     errDonVi = null;
 
     bool hopLe = true;
@@ -52,15 +51,6 @@ class HangHoaFormViewModel extends ChangeNotifier {
       hopLe = false;
     }
 
-    int? soLuong = int.tryParse(txtSoLuong.text);
-
-    if (txtSoLuong.text.trim().isEmpty) {
-      errSoLuong = "Vui lòng nhập số lượng";
-      hopLe = false;
-    } else if (soLuong == null || soLuong <= 0) {
-      errSoLuong = "Số lượng phải là số nguyên dương";
-      hopLe = false;
-    }
 
     if (txtDonVi.text.trim().isEmpty) {
       errDonVi = "Vui lòng nhập đơn vị";
@@ -80,7 +70,6 @@ class HangHoaFormViewModel extends ChangeNotifier {
     txtTenHangHoa.dispose();
     txtGiaBan.dispose();
     txtGiaNhap.dispose();
-    txtSoLuong.dispose();
     txtDonVi.dispose();
     super.dispose();
   }

@@ -241,18 +241,27 @@ class _TapHoaPageState extends State<TapHoaPage> {
                       hangHoa: vm.dsHangHoa[index],
 
                       onSua: () async {
-                        final HangHoa? hangHoaSua = await Navigator.push(
+                        HangHoa hangHoaCu = vm.dsHangHoa[index];
+
+                        final result = await Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) =>
-                                HangHoaForm(hangHoa: vm.dsHangHoa[index]),
+                            builder: (_) => HangHoaForm(hangHoa: hangHoaCu),
                           ),
                         );
 
-                        if (hangHoaSua != null) {
-                          vm.dsHangHoa[index] = hangHoaSua;
+                        if (result == "xoa") {
+                          vm.xoaHangHoa(hangHoaCu.maHangHoa!);
+                        } else if (result is HangHoa) {
+                          int viTri = vm.dsHangHoa.indexWhere(
+                            (e) => e.maHangHoa == result.maHangHoa,
+                          );
 
-                          vm.notifyListeners();
+                          if (viTri != -1) {
+                            vm.dsHangHoa[viTri] = result;
+
+                            vm.notifyListeners();
+                          }
                         }
                       },
 
@@ -304,7 +313,41 @@ class _TapHoaPageState extends State<TapHoaPage> {
                       hoaDon: vm.dsHoaDonTapHoa[index].hoaDon,
                       phieuThu: vm.dsHoaDonTapHoa[index].phieuThu,
                       tenNguoiThue: vm.dsHoaDonTapHoa[index].tenNguoiMua,
-                      onSua: () {},
+
+                      /// SỬA
+                      onSua: () async {
+                        final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => HoaDonTapHoaForm(
+                              hoaDonModel: vm.dsHoaDonTapHoa[index],
+                            ),
+                          ),
+                        );
+
+                        if (result != null) {
+
+                          int viTriHoaDon = vm.dsHoaDonTapHoa.indexWhere(
+                                (e) => e.hoaDon.maHoaDon == result.hoaDon.maHoaDon,
+                          );
+
+                          if (viTriHoaDon != -1) {
+                            vm.dsHoaDonTapHoa[viTriHoaDon] = result;
+                          }
+
+                          int viTriCongNo = vm.dsCongNoTapHoa.indexWhere(
+                                (e) => e.hoaDon.maHoaDon == result.hoaDon.maHoaDon,
+                          );
+
+                          if (viTriCongNo != -1) {
+                            vm.dsCongNoTapHoa[viTriCongNo] = result;
+                          }
+
+                          vm.notifyListeners();
+                        }
+                      },
+
+                      /// CHI TIẾT
                       onChiTiet: () {
                         Navigator.push(
                           context,
@@ -317,29 +360,146 @@ class _TapHoaPageState extends State<TapHoaPage> {
                           ),
                         );
                       },
-                      onXoa: () {},
+
+                      /// XÓA
+                      onXoa: () async {
+                        bool? xacNhan = await showDialog<bool>(
+                          context: context,
+                          builder: (dialogContext) {
+                            return AlertDialog(
+                              title: const Text("Xóa hóa đơn"),
+
+                              content: Text(
+                                "Bạn có muốn xóa hóa đơn ${vm.dsHoaDonTapHoa[index].hoaDon.maHoaDon} không?",
+                              ),
+
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(dialogContext, false);
+                                  },
+                                  child: const Text("Hủy"),
+                                ),
+
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red,
+                                  ),
+
+                                  onPressed: () {
+                                    Navigator.pop(dialogContext, true);
+                                  },
+
+                                  child: const Text(
+                                    "Xóa",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+
+                        if (xacNhan == true) {
+                          vm.xoaHoaDon(
+                            vm.dsHoaDonTapHoa[index].hoaDon.maHoaDon!,
+                          );
+
+                        }
+                      },
                     );
                   }
-
+                  // công nợ
                   if (vm.currentTab == 1) {
                     return ItemHoaDonTapHoa(
                       hoaDon: vm.dsCongNoTapHoa[index].hoaDon,
                       phieuThu: vm.dsCongNoTapHoa[index].phieuThu,
                       tenNguoiThue: vm.dsCongNoTapHoa[index].tenNguoiMua,
-                      onSua: () {},
+
+                      onSua: () async {
+                        final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => HoaDonTapHoaForm(
+                              hoaDonModel: vm.dsCongNoTapHoa[index],
+                            ),
+                          ),
+                        );
+
+                        if (result != null) {
+                          int viTriHoaDon = vm.dsHoaDonTapHoa.indexWhere(
+                            (e) => e.hoaDon.maHoaDon == result.hoaDon.maHoaDon,
+                          );
+
+                          if (viTriHoaDon != -1) {
+                            vm.dsHoaDonTapHoa[viTriHoaDon] = result;
+                          }
+
+                          int viTriCongNo = vm.dsCongNoTapHoa.indexWhere(
+                            (e) => e.hoaDon.maHoaDon == result.hoaDon.maHoaDon,
+                          );
+
+                          if (viTriCongNo != -1) {
+                            vm.dsCongNoTapHoa[viTriCongNo] = result;
+                          }
+
+                          vm.notifyListeners();
+                        }
+                      },
+
                       onChiTiet: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (_) => ChiTietHoaDonTapHoa(
-                              hoaDon: vm.dsHoaDonTapHoa[index].hoaDon,
-                              phieuThu: vm.dsHoaDonTapHoa[index].phieuThu,
-                              tenNguoiMua: vm.dsHoaDonTapHoa[index].tenNguoiMua,
+                              hoaDon: vm.dsCongNoTapHoa[index].hoaDon,
+                              phieuThu: vm.dsCongNoTapHoa[index].phieuThu,
+                              tenNguoiMua: vm.dsCongNoTapHoa[index].tenNguoiMua,
                             ),
                           ),
                         );
                       },
-                      onXoa: () {},
+
+                      onXoa: () async {
+                        bool? xacNhan = await showDialog<bool>(
+                          context: context,
+                          builder: (dialogContext) {
+                            return AlertDialog(
+                              title: const Text("Xóa hóa đơn"),
+                              content: Text(
+                                "Bạn có muốn xóa hóa đơn ${vm.dsCongNoTapHoa[index].hoaDon.maHoaDon} không?",
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(dialogContext, false);
+                                  },
+                                  child: const Text("Hủy"),
+                                ),
+
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red,
+                                  ),
+                                  onPressed: () {
+                                    Navigator.pop(dialogContext, true);
+                                  },
+                                  child: const Text(
+                                    "Xóa",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+
+                        if (xacNhan == true) {
+                          vm.xoaHoaDon(
+                            vm.dsCongNoTapHoa[index].hoaDon.maHoaDon!,
+                          );
+                        }
+                      },
                     );
                   }
                 },
