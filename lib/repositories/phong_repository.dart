@@ -10,7 +10,7 @@ class PhongRepository {
   Future<List<ItemPhong>> fetchPhong() async{
     return await _phongApiClient.fetchListPhong();
   }
-  Future<bool> saveRoom(Phong room) async{
+  Future<Phong?> saveRoom(Phong room) async{
     return await _phongApiClient.SaveRoom(room);
   }
 }

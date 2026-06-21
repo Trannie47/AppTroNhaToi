@@ -1,5 +1,6 @@
 import 'package:AppTroNhaToi/models/item_phong.dart';
 import 'package:AppTroNhaToi/repositories/phong_repository.dart';
+import 'package:AppTroNhaToi/states/phong_save_state.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 
@@ -13,6 +14,9 @@ class PhongViewModel extends ChangeNotifier{
   List<ItemPhong> get listPhongTrong => _listPhong.where((phong)=> phong.trangThai==0).toList();
   List<ItemPhong> get listPhongDangThue=> _listPhong.where((phong)=> phong.trangThai==1).toList();
   List<ItemPhong> get listPhongDangSua=> _listPhong.where((phong)=> phong.trangThai==2).toList();
+
+  PhongSaveState _phongSaveState= PhongSaveInitial();
+  PhongSaveState get phongSaveState => _phongSaveState;
 
   int _currentFilter= -1;
   int get currentFilter => _currentFilter;
@@ -79,10 +83,26 @@ class PhongViewModel extends ChangeNotifier{
     _trangThai=trangThai;
     notifyListeners();
   }
-  // hàm lưu phòng chưa hoàn thành
-  void saveRoom(){
-    Phong p= Phong(phongID: 10, tenPhong: nameController.text.toString(), trangThai: _trangThai, maLoaiPhong: _idLoaiPhong,moTa: descController.text.toString());
-    print("Phong lays được là $p");
+
+  Future<void> saveRoom() async{
+    Phong p= Phong(phongID: 0, tenPhong: nameController.text.toString(), trangThai: _trangThai, maLoaiPhong: _idLoaiPhong,moTa: descController.text.toString());
+    print("phong lay duoc la $p");
+    try{
+      _phongSaveState= PhongSaveLoading();
+      notifyListeners();
+      final result= await phongRepository.saveRoom(p);
+      if(result!=null){
+        print("Phòng Lưu được là $result");
+        _phongSaveState= PhongSaveSuccess();
+      }else{
+        _phongSaveState= PhongSaveError("Không nhận được phản hồi từ hệ thống!");
+      }
+
+    }catch(e){
+      _phongSaveState = PhongSaveError(e.toString().replaceFirst('Exception: ', ''));
+    }finally{
+      notifyListeners();
+    }
   }
 
   bool kiemTraDuLieu() {

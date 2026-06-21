@@ -23,13 +23,15 @@ class PhongApiClient {
     }
   }
 
-  Future<bool> SaveRoom(Phong room)async{
+  Future<Phong?> SaveRoom(Phong room)async{
     try{
       final response= await _dio.post("phong", data: room.toMap());
       if(response.statusCode==200 || response.statusCode==201){
-        return true;
+        if(response.data!=null){
+          return Phong.fromMap(response.data);
+        }
       }
-      return false;
+      return null;
     }on DioException catch(e){
       if (kDebugMode) {
         print("Lỗi PhongApiClient");
