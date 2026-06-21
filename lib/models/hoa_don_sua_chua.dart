@@ -1,5 +1,5 @@
 class HoaDonSuaChua {
-  final int? maHoaDonSC;
+  final String? maHoaDonSC;
   final int?
   trangThai; //mặc định là 0 // 0: Đang sửa chữa, 1: Đã hoàn thành , 2: Đã thanh toán, 3: Đã hủy
   final double? giaTien;
@@ -19,7 +19,7 @@ class HoaDonSuaChua {
 
   factory HoaDonSuaChua.fromMap(Map<String, dynamic> map) {
     return HoaDonSuaChua(
-      maHoaDonSC: map['maHoaDonSC'] as int?,
+      maHoaDonSC: map['maHoaDonSC'] as String?,
       trangThai: map['TrangThai'] as int,
       giaTien: (map['giaTien'] as num?)?.toDouble(),
       loaiSua: map['loaiSua'] as int,
@@ -42,7 +42,7 @@ class HoaDonSuaChua {
   }
 
   HoaDonSuaChua copyWith({
-    int? maHoaDonSC,
+    String? maHoaDonSC,
     int? trangThai,
     double? giaTien,
     int? loaiSua,

@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/LichSuSuaChuaPage/LichSuSuaChuaPageViewModel.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/PhieuSuaChuaForm/PhieuSuaChuaForm.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietLichSuSuaChuaPage/chiTietLichSuSuaChuaPage.dart';
 import 'package:AppTroNhaToi/widgets/itemLichSuSuaChua.dart';
 import 'package:flutter/material.dart';
@@ -44,6 +45,20 @@ class _LichSuSuaChuaPageState extends State<LichSuSuaChuaPage> {
     vm.dispose();
 
     super.dispose();
+  }
+
+  //Thêm Phiếu Sửa chữa
+  void taoMoi(BuildContext context) async {
+    bool? result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => PhieuSuaChuaForm(phong: vm.phong, thietBi: vm.thietBi),
+      ),
+    );
+
+    if (result == true) {
+      //
+    }
   }
 
   @override
@@ -105,7 +120,7 @@ class _LichSuSuaChuaPageState extends State<LichSuSuaChuaPage> {
           Padding(
             padding: const EdgeInsets.only(right: 8),
             child: ElevatedButton.icon(
-              onPressed: () {},
+              onPressed: () => taoMoi(context),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xff2D7A3A),
                 foregroundColor: Colors.white,

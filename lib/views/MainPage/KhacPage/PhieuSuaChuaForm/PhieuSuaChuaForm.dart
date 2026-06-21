@@ -1,20 +1,26 @@
+import 'package:AppTroNhaToi/models/hoa_don_sua_chua.dart';
+import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/sua_chua.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/PhieuSuaChuaForm/PhieuSuaChuaFormViewModel.dart';
+import 'package:AppTroNhaToi/widgets/customDropdownSearch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
+import 'package:intl/intl.dart';
 
 class PhieuSuaChuaForm extends StatefulWidget {
+  final Phong phong;
   final ThietBi thietBi;
-  final int? phongID;
-  final String tenPhong;
+  final SuaChua? suaChua;
+  final HoaDonSuaChua? hoaDonSuaChua;
 
   const PhieuSuaChuaForm({
     super.key,
+    required this.phong,
     required this.thietBi,
-    this.phongID,
-    required this.tenPhong,
+    this.suaChua,
+    this.hoaDonSuaChua,
   });
 
   @override
@@ -27,7 +33,12 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
   @override
   void initState() {
     super.initState();
-
+    vm.init(
+      widget.phong,
+      widget.thietBi,
+      suaChuaData: widget.suaChua,
+      hoaDonData: widget.hoaDonSuaChua,
+    );
     vm.addListener(() {
       if (mounted) {
         setState(() {});
@@ -48,64 +59,58 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
 
       appBar: AppBar(
         backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
         elevation: 0,
-        leadingWidth: 70,
+        surfaceTintColor: Colors.white,
+        centerTitle: false,
+
+        leadingWidth: 52,
 
         leading: Padding(
-          padding: const EdgeInsets.only(
-            left: 18,
-            top: 8,
-            bottom: 8,
-          ),
+          padding: const EdgeInsets.only(left: 12),
           child: Container(
+            width: 40,
+            height: 40,
             decoration: const BoxDecoration(
-              color: Color(0xffF5F5F5),
+              color: Color(0xFFF5F5F5),
               shape: BoxShape.circle,
             ),
             child: IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: const Icon(
-                Icons.arrow_back_ios_new,
-                size: 18,
-                color: Colors.black,
-              ),
+              padding: EdgeInsets.zero,
+              onPressed: () => Navigator.pop(context),
+              icon: const Icon(Icons.chevron_left, color: Colors.black),
             ),
           ),
         ),
 
-        titleSpacing: 0,
+        titleSpacing: 12,
 
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              "Lập phiếu sửa chữa",
+              "Lịch sử sửa chữa",
               style: TextStyle(
-                color: Colors.black,
+                fontSize: 18,
                 fontWeight: FontWeight.w700,
-                fontSize: 22,
+                color: Colors.black,
               ),
             ),
 
             Text(
-              "${widget.thietBi.tenThietBi} · ${widget.tenPhong}",
+              "${widget.thietBi.tenThietBi} - ${widget.phong.tenPhong}",
               style: TextStyle(
-                color: Colors.grey.shade500,
-                fontSize: 12,
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey,
               ),
             ),
           ],
         ),
       ),
-
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-
             /// THÔNG TIN SỰ CỐ
             Container(
               width: double.infinity,
@@ -117,7 +122,6 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   const Text(
                     "Thông tin sự cố",
                     style: TextStyle(
@@ -134,21 +138,11 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
                     controller: vm.txtNgaySuaChua,
                     errorText: vm.errNgaySuaChua,
                     keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      MaskedInputFormatter(
-                        '##/##/####',
-                      )
-                    ],
+                    inputFormatters: [MaskedInputFormatter('##/##/####')],
                     suffixIcon: IconButton(
-                      icon: const Icon(
-                        Icons.calendar_today_outlined,
-                        size: 20,
-                      ),
+                      icon: const Icon(Icons.calendar_today_outlined, size: 20),
                       onPressed: () async {
-                        await vm.chonNgay(
-                          context,
-                          vm.txtNgaySuaChua,
-                        );
+                        await vm.chonNgay(context, vm.txtNgaySuaChua);
                       },
                     ),
                   ),
@@ -169,17 +163,13 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
 
             /// TẠO HÓA ĐƠN
             Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 18,
-                vertical: 8,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Row(
                 children: [
-
                   const Expanded(
                     child: Text(
                       "Tạo hóa đơn",
@@ -214,7 +204,6 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-
                     const Text(
                       "Thông tin hóa đơn",
                       style: TextStyle(
@@ -232,21 +221,14 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
                       errorText: vm.errNgayHoaDon,
 
                       keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        MaskedInputFormatter(
-                          '##/##/####',
-                        ),
-                      ],
+                      inputFormatters: [MaskedInputFormatter('##/##/####')],
                       suffixIcon: IconButton(
                         icon: const Icon(
                           Icons.calendar_today_outlined,
                           size: 20,
                         ),
                         onPressed: () async {
-                          await vm.chonNgay(
-                            context,
-                            vm.txtNgayHoaDon,
-                          );
+                          await vm.chonNgay(context, vm.txtNgayHoaDon);
                         },
                       ),
                     ),
@@ -264,106 +246,55 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
 
                     const SizedBox(height: 18),
 
-                    const Text(
-                      "Loại sửa chữa",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xff4A4A4A),
-                      ),
-                    ),
-
-                    const SizedBox(height: 8),
-
-                    DropdownButtonFormField<String>(
-                      value: vm.loaiSuaChua,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 18,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(
-                            color: Color(0xffE5E5E5),
+                    /// Dropdown Loại sửa chữa
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 8,
+                      children: [
+                        Text(
+                          "Loai Sửa Chửa",
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(
-                            color: Color(0xff2D7A3A),
-                          ),
+                        CustomDropdownSearch<int>(
+                          items: vm.dsLoaiSua.keys.toList(),
+                          selectedItem: vm.loaiSua!,
+                          itemAsString: (item) => vm.dsLoaiSua[item]!,
+                          onChanged: (value) {
+                            if (value != null) {
+                              vm.setLoaiSua(value);
+                            }
+                          },
                         ),
-                      ),
-                      hint: const Text(
-                        "Chọn loại sửa chữa",
-                      ),
-                      items: vm.dsLoaiSuaChua
-                          .map(
-                            (e) => DropdownMenuItem(
-                              value: e,
-                              child: Text(e),
-                            ),
-                          )
-                          .toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          vm.loaiSuaChua = value;
-                        });
-                      },
+                      ],
                     ),
-
                     const SizedBox(height: 18),
 
-                    const Text(
-                      "Trạng thái",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xff4A4A4A),
-                      ),
-                    ),
-
-                    const SizedBox(height: 8),
-
-                    DropdownButtonFormField<String>(
-                      value: vm.trangThai,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 18,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(
-                            color: Color(0xffE5E5E5),
+                    /// Dropdown trạng thái
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 8,
+                      children: [
+                        Text(
+                          "Trạng thái",
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(
-                            color: Color(0xff2D7A3A),
-                          ),
+                        CustomDropdownSearch<int>(
+                          items: vm.dsTrangThai.keys.toList(),
+                          selectedItem: vm.trangThai,
+                          itemAsString: (item) => vm.dsTrangThai[item]!,
+                          onChanged: (value) {
+                            if (value != null) {
+                              vm.setTrangThai(value);
+                            }
+                          },
                         ),
-                      ),
-                      hint: const Text(
-                        "Chọn trạng thái",
-                      ),
-                      items: vm.dsTrangThai
-                          .map(
-                            (e) => DropdownMenuItem(
-                              value: e,
-                              child: Text(e),
-                            ),
-                          )
-                          .toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          vm.trangThai = value;
-                        });
-                      },
+                      ],
                     ),
                   ],
                 ),
@@ -375,12 +306,7 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
       ),
 
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.fromLTRB(
-          16,
-          10,
-          16,
-          20,
-        ),
+        padding: const EdgeInsets.fromLTRB(16, 10, 16, 20),
         child: SizedBox(
           height: 56,
           child: ElevatedButton(
@@ -392,21 +318,41 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
               ),
             ),
             onPressed: () {
-
               if (vm.kiemTraDuLieu()) {
-
                 SuaChua suaChua = SuaChua(
-                  phongID: widget.phongID,
+                  id: vm.maSuaChua,
+                  phongID: widget.phong.phongID,
                   nguyenNhan: vm.txtNguyenNhan.text,
-                  ngaySuaChua: vm.chuyenNgay(
-                    vm.txtNgaySuaChua.text,
-                  ),
+                  ngaySuaChua: DateFormat(
+                    "dd/MM/yyyy",
+                  ).parse(vm.txtNgaySuaChua.text),
                 );
 
-                Navigator.pop(
-                  context,
-                  suaChua,
-                );
+                HoaDonSuaChua? hd;
+
+                if (vm.taoHoaDon) {
+                  hd = HoaDonSuaChua(
+                    maHoaDonSC: vm.daTaoHoaDon ? vm.maHoaDon! : null,
+                    idSuaChua: vm.maSuaChua,
+                    ngayLapHoaDonSC: DateFormat(
+                      "dd/MM/yyyy",
+                    ).parse(vm.txtNgayHoaDon.text),
+                    giaTien: double.tryParse(vm.txtChiPhi.text) ?? 0,
+                    loaiSua: vm.loaiSua,
+                    trangThai: vm.trangThai,
+                  );
+                }
+                print(hd);
+                if (vm.maSuaChua != null) {
+                  print('Cập nhật');
+                } else {
+                  print('Tạo mới');
+                }
+
+                Navigator.pop(context, {
+                  'suaChua': suaChua,
+                  'hoaDonSuaChua': hd,
+                });
               }
 
               setState(() {});
@@ -426,7 +372,6 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
   }
 
   @override
-
   Widget _input({
     required String title,
     String? hint,
@@ -441,11 +386,10 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-
         Text(
           title,
           style: const TextStyle(
-            fontSize: 14,
+            fontSize: 12,
             fontWeight: FontWeight.w600,
             color: Color(0xff4A4A4A),
           ),
@@ -472,35 +416,27 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
 
             contentPadding: EdgeInsets.symmetric(
               horizontal: 16,
-              vertical: maxLines > 1 ? 16 : 18,
+              vertical: maxLines > 1 ? 14 : 14,
             ),
 
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(
-                color: Color(0xffE5E5E5),
-              ),
+              borderSide: const BorderSide(color: Color(0xffE5E5E5)),
             ),
 
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(
-                color: Color(0xff2D7A3A),
-              ),
+              borderSide: const BorderSide(color: Color(0xff2D7A3A)),
             ),
 
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(
-                color: Colors.red,
-              ),
+              borderSide: const BorderSide(color: Colors.red),
             ),
 
             focusedErrorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(
-                color: Colors.red,
-              ),
+              borderSide: const BorderSide(color: Colors.red),
             ),
           ),
         ),
@@ -509,15 +445,10 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
           const SizedBox(height: 4),
 
           Padding(
-            padding: const EdgeInsets.only(
-              left: 8,
-            ),
+            padding: const EdgeInsets.only(left: 8),
             child: Text(
               errorText,
-              style: const TextStyle(
-                color: Colors.red,
-                fontSize: 11,
-              ),
+              style: const TextStyle(color: Colors.red, fontSize: 11),
             ),
           ),
         ],
@@ -525,7 +456,3 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
     );
   }
 }
-
-
-
-

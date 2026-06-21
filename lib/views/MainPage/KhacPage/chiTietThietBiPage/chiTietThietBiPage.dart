@@ -35,7 +35,6 @@ class ChiTietThietBiPage extends StatefulWidget {
 
 class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
   late ChiTietThietBiPageViewModel vm;
-  bool hienMenu = false;
 
   @override
   void initState() {
@@ -115,7 +114,7 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
 
                 onPressed: () {
                   setState(() {
-                    hienMenu = !hienMenu;
+                    vm.hienMenu = !vm.hienMenu;
                   });
                 },
               ),
@@ -127,9 +126,9 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
       body: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: () {
-          if (hienMenu) {
+          if (vm.hienMenu) {
             setState(() {
-              hienMenu = false;
+              vm.hienMenu = false;
             });
           }
         },
@@ -380,7 +379,8 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
                 ],
               ),
             ),
-            if (hienMenu) Positioned(top: 12, right: 16, child: _buildMenu()),
+            if (vm.hienMenu)
+              Positioned(top: 12, right: 16, child: _buildMenu()),
           ],
         ),
       ),
@@ -525,7 +525,7 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
               subTitle: "Sửa tên, loại,...",
               onTap: () async {
                 setState(() {
-                  hienMenu = false;
+                  vm.hienMenu = false;
                 });
 
                 final result = await Navigator.push(
@@ -560,7 +560,7 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
 
               onTap: () async {
                 setState(() {
-                  hienMenu = false;
+                  vm.hienMenu = false;
                 });
 
                 await Future.delayed(const Duration(milliseconds: 150));
@@ -586,7 +586,7 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
 
               onTap: () {
                 setState(() {
-                  hienMenu = false;
+                  vm.hienMenu = false;
                 });
 
                 _showXoaDialog();
@@ -618,9 +618,7 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
                       builder: (_) => PhieuSuaChuaForm(
                         thietBi: vm.thietBi,
 
-                        phongID: vm.phongHienTai?.phongID,
-
-                        tenPhong: vm.phongHienTai?.tenPhong ?? "",
+                        phong: vm.phongHienTai!,
                       ),
                     ),
                   );

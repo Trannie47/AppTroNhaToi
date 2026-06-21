@@ -11,6 +11,7 @@ class ChiTietThietBiPageViewModel extends ChangeNotifier {
   late List<Phong> dsPhong;
   late List<LapRap> dsLapRap;
   late ThietBi thietBi;
+  bool hienMenu = false;
 
   late List<ThietBi> dsThietBi;
 
@@ -124,7 +125,7 @@ class ChiTietThietBiPageViewModel extends ChangeNotifier {
       ngaySuaChua: DateTime(2024, 1, 15),
     );
     final hd1 = HoaDonSuaChua(
-      maHoaDonSC: 5001,
+      maHoaDonSC: 'PSC20260120001',
       trangThai: 2,
       giaTien: 750000,
       loaiSua: 3,
@@ -139,7 +140,7 @@ class ChiTietThietBiPageViewModel extends ChangeNotifier {
       ngaySuaChua: DateTime(2023, 11, 5),
     );
     final hd2 = HoaDonSuaChua(
-      maHoaDonSC: 5002,
+      maHoaDonSC: 'PSC20260130002',
       trangThai: 1,
       giaTien: 450000,
       loaiSua: 1,

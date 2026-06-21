@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 String formatDateVN(DateTime date) {
   const days = [
     "Chủ Nhật",
@@ -24,11 +26,11 @@ String formatDate(DateTime? date) {
 }
 
 String? kiemTraNgay(
-    String text, {
-      int minYear = 1900,
-      int? maxYear,
-      bool khongLonHonHienTai = false,
-    }) {
+  String text, {
+  int minYear = 1900,
+  int? maxYear,
+  bool khongLonHonHienTai = false,
+}) {
   if (text.trim().isEmpty) {
     return "Vui lòng nhập ngày";
   }
@@ -54,20 +56,13 @@ String? kiemTraNgay(
       return "Tháng phải từ 1 đến 12";
     }
 
-    DateTime date = DateTime(
-      year,
-      month,
-      day,
-    );
+    DateTime date = DateTime(year, month, day);
 
-    if (date.day != day ||
-        date.month != month ||
-        date.year != year) {
+    if (date.day != day || date.month != month || date.year != year) {
       return "Ngày không hợp lệ";
     }
 
-    if (khongLonHonHienTai &&
-        date.isAfter(DateTime.now())) {
+    if (khongLonHonHienTai && date.isAfter(DateTime.now())) {
       return "Ngày không được lớn hơn hôm nay";
     }
 
@@ -76,12 +71,23 @@ String? kiemTraNgay(
     return "Ngày không hợp lệ";
   }
 }
+
 DateTime chuyenNgay(String text) {
   List<String> arr = text.split('/');
 
-  return DateTime(
-    int.parse(arr[2]),
-    int.parse(arr[1]),
-    int.parse(arr[0]),
+  return DateTime(int.parse(arr[2]), int.parse(arr[1]), int.parse(arr[0]));
+}
+
+Future<DateTime?> chonNgayChuan(
+  BuildContext context, {
+  DateTime? initialDate,
+  DateTime? firstDate,
+  DateTime? lastDate,
+}) async {
+  return await showDatePicker(
+    context: context,
+    initialDate: initialDate ?? DateTime.now(),
+    firstDate: firstDate ?? DateTime(2020),
+    lastDate: lastDate ?? DateTime(2100),
   );
 }

@@ -33,7 +33,7 @@ class LichSuSuaChuaPageViewModel extends ChangeNotifier {
           ngaySuaChua: DateTime(2024, 5, 10),
         ),
         hoaDonSuaChua: HoaDonSuaChua(
-          maHoaDonSC: 7001,
+          maHoaDonSC: 'PSC20260120001',
           trangThai: 2,
           giaTien: 650000,
           loaiSua: 3,
@@ -50,7 +50,7 @@ class LichSuSuaChuaPageViewModel extends ChangeNotifier {
           ngaySuaChua: DateTime(2024, 4, 2),
         ),
         hoaDonSuaChua: HoaDonSuaChua(
-          maHoaDonSC: 7002,
+          maHoaDonSC: 'PSC20260120003',
           trangThai: 1,
           giaTien: 200000,
           loaiSua: 0,
@@ -67,7 +67,7 @@ class LichSuSuaChuaPageViewModel extends ChangeNotifier {
           ngaySuaChua: DateTime(2024, 3, 18),
         ),
         hoaDonSuaChua: HoaDonSuaChua(
-          maHoaDonSC: 7003,
+          maHoaDonSC: 'PSC20260120004',
           trangThai: 2,
           giaTien: 300000,
           loaiSua: 4,
@@ -93,7 +93,7 @@ class LichSuSuaChuaPageViewModel extends ChangeNotifier {
           ngaySuaChua: DateTime(2023, 10, 20),
         ),
         hoaDonSuaChua: HoaDonSuaChua(
-          maHoaDonSC: 7005,
+          maHoaDonSC: 'PSC20260120005',
           trangThai: 2,
           giaTien: 120000,
           loaiSua: 3,

@@ -1,3 +1,6 @@
+import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
+
 String formatMoneyShort(num value) {
   if (value >= 1000000000) {
     double v = value / 1000000000;
@@ -26,4 +29,29 @@ String formatMoney(num? value) {
     return "0đ";
   }
   return "${value.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}đ";
+}
+
+class DinhDangGiaVN extends TextInputFormatter {
+  final NumberFormat formatter = NumberFormat('#,###', 'vi_VN');
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    if (newValue.text.isEmpty) {
+      return newValue;
+    }
+
+    String digits = newValue.text.replaceAll('.', '');
+
+    int value = int.parse(digits);
+
+    String newText = formatter.format(value).replaceAll(',', '.');
+
+    return TextEditingValue(
+      text: newText,
+      selection: TextSelection.collapsed(offset: newText.length),
+    );
+  }
 }

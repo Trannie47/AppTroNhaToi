@@ -5,6 +5,7 @@ import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/sua_chua.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/chiTietLichSuSuaChuaPage/chiTietLichSuSuaChuaPageViewModel.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/PhieuSuaChuaForm/PhieuSuaChuaForm.dart';
 import 'package:flutter/material.dart';
 
 class ChiTietLichSuSuaChuaPage extends StatefulWidget {
@@ -47,6 +48,27 @@ class _ChiTietLichSuSuaChuaPageState extends State<ChiTietLichSuSuaChuaPage> {
     vm.dispose();
 
     super.dispose();
+  }
+
+  Future<void> capNhatThongTin() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => PhieuSuaChuaForm(
+          phong: widget.phong,
+          thietBi: widget.thietBi,
+          suaChua: vm.suaChua,
+          hoaDonSuaChua: vm.hoaDonSuaChua,
+        ),
+      ),
+    );
+
+    if (result != null) {
+      setState(() {
+        vm.suaChua = result['suaChua'];
+        vm.hoaDonSuaChua = result['hoaDonSuaChua'];
+      });
+    }
   }
 
   Widget _infoRow(
@@ -156,11 +178,30 @@ class _ChiTietLichSuSuaChuaPageState extends State<ChiTietLichSuSuaChuaPage> {
         ),
 
         actions: [
-          PopupMenuButton(
+          PopupMenuButton<String>(
+            color: Colors.white,
+            elevation: 8,
+            offset: const Offset(0, 64),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+
+            onSelected: (value) {
+              switch (value) {
+                case "update":
+                  capNhatThongTin(); // gọi hàm cập nhật
+                  break;
+
+                case "delete":
+                  // xoaChiTiet(); // gọi hàm xóa
+                  break;
+              }
+            },
+
             icon: const Icon(Icons.more_vert),
 
             itemBuilder: (context) => [
-              PopupMenuItem(
+              PopupMenuItem<String>(
                 value: "update",
                 child: ListTile(
                   contentPadding: EdgeInsets.zero,
@@ -173,7 +214,7 @@ class _ChiTietLichSuSuaChuaPageState extends State<ChiTietLichSuSuaChuaPage> {
                 ),
               ),
 
-              PopupMenuItem(
+              PopupMenuItem<String>(
                 value: "delete",
                 child: ListTile(
                   contentPadding: EdgeInsets.zero,
