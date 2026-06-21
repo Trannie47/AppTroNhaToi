@@ -82,7 +82,7 @@ class _FormPhongState extends State<FormPhong> {
         trangThai: state.phong.trangThai,
         moTa: state.phong.moTa ?? '',
         maLoaiPhong: state.phong.maLoaiPhong,
-        loaiPhong: selectedLoai!,
+        loaiPhong: selectedLoai,
         dsHopDong: [],
         giahientai: selectedLoai.giaTien.toDouble()
       );
@@ -258,13 +258,29 @@ class _FormPhongState extends State<FormPhong> {
                                   ),
                                   const SizedBox(width: 10),
                                   Expanded(
-                                    child: _statusItem(
-                                      title: "Đang thuê",
-                                      color: Colors.orange,
-                                      selected: phongViewModel.trangThai == 1,
-                                      onTap: () =>
-                                          phongViewModel.setTrangThai(1),
-                                    ),
+                                    child: Opacity(
+                                        opacity: isEdit ? 1.0 : 0.4,
+                                      child: _statusItem(
+                                        title: "Đang thuê",
+                                        color: Colors.orange,
+                                        selected: phongViewModel.trangThai == 1,
+                                        onTap: isEdit ?
+                                            () => phongViewModel.setTrangThai(1)
+                                            : (){
+                                          ScaffoldMessenger.of(context).clearSnackBars();
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                "Trạng thái 'Đang thuê' sẽ tự động kích hoạt khi bạn lập Hợp đồng cho phòng này!",
+                                                style: TextStyle(fontWeight: FontWeight.w500),
+                                              ),
+                                              backgroundColor: Color(0xFF1E293B),
+                                              duration: Duration(seconds: 3),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    )
                                   ),
                                   const SizedBox(width: 10),
                                   Expanded(
