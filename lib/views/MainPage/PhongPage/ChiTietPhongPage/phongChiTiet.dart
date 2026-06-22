@@ -1,5 +1,10 @@
+import 'package:AppTroNhaToi/core/utils/string_formatter.dart';
 import 'package:AppTroNhaToi/models/item_phong.dart';
+import 'package:AppTroNhaToi/view_models/nguoithue_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../../../states/NguoiThueState.dart';
 
 class PhongChiTiet extends StatefulWidget {
   final ItemPhong room;
@@ -14,9 +19,18 @@ class PhongChiTiet extends StatefulWidget {
 
 }
   class _PhongChiTiet extends State<PhongChiTiet> {
+  late NguoithueViewModel nguoithueViewModel;
+  @override
+  void initState(){
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_){
+     Provider.of<NguoithueViewModel>(context, listen: false).getListNguoiThueFromIdPhong(widget.room.phongId);
+    });
+  }
     @override
     Widget build(BuildContext context) {
       final room = widget.room;
+      nguoithueViewModel= Provider.of<NguoithueViewModel>(context);
       // Lấy ra các màu sắc và văn bản trạng thái trực tiếp từ thuộc tính trangThai của room
       Color statusColor = _getTrangThaiColor(room.trangThai);
       String statusText = _getTrangThaiText(room.trangThai);
@@ -137,25 +151,70 @@ class PhongChiTiet extends StatefulWidget {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: const Column(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "Người thuê hiện tại (0)",
-                      style: TextStyle(color: Color(0xFF2D7A3A),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14),
-                    ),
-                    SizedBox(height: 20),
-                    Center(
-                      child: Text(
-                        "Phòng hiện đang trống, chưa có người thuê.",
-                        style: TextStyle(color: Colors.grey,
-                            fontSize: 13,
-                            fontStyle: FontStyle.italic),
-                      ),
-                    ),
-                    SizedBox(height: 10),
+                    ...switch (nguoithueViewModel.nguoiThueState){
+                      NguoiThueLoading() => [
+                        const Text("Người thuê hiện tại (...)", style: TextStyle(color: Color(0xFF2D7A3A), fontWeight: FontWeight.bold, fontSize: 14)),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 24),
+                          child: Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF2D7A3A)))),
+                        )
+                      ],
+                      NguoiThueError(errorMessage: final msg) => [
+                        const Text("Người thuê hiện tại (Lỗi)", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 14)),
+                        const SizedBox(height: 10),
+                        Center(
+                          child: TextButton.icon(
+                            onPressed: () {
+                              nguoithueViewModel.getListNguoiThueFromIdPhong(room.phongId);
+                            },
+                            icon: const Icon(Icons.refresh, color: Colors.red),
+                            label: Text("Lỗi: $msg. Thử lại?", style: const TextStyle(color: Colors.red)),
+                          ),
+                        )
+                      ],
+                      NguoiThueSuccess(listNguoithue: final dsKhach) => [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Người thuê hiện tại (${dsKhach.length})",
+                              style: const TextStyle(color: Color(0xFF2D7A3A), fontWeight: FontWeight.bold, fontSize: 14),
+                            ),
+                            if (dsKhach.isNotEmpty)
+                              const Text(
+                                "Xem tất cả ›",
+                                style: TextStyle(color: Color(0xFF2D7A3A), fontSize: 13, fontWeight: FontWeight.w600),
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        if (dsKhach.isEmpty)
+                          const Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 12),
+                              child: Text(
+                                "Phòng hiện đang trống, chưa có người thuê.",
+                                style: TextStyle(color: Colors.grey, fontSize: 13, fontStyle: FontStyle.italic),
+                              ),
+                            ),
+                          )
+                        else
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: dsKhach.length,
+                            itemBuilder: (context, index) {
+                              final khach = dsKhach[index];
+                              final isLastItem = index == dsKhach.length - 1;
+
+                              return _itemNguoiThue(khach: khach, isLastItem: isLastItem);
+                            },
+                          ),
+                      ],
+                    }
                   ],
                 ),
               ),
@@ -287,4 +346,53 @@ class PhongChiTiet extends StatefulWidget {
       }
       return buffer.toString();
     }
+
+  Widget _itemNguoiThue({required dynamic khach, required bool isLastItem}) {
+    String initials = vietTat(khach.hoTen);
+
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          child: Row(
+            children: [
+
+              CircleAvatar(
+                radius: 24,
+                backgroundColor: const Color(0xFFE2ECFF),
+                child: Text(
+                  initials,
+                  style: const TextStyle(
+                    color: const Color(0xFF2563EB),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 14),
+
+              // Thông tin chữ
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      khach.hoTen ?? 'Chưa rõ họ tên',
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.black87),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      "${khach.sdt ?? 'Không có SĐT'}",
+                      style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (!isLastItem) Divider(color: Colors.grey.shade100, height: 1, indent: 62),
+      ],
+    );
+  }
 }

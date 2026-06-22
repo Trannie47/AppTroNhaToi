@@ -1,6 +1,8 @@
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/repositories/nguoithue_repository.dart';
+import 'package:AppTroNhaToi/states/NguoiThueState.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 
 class NguoithueViewModel extends ChangeNotifier{
   final NguoithueRepository nguoithueRepository= NguoithueRepository();
@@ -22,6 +24,8 @@ class NguoithueViewModel extends ChangeNotifier{
   bool _isLoading= false;
   bool get isLoading => _isLoading;
 
+  NguoiThueState _nguoiThueState= NguoiThueLoading();
+  NguoiThueState get nguoiThueState => _nguoiThueState;
   Future<void> fetchAllNguoiThue() async {
 
     if(_isLoading) return;  // Nếu hệ thống đang load thì ko cho spam gọi api
@@ -135,4 +139,20 @@ class NguoithueViewModel extends ChangeNotifier{
     }
   }
 
+  Future<void> getListNguoiThueFromIdPhong(int idPhong)async{
+    _nguoiThueState= NguoiThueLoading();
+    notifyListeners();
+    try{
+      final result= await nguoithueRepository.getListNguoiThueFromIdPhong(idPhong);
+      _nguoiThueState= NguoiThueSuccess(result);
+      if (kDebugMode) {
+        print("ds nguoi thue lay duoc trong phong la $result");
+      }
+    }catch(e){
+      print("Lỗi NguoiThueViewModel $e");
+      _nguoiThueState= NguoiThueError(e.toString().replaceFirst('Exception: ', ''));
+    }finally{
+      notifyListeners();
+    }
+  }
 }

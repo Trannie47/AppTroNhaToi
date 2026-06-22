@@ -19,4 +19,7 @@ class NguoithueRepository {
     return await nguoiThueApiClient.xoaNguoiThue(idnt);
   }
 
+  Future<List<NguoiThue>> getListNguoiThueFromIdPhong(int idPhong) async{
+    return await nguoiThueApiClient.getListNguoiThueFromIdPhong(idPhong);
+  }
 }
