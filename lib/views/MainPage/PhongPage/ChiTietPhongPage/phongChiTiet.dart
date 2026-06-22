@@ -1,8 +1,8 @@
-import 'package:AppTroNhaToi/models/item_phong.dart'; // Import model ItemPhong xịn của Tài
+import 'package:AppTroNhaToi/models/item_phong.dart';
 import 'package:flutter/material.dart';
 
-class PhongChiTiet extends StatelessWidget {
-  final ItemPhong room; // 🟢 Nhận nguyên cục dữ liệu ItemPhong từ màn hình ngoài truyền vào
+class PhongChiTiet extends StatefulWidget {
+  final ItemPhong room;
 
   const PhongChiTiet({
     super.key,
@@ -10,241 +10,281 @@ class PhongChiTiet extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    // Lấy ra các màu sắc và văn bản trạng thái trực tiếp từ thuộc tính trangThai của room
-    Color statusColor = _getTrangThaiColor(room.trangThai);
-    String statusText = _getTrangThaiText(room.trangThai);
+  State<PhongChiTiet> createState() => _PhongChiTiet();
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFF6F7F8),
+}
+  class _PhongChiTiet extends State<PhongChiTiet> {
+    @override
+    Widget build(BuildContext context) {
+      final room = widget.room;
+      // Lấy ra các màu sắc và văn bản trạng thái trực tiếp từ thuộc tính trangThai của room
+      Color statusColor = _getTrangThaiColor(room.trangThai);
+      String statusText = _getTrangThaiText(room.trangThai);
 
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.chevron_left, size: 28, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text(
-          "Phòng ${room.tenPhong}",
-          style: const TextStyle(
-            color: Colors.black,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+      return Scaffold(
+        backgroundColor: const Color(0xFFF6F7F8),
+
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.chevron_left, size: 28, color: Colors.black),
+            onPressed: () => Navigator.of(context).pop(),
           ),
-        ),
-        centerTitle: false,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.more_vert, color: Colors.black),
-            onPressed: () {
-              // Các tùy chọn mở rộng tính sau
-            },
+          title: Text(
+            "Phòng ${room.tenPhong}",
+            style: const TextStyle(
+              color: Colors.black,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ],
-      ),
-
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-
-            //  BANNER TRẠNG THÁI
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              decoration: BoxDecoration(
-                color: statusColor.withOpacity(0.08),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: statusColor.withOpacity(0.2), width: 1),
-              ),
-              child: Row(
-                children: [
-                  CircleAvatar(radius: 5, backgroundColor: statusColor),
-                  const SizedBox(width: 10),
-                  Text(
-                    statusText,
-                    style: TextStyle(
-                      color: statusColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // hàng chức năng tiện ích
-            _buildQuickActionsRow(),
-            const SizedBox(height: 20),
-
-            // Thông tin phòng trọ
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Thông tin phòng",
-                    style: TextStyle(color: Color(0xFF2D7A3A), fontWeight: FontWeight.bold, fontSize: 14),
-                  ),
-                  const SizedBox(height: 12),
-                  _infoLine(label: "Loại phòng", value: room.loaiPhong.tenLoaiPhong),
-                  _infoLine(label: "Diện tích", value: "${room.loaiPhong.dienTich.toInt()} m²"),
-                  _infoLine(
-                      label: "Giá thuê",
-                      value: "${_formatCurrency(room.giahientai)}đ/tháng", // Dùng biến giahientai của Tài
-                      valueColor: const Color(0xFF2D7A3A),
-                      isBold: true
-                  ),
-                  _infoLine(label: "Số người tối đa", value: "${room.loaiPhong.soNguoiToiDa} người"),
-                  _infoLine(label: "Máy lạnh", value: room.loaiPhong.isMayLanh ? "Có" : "Không"),
-                  _infoLine(label: "Mô tả", value: room.moTa.isEmpty ? "Không có mô tả" : room.moTa, isLast: true),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            //Danh sách người đang thuê phòng này
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Người thuê hiện tại (0)",
-                    style: TextStyle(color: Color(0xFF2D7A3A), fontWeight: FontWeight.bold, fontSize: 14),
-                  ),
-                  SizedBox(height: 20),
-                  Center(
-                    child: Text(
-                      "Phòng hiện đang trống, chưa có người thuê.",
-                      style: TextStyle(color: Colors.grey, fontSize: 13, fontStyle: FontStyle.italic),
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                ],
-              ),
+          centerTitle: false,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.more_vert, color: Colors.black),
+              onPressed: () {
+                // Các tùy chọn mở rộng tính sau
+              },
             ),
           ],
         ),
-      ),
-    );
-  }
 
-  // Hàng chức năng tiện ích cho phong
-  Widget _buildQuickActionsRow() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          _actionChip(title: "Ghi điện nước", icon: Icons.flash_on, isActive: true, onTap: () {}),
-          const SizedBox(width: 8),
-          _actionChip(title: "Tạo hóa đơn", icon: Icons.receipt_long, isActive: false, onTap: () {}),
-          const SizedBox(width: 8),
-          _actionChip(title: "Hợp đồng", icon: Icons.assignment, isActive: false, onTap: () {}),
-          const SizedBox(width: 8),
-          _actionChip(title: "Lịch sử thuê", icon: Icons.history, isActive: false, onTap: () {}),
-        ],
-      ),
-    );
-  }
-
-  Widget _actionChip({
-    required String title,
-    required IconData icon,
-    required bool isActive,
-    required VoidCallback onTap,
-  }) {
-    Color mainColor = const Color(0xFF2D7A3A);
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: isActive ? mainColor : Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: isActive ? mainColor : Colors.grey.shade300, width: 1.2),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, size: 16, color: isActive ? Colors.white : Colors.black54),
-          const SizedBox(width: 6),
-          Text(
-            title,
-            style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: isActive ? Colors.white : Colors.black.withOpacity(0.7)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _infoLine({
-    required String label,
-    required String value,
-    Color? valueColor,
-    bool isBold = false,
-    bool isLast = false,
-  }) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: const TextStyle(color: Colors.black54, fontSize: 14)),
-              Expanded(
-                child: Text(
-                  value,
-                  textAlign: TextAlign.right,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-                    color: valueColor ?? Colors.black87,
-                  ),
+
+              //  BANNER TRẠNG THÁI
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16, vertical: 14),
+                decoration: BoxDecoration(
+                  color: statusColor.withOpacity(0.08),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                      color: statusColor.withOpacity(0.2), width: 1),
+                ),
+                child: Row(
+                  children: [
+                    CircleAvatar(radius: 5, backgroundColor: statusColor),
+                    const SizedBox(width: 10),
+                    Text(
+                      statusText,
+                      style: TextStyle(
+                        color: statusColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // hàng chức năng tiện ích
+              _buildQuickActionsRow(),
+              const SizedBox(height: 20),
+
+              // Thông tin phòng trọ
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Thông tin phòng",
+                      style: TextStyle(color: Color(0xFF2D7A3A),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14),
+                    ),
+                    const SizedBox(height: 12),
+                    _infoLine(label: "Loại phòng",
+                        value: room.loaiPhong.tenLoaiPhong),
+                    _infoLine(label: "Diện tích",
+                        value: "${room.loaiPhong.dienTich.toInt()} m²"),
+                    _infoLine(
+                        label: "Giá thuê",
+                        value: "${_formatCurrency(room.giahientai)}đ/tháng",
+                        // Dùng biến giahientai của Tài
+                        valueColor: const Color(0xFF2D7A3A),
+                        isBold: true
+                    ),
+                    _infoLine(label: "Số người tối đa",
+                        value: "${room.loaiPhong.soNguoiToiDa} người"),
+                    _infoLine(label: "Máy lạnh",
+                        value: room.loaiPhong.isMayLanh ? "Có" : "Không"),
+                    _infoLine(label: "Mô tả",
+                        value: room.moTa.isEmpty ? "Không có mô tả" : room.moTa,
+                        isLast: true),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              //Danh sách người đang thuê phòng này
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Người thuê hiện tại (0)",
+                      style: TextStyle(color: Color(0xFF2D7A3A),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14),
+                    ),
+                    SizedBox(height: 20),
+                    Center(
+                      child: Text(
+                        "Phòng hiện đang trống, chưa có người thuê.",
+                        style: TextStyle(color: Colors.grey,
+                            fontSize: 13,
+                            fontStyle: FontStyle.italic),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                  ],
                 ),
               ),
             ],
           ),
         ),
-        if (!isLast) Divider(color: Colors.grey.shade100, height: 1),
-      ],
-    );
-  }
-
-  // màu trạng thái phòng
-  Color _getTrangThaiColor(int status) {
-    if (status == 0) return Colors.green;
-    if (status == 1) return Colors.orange;
-    return Colors.red;
-  }
-
-  // chữ trạng thái phòng
-  String _getTrangThaiText(int status) {
-    if (status == 0) return "Còn trống";
-    if (status == 1) return "Đang cho thuê";
-    return "Đang sửa chữa";
-  }
-
-  String _formatCurrency(double amount) {
-    final n = amount.toInt();
-    final s = n.toString();
-    final buffer = StringBuffer();
-    for (int i = 0; i < s.length; i++) {
-      if (i > 0 && (s.length - i) % 3 == 0) buffer.write(',');
-      buffer.write(s[i]);
+      );
     }
-    return buffer.toString();
-  }
+
+
+    // Hàng chức năng tiện ích cho phong
+    Widget _buildQuickActionsRow() {
+      return SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            _actionChip(title: "Ghi điện nước",
+                icon: Icons.flash_on,
+                isActive: true,
+                onTap: () {}),
+            const SizedBox(width: 8),
+            _actionChip(title: "Tạo hóa đơn",
+                icon: Icons.receipt_long,
+                isActive: false,
+                onTap: () {}),
+            const SizedBox(width: 8),
+            _actionChip(title: "Hợp đồng",
+                icon: Icons.assignment,
+                isActive: false,
+                onTap: () {}),
+            const SizedBox(width: 8),
+            _actionChip(title: "Lịch sử thuê",
+                icon: Icons.history,
+                isActive: false,
+                onTap: () {}),
+          ],
+        ),
+      );
+    }
+
+    Widget _actionChip({
+      required String title,
+      required IconData icon,
+      required bool isActive,
+      required VoidCallback onTap,
+    }) {
+      Color mainColor = const Color(0xFF2D7A3A);
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isActive ? mainColor : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+              color: isActive ? mainColor : Colors.grey.shade300, width: 1.2),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 16,
+                color: isActive ? Colors.white : Colors.black54),
+            const SizedBox(width: 6),
+            Text(
+              title,
+              style: TextStyle(fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: isActive ? Colors.white : Colors.black.withOpacity(
+                      0.7)),
+            ),
+          ],
+        ),
+      );
+    }
+
+    Widget _infoLine({
+      required String label,
+      required String value,
+      Color? valueColor,
+      bool isBold = false,
+      bool isLast = false,
+    }) {
+      return Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(label, style: const TextStyle(
+                    color: Colors.black54, fontSize: 14)),
+                Expanded(
+                  child: Text(
+                    value,
+                    textAlign: TextAlign.right,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+                      color: valueColor ?? Colors.black87,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (!isLast) Divider(color: Colors.grey.shade100, height: 1),
+        ],
+      );
+    }
+
+    // màu trạng thái phòng
+    Color _getTrangThaiColor(int status) {
+      if (status == 0) return Colors.green;
+      if (status == 1) return Colors.orange;
+      return Colors.red;
+    }
+
+    // chữ trạng thái phòng
+    String _getTrangThaiText(int status) {
+      if (status == 0) return "Còn trống";
+      if (status == 1) return "Đang cho thuê";
+      return "Đang sửa chữa";
+    }
+
+    String _formatCurrency(double amount) {
+      final n = amount.toInt();
+      final s = n.toString();
+      final buffer = StringBuffer();
+      for (int i = 0; i < s.length; i++) {
+        if (i > 0 && (s.length - i) % 3 == 0) buffer.write(',');
+        buffer.write(s[i]);
+      }
+      return buffer.toString();
+    }
 }
