@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/utils/launcher_utils.dart';
 import '../../../../states/chi_tiet_nguoi_thue_state.dart';
+import '../../../../widgets/app_error.dart';
 
 class ChiTietNguoiThuePage extends StatefulWidget {
   final NguoiThue nguoiThue;
@@ -441,38 +442,14 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                           child: CircularProgressIndicator(color: Color(0xff2D7A3A)),
                         ),
                       ),
-                      ChiTietNguoithueError(message: final msg) => Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-                        child: Column(
-                          children: [
-                            const Icon(Icons.cloud_off_rounded, size: 40, color: Colors.orangeAccent),
-                            const SizedBox(height: 8),
-                            Text(
-                              msg,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 13,
-                                color: Color(0xff666666),
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            ElevatedButton.icon(
-                              onPressed: () {
-                                hopdongViewModel.fetchRoomByNguoiThue(widget.nguoiThue.idnt!);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xff2D7A3A),
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                              ),
-                              icon: const Icon(Icons.refresh_rounded, size: 16),
-                              label: const Text("Thử lại", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-                            ),
-                          ],
-                        ),
+                      ChiTietNguoithueError(message: final msg) =>
+                      AppErrorWidget(
+                        message: msg,
+                        onRetry: (){
+                          hopdongViewModel.fetchRoomByNguoiThue(widget.nguoiThue.idnt!);
+                        },
                       ),
+
 
                       ChiTietNguoiThueSuccess(listHD: final list) => list.isEmpty
                           ? const Padding(

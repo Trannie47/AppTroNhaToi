@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../states/NguoiThueState.dart';
+import '../../../../widgets/app_error.dart';
 
 class PhongChiTiet extends StatefulWidget {
   final ItemPhong room;
@@ -154,42 +155,33 @@ class PhongChiTiet extends StatefulWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Text(
+                      nguoithueViewModel.nguoiThueState is NguoiThueSuccess
+                          ? "Người thuê hiện tại (${(nguoithueViewModel.nguoiThueState as NguoiThueSuccess).listNguoithue.length})"
+                          : "Người thuê hiện tại (...)",
+                      style: const TextStyle(
+                        color: Color(0xFF2D7A3A),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
                     ...switch (nguoithueViewModel.nguoiThueState){
                       NguoiThueLoading() => [
-                        const Text("Người thuê hiện tại (...)", style: TextStyle(color: Color(0xFF2D7A3A), fontWeight: FontWeight.bold, fontSize: 14)),
                         const Padding(
                           padding: EdgeInsets.symmetric(vertical: 24),
                           child: Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF2D7A3A)))),
                         )
                       ],
+                    // 2. Trạng thái Error: Đã dọn dẹp màu sắc chuẩn chỉ, thanh thoát
                       NguoiThueError(errorMessage: final msg) => [
-                        const Text("Người thuê hiện tại (Lỗi)", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 14)),
-                        const SizedBox(height: 10),
-                        Center(
-                          child: TextButton.icon(
-                            onPressed: () {
-                              nguoithueViewModel.getListNguoiThueFromIdPhong(room.phongId);
-                            },
-                            icon: const Icon(Icons.refresh, color: Colors.red),
-                            label: Text("Lỗi: $msg. Thử lại?", style: const TextStyle(color: Colors.red)),
-                          ),
+                        AppErrorWidget(message: msg,
+                            onRetry:(){
+                                nguoithueViewModel.getListNguoiThueFromIdPhong(room.phongId);
+                            }
                         )
+                    
                       ],
                       NguoiThueSuccess(listNguoithue: final dsKhach) => [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Người thuê hiện tại (${dsKhach.length})",
-                              style: const TextStyle(color: Color(0xFF2D7A3A), fontWeight: FontWeight.bold, fontSize: 14),
-                            ),
-                            if (dsKhach.isNotEmpty)
-                              const Text(
-                                "Xem tất cả ›",
-                                style: TextStyle(color: Color(0xFF2D7A3A), fontSize: 13, fontWeight: FontWeight.w600),
-                              ),
-                          ],
-                        ),
                         const SizedBox(height: 16),
                         if (dsKhach.isEmpty)
                           const Center(
