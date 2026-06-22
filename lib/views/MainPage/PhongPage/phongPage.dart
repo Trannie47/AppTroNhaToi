@@ -1,5 +1,6 @@
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/view_models/phong_view_model.dart';
+import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/chiTietPhongPage.dart';
 import 'package:AppTroNhaToi/views/MainPage/PhongPage/FormPhong/FormPhong.dart';
 import 'package:AppTroNhaToi/widgets/itemPhong.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:provider/provider.dart';
 
 import '../../../models/loaiphong.dart';
 import '../../../modelviews/MainPage/PhongPage/PhongPageModelView.dart';
+import 'ChiTietPhongPage/phongChiTiet.dart';
 
 
 class PhongPage extends StatefulWidget {
@@ -237,7 +239,16 @@ class _PhongPageState extends State<PhongPage> {
                           return ItemPhong(
                             phong: currentPhong,
                             loaiPhong: currentLoaiPhong,
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PhongChiTiet(
+                                      room: itemBackend
+                                  ),
+                                ),
+                              );
+                            },
                           );
                         },
                       ),
