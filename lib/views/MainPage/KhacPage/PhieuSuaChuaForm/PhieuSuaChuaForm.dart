@@ -293,6 +293,7 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
                               vm.setTrangThai(value);
                             }
                           },
+                          popupHeight: 200,
                         ),
                       ],
                     ),

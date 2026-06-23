@@ -9,6 +9,9 @@ class CustomDropdownSearch<T> extends StatelessWidget {
   final void Function(T? value)? onChanged;
   final bool enabled;
 
+  /// Chiều cao popup
+  final double popupHeight;
+
   const CustomDropdownSearch({
     super.key,
     this.label = '',
@@ -17,13 +20,13 @@ class CustomDropdownSearch<T> extends StatelessWidget {
     this.selectedItem,
     this.onChanged,
     this.enabled = true,
+    this.popupHeight = 300,
   });
 
   @override
   Widget build(BuildContext context) {
     return DropdownSearch<T>(
       enabled: enabled,
-
       items: (filter, _) {
         final f = filter.toLowerCase();
 
@@ -35,15 +38,12 @@ class CustomDropdownSearch<T> extends StatelessWidget {
             .where((e) => itemAsString(e).toLowerCase().contains(f))
             .toList();
       },
-
       selectedItem: selectedItem,
-
       itemAsString: itemAsString,
-
       popupProps: PopupProps.menu(
         showSearchBox: true,
         fit: FlexFit.loose,
-
+        constraints: BoxConstraints(maxHeight: popupHeight),
         searchFieldProps: const TextFieldProps(
           decoration: InputDecoration(
             hintText: "Tìm kiếm...",
@@ -51,13 +51,7 @@ class CustomDropdownSearch<T> extends StatelessWidget {
             border: OutlineInputBorder(),
           ),
         ),
-
-        emptyBuilder: (_, __) => const Padding(
-          padding: EdgeInsets.all(16),
-          child: Center(child: Text("Không tìm thấy dữ liệu")),
-        ),
       ),
-
       decoratorProps: DropDownDecoratorProps(
         decoration: InputDecoration(
           labelText: label,
@@ -68,12 +62,8 @@ class CustomDropdownSearch<T> extends StatelessWidget {
           ),
         ),
       ),
-
       onSelected: onChanged,
-
-      compareFn: (a, b) {
-        return a == b;
-      },
+      compareFn: (a, b) => a == b,
     );
   }
 }
