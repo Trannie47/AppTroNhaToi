@@ -1,6 +1,8 @@
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/ChonHangHoaPage/chonHangHoaPageViewModel.dart';
+import 'package:AppTroNhaToi/service/hang_hoa_service.dart';
 import 'package:AppTroNhaToi/widgets/itemHangHoa.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ChonHangHoaPage extends StatefulWidget {
   const ChonHangHoaPage({super.key});
@@ -16,12 +18,15 @@ class _ChonHangHoaPageState extends State<ChonHangHoaPage> {
   void initState() {
     super.initState();
 
-    vm = ChonHangHoaPageModelView();
+    vm = ChonHangHoaPageModelView(context.read<HangHoaService>());
 
     vm.addListener(() {
       if (mounted) {
         setState(() {});
       }
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      vm.refresh();
     });
   }
 

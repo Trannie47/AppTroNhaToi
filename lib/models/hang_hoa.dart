@@ -15,10 +15,20 @@ class HangHoa {
 
   factory HangHoa.fromMap(Map<String, dynamic> map) {
     return HangHoa(
-      maHangHoa: map['maHangHoa'] as int?,
+      maHangHoa: map['maHangHoa'] != null
+          ? int.tryParse(map['maHangHoa'].toString())
+          : null,
+
       tenHangHoa: map['tenHangHoa'] as String?,
-      giaNhap: (map['giaNhap'] as num?)?.toDouble(),
-      giaBan: (map['giaBan'] as num?)?.toDouble(),
+
+      giaNhap: map['giaNhap'] != null
+          ? double.tryParse(map['giaNhap'].toString())
+          : null,
+
+      giaBan: map['giaBan'] != null
+          ? double.tryParse(map['giaBan'].toString())
+          : null,
+
       donViTinh: map['donViTinh'] as String?,
     );
   }
