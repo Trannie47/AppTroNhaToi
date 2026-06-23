@@ -25,6 +25,8 @@ class _ChonHangHoaPageState extends State<ChonHangHoaPage> {
         setState(() {});
       }
     });
+
+    //Khi frame hiện tại mở thì nó sẽ call dữ liệu lại chống update 2 lần
     WidgetsBinding.instance.addPostFrameCallback((_) {
       vm.refresh();
     });

@@ -13,6 +13,7 @@ class ChonHangHoaPageModelView extends ChangeNotifier {
   ChonHangHoaPageModelView(this._service) {
     _service.addListener(_onServiceUpdate);
     txtSearch.addListener(_onSearchChanged);
+    //Delay fetchAll sau khi build xong
     Future.microtask(() => _service.fetchAll());
   }
 
