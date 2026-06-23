@@ -1,6 +1,7 @@
 import 'package:AppTroNhaToi/core/utils/string_formatter.dart';
 import 'package:AppTroNhaToi/models/item_phong.dart';
 import 'package:AppTroNhaToi/view_models/nguoithue_view_model.dart';
+import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/widgets/more_options_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -59,7 +60,7 @@ class PhongChiTiet extends StatefulWidget {
             IconButton(
               icon: const Icon(Icons.more_vert, color: Colors.black),
               onPressed: () {
-                // Các tùy chọn mở rộng tính sau
+                _showMoreOption(context, room);
               },
             ),
           ],
@@ -385,6 +386,17 @@ class PhongChiTiet extends StatefulWidget {
         ),
         if (!isLastItem) Divider(color: Colors.grey.shade100, height: 1, indent: 62),
       ],
+    );
+  }
+  void  _showMoreOption(BuildContext context, ItemPhong room){
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => MoreOptionsSheet(room: room)
+
     );
   }
 }
