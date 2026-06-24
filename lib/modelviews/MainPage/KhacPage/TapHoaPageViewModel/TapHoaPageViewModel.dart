@@ -1,10 +1,12 @@
 import 'package:AppTroNhaToi/models/hang_hoa.dart';
 import 'package:AppTroNhaToi/models/hoa_don_tap_hoa.dart';
 import 'package:AppTroNhaToi/models/phieu_thu_hd_th.dart';
+import 'package:AppTroNhaToi/service/hang_hoa_service.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/TapHoaPage/HoaDonTapHoaModel.dart';
 import 'package:flutter/material.dart';
 
 class TapHoaPageViewModel extends ChangeNotifier {
+  final HangHoaService _service_hh;
   int currentTab = 0;
   int sttHoaDon = 1;
 
@@ -12,56 +14,14 @@ class TapHoaPageViewModel extends ChangeNotifier {
   List<HoaDonTapHoaModel> dsHoaDonTapHoa = [];
   List<HoaDonTapHoaModel> dsCongNoTapHoa = [];
 
-  TapHoaPageViewModel() {
-    loadData();
+  TapHoaPageViewModel(this._service_hh) {
+    _service_hh.addListener(_onServiceUpdate);
+    Future.microtask(() => _service_hh.fetchAll());
+    // loadData();
   }
+  Future<void> refresh() => _service_hh.fetchAll();
 
   void loadData() {
-    dsHangHoa = [
-      HangHoa(
-        maHangHoa: 1,
-        tenHangHoa: "Mì Hảo Hảo Hảo tam thái tử ba vì miền tây nam bộ",
-        giaNhap: 3000,
-        giaBan: 5000,
-        donViTinh: "gói",
-      ),
-      HangHoa(
-        maHangHoa: 2,
-        tenHangHoa: "Coca Cola",
-        giaNhap: 8000,
-        giaBan: 12000,
-        donViTinh: "chai",
-      ),
-      HangHoa(
-        maHangHoa: 3,
-        tenHangHoa: "Nước suối",
-        giaNhap: 4000,
-        giaBan: 7000,
-        donViTinh: "chai",
-      ),
-      HangHoa(
-        maHangHoa: 4,
-        tenHangHoa: "Sữa Vinamilk",
-        giaNhap: 28000,
-        giaBan: 35000,
-        donViTinh: "hộp",
-      ),
-      HangHoa(
-        maHangHoa: 5,
-        tenHangHoa: "Bánh Oreo",
-        giaNhap: 12000,
-        giaBan: 18000,
-        donViTinh: "hộp",
-      ),
-      HangHoa(
-        maHangHoa: 6,
-        tenHangHoa: "Trứng gà",
-        giaNhap: 25000,
-        giaBan: 30000,
-        donViTinh: "vỉ",
-      ),
-    ];
-
     // tạo 5 record trong dsHoaDonTapHoa
     dsHoaDonTapHoa = [
       HoaDonTapHoaModel(
@@ -79,10 +39,7 @@ class TapHoaPageViewModel extends ChangeNotifier {
           dsHangHoa[1], // Coca Cola
         ],
 
-        soLuong: {
-          dsHangHoa[0].maHangHoa!: 2,
-          dsHangHoa[1].maHangHoa!: 3,
-        },
+        soLuong: {dsHangHoa[0].maHangHoa!: 2, dsHangHoa[1].maHangHoa!: 3},
       ),
 
       HoaDonTapHoaModel(
@@ -100,10 +57,7 @@ class TapHoaPageViewModel extends ChangeNotifier {
           dsHangHoa[3], // Sữa Vinamilk
         ],
 
-        soLuong: {
-          dsHangHoa[2].maHangHoa!: 5,
-          dsHangHoa[3].maHangHoa!: 2,
-        },
+        soLuong: {dsHangHoa[2].maHangHoa!: 5, dsHangHoa[3].maHangHoa!: 2},
       ),
 
       HoaDonTapHoaModel(
@@ -125,10 +79,7 @@ class TapHoaPageViewModel extends ChangeNotifier {
           dsHangHoa[5], // Trứng gà
         ],
 
-        soLuong: {
-          dsHangHoa[4].maHangHoa!: 2,
-          dsHangHoa[5].maHangHoa!: 1,
-        },
+        soLuong: {dsHangHoa[4].maHangHoa!: 2, dsHangHoa[5].maHangHoa!: 1},
       ),
 
       HoaDonTapHoaModel(
@@ -145,10 +96,7 @@ class TapHoaPageViewModel extends ChangeNotifier {
           dsHangHoa[2], // Nước suối
         ],
 
-        soLuong: {
-          dsHangHoa[1].maHangHoa!: 1,
-          dsHangHoa[2].maHangHoa!: 2,
-        },
+        soLuong: {dsHangHoa[1].maHangHoa!: 1, dsHangHoa[2].maHangHoa!: 2},
       ),
 
       HoaDonTapHoaModel(
@@ -186,16 +134,11 @@ class TapHoaPageViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-// xoa hóa đơn và công nợ
+  // xoa hóa đơn và công nợ
   void xoaHoaDon(String maHoaDon) {
+    dsHoaDonTapHoa.removeWhere((e) => e.hoaDon.maHoaDon == maHoaDon);
 
-    dsHoaDonTapHoa.removeWhere(
-          (e) => e.hoaDon.maHoaDon == maHoaDon,
-    );
-
-    dsCongNoTapHoa.removeWhere(
-          (e) => e.hoaDon.maHoaDon == maHoaDon,
-    );
+    dsCongNoTapHoa.removeWhere((e) => e.hoaDon.maHoaDon == maHoaDon);
 
     notifyListeners();
   }
@@ -228,20 +171,11 @@ class TapHoaPageViewModel extends ChangeNotifier {
 
   /// thêm hàng hóa
   void themHoaDon(HoaDonTapHoaModel hoaDonModel) {
-
-    dsHoaDonTapHoa.insert(
-      0,
-      hoaDonModel,
-    );
+    dsHoaDonTapHoa.insert(0, hoaDonModel);
 
     // Nếu chưa có phiếu thu và có id người thuê
-    if (hoaDonModel.phieuThu == null &&
-        hoaDonModel.hoaDon.idnt != null) {
-
-      dsCongNoTapHoa.insert(
-        0,
-        hoaDonModel,
-      );
+    if (hoaDonModel.phieuThu == null && hoaDonModel.hoaDon.idnt != null) {
+      dsCongNoTapHoa.insert(0, hoaDonModel);
     }
 
     notifyListeners();
@@ -284,5 +218,17 @@ class TapHoaPageViewModel extends ChangeNotifier {
 
   int get tongHoaDon {
     return dsHoaDonTapHoa.length;
+  }
+
+  void _onServiceUpdate() {
+    dsHangHoa = List.from(_service_hh.list);
+
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _service_hh.removeListener(_onServiceUpdate);
+    super.dispose();
   }
 }

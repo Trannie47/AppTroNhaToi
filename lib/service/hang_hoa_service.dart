@@ -26,10 +26,14 @@ class HangHoaService extends ChangeNotifier {
     }
   }
 
-  Future<bool> them(HangHoa hh) async {
-    final ok = await _repo.themHangHoa(hh);
-    if (ok != null) await fetchAll();
-    return false;
+  Future<HangHoa?> them(HangHoa hh) async {
+    final result = await _repo.themHangHoa(hh);
+
+    if (result != null) {
+      await fetchAll();
+    }
+
+    return result;
   }
 
   Future<bool> capNhat(HangHoa hh) async {

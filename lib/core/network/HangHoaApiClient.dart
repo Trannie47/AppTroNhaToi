@@ -27,10 +27,7 @@ class HangHoaApiClient {
 
   Future<HangHoa?> themHangHoa(HangHoa hangHoa) async {
     try {
-      final response = await _dio.post(
-        "hang-hoa/create",
-        data: hangHoa.toMap(),
-      );
+      final response = await _dio.post("hang-hoa", data: hangHoa.toMap());
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return HangHoa.fromMap(response.data);
@@ -49,7 +46,7 @@ class HangHoaApiClient {
   Future<bool> xoaHangHoa(int maHangHoa) async {
     try {
       final response = await _dio.delete("hang-hoa/$maHangHoa");
-
+      print(response);
       if (response.statusCode == 200 || response.statusCode == 201) {
         return true;
       }

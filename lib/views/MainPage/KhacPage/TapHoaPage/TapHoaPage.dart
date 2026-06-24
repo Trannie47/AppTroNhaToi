@@ -1,7 +1,7 @@
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/models/hang_hoa.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/TapHoaPageViewModel/TapHoaPageViewModel.dart';
-
+import 'package:AppTroNhaToi/service/hang_hoa_service.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/HangHoaForm/HangHoaForm.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/HoaDonTapHoaForm/hoaDonTapHoaForm.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietHoaDonTapHoaPage/chiTietHoaDonTapHoaPage.dart';
@@ -9,6 +9,7 @@ import 'package:AppTroNhaToi/widgets/itemCongNo.dart';
 import 'package:AppTroNhaToi/widgets/itemHangHoa.dart';
 import 'package:AppTroNhaToi/widgets/itemHoaDonTapHoa.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class TapHoaPage extends StatefulWidget {
   const TapHoaPage({super.key});
@@ -18,16 +19,20 @@ class TapHoaPage extends StatefulWidget {
 }
 
 class _TapHoaPageState extends State<TapHoaPage> {
-  final vm = TapHoaPageViewModel();
+  late TapHoaPageViewModel vm;
 
   @override
   void initState() {
     super.initState();
-
+    vm = TapHoaPageViewModel(context.read<HangHoaService>());
     vm.addListener(() {
       if (mounted) {
         setState(() {});
       }
+    });
+    //Khi frame hiện tại mở thì nó sẽ call dữ liệu lại chống update 2 lần
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      vm.refresh();
     });
   }
 
@@ -326,9 +331,8 @@ class _TapHoaPageState extends State<TapHoaPage> {
                         );
 
                         if (result != null) {
-
                           int viTriHoaDon = vm.dsHoaDonTapHoa.indexWhere(
-                                (e) => e.hoaDon.maHoaDon == result.hoaDon.maHoaDon,
+                            (e) => e.hoaDon.maHoaDon == result.hoaDon.maHoaDon,
                           );
 
                           if (viTriHoaDon != -1) {
@@ -336,7 +340,7 @@ class _TapHoaPageState extends State<TapHoaPage> {
                           }
 
                           int viTriCongNo = vm.dsCongNoTapHoa.indexWhere(
-                                (e) => e.hoaDon.maHoaDon == result.hoaDon.maHoaDon,
+                            (e) => e.hoaDon.maHoaDon == result.hoaDon.maHoaDon,
                           );
 
                           if (viTriCongNo != -1) {
@@ -404,7 +408,6 @@ class _TapHoaPageState extends State<TapHoaPage> {
                           vm.xoaHoaDon(
                             vm.dsHoaDonTapHoa[index].hoaDon.maHoaDon!,
                           );
-
                         }
                       },
                     );

@@ -1,6 +1,8 @@
 import 'package:AppTroNhaToi/models/hang_hoa.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/HangHoaForm/HangHoaFormViewModel.dart';
+import 'package:AppTroNhaToi/service/hang_hoa_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HangHoaForm extends StatefulWidget {
   final HangHoa? hangHoa;
@@ -12,26 +14,21 @@ class HangHoaForm extends StatefulWidget {
 }
 
 class _HangHoaFormState extends State<HangHoaForm> {
-  final vm = HangHoaFormViewModel();
+  late HangHoaFormViewModel vm;
 
   @override
   void initState() {
     super.initState();
 
+    vm = HangHoaFormViewModel(context.read<HangHoaService>());
+
+    // Nếu có widget.hangHoa thì load vào form để sửa
     if (widget.hangHoa != null) {
-      vm.txtTenHangHoa.text = widget.hangHoa!.tenHangHoa ?? "";
-
-      vm.txtGiaBan.text = widget.hangHoa!.giaBan?.toStringAsFixed(0) ?? "";
-
-      vm.txtGiaNhap.text = widget.hangHoa!.giaNhap?.toStringAsFixed(0) ?? "";
-
-      vm.txtDonVi.text = widget.hangHoa!.donViTinh ?? "";
+      vm.loadDeSua(widget.hangHoa!);
     }
 
     vm.addListener(() {
-      if (mounted) {
-        setState(() {});
-      }
+      if (mounted) setState(() {});
     });
   }
 
@@ -78,14 +75,9 @@ class _HangHoaFormState extends State<HangHoaForm> {
           },
 
           decoration: InputDecoration(
-
             hintText: hint,
 
-            hintStyle: TextStyle(
-              color: Colors.grey.shade400,
-              fontSize: 16,
-            ),
-
+            hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 16),
 
             filled: true,
             fillColor: const Color(0xffF5F5F5),
@@ -107,9 +99,7 @@ class _HangHoaFormState extends State<HangHoaForm> {
 
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(
-                color: Color(0xff2D7A3A),
-              ),
+              borderSide: const BorderSide(color: Color(0xff2D7A3A)),
             ),
           ),
         ),
@@ -147,11 +137,7 @@ class _HangHoaFormState extends State<HangHoaForm> {
         leadingWidth: 58,
 
         leading: Padding(
-          padding: const EdgeInsets.only(
-            left: 14,
-            top: 8,
-            bottom: 8,
-          ),
+          padding: const EdgeInsets.only(left: 14, top: 8, bottom: 8),
           child: InkWell(
             borderRadius: BorderRadius.circular(30),
             onTap: () {
@@ -178,9 +164,7 @@ class _HangHoaFormState extends State<HangHoaForm> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              widget.hangHoa == null
-                  ? "Thêm hàng hóa"
-                  : "Chỉnh sửa hàng hóa",
+              widget.hangHoa == null ? "Thêm hàng hóa" : "Chỉnh sửa hàng hóa",
               style: const TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.w700,
@@ -191,16 +175,11 @@ class _HangHoaFormState extends State<HangHoaForm> {
             if (widget.hangHoa != null)
               Text(
                 widget.hangHoa!.tenHangHoa ?? "",
-                style: TextStyle(
-                  color: Colors.grey.shade500,
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
               ),
           ],
         ),
       ),
-
-
 
       body: SafeArea(
         child: SingleChildScrollView(
@@ -304,23 +283,15 @@ class _HangHoaFormState extends State<HangHoaForm> {
               width: double.infinity,
               height: 56,
               child: ElevatedButton(
-                onPressed: () {
-                  if (vm.kiemTraDuLieu()) {
-                    Navigator.pop(
-                      context,
-                      HangHoa(
-                        maHangHoa:
-                            widget.hangHoa?.maHangHoa ??
-                            DateTime.now().millisecondsSinceEpoch,
-
-                        tenHangHoa: vm.txtTenHangHoa.text,
-                        giaBan: double.parse(vm.txtGiaBan.text),
-                        giaNhap: double.parse(vm.txtGiaNhap.text),
-                        donViTinh: vm.txtDonVi.text,
-                      ),
-                    );
-                  }
-                },
+                onPressed: vm.isLoading
+                    ? null
+                    : () async {
+                        final ok = await vm.luu();
+                        print("Kết quả luu(): $ok");
+                        if (ok != null && mounted) {
+                          Navigator.pop(context, ok);
+                        }
+                      },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xff2D7A3A),
                   shape: RoundedRectangleBorder(
@@ -345,9 +316,7 @@ class _HangHoaFormState extends State<HangHoaForm> {
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
-
                   onPressed: () async {
-
                     bool? xacNhan = await showDialog(
                       context: context,
                       builder: (context) {
@@ -389,10 +358,10 @@ class _HangHoaFormState extends State<HangHoaForm> {
                     // }
 
                     if (xacNhan == true) {
-                      Navigator.pop(
-                        context,
-                        "xoa",
-                      );
+                      final ok = await vm.xoa();
+                      if (ok && mounted) {
+                        Navigator.pop(context, "xoa");
+                      }
                     }
                   },
 
