@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
 import '../../../../view_models/loaiphong_view_model.dart';
 
 class FormPhong extends StatefulWidget {
-  final Phong? room;
+  final ItemPhong? room;
 
   const FormPhong({super.key, this.room});
 
@@ -21,35 +21,44 @@ class FormPhong extends StatefulWidget {
 }
 
 class _FormPhongState extends State<FormPhong> {
-  late FormPhongViewModel vm;
+  //late FormPhongViewModel vm;
   late LoaiPhongViewModel loaiPhongViewModel;
   late PhongViewModel phongViewModel;
+  bool get isEdit=> widget.room!=null;
 
   @override
   void initState() {
     super.initState();
     loaiPhongViewModel = LoaiPhongViewModel();
     phongViewModel = PhongViewModel();
+    if(isEdit){ // đổ dữ liệu lên các trường khi sửa phòng
+      final room= widget.room!;
+      phongViewModel.nameController.text= room.tenPhong;
+      phongViewModel.descController.text= room.moTa;
+      
+      phongViewModel.setTrangThai(room.trangThai);
+      phongViewModel.setIdLoaiPhong(room.maLoaiPhong);
+
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await loaiPhongViewModel.getListLoaiPhong();
       final state = loaiPhongViewModel.loaiphongState;
-      if (state is LoaiPhongSuccess && state.listLoaiPhong.isNotEmpty) {
+      if (widget.room==null && state is LoaiPhongSuccess && state.listLoaiPhong.isNotEmpty) {
         final idDauTien = state.listLoaiPhong[0].maLoaiPhong;
         Future.microtask(() {
           phongViewModel.setIdLoaiPhong(idDauTien);
         }); //lấy id loại phòng đầu tiên làm mặc định
       }
     });
-    vm = FormPhongViewModel(widget.room);
+    //vm = FormPhongViewModel(widget.room);
 
-    vm.addListener(() {
-      if (mounted) setState(() {});
-    });
+    // vm.addListener(() {
+    //   if (mounted) setState(() {});
+    // });
   }
 
   @override
   void dispose() {
-    vm.dispose();
     super.dispose();
   }
 
@@ -104,28 +113,27 @@ class _FormPhongState extends State<FormPhong> {
     }
   }
 
-  void goToFormRoomType() async {
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => FormLoaiPhong(
-          onAdd: (loaiPhong) {
-            vm.addRoomType(loaiPhong);
-          },
-        ),
-      ),
-    );
-
-    if (result != null && result is List<LoaiPhong>) {
-      for (var item in result) {
-        vm.addRoomType(item);
-      }
-    }
-  }
+  // void goToFormRoomType() async {
+  //   final result = await Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (context) => FormLoaiPhong(
+  //         onAdd: (loaiPhong) {
+  //           vm.addRoomType(loaiPhong);
+  //         },
+  //       ),
+  //     ),
+  //   );
+  //
+  //   if (result != null && result is List<LoaiPhong>) {
+  //     for (var item in result) {
+  //       vm.addRoomType(item);
+  //     }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
-    bool isEdit = widget.room != null;
 
     return AnimatedBuilder(
       animation: phongViewModel,
@@ -446,7 +454,7 @@ class _FormPhongState extends State<FormPhong> {
                                           ),
                                         ),
                                         child: InkWell(
-                                          onTap: goToFormRoomType,
+                                          onTap: ()=> {},//goToFormRoomType
                                           child: const Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,

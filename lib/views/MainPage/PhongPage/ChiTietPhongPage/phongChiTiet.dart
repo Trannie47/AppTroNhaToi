@@ -129,7 +129,6 @@ class PhongChiTiet extends StatefulWidget {
                     _infoLine(
                         label: "Giá thuê",
                         value: "${_formatCurrency(room.giahientai)}đ/tháng",
-                        // Dùng biến giahientai của Tài
                         valueColor: const Color(0xFF2D7A3A),
                         isBold: true
                     ),
@@ -173,7 +172,7 @@ class PhongChiTiet extends StatefulWidget {
                           child: Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF2D7A3A)))),
                         )
                       ],
-                    // 2. Trạng thái Error: Đã dọn dẹp màu sắc chuẩn chỉ, thanh thoát
+
                       NguoiThueError(errorMessage: final msg) => [
                         AppErrorWidget(message: msg,
                             onRetry:(){

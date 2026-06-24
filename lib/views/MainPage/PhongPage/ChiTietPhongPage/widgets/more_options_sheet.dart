@@ -1,4 +1,5 @@
 import 'package:AppTroNhaToi/models/item_phong.dart';
+import 'package:AppTroNhaToi/views/MainPage/PhongPage/FormPhong/FormPhong.dart';
 import 'package:flutter/material.dart';
 
 class MoreOptionsSheet extends StatelessWidget {
@@ -27,6 +28,10 @@ class MoreOptionsSheet extends StatelessWidget {
             title: const Text('Chỉnh sửa thông tin phòng', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
             onTap: () {
               Navigator.pop(context);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_)=> FormPhong(room: room,))
+              );
             },
           ),
 
