@@ -2,11 +2,13 @@ import 'package:AppTroNhaToi/models/hang_hoa.dart';
 import 'package:AppTroNhaToi/models/hoa_don_tap_hoa.dart';
 import 'package:AppTroNhaToi/models/phieu_thu_hd_th.dart';
 import 'package:AppTroNhaToi/service/hang_hoa_service.dart';
+import 'package:AppTroNhaToi/service/hoa_don_tap_hoa_service.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/TapHoaPage/HoaDonTapHoaModel.dart';
 import 'package:flutter/material.dart';
 
 class TapHoaPageViewModel extends ChangeNotifier {
   final HangHoaService _service_hh;
+  final HoaDonTapHoaService _service_hdth;
   int currentTab = 0;
   int sttHoaDon = 1;
 
@@ -16,118 +18,20 @@ class TapHoaPageViewModel extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  TapHoaPageViewModel(this._service_hh) {
-    _service_hh.addListener(_onServiceUpdate);
+  TapHoaPageViewModel(this._service_hh, this._service_hdth) {
+    _service_hh.addListener(_onHangHoaUpdate);
+    _service_hdth.addListener(_onHoaDonUpdate);
     Future.microtask(() => _service_hh.fetchAll());
-    // loadData();
+    Future.microtask(() => _service_hdth.fetchAll());
   }
-  Future<void> refresh() => _service_hh.fetchAll();
+  Future<void> refresh() async {
+    await _service_hh.fetchAll();
+    await _service_hdth.fetchAll();
+    loadData();
+  }
 
   void loadData() {
     // tạo 5 record trong dsHoaDonTapHoa
-    dsHoaDonTapHoa = [
-      HoaDonTapHoaModel(
-        hoaDon: HoaDonTapHoa(
-          maHoaDon: taoMaHoaDon(),
-          ngayBan: DateTime.now(),
-          tongTien: 50000,
-          idnt: 1,
-        ),
-        phieuThu: null,
-        tenNguoiMua: 'Trần Văn A',
-
-        dsHangHoa: [
-          dsHangHoa[0], // Mì Hảo Hảo
-          dsHangHoa[1], // Coca Cola
-        ],
-
-        soLuong: {dsHangHoa[0].maHangHoa!: 2, dsHangHoa[1].maHangHoa!: 3},
-      ),
-
-      HoaDonTapHoaModel(
-        hoaDon: HoaDonTapHoa(
-          maHoaDon: taoMaHoaDon(),
-          ngayBan: DateTime.now().subtract(const Duration(days: 1)),
-          tongTien: 120000,
-          idnt: 2,
-        ),
-        phieuThu: null,
-        tenNguoiMua: 'Nguyễn Thị B',
-
-        dsHangHoa: [
-          dsHangHoa[2], // Nước suối
-          dsHangHoa[3], // Sữa Vinamilk
-        ],
-
-        soLuong: {dsHangHoa[2].maHangHoa!: 5, dsHangHoa[3].maHangHoa!: 2},
-      ),
-
-      HoaDonTapHoaModel(
-        hoaDon: HoaDonTapHoa(
-          maHoaDon: taoMaHoaDon(),
-          ngayBan: DateTime.now().subtract(const Duration(days: 3)),
-          tongTien: 80000,
-        ),
-        phieuThu: PhieuThuHdTh(
-          maPhieuThu: 1002,
-          ngayThu: DateTime.now().subtract(const Duration(days: 2)),
-          soTien: 80000,
-          nguoiDong: 'Lê Văn C',
-        ),
-        tenNguoiMua: 'Lê Văn C',
-
-        dsHangHoa: [
-          dsHangHoa[4], // Bánh Oreo
-          dsHangHoa[5], // Trứng gà
-        ],
-
-        soLuong: {dsHangHoa[4].maHangHoa!: 2, dsHangHoa[5].maHangHoa!: 1},
-      ),
-
-      HoaDonTapHoaModel(
-        hoaDon: HoaDonTapHoa(
-          maHoaDon: taoMaHoaDon(),
-          ngayBan: DateTime.now(),
-          tongTien: 30000,
-        ),
-        phieuThu: null,
-        tenNguoiMua: 'Phạm Thị D',
-
-        dsHangHoa: [
-          dsHangHoa[1], // Coca Cola
-          dsHangHoa[2], // Nước suối
-        ],
-
-        soLuong: {dsHangHoa[1].maHangHoa!: 1, dsHangHoa[2].maHangHoa!: 2},
-      ),
-
-      HoaDonTapHoaModel(
-        hoaDon: HoaDonTapHoa(
-          maHoaDon: taoMaHoaDon(),
-          ngayBan: DateTime.now().subtract(const Duration(days: 7)),
-          tongTien: 150000,
-        ),
-        phieuThu: PhieuThuHdTh(
-          maPhieuThu: 1003,
-          ngayThu: DateTime.now().subtract(const Duration(days: 6)),
-          soTien: 50000,
-          nguoiDong: 'Hoàng Văn E',
-        ),
-        tenNguoiMua: 'Hoàng Văn E',
-
-        dsHangHoa: [
-          dsHangHoa[0], // Mì Hảo Hảo
-          dsHangHoa[3], // Sữa Vinamilk
-          dsHangHoa[5], // Trứng gà
-        ],
-
-        soLuong: {
-          dsHangHoa[0].maHangHoa!: 5,
-          dsHangHoa[3].maHangHoa!: 2,
-          dsHangHoa[5].maHangHoa!: 1,
-        },
-      ),
-    ];
     //Nếu hoá đơn tạp hoá chưa có phiếu thu trở thành danh sách công nợ và id người thuê trên hoá đơn phải khác null
     dsCongNoTapHoa = dsHoaDonTapHoa
         .where((item) => (item.phieuThu == null) && (item.hoaDon.idnt != null))
@@ -222,7 +126,8 @@ class TapHoaPageViewModel extends ChangeNotifier {
     return dsHoaDonTapHoa.length;
   }
 
-  void _onServiceUpdate() {
+  //Hàng hoá
+  void _onHangHoaUpdate() {
     dsHangHoa = List.from(_service_hh.list);
 
     notifyListeners();
@@ -252,9 +157,17 @@ class TapHoaPageViewModel extends ChangeNotifier {
     }
   }
 
+  // hoá đơn tạp hoá
+  void _onHoaDonUpdate() {
+    dsHoaDonTapHoa = List.from(_service_hdth.list);
+    loadData();
+    notifyListeners();
+  }
+
   @override
   void dispose() {
-    _service_hh.removeListener(_onServiceUpdate);
+    _service_hh.removeListener(_onHangHoaUpdate);
+    _service_hdth.removeListener(_onHoaDonUpdate);
     super.dispose();
   }
 }

@@ -40,14 +40,10 @@ class HoaDonTapHoaModel {
       tenNguoiMua: map['tenNguoiMua'] as String?,
 
       dsHangHoa: map['dsHangHoa'] != null
-          ? (map['dsHangHoa'] as List)
-          .map((e) => HangHoa.fromMap(e))
-          .toList()
+          ? (map['dsHangHoa'] as List).map((e) => HangHoa.fromMap(e)).toList()
           : [],
 
-      soLuong: map['soLuong'] != null
-          ? Map<int, int>.from(map['soLuong'])
-          : {},
+      soLuong: map['soLuong'] != null ? Map<int, int>.from(map['soLuong']) : {},
     );
   }
 
@@ -55,8 +51,7 @@ class HoaDonTapHoaModel {
     return {
       'hoaDon': hoaDon.toMap(),
 
-      if (phieuThu != null)
-        'phieuThu': phieuThu!.toMap(),
+      if (phieuThu != null) 'phieuThu': phieuThu!.toMap(),
 
       'tenNguoiMua': tenNguoiMua,
 
@@ -64,5 +59,17 @@ class HoaDonTapHoaModel {
 
       'soLuong': soLuong,
     };
+  }
+
+  @override
+  String toString() {
+    return 'HoaDonTapHoaModel('
+        'hoaDon: ${hoaDon.maHoaDon}, '
+        'idnguoiMua : ${hoaDon.idnt ?? 'null'}'
+        'tenNguoiMua: ${tenNguoiMua ?? 'null'}, '
+        'phieuThu: ${phieuThu?.toString() ?? 'null'}, '
+        'soMatHang: ${dsHangHoa.length}, '
+        'soLuong: ${soLuong.isNotEmpty ? soLuong : '{}'}'
+        ')';
   }
 }

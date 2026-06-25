@@ -2,6 +2,7 @@ import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/models/hang_hoa.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/TapHoaPageViewModel/TapHoaPageViewModel.dart';
 import 'package:AppTroNhaToi/service/hang_hoa_service.dart';
+import 'package:AppTroNhaToi/service/hoa_don_tap_hoa_service.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/HangHoaForm/HangHoaForm.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/HoaDonTapHoaForm/hoaDonTapHoaForm.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietHoaDonTapHoaPage/chiTietHoaDonTapHoaPage.dart';
@@ -24,7 +25,10 @@ class _TapHoaPageState extends State<TapHoaPage> {
   @override
   void initState() {
     super.initState();
-    vm = TapHoaPageViewModel(context.read<HangHoaService>());
+    vm = TapHoaPageViewModel(
+      context.read<HangHoaService>(),
+      context.read<HoaDonTapHoaService>(),
+    );
     vm.addListener(() {
       if (mounted) {
         setState(() {});
@@ -294,13 +298,7 @@ class _TapHoaPageState extends State<TapHoaPage> {
                                     backgroundColor: Colors.red,
                                   ),
                                   onPressed: () async {
-                                    final ok = await vm.xoa(hangHoaCu);
-
-                                    if (!context.mounted) return;
-
-                                    if (ok) {
-                                      Navigator.pop(context, true);
-                                    }
+                                    Navigator.pop(context, true);
                                   },
                                   child: const Text(
                                     "Xóa",
@@ -313,7 +311,14 @@ class _TapHoaPageState extends State<TapHoaPage> {
                         );
 
                         if (xacNhan == true) {
-                          vm.xoaHangHoa(vm.dsHangHoa[index].maHangHoa!);
+                          // vm.xoaHangHoa(vm.dsHangHoa[index].maHangHoa!);
+                          final ok = await vm.xoa(hangHoaCu);
+
+                          if (!context.mounted) return;
+
+                          if (ok) {
+                            print(ok);
+                          }
                         }
                       },
                     );

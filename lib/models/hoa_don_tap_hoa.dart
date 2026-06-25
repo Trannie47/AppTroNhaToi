@@ -9,11 +9,16 @@ class HoaDonTapHoa {
   factory HoaDonTapHoa.fromMap(Map<String, dynamic> map) {
     return HoaDonTapHoa(
       maHoaDon: map['maHoaDon'] as String?,
-      idnt: map['IDNT'] as int?,
+      idnt: map['tongTien'] != null
+          ? .tryParse(map['tongTien'].toString())
+          : null,
+
       ngayBan: map['ngayBan'] != null
           ? DateTime.tryParse(map['ngayBan'] as String)
           : null,
-      tongTien: (map['tongTien'] as num?)?.toDouble(),
+      tongTien: map['tongTien'] != null
+          ? double.tryParse(map['tongTien'].toString())
+          : null,
     );
   }
 
