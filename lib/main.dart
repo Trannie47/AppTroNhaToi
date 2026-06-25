@@ -1,4 +1,5 @@
 import 'package:AppTroNhaToi/service/hang_hoa_service.dart';
+import 'package:AppTroNhaToi/service/hoa_don_tap_hoa_service.dart';
 import 'package:AppTroNhaToi/view_models/nguoithue_view_model.dart';
 import 'package:AppTroNhaToi/view_models/phong_view_model.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => PhongViewModel()),
         //File Service được khởi tạo ở đây
         ChangeNotifierProvider(create: (_) => HangHoaService()),
+        ChangeNotifierProvider(create: (_) => HoaDonTapHoaService()),
       ],
       child: const MyApp(),
     ),
