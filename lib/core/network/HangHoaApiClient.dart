@@ -63,7 +63,7 @@ class HangHoaApiClient {
 
   Future<HangHoa?> capNhatHangHoa(HangHoa hangHoa) async {
     try {
-      final response = await _dio.put(
+      final response = await _dio.patch(
         "hang-hoa/${hangHoa.maHangHoa}",
         data: hangHoa.toMap(),
       );

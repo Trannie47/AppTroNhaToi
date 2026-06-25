@@ -8,6 +8,7 @@ class ChonHangHoaPageModelView extends ChangeNotifier {
 
   List<HangHoa> _dsHienThi = [];
   List<HangHoa> get dsHangHoaHienThi => List.unmodifiable(_dsHienThi);
+
   bool get isLoading => _service.isLoading;
 
   ChonHangHoaPageModelView(this._service) {
@@ -27,6 +28,7 @@ class ChonHangHoaPageModelView extends ChangeNotifier {
 
   void _applyFilter() {
     final keyword = txtSearch.text.trim().toLowerCase();
+
     if (keyword.isEmpty) {
       _dsHienThi = List.from(_service.list);
     } else {
@@ -34,6 +36,14 @@ class ChonHangHoaPageModelView extends ChangeNotifier {
         return (e.tenHangHoa ?? '').toLowerCase().contains(keyword);
       }).toList();
     }
+
+    // Sắp xếp theo tên A -> Z
+    _dsHienThi.sort((a, b) {
+      final tenA = (a.tenHangHoa ?? '').trim().toLowerCase();
+      final tenB = (b.tenHangHoa ?? '').trim().toLowerCase();
+      return tenA.compareTo(tenB);
+    });
+
     notifyListeners();
   }
 

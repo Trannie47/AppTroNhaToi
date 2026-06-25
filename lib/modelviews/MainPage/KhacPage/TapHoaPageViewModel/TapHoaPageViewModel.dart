@@ -13,6 +13,8 @@ class TapHoaPageViewModel extends ChangeNotifier {
   List<HangHoa> dsHangHoa = [];
   List<HoaDonTapHoaModel> dsHoaDonTapHoa = [];
   List<HoaDonTapHoaModel> dsCongNoTapHoa = [];
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
 
   TapHoaPageViewModel(this._service_hh) {
     _service_hh.addListener(_onServiceUpdate);
@@ -224,6 +226,30 @@ class TapHoaPageViewModel extends ChangeNotifier {
     dsHangHoa = List.from(_service_hh.list);
 
     notifyListeners();
+  }
+
+  Future<bool> xoa(HangHoa hangHoa) async {
+    if (_isLoading) return false;
+
+    if (hangHoa.maHangHoa == null) return false;
+
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final result = await _service_hh.xoa(hangHoa.maHangHoa!);
+
+      if (result) {
+        dsHangHoa.removeWhere((e) => e.maHangHoa == hangHoa.maHangHoa);
+      }
+
+      return result;
+    } catch (e) {
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   @override

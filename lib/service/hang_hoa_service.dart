@@ -14,10 +14,15 @@ class HangHoaService extends ChangeNotifier {
 
   Future<void> fetchAll() async {
     if (_isLoading) return;
+
     _isLoading = true;
     notifyListeners();
+
     try {
       _list = await _repo.getListHangHoa();
+
+      // ID lớn nhất lên đầu
+      _list.sort((a, b) => (b.maHangHoa ?? 0).compareTo(a.maHangHoa ?? 0));
     } catch (e) {
       _list = [];
     } finally {
@@ -38,7 +43,10 @@ class HangHoaService extends ChangeNotifier {
 
   Future<bool> capNhat(HangHoa hh) async {
     final ok = await _repo.capNhatHangHoa(hh);
-    if (ok != null) await fetchAll();
+    if (ok != null) {
+      await fetchAll();
+      return true;
+    }
     return false;
   }
 

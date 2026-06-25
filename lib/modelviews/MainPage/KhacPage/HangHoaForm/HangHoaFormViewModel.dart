@@ -96,7 +96,7 @@ class HangHoaFormViewModel extends ChangeNotifier {
         giaNhap: double.tryParse(txtGiaNhap.text.trim()),
         donViTinh: txtDonVi.text.trim(),
       );
-
+      print(hh);
       if (isEditMode) {
         final ok = await _service.capNhat(hh);
         return ok ? hh : null;

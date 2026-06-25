@@ -271,6 +271,7 @@ class _TapHoaPageState extends State<TapHoaPage> {
                       },
 
                       onXoa: () async {
+                        HangHoa hangHoaCu = vm.dsHangHoa[index];
                         bool? xacNhan = await showDialog<bool>(
                           context: context,
                           builder: (context) {
@@ -292,8 +293,14 @@ class _TapHoaPageState extends State<TapHoaPage> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.red,
                                   ),
-                                  onPressed: () {
-                                    Navigator.pop(context, true);
+                                  onPressed: () async {
+                                    final ok = await vm.xoa(hangHoaCu);
+
+                                    if (!context.mounted) return;
+
+                                    if (ok) {
+                                      Navigator.pop(context, true);
+                                    }
                                   },
                                   child: const Text(
                                     "Xóa",
@@ -524,7 +531,7 @@ class _TapHoaPageState extends State<TapHoaPage> {
                     );
 
                     if (hangHoaMoi != null) {
-                      vm.dsHangHoa.add(hangHoaMoi);
+                      // vm.dsHangHoa.add(hangHoaMoi);
 
                       vm.notifyListeners();
                     }
