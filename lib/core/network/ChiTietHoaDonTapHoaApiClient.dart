@@ -11,7 +11,6 @@ class ChiTietTapHoaApiClient {
     String maHoaDon,
   ) async {
     try {
-      print("chi-tiet-tap-hoa/hoa-don/$maHoaDon");
       final response = await _dio.get("chi-tiet-tap-hoa/hoa-don/$maHoaDon");
 
       if (response.statusCode == 200 || response.statusCode == 201) {

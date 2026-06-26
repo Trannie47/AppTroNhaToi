@@ -1,5 +1,6 @@
 import 'package:AppTroNhaToi/Provider/hang_hoa_provider.dart';
 import 'package:AppTroNhaToi/Provider/hoa_don_tap_hoa_provider.dart';
+import 'package:AppTroNhaToi/Provider/nguoi_thue_provider.dart';
 import 'package:AppTroNhaToi/view_models/nguoithue_view_model.dart';
 import 'package:AppTroNhaToi/view_models/phong_view_model.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ void main() {
         //File Service được khởi tạo ở đây
         ChangeNotifierProvider(create: (_) => HangHoaProvider()),
         ChangeNotifierProvider(create: (_) => HoaDonTapHoaProvider()),
+        ChangeNotifierProvider(create: (_) => NguoiThueProvider()),
       ],
       child: const MyApp(),
     ),

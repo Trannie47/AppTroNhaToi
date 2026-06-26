@@ -1,11 +1,15 @@
 import 'package:AppTroNhaToi/models/hang_hoa.dart';
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
+import 'package:AppTroNhaToi/Provider/nguoi_thue_provider.dart';
 import 'package:flutter/material.dart';
 
 class HoaDonTapHoaFormViewModel extends ChangeNotifier {
+  final NguoiThueProvider _nguoiThueProvider;
+
   bool nguoiThueTro = true;
 
   bool coPhieuThu = true;
+
   String? errNguoiThue;
   String? errHangHoa;
 
@@ -16,15 +20,22 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
   final txtNguoiMua = TextEditingController();
 
   List<HangHoa> dsHangHoaChon = [];
+
   List<NguoiThue> dsNguoiThue = [];
+
   NguoiThue? selectedNguoiThue;
+
   Map<int, int> soLuong = {};
 
   int sttHoaDon = 1;
 
   String maHoaDon = "";
 
-  HoaDonTapHoaFormViewModel() {
+  HoaDonTapHoaFormViewModel(this._nguoiThueProvider) {
+    _nguoiThueProvider.addListener(_onNguoiThueUpdate);
+
+    Future.microtask(() => _nguoiThueProvider.fetchAll());
+
     DateTime now = DateTime.now();
 
     txtNgayMua.text =
@@ -33,81 +44,26 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
         "${now.year}";
   }
 
-  //LoadingData
-  void LoadData() {
-    dsNguoiThue = [
-      NguoiThue(
-        idnt: 1,
-        cccd: '012345678901',
-        hoTen: 'Nguyễn Văn An',
-        ngaySinh: DateTime(1995, 4, 12),
-        sdt: '0987654321',
-        queQuan: 'Hà Nội',
-        ghiChu: 'Thích nuôi cây',
-        gioiTinh: true,
-      ),
-      NguoiThue(
-        idnt: 2,
-        cccd: '023456789012',
-        hoTen: 'Trần Thị Bích',
-        ngaySinh: DateTime(1998, 10, 3),
-        sdt: '0911222333',
-        queQuan: 'Hồ Chí Minh',
-        ghiChu: 'Làm IT',
-        gioiTinh: false,
-      ),
-      NguoiThue(
-        idnt: 3,
-        cccd: '034567890123',
-        hoTen: 'Lê Văn Cường',
-        ngaySinh: DateTime(1992, 1, 20),
-        sdt: '0903344556',
-        queQuan: 'Đà Nẵng',
-        ghiChu: null,
-        gioiTinh: true,
-      ),
-      NguoiThue(
-        idnt: 4,
-        cccd: '045678901234',
-        hoTen: 'Phạm Thị Duyên',
-        ngaySinh: DateTime(2000, 6, 5),
-        sdt: '0977000111',
-        queQuan: 'Cần Thơ',
-        ghiChu: 'Sinh viên',
-        gioiTinh: false,
-      ),
-      NguoiThue(
-        idnt: 5,
-        cccd: '056789012345',
-        hoTen: 'Hoàng Văn Em',
-        ngaySinh: DateTime(1988, 12, 30),
-        sdt: '0966123456',
-        queQuan: 'Hải Phòng',
-        ghiChu: 'Người sửa chữa',
-        gioiTinh: true,
-      ),
-    ];
+  void _onNguoiThueUpdate() {
+    dsNguoiThue = List.from(_nguoiThueProvider.list);
+    print("Số người thuê: ${dsNguoiThue.length}");
+    notifyListeners();
   }
 
   // kiểm tra dữ liệu
   bool kiemTraDuLieu() {
-
     errNguoiThue = null;
     errHangHoa = null;
 
     bool hopLe = true;
 
-    // Người thuê trọ bật thì bắt buộc phải chọn người thuê
     if (nguoiThueTro && selectedNguoiThue == null) {
-
       errNguoiThue = "Vui lòng chọn người thuê.";
 
       hopLe = false;
     }
 
-    // Hóa đơn phải có ít nhất 1 mặt hàng
     if (dsHangHoaChon.isEmpty) {
-
       errHangHoa = "Vui lòng thêm ít nhất một hàng hóa.";
 
       hopLe = false;
@@ -118,44 +74,32 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
     return hopLe;
   }
 
-
   // đổi trạng thái phiếu thu
   void doiTrangThaiPhieuThu(bool value) {
-
     if (!nguoiThueTro) {
-
-      // Khách vãng lai luôn bật phiếu thu
       coPhieuThu = true;
-    }
-    else {
-
+    } else {
       coPhieuThu = value;
     }
 
     if (!coPhieuThu) {
-
       txtNguoiDongTien.clear();
     }
 
     notifyListeners();
   }
 
-  // ĐỔI TRẠNG THÁI người thuê
-
+  // đổi trạng thái người thuê
   void doiTrangThaiNguoiThueTro(bool value) {
-
     nguoiThueTro = value;
 
     if (!nguoiThueTro) {
-
       selectedNguoiThue = null;
 
       txtNguoiMua.clear();
 
-      // Khách vãng lai luôn có phiếu thu
       coPhieuThu = true;
 
-      // Xóa người đóng tiền
       txtNguoiDongTien.clear();
 
       errNguoiThue = null;
@@ -165,15 +109,15 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
   }
 
   void themHangHoa(HangHoa hangHoa) {
-    // Guard: bỏ qua nếu không có mã
     if (hangHoa.maHangHoa == null) return;
 
     int index = dsHangHoaChon.indexWhere(
       (e) => e.maHangHoa == hangHoa.maHangHoa,
     );
-    print(hangHoa);
+
     if (index == -1) {
       dsHangHoaChon.add(hangHoa);
+
       soLuong[hangHoa.maHangHoa!] = 1;
     } else {
       soLuong[hangHoa.maHangHoa!] = (soLuong[hangHoa.maHangHoa!] ?? 0) + 1;
@@ -182,14 +126,12 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// tăng số lượng
   void tangSoLuong(HangHoa hangHoa) {
     soLuong[hangHoa.maHangHoa!] = (soLuong[hangHoa.maHangHoa] ?? 0) + 1;
 
     notifyListeners();
   }
 
-  //Cập nhật số lượng
   void capNhatSoLuong(HangHoa hangHoa, int value) {
     if (value <= 0) {
       value = 1;
@@ -200,7 +142,6 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// giảm số lượng
   void giamSoLuong(HangHoa hangHoa) {
     int sl = soLuong[hangHoa.maHangHoa] ?? 1;
 
@@ -215,12 +156,10 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// lấy số lượng
   int laySoLuong(HangHoa hangHoa) {
     return soLuong[hangHoa.maHangHoa] ?? 1;
   }
 
-  /// tổng tiền
   double get tongTien {
     double tong = 0;
 
@@ -231,14 +170,12 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
     return tong;
   }
 
-  /// format tiền
   String formatTien(double tien) {
     return tien
         .toStringAsFixed(0)
         .replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (match) => ',');
   }
 
-  /// sinh mã hóa đơn
   void taoMaHoaDon() {
     DateTime now = DateTime.now();
 
@@ -252,7 +189,6 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
 
     maHoaDon = "TH$nam$thang$ngay$stt";
 
-
     sttHoaDon++;
 
     notifyListeners();
@@ -260,6 +196,8 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
+    _nguoiThueProvider.removeListener(_onNguoiThueUpdate);
+
     txtNgayMua.dispose();
 
     txtNguoiDongTien.dispose();

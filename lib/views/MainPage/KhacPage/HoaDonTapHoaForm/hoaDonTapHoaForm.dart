@@ -1,3 +1,4 @@
+import 'package:AppTroNhaToi/Provider/nguoi_thue_provider.dart';
 import 'package:AppTroNhaToi/models/hang_hoa.dart';
 import 'package:AppTroNhaToi/models/hoa_don_tap_hoa.dart';
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
@@ -10,59 +11,62 @@ import 'package:AppTroNhaToi/views/MainPage/KhacPage/TapHoaPage/HoaDonTapHoaMode
 import 'package:AppTroNhaToi/widgets/customDropdownSearch.dart';
 import 'package:AppTroNhaToi/widgets/itemHangHoaChon.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HoaDonTapHoaForm extends StatefulWidget {
-
   final HoaDonTapHoaModel? hoaDonModel;
 
-  const HoaDonTapHoaForm({
-    super.key,
-    this.hoaDonModel,
-  });
+  const HoaDonTapHoaForm({super.key, this.hoaDonModel});
 
   @override
-  State<HoaDonTapHoaForm> createState() =>
-      _HoaDonTapHoaFormState();
+  State<HoaDonTapHoaForm> createState() => _HoaDonTapHoaFormState();
 }
+
 class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
-  final vm = HoaDonTapHoaFormViewModel();
+  late HoaDonTapHoaFormViewModel vm;
 
   @override
   void initState() {
     super.initState();
 
-    vm.LoadData();
+    vm = HoaDonTapHoaFormViewModel(context.read<NguoiThueProvider>());
 
-    if (widget.hoaDonModel != null) {
+    vm.addListener(_onVmChanged);
+    vm.addListener(() {
+      if (mounted) setState(() {});
+    });
+  }
 
+  void _onVmChanged() {
+    // Chờ người thuê load xong mới bind dữ liệu sửa
+    if (widget.hoaDonModel != null &&
+        vm.dsNguoiThue.isNotEmpty &&
+        vm.maHoaDon.isEmpty) {
       vm.maHoaDon = widget.hoaDonModel!.hoaDon.maHoaDon!;
 
       vm.selectedNguoiThue = vm.dsNguoiThue.firstWhere(
-            (e) => e.idnt == widget.hoaDonModel!.hoaDon.idnt,
+        (e) => e.idnt == widget.hoaDonModel!.hoaDon.idnt,
         orElse: () => vm.dsNguoiThue.first,
       );
 
-      vm.nguoiThueTro =
-          widget.hoaDonModel!.hoaDon.idnt != null;
+      vm.nguoiThueTro = widget.hoaDonModel!.hoaDon.idnt != null;
 
-      vm.coPhieuThu =
-          widget.hoaDonModel!.phieuThu != null;
+      vm.coPhieuThu = widget.hoaDonModel!.phieuThu != null;
 
-      vm.txtNguoiDongTien.text =
-          widget.hoaDonModel!.phieuThu?.nguoiDong ?? "";
+      vm.txtNguoiDongTien.text = widget.hoaDonModel!.phieuThu?.nguoiDong ?? "";
 
-      vm.dsHangHoaChon =
-          List.from(widget.hoaDonModel!.dsHangHoa);
+      vm.dsHangHoaChon = List.from(widget.hoaDonModel!.dsHangHoa);
 
-      vm.soLuong =
-          Map.from(widget.hoaDonModel!.soLuong);
+      vm.soLuong = Map.from(widget.hoaDonModel!.soLuong);
+
+      vm.notifyListeners();
     }
   }
 
   @override
   void dispose() {
+    vm.removeListener(_onVmChanged);
     vm.dispose();
-
     super.dispose();
   }
 
@@ -160,10 +164,7 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
             if (vm.maHoaDon != 0)
               Text(
                 vm.maHoaDon.toString(),
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: Colors.grey, fontSize: 12),
               ),
           ],
         ),
@@ -210,7 +211,6 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
                             Text(
                               "Người thuê trọ",
                               style: TextStyle(fontWeight: FontWeight.w600),
-
                             ),
 
                             SizedBox(height: 3),
@@ -230,13 +230,9 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
                         value: vm.nguoiThueTro,
                         activeColor: const Color(0xff2D7A3A),
                         onChanged: (value) {
-
                           setState(() {
-
                             vm.doiTrangThaiNguoiThueTro(value);
-
                           });
-
                         },
                       ),
                     ],
@@ -245,27 +241,20 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
                   const SizedBox(height: 8),
 
                   if (vm.nguoiThueTro) ...[
-
                     SizedBox(
                       height: 48,
                       child: CustomDropdownSearch<NguoiThue>(
-
                         items: vm.dsNguoiThue,
                         selectedItem: vm.selectedNguoiThue,
                         itemAsString: (item) => item.hoTen!,
 
                         onChanged: (value) {
-
                           setState(() {
-
                             vm.selectedNguoiThue = value;
                             vm.errNguoiThue = null;
-
                           });
-
                         },
                       ),
-
                     ),
 
                     if (vm.errNguoiThue != null) ...[
@@ -282,7 +271,6 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
                         ),
                       ),
                     ],
-
                   ],
 
                   const SizedBox(height: 20),
@@ -331,15 +319,11 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
                         activeColor: const Color(0xff2D7A3A),
 
                         onChanged: (value) {
-
                           setState(() {
-
                             vm.doiTrangThaiPhieuThu(value);
-
                           });
-
                         },
-                      )
+                      ),
                     ],
                   ),
 
@@ -350,8 +334,7 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
                       title: "Người đóng tiền",
                       controller: vm.txtNguoiDongTien,
                     ),
-
-                  ]
+                  ],
                 ],
               ),
             ),
@@ -427,7 +410,6 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
                   ),
                 ),
               ),
-
             ),
             if (vm.errHangHoa != null) ...[
               const SizedBox(height: 6),
@@ -438,15 +420,11 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
                   padding: const EdgeInsets.only(left: 6),
                   child: Text(
                     vm.errHangHoa!,
-                    style: const TextStyle(
-                      color: Colors.red,
-                      fontSize: 12,
-                    ),
+                    style: const TextStyle(color: Colors.red, fontSize: 12),
                   ),
                 ),
               ),
             ],
-
 
             const SizedBox(height: 30),
 
@@ -493,7 +471,6 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
                 ),
 
                 onPressed: () {
-
                   if (!vm.kiemTraDuLieu()) {
                     setState(() {});
                     return;
@@ -505,9 +482,7 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
 
                   HoaDonTapHoa hoaDon = HoaDonTapHoa(
                     maHoaDon: vm.maHoaDon,
-                    idnt: vm.nguoiThueTro
-                        ? vm.selectedNguoiThue?.idnt
-                        : null,
+                    idnt: vm.nguoiThueTro ? vm.selectedNguoiThue?.idnt : null,
                     ngayBan: DateTime.now(),
                     tongTien: vm.tongTien,
                   );
@@ -515,7 +490,6 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
                   PhieuThuHdTh? phieuThu;
 
                   if (vm.coPhieuThu) {
-
                     phieuThu = PhieuThuHdTh(
                       maHoaDon: vm.maHoaDon,
                       nguoiDong: vm.txtNguoiDongTien.text,
@@ -532,7 +506,7 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
                       phieuThu: phieuThu,
 
                       tenNguoiMua:
-                      vm.selectedNguoiThue?.hoTen ?? "Khách vãng lai",
+                          vm.selectedNguoiThue?.hoTen ?? "Khách vãng lai",
 
                       dsHangHoa: List.from(vm.dsHangHoaChon),
 
