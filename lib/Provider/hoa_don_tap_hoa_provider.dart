@@ -3,7 +3,7 @@ import 'package:AppTroNhaToi/repositories/hoaDonTapHoa_reponsitory.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/TapHoaPage/HoaDonTapHoaModel.dart';
 import 'package:flutter/foundation.dart';
 
-class HoaDonTapHoaService extends ChangeNotifier {
+class HoaDonTapHoaProvider extends ChangeNotifier {
   final HoaDonTapHoaRepository _repo = HoaDonTapHoaRepository();
 
   List<HoaDonTapHoaModel> _list = [];

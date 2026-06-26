@@ -1,14 +1,14 @@
 import 'package:AppTroNhaToi/models/hang_hoa.dart';
 import 'package:AppTroNhaToi/models/hoa_don_tap_hoa.dart';
 import 'package:AppTroNhaToi/models/phieu_thu_hd_th.dart';
-import 'package:AppTroNhaToi/service/hang_hoa_service.dart';
-import 'package:AppTroNhaToi/service/hoa_don_tap_hoa_service.dart';
+import 'package:AppTroNhaToi/Provider/hang_hoa_provider.dart';
+import 'package:AppTroNhaToi/Provider/hoa_don_tap_hoa_provider.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/TapHoaPage/HoaDonTapHoaModel.dart';
 import 'package:flutter/material.dart';
 
 class TapHoaPageViewModel extends ChangeNotifier {
-  final HangHoaService _service_hh;
-  final HoaDonTapHoaService _service_hdth;
+  final HangHoaProvider _service_hh;
+  final HoaDonTapHoaProvider _service_hdth;
   int currentTab = 0;
   int sttHoaDon = 1;
 

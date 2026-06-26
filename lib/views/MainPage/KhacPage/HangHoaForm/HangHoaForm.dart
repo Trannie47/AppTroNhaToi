@@ -1,6 +1,6 @@
 import 'package:AppTroNhaToi/models/hang_hoa.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/HangHoaForm/HangHoaFormViewModel.dart';
-import 'package:AppTroNhaToi/service/hang_hoa_service.dart';
+import 'package:AppTroNhaToi/Provider/hang_hoa_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -20,7 +20,7 @@ class _HangHoaFormState extends State<HangHoaForm> {
   void initState() {
     super.initState();
 
-    vm = HangHoaFormViewModel(context.read<HangHoaService>());
+    vm = HangHoaFormViewModel(context.read<HangHoaProvider>());
 
     // Nếu có widget.hangHoa thì load vào form để sửa
     if (widget.hangHoa != null) {

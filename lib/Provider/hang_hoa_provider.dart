@@ -3,7 +3,7 @@ import 'package:AppTroNhaToi/repositories/hanghoa_reponsitory.dart';
 import 'package:flutter/foundation.dart';
 import 'package:AppTroNhaToi/models/hang_hoa.dart';
 
-class HangHoaService extends ChangeNotifier {
+class HangHoaProvider extends ChangeNotifier {
   final HangHoaRepository _repo = HangHoaRepository();
 
   List<HangHoa> _list = [];

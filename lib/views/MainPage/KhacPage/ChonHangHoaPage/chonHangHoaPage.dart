@@ -1,5 +1,5 @@
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/ChonHangHoaPage/chonHangHoaPageViewModel.dart';
-import 'package:AppTroNhaToi/service/hang_hoa_service.dart';
+import 'package:AppTroNhaToi/Provider/hang_hoa_provider.dart';
 import 'package:AppTroNhaToi/widgets/itemHangHoa.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,7 +18,7 @@ class _ChonHangHoaPageState extends State<ChonHangHoaPage> {
   void initState() {
     super.initState();
 
-    vm = ChonHangHoaPageModelView(context.read<HangHoaService>());
+    vm = ChonHangHoaPageModelView(context.read<HangHoaProvider>());
 
     vm.addListener(() {
       if (mounted) {

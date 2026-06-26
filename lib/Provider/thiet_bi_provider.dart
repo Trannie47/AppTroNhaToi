@@ -3,7 +3,7 @@ import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:AppTroNhaToi/repositories/thietbi_repository.dart';
 import 'package:flutter/foundation.dart';
 
-class ThietBiService extends ChangeNotifier {
+class ThietBiProvider extends ChangeNotifier {
   final ThietBiRepository _repo = ThietBiRepository();
 
   List<ThietBi> _list = [];
@@ -22,9 +22,7 @@ class ThietBiService extends ChangeNotifier {
       _list = await _repo.getListThietBi();
 
       // ID lớn nhất lên đầu
-      _list.sort(
-            (a, b) => (b.thietBiID ?? 0).compareTo(a.thietBiID ?? 0),
-      );
+      _list.sort((a, b) => (b.thietBiID ?? 0).compareTo(a.thietBiID ?? 0));
     } catch (e) {
       _list = [];
     } finally {

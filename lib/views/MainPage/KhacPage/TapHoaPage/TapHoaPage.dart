@@ -1,8 +1,8 @@
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/models/hang_hoa.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/TapHoaPageViewModel/TapHoaPageViewModel.dart';
-import 'package:AppTroNhaToi/service/hang_hoa_service.dart';
-import 'package:AppTroNhaToi/service/hoa_don_tap_hoa_service.dart';
+import 'package:AppTroNhaToi/Provider/hang_hoa_provider.dart';
+import 'package:AppTroNhaToi/Provider/hoa_don_tap_hoa_provider.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/HangHoaForm/HangHoaForm.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/HoaDonTapHoaForm/hoaDonTapHoaForm.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietHoaDonTapHoaPage/chiTietHoaDonTapHoaPage.dart';
@@ -26,8 +26,8 @@ class _TapHoaPageState extends State<TapHoaPage> {
   void initState() {
     super.initState();
     vm = TapHoaPageViewModel(
-      context.read<HangHoaService>(),
-      context.read<HoaDonTapHoaService>(),
+      context.read<HangHoaProvider>(),
+      context.read<HoaDonTapHoaProvider>(),
     );
     vm.addListener(() {
       if (mounted) {

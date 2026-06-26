@@ -1,9 +1,9 @@
 import 'package:AppTroNhaToi/models/hang_hoa.dart';
-import 'package:AppTroNhaToi/service/hang_hoa_service.dart';
+import 'package:AppTroNhaToi/Provider/hang_hoa_provider.dart';
 import 'package:flutter/material.dart';
 
 class ChonHangHoaPageModelView extends ChangeNotifier {
-  final HangHoaService _service;
+  final HangHoaProvider _service;
   final TextEditingController txtSearch = TextEditingController();
 
   List<HangHoa> _dsHienThi = [];
