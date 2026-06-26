@@ -1,3 +1,4 @@
+import 'package:AppTroNhaToi/Provider/chi-tiet-hoa_don_tap_hoa_provider.dart';
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/chiTietHoaDonTapHoaPage/chiTietHoaDonTapHoaPageViewModel.dart';
@@ -5,6 +6,7 @@ import 'package:AppTroNhaToi/widgets/itemHangHoaChon.dart';
 import 'package:flutter/material.dart';
 import 'package:AppTroNhaToi/models/hoa_don_tap_hoa.dart';
 import 'package:AppTroNhaToi/models/phieu_thu_hd_th.dart';
+import 'package:provider/provider.dart';
 
 class ChiTietHoaDonTapHoa extends StatefulWidget {
   final HoaDonTapHoa hoaDon;
@@ -33,6 +35,7 @@ class _ChiTietHoaDonTapHoaState extends State<ChiTietHoaDonTapHoa> {
       hoaDon: widget.hoaDon,
       phieuThu: widget.phieuThu,
       tenNguoiMua: widget.tenNguoiMua,
+      provider: context.read<ChiTietTapHoaProvider>(),
     );
 
     vm.addListener(() {

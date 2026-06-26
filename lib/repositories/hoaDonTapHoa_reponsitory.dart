@@ -7,9 +7,6 @@ class HoaDonTapHoaRepository {
 
   Future<List<HoaDonTapHoaModel>> getListHoaDonTapHoa() async {
     final result = await hoaDonTapHoaApiClient.getListHoaDonTapHoa();
-    for (final item in result) {
-      print(item);
-    }
     return result;
   }
 

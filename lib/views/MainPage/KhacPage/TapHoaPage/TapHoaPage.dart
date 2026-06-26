@@ -1,3 +1,4 @@
+import 'package:AppTroNhaToi/Provider/chi-tiet-hoa_don_tap_hoa_provider.dart';
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/models/hang_hoa.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/TapHoaPageViewModel/TapHoaPageViewModel.dart';
@@ -368,10 +369,14 @@ class _TapHoaPageState extends State<TapHoaPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => ChiTietHoaDonTapHoa(
-                              hoaDon: vm.dsHoaDonTapHoa[index].hoaDon,
-                              phieuThu: vm.dsHoaDonTapHoa[index].phieuThu,
-                              tenNguoiMua: vm.dsHoaDonTapHoa[index].tenNguoiMua,
+                            builder: (_) => ChangeNotifierProvider(
+                              create: (_) => ChiTietTapHoaProvider(),
+                              child: ChiTietHoaDonTapHoa(
+                                hoaDon: vm.dsHoaDonTapHoa[index].hoaDon,
+                                phieuThu: vm.dsHoaDonTapHoa[index].phieuThu,
+                                tenNguoiMua:
+                                    vm.dsHoaDonTapHoa[index].tenNguoiMua,
+                              ),
                             ),
                           ),
                         );
@@ -466,10 +471,14 @@ class _TapHoaPageState extends State<TapHoaPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => ChiTietHoaDonTapHoa(
-                              hoaDon: vm.dsCongNoTapHoa[index].hoaDon,
-                              phieuThu: vm.dsCongNoTapHoa[index].phieuThu,
-                              tenNguoiMua: vm.dsCongNoTapHoa[index].tenNguoiMua,
+                            builder: (_) => ChangeNotifierProvider(
+                              create: (_) => ChiTietTapHoaProvider(),
+                              child: ChiTietHoaDonTapHoa(
+                                hoaDon: vm.dsCongNoTapHoa[index].hoaDon,
+                                phieuThu: vm.dsCongNoTapHoa[index].phieuThu,
+                                tenNguoiMua:
+                                    vm.dsCongNoTapHoa[index].tenNguoiMua,
+                              ),
                             ),
                           ),
                         );
