@@ -1,0 +1,24 @@
+import 'package:AppTroNhaToi/core/network/ThietBiApiClient.dart';
+import 'package:AppTroNhaToi/core/network/thietBiApiClient.dart';
+import 'package:AppTroNhaToi/models/thiet_bi.dart';
+
+class ThietBiRepository {
+  final ThietBiApiClient thietBiApiClient = ThietBiApiClient();
+
+  Future<List<ThietBi>> getListThietBi() async {
+    final result = await thietBiApiClient.getListThietBi();
+    return result;
+  }
+
+  Future<ThietBi?> themThietBi(ThietBi thietBi) async {
+    return await thietBiApiClient.themThietBi(thietBi);
+  }
+
+  Future<bool> xoaThietBi(int thietBiID) async {
+    return await thietBiApiClient.xoaThietBi(thietBiID);
+  }
+
+  Future<ThietBi?> capNhatThietBi(ThietBi thietBi) async {
+    return await thietBiApiClient.capNhatThietBi(thietBi);
+  }
+}

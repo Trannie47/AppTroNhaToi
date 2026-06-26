@@ -7,5 +7,4 @@ class LoaiPhongRepository{
   Future<List<LoaiPhong>> getListLoaiPhong() async{
       return await loaiPhongApiClient.getListLoaiPhong();
   }
-
 }
