@@ -1,5 +1,4 @@
 import 'package:AppTroNhaToi/core/network/ThietBiApiClient.dart';
-import 'package:AppTroNhaToi/core/network/thietBiApiClient.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 
 class ThietBiRepository {

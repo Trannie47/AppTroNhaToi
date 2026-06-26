@@ -27,10 +27,7 @@ class ThietBiApiClient {
 
   Future<ThietBi?> themThietBi(ThietBi thietBi) async {
     try {
-      final response = await _dio.post(
-        "thiet-bi",
-        data: thietBi.toMap(),
-      );
+      final response = await _dio.post("thiet-bi", data: thietBi.toMap());
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return ThietBi.fromMap(response.data);
