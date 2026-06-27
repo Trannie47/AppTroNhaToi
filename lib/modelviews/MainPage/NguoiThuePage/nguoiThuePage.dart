@@ -3,30 +3,27 @@ import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/nguoi_thue_phong.dart';
 import 'package:flutter/material.dart';
 
-class NguoiThuePageViewModel extends ChangeNotifier {
-  final TextEditingController searchController = TextEditingController();
+import '../../../Provider/nguoi_thue_provider.dart';
 
-  final List<NguoiThuePhong> danhSachNguoiThue = [
-    NguoiThuePhong(
-      nguoiThue: NguoiThue(
-        idnt: 1,
-        hoTen: "Nguyễn Văn An",
-        cccd: "079203001234",
-        sdt: "0909123456",
-        queQuan: "TP.HCM",
-        ghiChu: "",
-        ngaySinh: DateTime(2003, 5, 12),
-      ),
-      phong: [
-        Phong(phongID: 1, tenPhong: "P101", trangThai: 1, maLoaiPhong: 1),
-        Phong(phongID: 2, tenPhong: "P102", trangThai: 2, maLoaiPhong: 2),
-      ],
-    ),
-  ];
+class NguoiThuePageViewModel extends ChangeNotifier {
+  final NguoiThueProvider _service;
+  final TextEditingController searchController = TextEditingController();
+  List<NguoiThue> get listNguoiThue => _service.list;
+  bool get isLoading => _service.isLoading;
+
+  NguoiThuePageViewModel(this._service){
+    _service.addListener(_onProviderUpdate);
+  }
+
+  Future<void> refresh() => _service.fetchAll();
 
   @override
   void dispose() {
+    _service.removeListener(_onProviderUpdate);
     searchController.dispose();
     super.dispose();
+  }
+  void _onProviderUpdate() {
+    notifyListeners();
   }
 }

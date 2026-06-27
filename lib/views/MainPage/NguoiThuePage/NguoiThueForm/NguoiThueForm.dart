@@ -2,6 +2,8 @@ import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/views/MainPage/NguoiThuePage/qr_cccd_scanner_page/qr_cccd_scanner_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../Provider/nguoi_thue_provider.dart';
+import '../../../../modelviews/MainPage/NguoiThuePage/NguoiThueForm/NguoiThueFormViewModel.dart';
 import '../../../../view_models/nguoithue_view_model.dart';
 
 class NguoiThueForm extends StatefulWidget {
@@ -14,10 +16,16 @@ class NguoiThueForm extends StatefulWidget {
 }
 
 class _NguoiThueFormState extends State<NguoiThueForm> {
-  late NguoithueViewModel nguoithueViewModel;
+  late NguoiThueFormViewModel vm;
 
   @override
   void initState() {
+    vm = NguoiThueFormViewModel(context.read<NguoiThueProvider>());
+    vm.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
     super.initState();
   }
 
@@ -36,13 +44,12 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
     );
 
     if (result != null && result.isNotEmpty) {
-      nguoithueViewModel.parseCCCDQR(result);
+      vm.parseCCCDQR(result);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    nguoithueViewModel= Provider.of<NguoithueViewModel>(context); // lấy viewmodel dùng chung với màn load ds người thuê
     return Scaffold(
       backgroundColor: const Color(0xffF7F9F7),
 
@@ -107,11 +114,11 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
         child: SizedBox(
           height: 52,
           child: ElevatedButton(
-            onPressed: nguoithueViewModel.isLoading
+            onPressed: vm.isLoading
                 ? null
                 : () async {
-              if (nguoithueViewModel.formKey.currentState!.validate()) {
-                bool isSuccess = await nguoithueViewModel.luuNguoiThue();
+              if (vm.formKey.currentState!.validate()) {
+                bool isSuccess = await vm.luuNguoiThue();
 
                 if (isSuccess && context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -132,7 +139,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                 borderRadius: BorderRadius.circular(14),
               ),
             ),
-            child: nguoithueViewModel.isLoading
+            child: vm.isLoading
                 ? const SizedBox(
               width: 20,
               height: 20,
@@ -154,7 +161,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
       ),
 
       body: Form(
-        key: nguoithueViewModel.formKey,
+        key: vm.formKey,
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(12, 4, 12, 16),
 
@@ -239,8 +246,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                     _input(
                       title: "Họ và tên",
                       hint: "Nhập họ và tên đầy đủ",
-                      //controller: vm.txtHoTen,
-                      controller: nguoithueViewModel.txtHoTen,
+                      controller: vm.txtHoTen,
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
                           return "Vui lòng nhập họ tên";
@@ -252,8 +258,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                     _input(
                       title: "Số điện thoại",
                       hint: "VD: 0901 234 567",
-                      //controller: vm.txtSDT,
-                      controller: nguoithueViewModel.txtSDT,
+                      controller: vm.txtSDT,
                       keyboardType: TextInputType.phone,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -272,7 +277,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                       title: "Số CCCD ( Căn cước công dân)",
                       hint: "Nhập số CCCD/CMND",
                       //controller: vm.txtCCCD,
-                      controller: nguoithueViewModel.txtCCCD,
+                      controller: vm.txtCCCD,
                       keyboardType: TextInputType.number,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -310,8 +315,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                                 const SizedBox(height: 8),
 
                                 TextFormField(
-                                  //controller: vm.txtNgaySinh,
-                                  controller: nguoithueViewModel.txtNgaySinh,
+                                  controller: vm.txtNgaySinh,
                                   validator: (value) {
 
                                     if (value == null || value.isEmpty) {
@@ -380,8 +384,8 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                                       newText += text[i];
                                     }
 
-                                    if (newText != nguoithueViewModel.txtNgaySinh.text) {
-                                      nguoithueViewModel.txtNgaySinh.value = TextEditingValue(
+                                    if (newText != vm.txtNgaySinh.text) {
+                                      vm.txtNgaySinh.value = TextEditingValue(
                                         text: newText,
 
                                         selection: TextSelection.collapsed(
@@ -416,7 +420,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                                           lastDate: DateTime.now(),
                                         );
                                         if (picked != null) {
-                                          nguoithueViewModel.txtNgaySinh.text =
+                                          vm.txtNgaySinh.text =
                                           "${picked.day.toString().padLeft(2, '0')}/"
                                               "${picked.month.toString().padLeft(2, '0')}/"
                                               "${picked.year}";
@@ -473,7 +477,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
 
                                 FormField<bool>(
                                   validator: (value) {
-                                    if (nguoithueViewModel.gioiTinh == null) {
+                                    if (vm.gioiTinh == null) {
                                       return "Vui lòng chọn giới tính";
                                     }
                                     return null;
@@ -495,7 +499,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
 
                                           child: DropdownButtonHideUnderline(
                                             child: DropdownButton<bool>(
-                                              value: nguoithueViewModel.gioiTinh,
+                                              value: vm.gioiTinh,
 
                                               isExpanded: true,
 
@@ -520,7 +524,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
 
                                               onChanged: (value) {
                                                 if (value != null) {
-                                                  nguoithueViewModel.gioiTinh = value; // Gán data vào VM chung
+                                                  vm.gioiTinh = value; // Gán data vào VM chung
                                                   state.didChange(value); // Báo hiệu FormField cập nhật
                                                 }
                                               },
@@ -553,7 +557,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                     _input(
                       title: "Quê quán",
                       hint: "Tỉnh / Thành phố",
-                      controller: nguoithueViewModel.txtQueQuan,
+                      controller: vm.txtQueQuan,
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
                           return "Vui lòng nhập quê quán";
@@ -577,7 +581,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                     const SizedBox(height: 12),
 
                     TextFormField(
-                      controller: nguoithueViewModel.txtGhiChu,
+                      controller: vm.txtGhiChu,
                       maxLines: 2,
 
                       decoration: InputDecoration(

@@ -4,41 +4,51 @@ import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/phuong_tien.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../Provider/nguoi_thue_provider.dart';
+import '../../../../repositories/hopdong_repository.dart';
+import '../../../../states/chi_tiet_nguoi_thue_state.dart';
+
 class ChiTietNguoiThuePageViewModel extends ChangeNotifier {
-  late final NguoiThue nguoiThue;
-  late final List<Phong> dsPhong;
+  final NguoiThueProvider _service;
+  final HopdongRepository _hopDongRepository = HopdongRepository();
 
-  List<PhuongTien> dsXe = [];
-  List<HoaDonGuiXe> dsHoaDon = [];
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+  ChiTietNguoiThueState _chiTietNguoiThueState = ChiTietNguoiThueLoading();
+  ChiTietNguoiThueState get chiTietNguoiThueState => _chiTietNguoiThueState;
 
-  ChiTietNguoiThuePageViewModel({
-    required this.nguoiThue,
-    required this.dsPhong,
-  });
+  ChiTietNguoiThuePageViewModel(this._service);
 
-  void showDeleteDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (_) {
-        return AlertDialog(
-          title: const Text("Xóa người thuê"),
-          content: const Text(
-            "Bạn có chắc chắn muốn xóa người thuê này không?",
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("Hủy"),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text("Xóa", style: TextStyle(color: Colors.red)),
-            ),
-          ],
-        );
-      },
-    );
+  //Lấy ds phòng của ng thuê đó
+  Future<void> fetchRoomByNguoiThue(int idnt) async {
+    _chiTietNguoiThueState = ChiTietNguoiThueLoading();
+    notifyListeners();
+    try {
+      final result = await _hopDongRepository.fetchRoomByNguoiThue(idnt);
+      _chiTietNguoiThueState = ChiTietNguoiThueSuccess(result);
+    } catch (e) {
+      _chiTietNguoiThueState = ChiTietNguoithueError(e.toString());
+    } finally {
+      notifyListeners();
+    }
   }
+
+
+  Future<bool> xoaNguoiThue(int idnt) async {
+    if (_isLoading) return false;
+    _isLoading = true;
+    notifyListeners();
+    try {
+      final result = await _service.xoa(idnt);
+      return result;
+    } catch (e) {
+      print("Loi viemodel khi xoa $e");
+      rethrow;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+
 }

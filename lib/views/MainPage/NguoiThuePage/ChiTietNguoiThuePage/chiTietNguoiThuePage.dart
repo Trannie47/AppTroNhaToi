@@ -9,7 +9,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../Provider/nguoi_thue_provider.dart';
 import '../../../../core/utils/launcher_utils.dart';
+import '../../../../modelviews/MainPage/NguoiThuePage/ChiTietNguoiThuePage/chiTietNguoiThuePageViewModel.dart';
 import '../../../../states/chi_tiet_nguoi_thue_state.dart';
 import '../../../../widgets/app_error.dart';
 
@@ -29,24 +31,29 @@ class ChiTietNguoiThuePage extends StatefulWidget {
 }
 
 class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
-  // late ChiTietNguoiThuePageViewModel vm;
-  late HopdongViewModel hopdongViewModel;
+  late ChiTietNguoiThuePageViewModel vm;
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      hopdongViewModel.fetchRoomByNguoiThue(
-        widget.nguoiThue.idnt!,
-      ); // kích hoạt gọi api lấy ds phòng theo id người thuê
+    vm = ChiTietNguoiThuePageViewModel(context.read<NguoiThueProvider>());
+    vm.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
     });
 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      vm.fetchRoomByNguoiThue(widget.nguoiThue.idnt!);
+    }); //Kích hoạt gọi api lấy ds phòng theo id ngthue
+
   }
-  //
-  // @override
-  // void dispose() {
-  //   vm.dispose();
-  //   super.dispose();
-  // }
+
+  @override
+  void dispose() {
+    vm.dispose();
+    super.dispose();
+  }
 
   // void openPhuongTienPage() {
   //   Navigator.push(
@@ -65,7 +72,6 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
   @override
   Widget build(BuildContext context) {
     final detail = widget.nguoiThue; // lấy dữ liệu người thuê được gửi từ mà trước qua
-    hopdongViewModel= Provider.of<HopdongViewModel>(context);
     return Scaffold(
       backgroundColor: const Color(0xffF7F8FC),
 
@@ -430,12 +436,12 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
 
                   const SizedBox(height: 18),
                   _section(
-                    title: switch(hopdongViewModel.chiTietNguoiThueState){
+                    title: switch(vm.chiTietNguoiThueState){
                       ChiTietNguoiThueSuccess(listHD: final list) => "Phòng đang thuê (${list.length})",
                       _ => "Phòng đang thuê (...)",
                     },
                     action: "Xem thêm",
-                    child: switch(hopdongViewModel.chiTietNguoiThueState){
+                    child: switch(vm.chiTietNguoiThueState){
                       ChiTietNguoiThueLoading() => const Center(
                         child: Padding(
                           padding: EdgeInsets.all(16.0),
@@ -446,7 +452,7 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                       AppErrorWidget(
                         message: msg,
                         onRetry: (){
-                          hopdongViewModel.fetchRoomByNguoiThue(widget.nguoiThue.idnt!);
+                          vm.fetchRoomByNguoiThue(widget.nguoiThue.idnt!);
                         },
                       ),
 
@@ -503,144 +509,7 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                     ),
 
                     child: TextButton.icon(
-                      onPressed: () async {
-                        bool? confirmDelete = await showDialog<bool>(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            backgroundColor: Colors.white,
-                            surfaceTintColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(24),
-                            ),
-                            contentPadding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-                            content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Container(
-                                  width: 56,
-                                  height: 56,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xffFFF1F1),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: const Icon(
-                                    Icons.delete_forever_rounded,
-                                    color: Colors.red,
-                                    size: 28,
-                                  ),
-                                ),
-                                const SizedBox(height: 16),
-
-                                // Tiêu đề font đậm
-                                const Text(
-                                  "Xác nhận xóa",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w800,
-                                    color: Color(0xff1C1C1E),
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-
-                                // Nội dung mô tả ngắn gọn
-                                const Text(
-                                  "Bạn có chắc muốn xóa người thuê này không? Hành động này không thể hoàn tác.",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Color(0xff666666),
-                                    height: 1.4,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                            actions: [
-                              Row(
-                                children: [
-                                  // Nút HỦY
-                                  Expanded(
-                                    child: OutlinedButton(
-                                      onPressed: () => Navigator.pop(context, false),
-                                      style: OutlinedButton.styleFrom(
-                                        minimumSize: const Size.fromHeight(44),
-                                        side: BorderSide(color: Colors.grey.shade300),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12),
-                                        ),
-                                      ),
-                                      child: const Text(
-                                        "Hủy",
-                                        style: TextStyle(
-                                          color: Color(0xff666666),
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-
-                                  // Nút XÓA
-                                  Expanded(
-                                    child: ElevatedButton(
-                                      onPressed: () => Navigator.pop(context, true),
-                                      style: ElevatedButton.styleFrom(
-                                        minimumSize: const Size.fromHeight(44),
-                                        backgroundColor: Colors.red,
-                                        foregroundColor: Colors.white,
-                                        elevation: 0,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12),
-                                        ),
-                                      ),
-                                      child: const Text(
-                                        "Xóa",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        );
-                        if(confirmDelete!= true) return;
-                        try{
-                          final idnt= widget.nguoiThue.idnt;
-                          if(idnt!=null) {
-                            bool isSuccess = await Provider
-                                .of<
-                                NguoithueViewModel>(context, listen: false)
-                                .xoaNguoiThue(idnt);
-
-                            if(isSuccess && context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text(
-                                    'Xóa người thuê thành công!')),
-                              );
-                              Navigator.pop(context,true);
-                            }
-                          }
-                        }catch(e){
-                            String  errorMessage= "Không thể xóa người thuê này!";
-                            if(e is DioException && e.response?.data!=null){
-                              final data = e.response?.data;
-                              if (data is Map && data.containsKey('message')) {
-                                errorMessage = data['message'].toString();
-                              }
-                            }
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(errorMessage),
-                                backgroundColor: Colors.red.shade700,
-                              ),
-                            );
-                        }
-                      },
+                      onPressed: () => _thucHienXoaNguoiThue(),
 
                       icon: const Icon(
                         Icons.delete_outline_rounded,
@@ -666,6 +535,136 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
         ),
       ),
     );
+  }
+
+  Future<void> _thucHienXoaNguoiThue() async {
+    bool? confirmDelete = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+        ),
+        contentPadding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 56,
+              height: 56,
+              decoration: const BoxDecoration(
+                color: Color(0xffFFF1F1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.delete_forever_rounded,
+                color: Colors.red,
+                size: 28,
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              "Xác nhận xóa",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+                color: Color(0xff1C1C1E),
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              "Bạn có chắc muốn xóa người thuê này không? Hành động này không thể hoàn tác.",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14,
+                color: Color(0xff666666),
+                height: 1.4,
+              ),
+            ),
+          ],
+        ),
+        actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        actions: [
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size.fromHeight(44),
+                    side: BorderSide(color: Colors.grey.shade300),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    "Hủy",
+                    style: TextStyle(
+                      color: Color(0xff666666),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size.fromHeight(44),
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    "Xóa",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+
+    if (confirmDelete != true) return;
+    try {
+      final idnt = widget.nguoiThue.idnt;
+      if (idnt != null) {
+        // Gọi hàm xóa qua vm con mới, mảng local trong Provider tổng tự động refresh
+        bool isSuccess = await vm.xoaNguoiThue(idnt);
+
+        if (isSuccess && context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Xóa người thuê thành công!')),
+          );
+          Navigator.pop(context, true); // Quay lại màn hình danh sách chính
+        }
+      }
+    } catch (e) {
+      String errorMessage = "Không thể xóa người thuê này!";
+      if (e is DioException && e.response?.data != null) {
+        final data = e.response?.data;
+        if (data is Map && data.containsKey('message')) {
+          errorMessage = data['message'].toString();
+        }
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red.shade700,
+        ),
+      );
+    }
   }
 
   Widget _section({

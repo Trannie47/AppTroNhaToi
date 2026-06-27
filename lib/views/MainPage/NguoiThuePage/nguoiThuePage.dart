@@ -1,13 +1,11 @@
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
-import 'package:AppTroNhaToi/models/nguoi_thue_phong.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/NguoiThuePage/nguoiThuePage.dart';
 import 'package:AppTroNhaToi/view_models/hopdong_view_model.dart';
 import 'package:AppTroNhaToi/views/MainPage/NguoiThuePage/NguoiThueForm/NguoiThueForm.dart';
 import 'package:AppTroNhaToi/widgets/itemNguoiThue.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../../../view_models/nguoithue_view_model.dart';
+import '../../../Provider/nguoi_thue_provider.dart';
 import 'ChiTietNguoiThuePage/chiTietNguoiThuePage.dart';
 
 class NguoiThuePage extends StatefulWidget {
@@ -20,19 +18,20 @@ class NguoiThuePage extends StatefulWidget {
 
 class _NguoiThuePageState extends State<NguoiThuePage> {
 
-  late NguoithueViewModel nguoithueViewModel;
+  late NguoiThuePageViewModel vm;
 
   @override
   void initState() {
     super.initState();
-    //khởi tạo kích hoạt api lấy dữ liệu list người thuê về
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final vm = Provider.of<NguoithueViewModel>(context, listen: false);
-      nguoithueViewModel = vm;
+      vm = NguoiThuePageViewModel(context.read<NguoiThueProvider>());
+      vm.addListener(() {
+        if (mounted) {
+          setState(() {});
+        }
+      });
 
-      vm.fetchAllNguoiThue();
+        vm.refresh();
 
-    });
 
 
   }
@@ -50,15 +49,14 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
         ),
       ),
     );
-    if(check==true || context.mounted){
-      Provider.of<NguoithueViewModel>(context, listen: false).fetchAllNguoiThue();
+    if ((check == true || check != null) && mounted) {
+      vm.refresh();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    nguoithueViewModel= Provider.of<NguoithueViewModel>(context);
-    final listNguoiThue= nguoithueViewModel.listNguoithu;
+    final listNguoiThue = vm.listNguoiThue;
     return Scaffold(
       backgroundColor: const Color(0xffF5F6FA),
 
@@ -96,8 +94,8 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
                               },
                             ),
                           );
-                         if(check ==true && context.mounted){
-                           Provider.of<NguoithueViewModel>(context,listen: false).fetchAllNguoiThue();
+                         if (check == true && mounted) {
+                           vm.refresh();
                          }
                         },
 
@@ -131,7 +129,7 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
                 alignment: Alignment.center,
 
                 child: TextField(
-                  controller: nguoithueViewModel.searchController,
+                  controller: vm.searchController,
 
                   textAlignVertical: TextAlignVertical.center,
 
