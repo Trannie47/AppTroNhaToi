@@ -1,6 +1,9 @@
 import 'package:AppTroNhaToi/models/item_phong.dart';
 import 'package:AppTroNhaToi/views/MainPage/PhongPage/FormPhong/FormPhong.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../../../../view_models/phong_view_model.dart';
 
 class MoreOptionsSheet extends StatelessWidget {
   final ItemPhong room;
@@ -26,12 +29,16 @@ class MoreOptionsSheet extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.edit_outlined, color: Color(0xFF2D7A3A)),
             title: const Text('Chỉnh sửa thông tin phòng', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_)=> FormPhong(room: room,))
+            onTap: () async {
+
+              final result = await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => FormPhong(room: room)),
               );
+              if(result != null && result is ItemPhong){
+                context.read<PhongViewModel>().updateRoomInList(result);
+              }
+              Navigator.pop(context);
             },
           ),
 

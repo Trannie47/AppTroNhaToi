@@ -45,6 +45,29 @@ class PhongApiClient {
       throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
     }
   }
+  Future<Phong?> updateRoom(Phong room) async{
+    try{
+      final response=await _dio.patch("phong/${room.phongID}", data: room.toMap());
+
+      if(response.statusCode==200 || response.statusCode==201){
+        if(response.data!=null){
+          return Phong.fromMap(response.data);
+        }
+      }
+      return null;
+    }on DioException catch(e){
+      if (kDebugMode) {
+        print("Lỗi PhongApiClient");
+      }
+      throw Exception(_mapErrorToMessage(e));
+    }
+    catch(e){
+      if (kDebugMode) {
+        print("Lỗi không xác định PhongApiClient: $e");
+      }
+      throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
+    }
+  }
 
   String _mapErrorToMessage(DioException e){
     if (e.type == DioExceptionType.connectionError ||
@@ -53,13 +76,20 @@ class PhongApiClient {
         e.type == DioExceptionType.sendTimeout) {
       return "Không có kết nối mạng, vui lòng thử lại";
     }
-    final statusCode= e.response?.statusCode;
-    switch(statusCode){
+    if (e.response?.data != null && e.response?.data['message'] != null) {
+      final msg = e.response?.data['message'];
+      if (msg is String) return msg;
+      if (msg is List && msg.isNotEmpty) return msg.first.toString();
+    }
+
+    final statusCode = e.response?.statusCode;
+    switch (statusCode) {
+      case 400:
+        return "Dữ liệu yêu cầu không hợp lệ!";
       case 500:
         return "Hệ thống đang gặp sự cố, vui lòng thử lại sau";
       default:
         return "Đã có lỗi xảy ra, vui lòng thử lại sau";
-
     }
   }
 }

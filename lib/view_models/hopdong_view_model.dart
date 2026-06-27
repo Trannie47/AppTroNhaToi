@@ -15,6 +15,7 @@ class HopdongViewModel extends ChangeNotifier{
   ChiTietNguoiThueState _chiTietNguoiThueState= ChiTietNguoiThueLoading();
   ChiTietNguoiThueState get chiTietNguoiThueState => _chiTietNguoiThueState;
 
+  //Lấy ds phòng của người thuê
   Future<void> fetchRoomByNguoiThue(int idnt)async{
     try{
       _chiTietNguoiThueState= ChiTietNguoiThueLoading();

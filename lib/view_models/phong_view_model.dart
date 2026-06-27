@@ -55,6 +55,22 @@ class PhongViewModel extends ChangeNotifier{
       notifyListeners();
     }
   }
+  Future<void> updateRoom(Phong room) async{
+    try{
+      _phongSaveState= PhongSaveLoading();// Dùng lại State của SavePhong
+      notifyListeners();
+      final result=  await phongRepository.updateRoom(room);
+      if(result !=null) {
+        _phongSaveState = PhongSaveSuccess(result);
+      }else{
+        _phongSaveState= PhongSaveError("Không nhận được phản hồi từ hệ thống!");
+      }
+    }catch(e){
+      _phongSaveState = PhongSaveError(e.toString().replaceFirst('Exception: ', ''));
+    }finally{
+      notifyListeners();
+    }
+  }
 
   List<ItemPhong> get listPhongHienThi{
     switch(_currentFilter){
@@ -119,5 +135,12 @@ class PhongViewModel extends ChangeNotifier{
   void addRoom(ItemPhong room){
     _listPhong.insert(0,room);
     notifyListeners();
+  }
+  void updateRoomInList(ItemPhong updateRoom){
+    final index= _listPhong.indexWhere((phong)=> phong.phongId==updateRoom.phongId);
+    if(index!=-1){
+      _listPhong[index]= updateRoom;
+      notifyListeners();
+    }
   }
 }

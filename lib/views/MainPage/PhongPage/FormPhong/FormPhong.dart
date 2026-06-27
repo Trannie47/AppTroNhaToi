@@ -24,8 +24,8 @@ class _FormPhongState extends State<FormPhong> {
   //late FormPhongViewModel vm;
   late LoaiPhongViewModel loaiPhongViewModel;
   late PhongViewModel phongViewModel;
-  bool get isEdit=> widget.room!=null;
-
+  bool get isEdit=> widget.room!=null; //Check xem có phải chỉnh sửa hay không
+  bool get isHasContract => isEdit && (widget.room?.dsHopDong.isNotEmpty ?? false); // check xem phòng này có hợp đồng không để ràng buộc trạng thái.
   @override
   void initState() {
     super.initState();
@@ -67,7 +67,18 @@ class _FormPhongState extends State<FormPhong> {
       print("Sai dữ liệu");
       return;
     }
-    await phongViewModel.saveRoom();
+    if(isEdit){
+      Phong editData = Phong(
+        phongID: widget.room!.phongId,
+        tenPhong: phongViewModel.nameController.text.trim(),
+        trangThai: phongViewModel.trangThai,
+        maLoaiPhong: phongViewModel.idLoaiPhong,
+        moTa: phongViewModel.descController.text.trim(),
+      );
+      await phongViewModel.updateRoom(editData);
+    } else {
+      await phongViewModel.saveRoom();
+    }
     if (!mounted) return;
     final state = phongViewModel.phongSaveState;
     if (state is PhongSaveSuccess) {
@@ -92,21 +103,21 @@ class _FormPhongState extends State<FormPhong> {
         moTa: state.phong.moTa ?? '',
         maLoaiPhong: state.phong.maLoaiPhong,
         loaiPhong: selectedLoai,
-        dsHopDong: [],
+          dsHopDong: isEdit ? widget.room!.dsHopDong : [],
         giahientai: selectedLoai.giaTien.toDouble()
       );
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Thêm phòng trọ mới thành công!"),
+        SnackBar(
+          content: Text(isEdit ? "Cập nhật thông tin phòng thành công!" : "Thêm phòng trọ mới thành công!"),
           backgroundColor: Colors.green,
-          duration: Duration(seconds: 2),
+          duration: const Duration(seconds: 2),
         ),
       );
       Navigator.pop(context, itemPhong);
     } else if (state is PhongSaveError) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("Lưu thất bại: ${state.messageError}"),
+          content: Text(isEdit ?"Lưu thất bại: ${state.messageError}": "Cập nhật thất bại: ${state.messageError}"),
           backgroundColor: Colors.red,
         ),
       );
@@ -256,48 +267,44 @@ class _FormPhongState extends State<FormPhong> {
                               return Row(
                                 children: [
                                   Expanded(
-                                    child: _statusItem(
-                                      title: "Còn trống",
-                                      color: Colors.green,
-                                      selected: phongViewModel.trangThai == 0,
-                                      onTap: () =>
-                                          phongViewModel.setTrangThai(0),
+                                    child: Opacity(
+                                        opacity: isHasContract? 0.4: 1.0,
+                                      child: _statusItem(
+                                        title: "Còn trống",
+                                        color: Colors.green,
+                                        selected: phongViewModel.trangThai == 0,
+                                        onTap: isHasContract? ()=>  _showWarningSnackbar("Phòng đang có Hợp đồng hoạt động. Không thể đưa phòng về trạng thái trống!")
+                                                            : ()=> phongViewModel.setTrangThai(0),
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(width: 10),
                                   Expanded(
                                     child: Opacity(
-                                        opacity: isEdit ? 1.0 : 0.4,
+                                        opacity: isHasContract ? 1.0 : 0.4,
                                       child: _statusItem(
                                         title: "Đang thuê",
                                         color: Colors.orange,
                                         selected: phongViewModel.trangThai == 1,
-                                        onTap: isEdit ?
+                                        onTap: isHasContract ?
                                             () => phongViewModel.setTrangThai(1)
-                                            : (){
-                                          ScaffoldMessenger.of(context).clearSnackBars();
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            const SnackBar(
-                                              content: Text(
-                                                "Trạng thái 'Đang thuê' sẽ tự động kích hoạt khi bạn lập Hợp đồng cho phòng này!",
-                                                style: TextStyle(fontWeight: FontWeight.w500),
-                                              ),
-                                              backgroundColor: Color(0xFF1E293B),
-                                              duration: Duration(seconds: 3),
-                                            ),
-                                          );
-                                        },
+                                            : ()=> _showWarningSnackbar("Trạng thái 'Đang thuê' sẽ tự động kích hoạt khi bạn lập Hợp đồng cho phòng này!")
                                       ),
                                     )
                                   ),
                                   const SizedBox(width: 10),
                                   Expanded(
-                                    child: _statusItem(
-                                      title: "Đang sửa chữa",
-                                      color: Colors.red,
-                                      selected: phongViewModel.trangThai == 2,
-                                      onTap: () =>
-                                          phongViewModel.setTrangThai(2),
+                                    child: Opacity(
+                                        opacity: isHasContract ? 0.4: 1.0,
+                                      child: _statusItem(
+                                        title: "Đang sửa chữa",
+                                        color: Colors.red,
+                                        selected: phongViewModel.trangThai == 2,
+                                        onTap: isHasContract ?
+                                        ()=> _showWarningSnackbar("Phòng đang có khách ở, không thể chuyển sang trạng thái sửa chữa!")
+                                            : () => phongViewModel.setTrangThai(2)
+                                           
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -554,6 +561,21 @@ class _FormPhongState extends State<FormPhong> {
           const SizedBox(height: 18),
           child,
         ],
+      ),
+    );
+  }
+
+  //Thanh thông báo
+  void _showWarningSnackbar(String message) {
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13),
+        ),
+        backgroundColor: const Color(0xFF1E293B),
+        duration: const Duration(seconds: 3),
       ),
     );
   }

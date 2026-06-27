@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../states/NguoiThueState.dart';
+import '../../../../view_models/phong_view_model.dart';
 import '../../../../widgets/app_error.dart';
 
 class PhongChiTiet extends StatefulWidget {
@@ -31,7 +32,11 @@ class PhongChiTiet extends StatefulWidget {
   }
     @override
     Widget build(BuildContext context) {
-      final room = widget.room;
+      final phongViewModel = Provider.of<PhongViewModel>(context);
+      final room = phongViewModel.listPhong.firstWhere(
+            (p) => p.phongId == widget.room.phongId,
+        orElse: () => widget.room,
+      );
       nguoithueViewModel= Provider.of<NguoithueViewModel>(context);
       // Lấy ra các màu sắc và văn bản trạng thái trực tiếp từ thuộc tính trangThai của room
       Color statusColor = _getTrangThaiColor(room.trangThai);

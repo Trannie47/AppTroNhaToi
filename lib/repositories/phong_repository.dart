@@ -13,4 +13,8 @@ class PhongRepository {
   Future<Phong?> saveRoom(Phong room) async{
     return await _phongApiClient.SaveRoom(room);
   }
+
+  Future<Phong?> updateRoom(Phong room) async{
+    return await _phongApiClient.updateRoom(room);
+  }
 }
