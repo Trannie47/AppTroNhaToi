@@ -40,13 +40,10 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
     super.dispose();
   }
   void toChiTietNguoiThue(NguoiThue nt) async{
-    final check= await Navigator.push(
+    final check = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ChangeNotifierProvider(
-            create: (_) => HopdongViewModel(),
-            child:  ChiTietNguoiThuePage(nguoiThue: nt),
-        ),
+        builder: (context) => ChiTietNguoiThuePage(nguoiThue: nt),
       ),
     );
     if ((check == true || check != null) && mounted) {

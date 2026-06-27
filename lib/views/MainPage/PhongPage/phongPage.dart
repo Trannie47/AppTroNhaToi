@@ -21,7 +21,6 @@ class PhongPage extends StatefulWidget {
 
 class _PhongPageState extends State<PhongPage> {
   late PhongPageViewModel vm;
-  late PhongViewModel phongViewModel;
   @override
   void initState() {
     super.initState();
@@ -44,19 +43,14 @@ class _PhongPageState extends State<PhongPage> {
     super.dispose();
   }
 
-  void toThemPhong() async {
+  void themPhong() async {
 
-    final room = await Navigator.push(
+    await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => const FormPhong(),
       ),
     );
-
-    if (room != null) {
-      phongViewModel.addRoom(room);
-      setState(() {});
-    }
   }
 
   @override
@@ -84,7 +78,7 @@ class _PhongPageState extends State<PhongPage> {
               ),
             ),
             ElevatedButton.icon(
-              onPressed: toThemPhong,
+              onPressed: themPhong,
               icon: const Icon(Icons.add, color: Colors.white, size: 13),
               label: const Text(
                 "Thêm phòng",
