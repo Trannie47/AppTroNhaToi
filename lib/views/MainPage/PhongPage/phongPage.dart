@@ -6,8 +6,9 @@ import 'package:AppTroNhaToi/widgets/itemPhong.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../Provider/phong_provider.dart';
 import '../../../models/loaiphong.dart';
-import '../../../modelviews/MainPage/PhongPage/PhongPageModelView.dart';
+import '../../../modelviews/MainPage/PhongPage/PhongPageViewModel.dart';
 import 'ChiTietPhongPage/phongChiTiet.dart';
 
 
@@ -19,19 +20,22 @@ class PhongPage extends StatefulWidget {
 }
 
 class _PhongPageState extends State<PhongPage> {
-  final PhongPageModelView vm = PhongPageModelView();
+  late PhongPageViewModel vm;
   late PhongViewModel phongViewModel;
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_){
-      Provider.of<PhongViewModel>(context, listen: false).fetchPhong();
-    });
+    vm = PhongPageViewModel(context.read<PhongProvider>());
     vm.addListener(() {
       if (mounted) {
         setState(() {});
       }
     });
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      vm.refresh();
+    });
+
+
   }
 
   @override
@@ -57,8 +61,7 @@ class _PhongPageState extends State<PhongPage> {
 
   @override
   Widget build(BuildContext context) {
-    phongViewModel= Provider.of<PhongViewModel>(context);
-    final listPhong= phongViewModel.listPhong;
+    final listPhong= vm.listPhong;
     return Scaffold(
       backgroundColor: const Color(0xffF6F6F6),
 
@@ -154,21 +157,21 @@ class _PhongPageState extends State<PhongPage> {
                                 const SizedBox(width: 10),
                                 _itemFilter(
                                   filter: 0,
-                                  text: "Còn trống (${phongViewModel.listPhongTrong.length})",
+                                  text: "Còn trống (${vm.listPhongTrong.length})",
                                   bgColor: const Color(0xffEAF3EB),
                                   textColor: const Color(0xff2D7A3A),
                                 ),
                                 const SizedBox(width: 10),
                                 _itemFilter(
                                   filter: 1,
-                                  text: "Đang thuê (${phongViewModel.listPhongDangThue.length})",
+                                  text: "Đang thuê (${vm.listPhongDangThue.length})",
                                   bgColor: const Color(0xffFFF1E1),
                                   textColor: const Color(0xffFF8A00),
                                 ),
                                 const SizedBox(width: 10),
                                 _itemFilter(
                                   filter: 2,
-                                  text: "Đang sửa (${phongViewModel.listPhongDangSua.length})",
+                                  text: "Đang sửa (${vm.listPhongDangSua.length})",
                                   bgColor: const Color(0xffFFEAEA),
                                   textColor: Colors.red,
                                 ),
@@ -186,17 +189,17 @@ class _PhongPageState extends State<PhongPage> {
                                 color: const Color(0xff222222),
                               ),
                               _itemThongKe(
-                                title: "${phongViewModel.listPhongTrong.length}",
+                                title: "${vm.listPhongTrong.length}",
                                 subTitle: "Còn trống",
                                 color: const Color(0xff2D7A3A),
                               ),
                               _itemThongKe(
-                                title: "${phongViewModel.listPhongDangThue.length}",
+                                title: "${vm.listPhongDangThue.length}",
                                 subTitle: "Đang thuê",
                                 color: const Color(0xffFF8A00),
                               ),
                               _itemThongKe(
-                                title: "${phongViewModel.listPhongDangSua.length}",
+                                title: "${vm.listPhongDangSua.length}",
                                 subTitle: "Đang sửa",
                                 color: Colors.red,
                               ),
@@ -214,13 +217,13 @@ class _PhongPageState extends State<PhongPage> {
                         horizontal: 16,
                         vertical: 8,
                       ),
-                      child: phongViewModel.listPhongHienThi.isEmpty
+                      child: vm.listPhongHienThi.isEmpty
                       ? const Center(child: Text("Không có phòng trọ nào thuộc trạng thái này"))
                       :
                       ListView.builder(
-                        itemCount: phongViewModel.listPhongHienThi.length,
+                        itemCount: vm.listPhongHienThi.length,
                         itemBuilder: (context, index) {
-                          final itemBackend = phongViewModel.listPhongHienThi[index];
+                          final itemBackend = vm.listPhongHienThi[index];
                           final currentPhong = Phong(
                             phongID: itemBackend.phongId,
                             tenPhong: itemBackend.tenPhong,
@@ -276,7 +279,7 @@ class _PhongPageState extends State<PhongPage> {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(30),
-          onTap: () => phongViewModel.setFilter(filter),
+          onTap: () => vm.setFilter(filter),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 5.5),
             child: Text(

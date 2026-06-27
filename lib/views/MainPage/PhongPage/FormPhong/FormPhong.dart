@@ -8,7 +8,10 @@ import 'package:AppTroNhaToi/view_models/phong_view_model.dart';
 import 'package:AppTroNhaToi/views/MainPage/PhongPage/FormLoaiPhong/FormLoaiPhong.dart';
 import 'package:AppTroNhaToi/widgets/itemLoaiPhongSelectBox.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../../../../Provider/loai_phong_provider.dart';
+import '../../../../Provider/phong_provider.dart';
 import '../../../../view_models/loaiphong_view_model.dart';
 
 class FormPhong extends StatefulWidget {
@@ -21,40 +24,23 @@ class FormPhong extends StatefulWidget {
 }
 
 class _FormPhongState extends State<FormPhong> {
-  //late FormPhongViewModel vm;
-  late LoaiPhongViewModel loaiPhongViewModel;
-  late PhongViewModel phongViewModel;
+  late FormPhongViewModel vm;
   bool get isEdit=> widget.room!=null; //Check xem có phải chỉnh sửa hay không
   bool get isHasContract => isEdit && (widget.room?.dsHopDong.isNotEmpty ?? false); // check xem phòng này có hợp đồng không để ràng buộc trạng thái.
   @override
   void initState() {
     super.initState();
-    loaiPhongViewModel = LoaiPhongViewModel();
-    phongViewModel = PhongViewModel();
-    if(isEdit){ // đổ dữ liệu lên các trường khi sửa phòng
-      final room= widget.room!;
-      phongViewModel.nameController.text= room.tenPhong;
-      phongViewModel.descController.text= room.moTa;
-      
-      phongViewModel.setTrangThai(room.trangThai);
-      phongViewModel.setIdLoaiPhong(room.maLoaiPhong);
-
-    }
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await loaiPhongViewModel.getListLoaiPhong();
-      final state = loaiPhongViewModel.loaiphongState;
-      if (widget.room==null && state is LoaiPhongSuccess && state.listLoaiPhong.isNotEmpty) {
-        final idDauTien = state.listLoaiPhong[0].maLoaiPhong;
-        Future.microtask(() {
-          phongViewModel.setIdLoaiPhong(idDauTien);
-        }); //lấy id loại phòng đầu tiên làm mặc định
-      }
+    vm = FormPhongViewModel(
+      context.read<PhongProvider>(),
+      context.read<LoaiPhongProvider>(),
+      widget.room,
+    );
+    vm.addListener(() {
+      if (mounted) setState(() {});
     });
-    //vm = FormPhongViewModel(widget.room);
-
-    // vm.addListener(() {
-    //   if (mounted) setState(() {});
-    // });
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await vm.loadDataInitial();
+    });
   }
 
   @override
@@ -62,50 +48,63 @@ class _FormPhongState extends State<FormPhong> {
     super.dispose();
   }
 
-  void saveRoom() async {
-    if (!phongViewModel.kiemTraDuLieu()) {
-      print("Sai dữ liệu");
+  void xuLyLuuPhong() async {
+    if (!vm.kiemTraDuLieu()) {
+      print("Sai dữ liệu nhập vào!");
       return;
     }
-    if(isEdit){
+
+    if (isEdit) {
       Phong editData = Phong(
         phongID: widget.room!.phongId,
-        tenPhong: phongViewModel.nameController.text.trim(),
-        trangThai: phongViewModel.trangThai,
-        maLoaiPhong: phongViewModel.idLoaiPhong,
-        moTa: phongViewModel.descController.text.trim(),
+        tenPhong: vm.nameController.text.trim(),
+        trangThai: vm.trangThai,
+        maLoaiPhong: vm.idLoaiPhong,
+        moTa: vm.descController.text.trim(),
       );
-      await phongViewModel.updateRoom(editData);
+      await vm.updateRoom(editData);
     } else {
-      await phongViewModel.saveRoom();
+      await vm.saveRoom();
     }
+
     if (!mounted) return;
-    final state = phongViewModel.phongSaveState;
+    final state = vm.phongSaveState;
+
     if (state is PhongSaveSuccess) {
       LoaiPhong selectedLoai = LoaiPhong(
-          maLoaiPhong: phongViewModel.idLoaiPhong,
+          maLoaiPhong: vm.idLoaiPhong,
           tenLoaiPhong: 'Chưa rõ',
           dienTich: 0,
           soNguoiToiDa: 0,
           giaTien: 0
       );
-      final loaiState= loaiPhongViewModel.loaiphongState;
-      if(loaiState is LoaiPhongSuccess){
-        selectedLoai= loaiState.listLoaiPhong.firstWhere(
-                (element)=> element.maLoaiPhong== phongViewModel.idLoaiPhong,
+
+      final loaiState = vm.loaiphongState;
+      if (loaiState is LoaiPhongSuccess) {
+        selectedLoai = loaiState.listLoaiPhong.firstWhere(
+              (element) => element.maLoaiPhong == vm.idLoaiPhong,
+          orElse: () => selectedLoai,
         );
       }
-    // Nêu lưu phòng thành công thì tạo 1 đối tượng và gửi nó quay lại màn trc để add vào ds
-      ItemPhong itemPhong= ItemPhong(
+
+      ItemPhong itemPhong = ItemPhong(
         phongId: state.phong.phongID,
         tenPhong: state.phong.tenPhong,
         trangThai: state.phong.trangThai,
         moTa: state.phong.moTa ?? '',
         maLoaiPhong: state.phong.maLoaiPhong,
         loaiPhong: selectedLoai,
-          dsHopDong: isEdit ? widget.room!.dsHopDong : [],
-        giahientai: selectedLoai.giaTien.toDouble()
+        dsHopDong: isEdit ? widget.room!.dsHopDong : [],
+        giahientai: selectedLoai.giaTien.toDouble(),
       );
+      //Goị và cập nhật lại
+      final providerTong = context.read<PhongProvider>();
+      if (isEdit) {
+        providerTong.updateRoomInList(itemPhong);
+      } else {
+        providerTong.addRoom(itemPhong);
+      }
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(isEdit ? "Cập nhật thông tin phòng thành công!" : "Thêm phòng trọ mới thành công!"),
@@ -117,7 +116,7 @@ class _FormPhongState extends State<FormPhong> {
     } else if (state is PhongSaveError) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(isEdit ?"Lưu thất bại: ${state.messageError}": "Cập nhật thất bại: ${state.messageError}"),
+          content: Text(isEdit ? "Lưu thất bại: ${state.messageError}" : "Cập nhật thất bại: ${state.messageError}"),
           backgroundColor: Colors.red,
         ),
       );
@@ -147,11 +146,11 @@ class _FormPhongState extends State<FormPhong> {
   Widget build(BuildContext context) {
 
     return AnimatedBuilder(
-      animation: phongViewModel,
+      animation: vm,
       builder: (context, _) {
         // Kiểm tra xem trạng thái trong ViewModel có phải đang Loading hay không
         final isWholeScreenLoading =
-            phongViewModel.phongSaveState is PhongSaveLoading;
+            vm.phongSaveState is PhongSaveLoading;
         return Stack(
           children: [
             Scaffold(
@@ -178,10 +177,10 @@ class _FormPhongState extends State<FormPhong> {
                 child: SizedBox(
                   height: 56,
                   child: AnimatedBuilder(
-                    animation: phongViewModel,
+                    animation: vm,
                     builder: (context, _) {
                       final isSaving =
-                          phongViewModel.phongSaveState is PhongSaveLoading;
+                          vm.phongSaveState is PhongSaveLoading;
 
                       return ElevatedButton(
                         style: ElevatedButton.styleFrom(
@@ -191,7 +190,7 @@ class _FormPhongState extends State<FormPhong> {
                           ),
                         ),
                         // Nếu đang loading thì trả về 'null' để vô hiệu hóa nút bấm
-                        onPressed: isSaving ? null : saveRoom,
+                        onPressed: isSaving ? null : xuLyLuuPhong,
                         child: isSaving
                             ? const SizedBox(
                                 height: 24,
@@ -231,15 +230,15 @@ class _FormPhongState extends State<FormPhong> {
                           ),
                           const SizedBox(height: 10),
                           AnimatedBuilder(
-                            animation: phongViewModel,
+                            animation: vm,
                             builder: (context, _) {
                               return TextField(
-                                controller: phongViewModel.nameController,
+                                controller: vm.nameController,
                                 decoration: InputDecoration(
                                   hintText: "VD: 101, A01, Phòng 1...",
                                   filled: true,
                                   fillColor: const Color(0xFFF3F3F3),
-                                  errorText: phongViewModel.errTenPhong,
+                                  errorText: vm.errTenPhong,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(14),
                                     borderSide: BorderSide.none,
@@ -262,7 +261,7 @@ class _FormPhongState extends State<FormPhong> {
                           const SizedBox(height: 10),
 
                           AnimatedBuilder(
-                            animation: phongViewModel,
+                            animation: vm,
                             builder: (context, _) {
                               return Row(
                                 children: [
@@ -272,9 +271,9 @@ class _FormPhongState extends State<FormPhong> {
                                       child: _statusItem(
                                         title: "Còn trống",
                                         color: Colors.green,
-                                        selected: phongViewModel.trangThai == 0,
+                                        selected: vm.trangThai == 0,
                                         onTap: isHasContract? ()=>  _showWarningSnackbar("Phòng đang có Hợp đồng hoạt động. Không thể đưa phòng về trạng thái trống!")
-                                                            : ()=> phongViewModel.setTrangThai(0),
+                                                            : ()=> vm.setTrangThai(0),
                                       ),
                                     ),
                                   ),
@@ -285,9 +284,9 @@ class _FormPhongState extends State<FormPhong> {
                                       child: _statusItem(
                                         title: "Đang thuê",
                                         color: Colors.orange,
-                                        selected: phongViewModel.trangThai == 1,
+                                        selected: vm.trangThai == 1,
                                         onTap: isHasContract ?
-                                            () => phongViewModel.setTrangThai(1)
+                                            () => vm.setTrangThai(1)
                                             : ()=> _showWarningSnackbar("Trạng thái 'Đang thuê' sẽ tự động kích hoạt khi bạn lập Hợp đồng cho phòng này!")
                                       ),
                                     )
@@ -299,10 +298,10 @@ class _FormPhongState extends State<FormPhong> {
                                       child: _statusItem(
                                         title: "Đang sửa chữa",
                                         color: Colors.red,
-                                        selected: phongViewModel.trangThai == 2,
+                                        selected: vm.trangThai == 2,
                                         onTap: isHasContract ?
                                         ()=> _showWarningSnackbar("Phòng đang có khách ở, không thể chuyển sang trạng thái sửa chữa!")
-                                            : () => phongViewModel.setTrangThai(2)
+                                            : () => vm.setTrangThai(2)
                                            
                                       ),
                                     ),
@@ -320,9 +319,9 @@ class _FormPhongState extends State<FormPhong> {
                     _section(
                       title: "Loại phòng",
                       child: AnimatedBuilder(
-                        animation: loaiPhongViewModel,
+                        animation: vm,
                         builder: (context, _) {
-                          final state = loaiPhongViewModel.loaiphongState;
+                          final state = vm.loaiphongState;
 
                           switch (state) {
                             //Load phòng lên
@@ -381,8 +380,7 @@ class _FormPhongState extends State<FormPhong> {
                                             ),
                                           ),
                                         ),
-                                        onPressed: () => loaiPhongViewModel
-                                            .getListLoaiPhong(),
+                                        onPressed: () => vm.loadDataInitial(),
                                         icon: const Icon(
                                           Icons.refresh,
                                           size: 16,
@@ -419,7 +417,7 @@ class _FormPhongState extends State<FormPhong> {
                               }
 
                               return AnimatedBuilder(
-                                animation: phongViewModel,
+                                animation: vm,
                                 builder: (context, _) {
                                   return Column(
                                     children: [
@@ -429,12 +427,12 @@ class _FormPhongState extends State<FormPhong> {
                                         final item = danhSachLoai[index];
 
                                         bool selected =
-                                            phongViewModel.idLoaiPhong ==
+                                            vm.idLoaiPhong ==
                                             item.maLoaiPhong;
 
                                         return GestureDetector(
                                           onTap: () {
-                                            phongViewModel.setIdLoaiPhong(
+                                            vm.setIdLoaiPhong(
                                               item.maLoaiPhong,
                                             );
                                           },
@@ -497,7 +495,7 @@ class _FormPhongState extends State<FormPhong> {
                     _section(
                       title: "Mô tả",
                       child: TextField(
-                        controller: phongViewModel.descController,
+                        controller: vm.descController,
                         maxLines: 2,
                         decoration: InputDecoration(
                           filled: true,

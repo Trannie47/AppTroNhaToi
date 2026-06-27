@@ -1,12 +1,13 @@
 import 'package:AppTroNhaToi/core/utils/string_formatter.dart';
 import 'package:AppTroNhaToi/models/item_phong.dart';
-import 'package:AppTroNhaToi/view_models/nguoithue_view_model.dart';
 import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/widgets/more_options_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../Provider/phong_provider.dart';
+import '../../../../Provider/nguoi_thue_provider.dart';
+import '../../../../modelviews/MainPage/PhongPage/ChiTietPhongPage/chiTietPhongViewModel.dart';
 import '../../../../states/NguoiThueState.dart';
-import '../../../../view_models/phong_view_model.dart';
 import '../../../../widgets/app_error.dart';
 
 class PhongChiTiet extends StatefulWidget {
@@ -22,22 +23,31 @@ class PhongChiTiet extends StatefulWidget {
 
 }
   class _PhongChiTiet extends State<PhongChiTiet> {
-  late NguoithueViewModel nguoithueViewModel;
+  //late NguoithueViewModel nguoithueViewModel;
+    late ChiTietPhongViewModel vm;
   @override
   void initState(){
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_){
-     Provider.of<NguoithueViewModel>(context, listen: false).getListNguoiThueFromIdPhong(widget.room.phongId);
+    vm = ChiTietPhongViewModel(
+      context.read<PhongProvider>(),
+      context.read<NguoiThueProvider>(),
+      widget.room.phongId,
+    );
+    vm.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      vm.getListNguoiThueFromIdPhong(widget.room.phongId);
     });
   }
     @override
     Widget build(BuildContext context) {
-      final phongViewModel = Provider.of<PhongViewModel>(context);
-      final room = phongViewModel.listPhong.firstWhere(
+      final room = context.watch<PhongProvider>().listPhong.firstWhere(
             (p) => p.phongId == widget.room.phongId,
         orElse: () => widget.room,
       );
-      nguoithueViewModel= Provider.of<NguoithueViewModel>(context);
       // Lấy ra các màu sắc và văn bản trạng thái trực tiếp từ thuộc tính trangThai của room
       Color statusColor = _getTrangThaiColor(room.trangThai);
       String statusText = _getTrangThaiText(room.trangThai);
@@ -161,8 +171,8 @@ class PhongChiTiet extends StatefulWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      nguoithueViewModel.nguoiThueState is NguoiThueSuccess
-                          ? "Người thuê hiện tại (${(nguoithueViewModel.nguoiThueState as NguoiThueSuccess).listNguoithue.length})"
+                      vm.nguoiThueState is NguoiThueSuccess
+                          ? "Người thuê hiện tại (${(vm.nguoiThueState as NguoiThueSuccess).listNguoithue.length})"
                           : "Người thuê hiện tại (...)",
                       style: const TextStyle(
                         color: Color(0xFF2D7A3A),
@@ -170,7 +180,7 @@ class PhongChiTiet extends StatefulWidget {
                         fontSize: 14,
                       ),
                     ),
-                    ...switch (nguoithueViewModel.nguoiThueState){
+                    ...switch (vm.nguoiThueState){
                       NguoiThueLoading() => [
                         const Padding(
                           padding: EdgeInsets.symmetric(vertical: 24),
@@ -181,10 +191,10 @@ class PhongChiTiet extends StatefulWidget {
                       NguoiThueError(errorMessage: final msg) => [
                         AppErrorWidget(message: msg,
                             onRetry:(){
-                                nguoithueViewModel.getListNguoiThueFromIdPhong(room.phongId);
+                                vm.getListNguoiThueFromIdPhong(room.phongId);
                             }
                         )
-                    
+
                       ],
                       NguoiThueSuccess(listNguoithue: final dsKhach) => [
                         const SizedBox(height: 16),
@@ -392,7 +402,7 @@ class PhongChiTiet extends StatefulWidget {
       ],
     );
   }
-  void  _showMoreOption(BuildContext context, ItemPhong room){
+  void  _showMoreOption(BuildContext context, ItemPhong room) {
     showModalBottomSheet(
         context: context,
         backgroundColor: Colors.white,

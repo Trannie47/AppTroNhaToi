@@ -3,83 +3,47 @@ import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/chiTietHopDongPage/chiTietHopDongViewModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietHopDongPage/chiTietHopDong_Model.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-// ===================== VIEW MODEL =====================
+import '../../../../Provider/phong_provider.dart';
+import '../../../../Provider/nguoi_thue_provider.dart';
+import '../../../../states/NguoiThueState.dart';
+
 
 class ChiTietPhongViewModel extends ChangeNotifier {
-  final Phong phong;
-  final LoaiPhong loaiphong;
+  final PhongProvider _phongService;
+  final NguoiThueProvider _nguoiThueService;
+  final int _phongId;
+  NguoiThueState _nguoiThueState= NguoiThueLoading();
+  NguoiThueState get nguoiThueState => _nguoiThueState;
 
-  ChiTietPhongViewModel({required this.phong, required this.loaiphong}) {
-    _loadData();
+  ChiTietPhongViewModel(this._phongService, this._nguoiThueService, this._phongId) {
+    _phongService.addListener(_onProviderUpdate);
   }
 
-  // ---- State ----
-  bool _isLoading = false;
-  String? _errorMessage;
-  Phong? _phong;
-  List<chiTietHopDongModel> _dsChiTietHopDong = [];
-  int _selectedTabIndex = 0;
 
-  // ---- Getters ----
-  bool get isLoading => _isLoading;
-  String? get errorMessage => _errorMessage;
-
-  List<chiTietHopDongModel> get danhSachNguoiThue => _dsChiTietHopDong;
-  int get selectedTabIndex => _selectedTabIndex;
-
-  bool get dangChoThue => _phong?.trangThai == 'dang_cho_thue';
-
-  String get trangThaiText {
-    return _phong!.trangThaiText;
-  }
-
-  Color get trangThaiColor {
-    switch (_phong?.trangThai) {
-      case 'dang_cho_thue':
-        return const Color(0xFFF59E0B);
-      case 'trong':
-        return const Color(0xFF22C55E);
-      case 'bao_tri':
-        return const Color(0xFFEF4444);
-      default:
-        return Colors.grey;
-    }
-  }
-
-  // ---- Methods ----
-  void selectTab(int index) {
-    if (_selectedTabIndex != index) {
-      _selectedTabIndex = index;
-      notifyListeners();
-    }
-  }
-
-  Future<void> _loadData() async {
-    _isLoading = true;
-    _errorMessage = null;
+  Future<void> getListNguoiThueFromIdPhong(int idPhong)async{
+    _nguoiThueState= NguoiThueLoading();
     notifyListeners();
-
-    try {
-      // TODO: Replace with actual API call
-      await Future.delayed(const Duration(milliseconds: 500));
-
-      _dsChiTietHopDong = [];
-    } catch (e) {
-      _errorMessage = 'Không thể tải dữ liệu phòng. Vui lòng thử lại.';
-    } finally {
-      _isLoading = false;
+    try{
+      final result= await _nguoiThueService.getListNguoiThueFromIdPhong(idPhong);
+      _nguoiThueState= NguoiThueSuccess(result);
+    }catch(e){
+      if (kDebugMode) {
+        print("Lỗi NguoiThueViewModel $e");
+      }
+      _nguoiThueState= NguoiThueError(e.toString().replaceFirst('Exception: ', ''));
+    }finally{
       notifyListeners();
     }
   }
-
-  Future<void> refresh() => _loadData();
-
+  void _onProviderUpdate() {
+    notifyListeners();
+  }
   @override
   void dispose() {
-    // No controllers or streams to dispose currently.
-    // Keep this override for future cleanup.
+    _phongService.removeListener(_onProviderUpdate);
     super.dispose();
   }
 }

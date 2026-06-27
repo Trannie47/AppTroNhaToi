@@ -30,15 +30,11 @@ class MoreOptionsSheet extends StatelessWidget {
             leading: const Icon(Icons.edit_outlined, color: Color(0xFF2D7A3A)),
             title: const Text('Chỉnh sửa thông tin phòng', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
             onTap: () async {
-
-              final result = await Navigator.push(
+              Navigator.pop(context);
+              Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => FormPhong(room: room)),
               );
-              if(result != null && result is ItemPhong){
-                context.read<PhongViewModel>().updateRoomInList(result);
-              }
-              Navigator.pop(context);
             },
           ),
 
