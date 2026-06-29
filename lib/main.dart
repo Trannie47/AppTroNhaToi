@@ -50,6 +50,8 @@ class MyApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
 
+      theme: ThemeData(useMaterial3: false, platform: TargetPlatform.iOS),
+
       home: const HomePage(),
     );
   }
