@@ -6,7 +6,7 @@ class ThietBi {
   final DateTime? ngayMua;
   final int? trangThai;
 
-  ThietBi({
+  const ThietBi({
     this.thietBiID,
     this.tenThietBi,
     this.loai,
@@ -20,9 +20,11 @@ class ThietBi {
       thietBiID: map['thietBiID'] as int?,
       tenThietBi: map['tenThietBi'] as String?,
       loai: map['loai'] as String?,
-      giaTri: (map['giaTri'] as num?)?.toDouble(),
+      giaTri: map['giaTri'] == null
+          ? null
+          : double.tryParse(map['giaTri'].toString()),
       ngayMua: map['ngayMua'] != null
-          ? DateTime.tryParse(map['ngayMua'] as String)
+          ? DateTime.tryParse(map['ngayMua'].toString())
           : null,
       trangThai: map['trangThai'] as int?,
     );
@@ -34,7 +36,7 @@ class ThietBi {
       'tenThietBi': tenThietBi,
       'loai': loai,
       'giaTri': giaTri,
-      'ngayMua': ngayMua == null ? null : ngayMua!.toIso8601String(),
+      'ngayMua': ngayMua?.toIso8601String(),
       'trangThai': trangThai,
     };
   }
@@ -57,7 +59,8 @@ class ThietBi {
     );
   }
 
-  // 0: Tốt, 1: Đang sửa
+  /// 0: Tốt
+  /// 1: Đang sửa
   String get trangThaiText {
     switch (trangThai) {
       case 0:
@@ -69,9 +72,19 @@ class ThietBi {
     }
   }
 
+  bool get laTot => trangThai == 0;
+
+  bool get dangSua => trangThai == 1;
+
   @override
   String toString() {
-    return 'ThietBi(thietBiID: $thietBiID, tenThietBi: $tenThietBi, '
-        'loai: $loai, giaTri: $giaTri, ngayMua: $ngayMua, trangThai: $trangThai)';
+    return 'ThietBi('
+        'thietBiID: $thietBiID, '
+        'tenThietBi: $tenThietBi, '
+        'loai: $loai, '
+        'giaTri: $giaTri, '
+        'ngayMua: $ngayMua, '
+        'trangThai: $trangThai'
+        ')';
   }
 }
