@@ -1,4 +1,5 @@
 import 'package:AppTroNhaToi/core/network/HoaDonTapHoaApiClient.dart';
+import 'package:AppTroNhaToi/models/DTO/HoaDonTapHoaDTO.dart';
 import 'package:AppTroNhaToi/models/hoa_don_tap_hoa.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/TapHoaPage/HoaDonTapHoaModel.dart';
 
@@ -10,7 +11,9 @@ class HoaDonTapHoaRepository {
     return result;
   }
 
-  Future<HoaDonTapHoa?> themHoaDonTapHoa(HoaDonTapHoa hoaDonTapHoa) async {
+  Future<HoaDonTapHoaDTO?> themHoaDonTapHoa(
+    HoaDonTapHoaDTO hoaDonTapHoa,
+  ) async {
     return await hoaDonTapHoaApiClient.themHoaDonTapHoa(hoaDonTapHoa);
   }
 
@@ -18,7 +21,9 @@ class HoaDonTapHoaRepository {
     return await hoaDonTapHoaApiClient.xoaHoaDonTapHoa(maHoaDon);
   }
 
-  Future<HoaDonTapHoa?> capNhatHoaDonTapHoa(HoaDonTapHoa hoaDonTapHoa) async {
+  Future<HoaDonTapHoaDTO?> capNhatHoaDonTapHoa(
+    HoaDonTapHoaDTO hoaDonTapHoa,
+  ) async {
     return await hoaDonTapHoaApiClient.capNhatHoaDonTapHoa(hoaDonTapHoa);
   }
 }

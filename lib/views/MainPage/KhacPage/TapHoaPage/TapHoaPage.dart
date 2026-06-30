@@ -102,9 +102,9 @@ class _TapHoaPageState extends State<TapHoaPage> {
                   MaterialPageRoute(builder: (_) => const HoaDonTapHoaForm()),
                 );
 
-                if (hoaDonMoi != null) {
-                  vm.themHoaDon(hoaDonMoi);
-                }
+                // if (hoaDonMoi != null) {
+                //   vm.themHoaDon(hoaDonMoi);
+                // }
               },
 
               style: ElevatedButton.styleFrom(

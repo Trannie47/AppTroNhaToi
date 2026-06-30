@@ -1,4 +1,5 @@
 import 'package:AppTroNhaToi/core/network/retrofit_client.dart';
+import 'package:AppTroNhaToi/models/DTO/HoaDonTapHoaDTO.dart';
 import 'package:AppTroNhaToi/models/hoa_don_tap_hoa.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/TapHoaPage/HoaDonTapHoaModel.dart';
 import 'package:dio/dio.dart';
@@ -26,13 +27,13 @@ class HoaDonTapHoaApiClient {
     }
   }
 
-  Future<HoaDonTapHoa?> themHoaDonTapHoa(HoaDonTapHoa hoaDon) async {
+  Future<HoaDonTapHoaDTO?> themHoaDonTapHoa(HoaDonTapHoaDTO hoaDon) async {
     try {
       final response = await _dio.post("hoa-don-tap-hoa", data: hoaDon.toMap());
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (response.data != null) {
-          return HoaDonTapHoa.fromMap(response.data);
+          return HoaDonTapHoaDTO.fromMap(response.data);
         }
       }
 
@@ -72,15 +73,17 @@ class HoaDonTapHoaApiClient {
     }
   }
 
-  Future<HoaDonTapHoa?> capNhatHoaDonTapHoa(HoaDonTapHoa hoaDon) async {
+  Future<HoaDonTapHoaDTO?> capNhatHoaDonTapHoa(
+    HoaDonTapHoaDTO hoaDonTapHoaDTO,
+  ) async {
     try {
       final response = await _dio.put(
-        "hoa-don-tap-hoa/${hoaDon.maHoaDon}",
-        data: hoaDon.toMap(),
+        "hoa-don-tap-hoa/${hoaDonTapHoaDTO.maHoaDon}",
+        data: hoaDonTapHoaDTO.toMap(),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return HoaDonTapHoa.fromMap(response.data);
+        return HoaDonTapHoaDTO.fromMap(response.data);
       }
 
       return null;

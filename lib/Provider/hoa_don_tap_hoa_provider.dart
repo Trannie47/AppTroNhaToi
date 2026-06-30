@@ -1,4 +1,4 @@
-import 'package:AppTroNhaToi/models/hoa_don_tap_hoa.dart';
+import 'package:AppTroNhaToi/models/DTO/HoaDonTapHoaDTO.dart';
 import 'package:AppTroNhaToi/repositories/hoaDonTapHoa_reponsitory.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/TapHoaPage/HoaDonTapHoaModel.dart';
 import 'package:flutter/foundation.dart';
@@ -21,9 +21,8 @@ class HoaDonTapHoaProvider extends ChangeNotifier {
     try {
       _list = await _repo.getListHoaDonTapHoa();
 
-      // Mã hóa đơn mới nhất lên đầu
       _list.sort(
-        (a, b) => (b.hoaDon.maHoaDon ?? '').compareTo(b.hoaDon.maHoaDon ?? ''),
+        (a, b) => (b.hoaDon.maHoaDon ?? '').compareTo(a.hoaDon.maHoaDon ?? ''),
       );
     } catch (e) {
       _list = [];
@@ -33,8 +32,8 @@ class HoaDonTapHoaProvider extends ChangeNotifier {
     }
   }
 
-  Future<HoaDonTapHoa?> them(HoaDonTapHoa hoaDon) async {
-    final result = await _repo.themHoaDonTapHoa(hoaDon);
+  Future<HoaDonTapHoaDTO?> them(HoaDonTapHoaDTO dto) async {
+    final result = await _repo.themHoaDonTapHoa(dto);
 
     if (result != null) {
       await fetchAll();
@@ -43,14 +42,13 @@ class HoaDonTapHoaProvider extends ChangeNotifier {
     return result;
   }
 
-  Future<bool> capNhat(HoaDonTapHoa hoaDon) async {
-    final result = await _repo.capNhatHoaDonTapHoa(hoaDon);
+  Future<bool> capNhat(HoaDonTapHoaDTO dto) async {
+    final ok = await _repo.capNhatHoaDonTapHoa(dto);
 
-    if (result != null) {
+    if (ok != null) {
       await fetchAll();
       return true;
     }
-
     return false;
   }
 

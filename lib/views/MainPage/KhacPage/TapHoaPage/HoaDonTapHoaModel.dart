@@ -14,18 +14,7 @@ class HoaDonTapHoaModel {
 
   final String? tenNguoiMua;
 
-  // thêm 2 dòng này
-  final List<HangHoa> dsHangHoa;
-
-  final Map<int, int> soLuong;
-
-  HoaDonTapHoaModel({
-    required this.hoaDon,
-    this.phieuThu,
-    this.tenNguoiMua,
-    required this.dsHangHoa,
-    required this.soLuong,
-  });
+  HoaDonTapHoaModel({required this.hoaDon, this.phieuThu, this.tenNguoiMua});
 
   factory HoaDonTapHoaModel.fromMap(Map<String, dynamic> map) {
     return HoaDonTapHoaModel(
@@ -38,12 +27,6 @@ class HoaDonTapHoaModel {
           : null,
 
       tenNguoiMua: map['tenNguoiMua'] as String?,
-
-      dsHangHoa: map['dsHangHoa'] != null
-          ? (map['dsHangHoa'] as List).map((e) => HangHoa.fromMap(e)).toList()
-          : [],
-
-      soLuong: map['soLuong'] != null ? Map<int, int>.from(map['soLuong']) : {},
     );
   }
 
@@ -54,10 +37,6 @@ class HoaDonTapHoaModel {
       if (phieuThu != null) 'phieuThu': phieuThu!.toMap(),
 
       'tenNguoiMua': tenNguoiMua,
-
-      'dsHangHoa': dsHangHoa.map((e) => e.toMap()).toList(),
-
-      'soLuong': soLuong,
     };
   }
 
@@ -68,8 +47,6 @@ class HoaDonTapHoaModel {
         'idnguoiMua : ${hoaDon.idnt ?? 'null'}'
         'tenNguoiMua: ${tenNguoiMua ?? 'null'}, '
         'phieuThu: ${phieuThu?.toString() ?? 'null'}, '
-        'soMatHang: ${dsHangHoa.length}, '
-        'soLuong: ${soLuong.isNotEmpty ? soLuong : '{}'}'
         ')';
   }
 }

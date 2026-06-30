@@ -1,10 +1,11 @@
+import 'package:AppTroNhaToi/Provider/hoa_don_tap_hoa_provider.dart';
 import 'package:AppTroNhaToi/Provider/nguoi_thue_provider.dart';
 import 'package:AppTroNhaToi/models/hang_hoa.dart';
 import 'package:AppTroNhaToi/models/hoa_don_tap_hoa.dart';
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/models/phieu_thu_hd_th.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
-import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/HoaDonTapHoaForm/hoaDonTapHoaViewModel.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/HoaDonTapHoaForm/hoaDonTapHoaFormViewModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/ChonHangHoaPage/chonHangHoaPage.dart';
 
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/TapHoaPage/HoaDonTapHoaModel.dart';
@@ -29,7 +30,10 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
   void initState() {
     super.initState();
 
-    vm = HoaDonTapHoaFormViewModel(context.read<NguoiThueProvider>());
+    vm = HoaDonTapHoaFormViewModel(
+      context.read<NguoiThueProvider>(),
+      context.read<HoaDonTapHoaProvider>(),
+    );
 
     vm.addListener(_onVmChanged);
     vm.addListener(() {
@@ -54,10 +58,6 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
       vm.coPhieuThu = widget.hoaDonModel!.phieuThu != null;
 
       vm.txtNguoiDongTien.text = widget.hoaDonModel!.phieuThu?.nguoiDong ?? "";
-
-      vm.dsHangHoaChon = List.from(widget.hoaDonModel!.dsHangHoa);
-
-      vm.soLuong = Map.from(widget.hoaDonModel!.soLuong);
 
       vm.notifyListeners();
     }
@@ -470,62 +470,36 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
                   ),
                 ),
 
-                onPressed: () {
-                  if (!vm.kiemTraDuLieu()) {
-                    setState(() {});
-                    return;
-                  }
+                onPressed: vm.isLoading
+                    ? null
+                    : () async {
+                        final ok = await vm.luu();
 
-                  if (vm.maHoaDon == "") {
-                    vm.taoMaHoaDon();
-                  }
+                        if (ok && mounted) {
+                          Navigator.pop(context, true);
+                        }
+                      },
 
-                  HoaDonTapHoa hoaDon = HoaDonTapHoa(
-                    maHoaDon: vm.maHoaDon,
-                    idnt: vm.nguoiThueTro ? vm.selectedNguoiThue?.idnt : null,
-                    ngayBan: DateTime.now(),
-                    tongTien: vm.tongTien,
-                  );
+                child: vm.isLoading
+                    ? const SizedBox(
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : const Text(
+                        "Lưu hoá đơn ",
 
-                  PhieuThuHdTh? phieuThu;
+                        style: TextStyle(
+                          color: Colors.white,
 
-                  if (vm.coPhieuThu) {
-                    phieuThu = PhieuThuHdTh(
-                      maHoaDon: vm.maHoaDon,
-                      nguoiDong: vm.txtNguoiDongTien.text,
-                      soTien: vm.tongTien,
-                      ngayThu: DateTime.now(),
-                    );
-                  }
+                          fontSize: 16,
 
-                  Navigator.pop(
-                    context,
-                    HoaDonTapHoaModel(
-                      hoaDon: hoaDon,
-
-                      phieuThu: phieuThu,
-
-                      tenNguoiMua:
-                          vm.selectedNguoiThue?.hoTen ?? "Khách vãng lai",
-
-                      dsHangHoa: List.from(vm.dsHangHoaChon),
-
-                      soLuong: Map.from(vm.soLuong),
-                    ),
-                  );
-                },
-
-                child: const Text(
-                  "Lưu hàng hóa",
-
-                  style: TextStyle(
-                    color: Colors.white,
-
-                    fontSize: 16,
-
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
               ),
             ),
           ],

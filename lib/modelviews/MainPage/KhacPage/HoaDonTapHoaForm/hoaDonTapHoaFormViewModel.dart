@@ -1,11 +1,17 @@
+import 'package:AppTroNhaToi/Provider/hoa_don_tap_hoa_provider.dart';
+import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
+import 'package:AppTroNhaToi/models/DTO/HoaDonTapHoaDTO.dart';
+import 'package:AppTroNhaToi/models/chi_tiet_tap_hoa.dart';
 import 'package:AppTroNhaToi/models/hang_hoa.dart';
+import 'package:AppTroNhaToi/models/hoa_don_tap_hoa.dart';
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/Provider/nguoi_thue_provider.dart';
+import 'package:AppTroNhaToi/models/phieu_thu_hd_th.dart';
 import 'package:flutter/material.dart';
 
 class HoaDonTapHoaFormViewModel extends ChangeNotifier {
   final NguoiThueProvider _nguoiThueProvider;
-
+  final HoaDonTapHoaProvider _hoaDonTapHoaProvider;
   bool nguoiThueTro = true;
 
   bool coPhieuThu = true;
@@ -31,22 +37,37 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
 
   String maHoaDon = "";
 
-  HoaDonTapHoaFormViewModel(this._nguoiThueProvider) {
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
+  HoaDonTapHoaFormViewModel(
+    this._nguoiThueProvider,
+    this._hoaDonTapHoaProvider,
+  ) {
     _nguoiThueProvider.addListener(_onNguoiThueUpdate);
 
-    Future.microtask(() => _nguoiThueProvider.fetchAll());
+    dsNguoiThue = List.from(_nguoiThueProvider.list);
+
+    Future.microtask(() async {
+      if (_nguoiThueProvider.list.isEmpty) {
+        await _nguoiThueProvider.fetchAll();
+      } else {
+        _onNguoiThueUpdate();
+      }
+    });
 
     DateTime now = DateTime.now();
 
-    txtNgayMua.text =
-        "${now.day.toString().padLeft(2, '0')}/"
-        "${now.month.toString().padLeft(2, '0')}/"
-        "${now.year}";
+    txtNgayMua.text = formatDate(now);
+  }
+
+  Future<void> refresh() async {
+    await _nguoiThueProvider.fetchAll();
   }
 
   void _onNguoiThueUpdate() {
     dsNguoiThue = List.from(_nguoiThueProvider.list);
-    print("Số người thuê: ${dsNguoiThue.length}");
+
     notifyListeners();
   }
 
@@ -127,7 +148,7 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
   }
 
   void tangSoLuong(HangHoa hangHoa) {
-    soLuong[hangHoa.maHangHoa!] = (soLuong[hangHoa.maHangHoa] ?? 0) + 1;
+    soLuong[hangHoa.maHangHoa!] = (soLuong[hangHoa.maHangHoa!] ?? 0) + 1;
 
     notifyListeners();
   }
@@ -176,22 +197,71 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
         .replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (match) => ',');
   }
 
-  void taoMaHoaDon() {
-    DateTime now = DateTime.now();
+  // void taoMaHoaDon() {
+  //   DateTime now = DateTime.now();
 
-    String nam = now.year.toString();
+  //   String nam = now.year.toString();
 
-    String thang = now.month.toString().padLeft(2, '0');
+  //   String thang = now.month.toString().padLeft(2, '0');
 
-    String ngay = now.day.toString().padLeft(2, '0');
+  //   String ngay = now.day.toString().padLeft(2, '0');
 
-    String stt = sttHoaDon.toString().padLeft(3, '0');
+  //   String stt = sttHoaDon.toString().padLeft(3, '0');
 
-    maHoaDon = "TH$nam$thang$ngay$stt";
+  //   maHoaDon = "TH$nam$thang$ngay$stt";
 
-    sttHoaDon++;
+  //   sttHoaDon++;
 
+  //   notifyListeners();
+  // }
+
+  Future<bool> luu() async {
+    if (!kiemTraDuLieu()) return false;
+    if (_isLoading) return false;
+
+    _isLoading = true;
     notifyListeners();
+
+    try {
+      final dto = HoaDonTapHoaDTO(
+        maHoaDon: maHoaDon,
+        idnt: nguoiThueTro ? selectedNguoiThue?.idnt : null,
+        ngayBan: DateTime.now(),
+        tongTien: tongTien,
+        chiTietTapHoa: dsHangHoaChon
+            .map(
+              (hh) => ChiTietTapHoa(
+                maHangHoa: hh.maHangHoa!,
+                soLuong: laySoLuong(hh),
+              ),
+            )
+            .toList(),
+        phieuThuHdTh: coPhieuThu
+            ? PhieuThuHdTh(
+                ngayThu: DateTime.now(),
+                soTien: tongTien,
+                nguoiDong: !nguoiThueTro
+                    ? (txtNguoiMua.text.trim().isNotEmpty
+                          ? txtNguoiMua.text.trim()
+                          : (selectedNguoiThue?.hoTen ?? ""))
+                    : (selectedNguoiThue?.hoTen ?? ""),
+              )
+            : null,
+      );
+
+      if (dto.maHoaDon != '') {
+        return await _hoaDonTapHoaProvider.capNhat(dto);
+      } else {
+        final result = await _hoaDonTapHoaProvider.them(dto);
+        return result != null;
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   @override
@@ -199,9 +269,7 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
     _nguoiThueProvider.removeListener(_onNguoiThueUpdate);
 
     txtNgayMua.dispose();
-
     txtNguoiDongTien.dispose();
-
     txtNguoiMua.dispose();
 
     super.dispose();

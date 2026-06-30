@@ -19,7 +19,9 @@ class PhieuThuHdTh {
       ngayThu: map['ngayThu'] != null
           ? DateTime.tryParse(map['ngayThu'] as String)
           : null,
-      soTien: (map['soTien'] as num?)?.toDouble(),
+      soTien: map['soTien'] == null
+          ? null
+          : double.tryParse(map['soTien'].toString()),
       nguoiDong: map['nguoiDong'] as String?,
       maHoaDon: map['maHoaDon'] as String?,
     );
@@ -28,7 +30,7 @@ class PhieuThuHdTh {
   Map<String, dynamic> toMap() {
     return {
       if (maPhieuThu != null) 'maPhieuThu': maPhieuThu,
-      'ngayThu': ngayThu?.toIso8601String().split('T').first,
+      "ngayThu": ngayThu?.toUtc().toIso8601String(),
       'soTien': soTien,
       'nguoiDong': nguoiDong,
       'maHoaDon': maHoaDon,
