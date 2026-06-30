@@ -1,8 +1,10 @@
+import 'package:AppTroNhaToi/Provider/thiet_bi_provider.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/ThietBiPage/thietBiPageViewModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThietBiForm/thietBiForm.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietThietBiPage/chiTietThietBiPage.dart';
 import 'package:AppTroNhaToi/widgets/itemThietBi.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ThietBiPage extends StatefulWidget {
   const ThietBiPage({super.key});
@@ -12,7 +14,24 @@ class ThietBiPage extends StatefulWidget {
 }
 
 class _ThietBiPageState extends State<ThietBiPage> {
-  final vm = ThietBiPageViewModel();
+  late ThietBiPageViewModel vm;
+
+  @override
+  void initState() {
+    super.initState();
+    vm = ThietBiPageViewModel(
+      context.read<ThietBiProvider>()
+    );
+    vm.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+    //Khi frame hiện tại mở thì nó sẽ call dữ liệu lại chống update 2 lần
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      vm.refresh();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -34,7 +34,7 @@ class ThietBi {
       'tenThietBi': tenThietBi,
       'loai': loai,
       'giaTri': giaTri,
-      'ngayMua': ngayMua?.toIso8601String().split('T').first,
+      'ngayMua': ngayMua == null ? null : ngayMua!.toIso8601String(),
       'trangThai': trangThai,
     };
   }

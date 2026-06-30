@@ -1,9 +1,17 @@
+import 'package:AppTroNhaToi/Provider/thiet_bi_provider.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/models/lap_rap.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:flutter/material.dart';
 
 class ThietBiFormViewModel extends ChangeNotifier {
+  final ThietBiProvider _service;
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+  ThietBi? _thietBiDangSua;
+  bool get isEditMode => _thietBiDangSua != null;
+
+
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   final TextEditingController txtTenThietBi = TextEditingController();
@@ -36,8 +44,13 @@ class ThietBiFormViewModel extends ChangeNotifier {
 
   final List<String> dsTrangThai = ["Tốt", "Đang sửa"];
 
-  ThietBiFormViewModel({ThietBi? thietBiInput, List<LapRap>? dsLapRap}) {
+  ThietBiFormViewModel(
+      this._service,{
+        ThietBi? thietBiInput,
+        List<LapRap>? dsLapRap,
+      }) {
     if (thietBiInput != null) {
+      _thietBiDangSua = thietBiInput;
       thietBi = thietBiInput;
 
       txtTenThietBi.text = thietBi.tenThietBi ?? "";
@@ -130,6 +143,58 @@ class ThietBiFormViewModel extends ChangeNotifier {
     notifyListeners();
 
     return hopLe;
+  }
+
+  Future<ThietBi?> luu() async {
+    if (!kiemTraDuLieu()) return null;
+    if (_isLoading) return null;
+
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final parts = txtNgayMua.text.split('/');
+
+      final tb = ThietBi(
+        thietBiID: _thietBiDangSua?.thietBiID,
+        tenThietBi: txtTenThietBi.text.trim(),
+        loai: loaiThietBi,
+        giaTri: double.parse(txtGiaTri.text),
+
+        ngayMua: DateTime(
+          int.parse(parts[2]),
+          int.parse(parts[1]),
+          int.parse(parts[0]),
+        ),
+
+        trangThai: trangThai == "Tốt" ? 0 : 1,
+      );
+
+      if (isEditMode) {
+
+        final ok = await _service.capNhat(tb);
+
+        return ok ? tb : null;
+
+      } else {
+
+        // return await _service.them(tb);
+
+        print(tb.toMap());
+
+        final result = await _service.them(tb);
+
+        print(result);
+
+        return result;
+      }
+
+    } finally {
+
+      _isLoading = false;
+      notifyListeners();
+
+    }
   }
 
   @override

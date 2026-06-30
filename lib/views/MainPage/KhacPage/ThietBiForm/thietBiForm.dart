@@ -1,3 +1,4 @@
+import 'package:AppTroNhaToi/Provider/thiet_bi_provider.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/models/lap_rap.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
@@ -7,6 +8,7 @@ import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/thietBiForm/thietBiFor
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
+import 'package:provider/provider.dart';
 
 class ThietBiForm extends StatefulWidget {
   final ThietBi? thietBi;
@@ -240,6 +242,7 @@ class _ThietBiFormState extends State<ThietBiForm> {
     super.initState();
 
     vm = ThietBiFormViewModel(
+      context.read<ThietBiProvider>(),
       thietBiInput: widget.thietBi,
       dsLapRap: widget.dsLapRap,
     );
@@ -297,24 +300,38 @@ class _ThietBiFormState extends State<ThietBiForm> {
               ),
             ),
 
-            onPressed: () {
-              bool hopLe = vm.kiemTraDuLieu();
+            // onPressed: () {
+            //   bool hopLe = vm.kiemTraDuLieu();
+            //
+            //   setState(() {});
+            //
+            //   if (!hopLe) {
+            //     return;
+            //   }
+            //
+            //   ThietBi thietBiMoi = (widget.thietBi ?? ThietBi()).copyWith(
+            //     tenThietBi: vm.txtTenThietBi.text,
+            //     loai: vm.loaiThietBi,
+            //     trangThai: vm.trangThai == "Tốt" ? 0 : 1,
+            //     giaTri: double.tryParse(vm.txtGiaTri.text),
+            //     ngayMua: chuyenNgay(vm.txtNgayMua.text),
+            //   );
+            //
+            //   Navigator.pop(context, thietBiMoi);
+            // },
+
+            onPressed: () async {
+
+              final result = await vm.luu();
 
               setState(() {});
 
-              if (!hopLe) {
-                return;
+              if (result != null) {
+
+                Navigator.pop(context, result);
+
               }
 
-              ThietBi thietBiMoi = (widget.thietBi ?? ThietBi()).copyWith(
-                tenThietBi: vm.txtTenThietBi.text,
-                loai: vm.loaiThietBi,
-                trangThai: vm.trangThai == "Tốt" ? 0 : 1,
-                giaTri: double.tryParse(vm.txtGiaTri.text),
-                ngayMua: chuyenNgay(vm.txtNgayMua.text),
-              );
-
-              Navigator.pop(context, thietBiMoi);
             },
 
             child: Text(

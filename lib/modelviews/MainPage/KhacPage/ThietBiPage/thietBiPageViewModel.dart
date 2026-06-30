@@ -1,3 +1,4 @@
+import 'package:AppTroNhaToi/Provider/thiet_bi_provider.dart';
 import 'package:AppTroNhaToi/models/lap_rap.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
@@ -5,6 +6,31 @@ import 'package:flutter/material.dart';
 
 class ThietBiPageViewModel extends ChangeNotifier {
   int currentIndex = 0;
+
+  final ThietBiProvider _serviceTB;
+
+  bool get isLoading => _serviceTB.isLoading;
+
+  ThietBiPageViewModel(this._serviceTB) {
+    _serviceTB.addListener(_onThietBiUpdate);
+
+    Future.microtask(() => _serviceTB.fetchAll());
+  }
+
+  List<ThietBi> dsThietBi = [];
+
+  void _onThietBiUpdate() {
+    dsThietBi = List.from(_serviceTB.list);
+    notifyListeners();
+  }
+
+  Future<void> refresh() => _serviceTB.fetchAll();
+
+  @override
+  void dispose() {
+    _serviceTB.removeListener(_onThietBiUpdate);
+    super.dispose();
+  }
   List<Phong> dsPhong = [
     Phong(phongID: 1, tenPhong: "P101", trangThai: 1, maLoaiPhong: 1),
 
@@ -19,34 +45,7 @@ class ThietBiPageViewModel extends ChangeNotifier {
     LapRap(id: 3, phongID: 2, thietBiID: 3),
   ];
 
-  List<ThietBi> dsThietBi = [
-    ThietBi(
-      thietBiID: 1,
-      tenThietBi: "Máy lạnh Daikin 1HP",
-      loai: "Điều hòa",
-      giaTri: 8500000,
-      ngayMua: DateTime(2023, 1),
-      trangThai: 0,
-    ),
 
-    ThietBi(
-      thietBiID: 2,
-      tenThietBi: "Tủ lạnh mini 90L",
-      loai: "Tủ lạnh",
-      giaTri: 3500000,
-      ngayMua: DateTime(2022, 3),
-      trangThai: 1,
-    ),
-
-    ThietBi(
-      thietBiID: 3,
-      tenThietBi: "Máy lạnh Panasonic 1.5HP",
-      loai: "Điều hòa",
-      giaTri: 12000000,
-      ngayMua: DateTime(2022, 6),
-      trangThai: 0,
-    ),
-  ];
 
   List<ThietBi> get dsHienThi {
     switch (currentIndex) {
