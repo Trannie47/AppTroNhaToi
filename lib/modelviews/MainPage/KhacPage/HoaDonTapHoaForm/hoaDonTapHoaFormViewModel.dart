@@ -1,3 +1,4 @@
+import 'package:AppTroNhaToi/Provider/chi-tiet-hoa_don_tap_hoa_provider.dart';
 import 'package:AppTroNhaToi/Provider/hoa_don_tap_hoa_provider.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/models/DTO/HoaDonTapHoaDTO.dart';
@@ -7,44 +8,45 @@ import 'package:AppTroNhaToi/models/hoa_don_tap_hoa.dart';
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/Provider/nguoi_thue_provider.dart';
 import 'package:AppTroNhaToi/models/phieu_thu_hd_th.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietHoaDonTapHoaPage/chiTietHoaDonTapHoaPage_Model.dart';
 import 'package:flutter/material.dart';
 
 class HoaDonTapHoaFormViewModel extends ChangeNotifier {
   final NguoiThueProvider _nguoiThueProvider;
   final HoaDonTapHoaProvider _hoaDonTapHoaProvider;
-  bool nguoiThueTro = true;
+  final ChiTietTapHoaProvider _chiTietHoaDonTapHoaProvider;
 
+  bool nguoiThueTro = true;
   bool coPhieuThu = true;
 
   String? errNguoiThue;
   String? errHangHoa;
 
   final txtNgayMua = TextEditingController();
-
   final txtNguoiDongTien = TextEditingController();
-
   final txtNguoiMua = TextEditingController();
 
-  List<HangHoa> dsHangHoaChon = [];
-
   List<NguoiThue> dsNguoiThue = [];
-
   NguoiThue? selectedNguoiThue;
-
-  Map<int, int> soLuong = {};
-
-  int sttHoaDon = 1;
 
   String maHoaDon = "";
 
   bool _isLoading = false;
-  bool get isLoading => _isLoading;
+  bool get isLoading => _isLoading || _chiTietHoaDonTapHoaProvider.isLoading;
+
+  // Danh sách hàng hóa đã chọn trong form (editable, người dùng thêm/bớt)
+  List<chiTietHoaDonTapHoaPageModel> dsHangHoaChon = [];
+  List<chiTietHoaDonTapHoaPageModel> get list =>
+      List.unmodifiable(dsHangHoaChon);
 
   HoaDonTapHoaFormViewModel(
     this._nguoiThueProvider,
     this._hoaDonTapHoaProvider,
-  ) {
+    this._chiTietHoaDonTapHoaProvider, {
+    String? maHoaDonEdit, // nếu có => đang sửa hóa đơn cũ
+  }) {
     _nguoiThueProvider.addListener(_onNguoiThueUpdate);
+    _chiTietHoaDonTapHoaProvider.addListener(_onChiTietHoaDonTapHoaUpdate);
 
     dsNguoiThue = List.from(_nguoiThueProvider.list);
 
@@ -54,11 +56,15 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
       } else {
         _onNguoiThueUpdate();
       }
+
+      if (maHoaDonEdit != null && maHoaDonEdit.isNotEmpty) {
+        maHoaDon = maHoaDonEdit;
+        await _chiTietHoaDonTapHoaProvider.fetchByMaHoaDon(maHoaDonEdit);
+        _onChiTietHoaDonTapHoaUpdate();
+      }
     });
 
-    DateTime now = DateTime.now();
-
-    txtNgayMua.text = formatDate(now);
+    txtNgayMua.text = formatDate(DateTime.now());
   }
 
   Future<void> refresh() async {
@@ -67,7 +73,14 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
 
   void _onNguoiThueUpdate() {
     dsNguoiThue = List.from(_nguoiThueProvider.list);
+    notifyListeners();
+  }
 
+  // Đồng bộ dữ liệu chi tiết tạp hóa từ provider vào danh sách đang chỉnh sửa
+  void _onChiTietHoaDonTapHoaUpdate() {
+    if (maHoaDon.isNotEmpty) {
+      dsHangHoaChon = List.from(_chiTietHoaDonTapHoaProvider.list);
+    }
     notifyListeners();
   }
 
@@ -132,60 +145,94 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
   void themHangHoa(HangHoa hangHoa) {
     if (hangHoa.maHangHoa == null) return;
 
-    int index = dsHangHoaChon.indexWhere(
-      (e) => e.maHangHoa == hangHoa.maHangHoa,
+    final index = dsHangHoaChon.indexWhere(
+      (e) => e.hangHoa.maHangHoa == hangHoa.maHangHoa,
     );
 
     if (index == -1) {
-      dsHangHoaChon.add(hangHoa);
-
-      soLuong[hangHoa.maHangHoa!] = 1;
+      dsHangHoaChon.add(
+        chiTietHoaDonTapHoaPageModel(
+          hangHoa: hangHoa,
+          chiTietTapHoa: ChiTietTapHoa(
+            maHangHoa: hangHoa.maHangHoa!,
+            soLuong: 1,
+          ),
+        ),
+      );
     } else {
-      soLuong[hangHoa.maHangHoa!] = (soLuong[hangHoa.maHangHoa!] ?? 0) + 1;
+      final item = dsHangHoaChon[index];
+
+      dsHangHoaChon[index] = chiTietHoaDonTapHoaPageModel(
+        hangHoa: item.hangHoa,
+        chiTietTapHoa: item.chiTietTapHoa.copyWith(
+          soLuong: (item.chiTietTapHoa.soLuong ?? 0) + 1,
+        ),
+      );
     }
 
     notifyListeners();
   }
 
-  void tangSoLuong(HangHoa hangHoa) {
-    soLuong[hangHoa.maHangHoa!] = (soLuong[hangHoa.maHangHoa!] ?? 0) + 1;
+  void tangSoLuong(chiTietHoaDonTapHoaPageModel item) {
+    final index = dsHangHoaChon.indexWhere(
+      (e) => e.hangHoa.maHangHoa == item.hangHoa.maHangHoa,
+    );
+
+    if (index == -1) return;
+
+    final sl = dsHangHoaChon[index].chiTietTapHoa.soLuong ?? 0;
+
+    dsHangHoaChon[index] = chiTietHoaDonTapHoaPageModel(
+      hangHoa: item.hangHoa,
+      chiTietTapHoa: item.chiTietTapHoa.copyWith(soLuong: sl + 1),
+    );
 
     notifyListeners();
   }
 
-  void capNhatSoLuong(HangHoa hangHoa, int value) {
-    if (value <= 0) {
-      value = 1;
-    }
+  void capNhatSoLuong(chiTietHoaDonTapHoaPageModel item, int value) {
+    if (value <= 0) value = 1;
 
-    soLuong[hangHoa.maHangHoa!] = value;
+    final index = dsHangHoaChon.indexWhere(
+      (e) => e.hangHoa.maHangHoa == item.hangHoa.maHangHoa,
+    );
+
+    if (index == -1) return;
+
+    dsHangHoaChon[index] = chiTietHoaDonTapHoaPageModel(
+      hangHoa: item.hangHoa,
+      chiTietTapHoa: item.chiTietTapHoa.copyWith(soLuong: value),
+    );
 
     notifyListeners();
   }
 
-  void giamSoLuong(HangHoa hangHoa) {
-    int sl = soLuong[hangHoa.maHangHoa] ?? 1;
+  void giamSoLuong(chiTietHoaDonTapHoaPageModel item) {
+    final index = dsHangHoaChon.indexWhere(
+      (e) => e.hangHoa.maHangHoa == item.hangHoa.maHangHoa,
+    );
+
+    if (index == -1) return;
+
+    final sl = dsHangHoaChon[index].chiTietTapHoa.soLuong ?? 1;
 
     if (sl > 1) {
-      soLuong[hangHoa.maHangHoa!] = sl - 1;
+      dsHangHoaChon[index] = chiTietHoaDonTapHoaPageModel(
+        hangHoa: item.hangHoa,
+        chiTietTapHoa: item.chiTietTapHoa.copyWith(soLuong: sl - 1),
+      );
     } else {
-      dsHangHoaChon.removeWhere((e) => e.maHangHoa == hangHoa.maHangHoa);
-
-      soLuong.remove(hangHoa.maHangHoa);
+      dsHangHoaChon.removeAt(index);
     }
 
     notifyListeners();
-  }
-
-  int laySoLuong(HangHoa hangHoa) {
-    return soLuong[hangHoa.maHangHoa] ?? 1;
   }
 
   double get tongTien {
     double tong = 0;
 
-    for (var hh in dsHangHoaChon) {
-      tong += (hh.giaBan ?? 0) * laySoLuong(hh);
+    for (final item in dsHangHoaChon) {
+      tong += (item.hangHoa.giaBan ?? 0) * (item.chiTietTapHoa.soLuong ?? 0);
     }
 
     return tong;
@@ -196,24 +243,6 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
         .toStringAsFixed(0)
         .replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (match) => ',');
   }
-
-  // void taoMaHoaDon() {
-  //   DateTime now = DateTime.now();
-
-  //   String nam = now.year.toString();
-
-  //   String thang = now.month.toString().padLeft(2, '0');
-
-  //   String ngay = now.day.toString().padLeft(2, '0');
-
-  //   String stt = sttHoaDon.toString().padLeft(3, '0');
-
-  //   maHoaDon = "TH$nam$thang$ngay$stt";
-
-  //   sttHoaDon++;
-
-  //   notifyListeners();
-  // }
 
   Future<bool> luu() async {
     if (!kiemTraDuLieu()) return false;
@@ -231,8 +260,8 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
         chiTietTapHoa: dsHangHoaChon
             .map(
               (hh) => ChiTietTapHoa(
-                maHangHoa: hh.maHangHoa!,
-                soLuong: laySoLuong(hh),
+                maHangHoa: hh.hangHoa.maHangHoa!,
+                soLuong: hh.chiTietTapHoa.soLuong ?? 1,
               ),
             )
             .toList(),
@@ -267,6 +296,7 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
   @override
   void dispose() {
     _nguoiThueProvider.removeListener(_onNguoiThueUpdate);
+    _chiTietHoaDonTapHoaProvider.removeListener(_onChiTietHoaDonTapHoaUpdate);
 
     txtNgayMua.dispose();
     txtNguoiDongTien.dispose();

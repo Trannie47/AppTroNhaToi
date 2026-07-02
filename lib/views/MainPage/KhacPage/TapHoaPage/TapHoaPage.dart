@@ -99,7 +99,16 @@ class _TapHoaPageState extends State<TapHoaPage> {
               onPressed: () async {
                 final hoaDonMoi = await Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const HoaDonTapHoaForm()),
+                  MaterialPageRoute(
+                    builder: (_) => MultiProvider(
+                      providers: [
+                        ChangeNotifierProvider(
+                          create: (_) => ChiTietTapHoaProvider(),
+                        ),
+                      ],
+                      child: const HoaDonTapHoaForm(),
+                    ),
+                  ),
                 );
 
                 // if (hoaDonMoi != null) {
@@ -337,8 +346,15 @@ class _TapHoaPageState extends State<TapHoaPage> {
                         final result = await Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => HoaDonTapHoaForm(
-                              hoaDonModel: vm.dsHoaDonTapHoa[index],
+                            builder: (_) => MultiProvider(
+                              providers: [
+                                ChangeNotifierProvider(
+                                  create: (_) => ChiTietTapHoaProvider(),
+                                ),
+                              ],
+                              child: HoaDonTapHoaForm(
+                                hoaDonModel: vm.dsHoaDonTapHoa[index],
+                              ),
                             ),
                           ),
                         );
@@ -440,8 +456,15 @@ class _TapHoaPageState extends State<TapHoaPage> {
                         final result = await Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => HoaDonTapHoaForm(
-                              hoaDonModel: vm.dsCongNoTapHoa[index],
+                            builder: (_) => MultiProvider(
+                              providers: [
+                                ChangeNotifierProvider(
+                                  create: (_) => ChiTietTapHoaProvider(),
+                                ),
+                              ],
+                              child: HoaDonTapHoaForm(
+                                hoaDonModel: vm.dsCongNoTapHoa[index],
+                              ),
                             ),
                           ),
                         );

@@ -82,6 +82,43 @@ class ItemHoaDonTapHoa extends StatelessWidget {
               const Icon(Icons.chevron_right, color: Colors.grey, size: 24)
             else ...[
               /// Sửa
+              // if (onSua != null)
+              //   Container(
+              //     width: 42,
+              //     height: 42,
+              //     decoration: BoxDecoration(
+              //       color: const Color(0xffEAF5EC),
+              //       borderRadius: BorderRadius.circular(12),
+              //     ),
+              //     child: IconButton(
+              //       onPressed: onSua,
+              //       icon: const Icon(
+              //         Icons.edit_outlined,
+              //         color: Color(0xff2D7A3A),
+              //         size: 20,
+              //       ),
+              //     ),
+              //   ),
+              if (onSua != null && onXoa != null) const SizedBox(width: 10),
+
+              /// Xóa
+              // if (onXoa != null)
+              //   Container(
+              //     width: 42,
+              //     height: 42,
+              //     decoration: BoxDecoration(
+              //       color: const Color(0xffFFF0F0),
+              //       borderRadius: BorderRadius.circular(12),
+              //     ),
+              //     child: IconButton(
+              //       onPressed: onXoa,
+              //       icon: const Icon(
+              //         Icons.delete_outline,
+              //         color: Colors.red,
+              //         size: 20,
+              //       ),
+              //     ),
+              //   ),
               if (onSua != null)
                 Container(
                   width: 42,
@@ -95,27 +132,6 @@ class ItemHoaDonTapHoa extends StatelessWidget {
                     icon: const Icon(
                       Icons.edit_outlined,
                       color: Color(0xff2D7A3A),
-                      size: 20,
-                    ),
-                  ),
-                ),
-
-              if (onSua != null && onXoa != null) const SizedBox(width: 10),
-
-              /// Xóa
-              if (onXoa != null)
-                Container(
-                  width: 42,
-                  height: 42,
-                  decoration: BoxDecoration(
-                    color: const Color(0xffFFF0F0),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: IconButton(
-                    onPressed: onXoa,
-                    icon: const Icon(
-                      Icons.delete_outline,
-                      color: Colors.red,
                       size: 20,
                     ),
                   ),

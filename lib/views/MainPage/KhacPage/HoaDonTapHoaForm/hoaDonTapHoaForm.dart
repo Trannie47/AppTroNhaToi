@@ -1,3 +1,4 @@
+import 'package:AppTroNhaToi/Provider/chi-tiet-hoa_don_tap_hoa_provider.dart';
 import 'package:AppTroNhaToi/Provider/hoa_don_tap_hoa_provider.dart';
 import 'package:AppTroNhaToi/Provider/nguoi_thue_provider.dart';
 import 'package:AppTroNhaToi/models/hang_hoa.dart';
@@ -33,6 +34,8 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
     vm = HoaDonTapHoaFormViewModel(
       context.read<NguoiThueProvider>(),
       context.read<HoaDonTapHoaProvider>(),
+      context.read<ChiTietTapHoaProvider>(),
+      maHoaDonEdit: widget.hoaDonModel?.hoaDon.maHoaDon,
     );
 
     vm.addListener(_onVmChanged);
@@ -344,86 +347,92 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
             Column(
               children: vm.dsHangHoaChon.map((e) {
                 return ItemHangHoaChon(
-                  hangHoa: e,
+                  hangHoa: e.hangHoa,
 
-                  soLuong: vm.laySoLuong(e),
+                  soLuong: e.chiTietTapHoa.soLuong ?? 1,
 
-                  onTang: () {
-                    setState(() {
-                      vm.tangSoLuong(e);
-                    });
-                  },
+                  onTang: vm.maHoaDon.isNotEmpty
+                      ? null
+                      : () {
+                          setState(() {
+                            vm.tangSoLuong(e);
+                          });
+                        },
 
-                  onChanged: (value) {
-                    setState(() {
-                      vm.capNhatSoLuong(e, value);
-                    });
-                  },
+                  onChanged: vm.maHoaDon.isNotEmpty
+                      ? null
+                      : (value) {
+                          setState(() {
+                            vm.capNhatSoLuong(e, value);
+                          });
+                        },
 
-                  onGiam: () {
-                    setState(() {
-                      vm.giamSoLuong(e);
-                    });
-                  },
+                  onGiam: vm.maHoaDon.isNotEmpty
+                      ? null
+                      : () {
+                          setState(() {
+                            vm.giamSoLuong(e);
+                          });
+                        },
                 );
               }).toList(),
             ),
 
             const SizedBox(height: 18),
 
-            SizedBox(
-              width: double.infinity,
-
-              height: 55,
-
-              child: OutlinedButton.icon(
-                style: OutlinedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+            if (vm.maHoaDon.isEmpty) ...[
+              SizedBox(
+                width: double.infinity,
+                height: 55,
+                child: OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                   ),
-                ),
+                  onPressed: () async {
+                    final HangHoa? result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const ChonHangHoaPage(),
+                      ),
+                    );
 
-                onPressed: () async {
-                  final HangHoa? result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const ChonHangHoaPage()),
-                  );
-
-                  if (result != null) {
-                    setState(() {
-                      vm.themHangHoa(result);
-                      vm.errHangHoa = null;
-                    });
-                  }
-                },
-
-                icon: const Icon(
-                  Icons.add_circle_outline,
-                  color: Color(0xff2D7A3A),
-                ),
-
-                label: const Text(
-                  "Thêm hàng hóa",
-                  style: TextStyle(
+                    if (result != null) {
+                      setState(() {
+                        vm.themHangHoa(result);
+                        vm.errHangHoa = null;
+                      });
+                    }
+                  },
+                  icon: const Icon(
+                    Icons.add_circle_outline,
                     color: Color(0xff2D7A3A),
-                    fontWeight: FontWeight.w600,
+                  ),
+                  label: const Text(
+                    "Thêm hàng hóa",
+                    style: TextStyle(
+                      color: Color(0xff2D7A3A),
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
-            ),
-            if (vm.errHangHoa != null) ...[
-              const SizedBox(height: 6),
 
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 6),
-                  child: Text(
-                    vm.errHangHoa!,
-                    style: const TextStyle(color: Colors.red, fontSize: 12),
+              if (vm.errHangHoa != null) ...[
+                const SizedBox(height: 6),
+
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 6),
+                    child: Text(
+                      vm.errHangHoa!,
+                      style: const TextStyle(color: Colors.red, fontSize: 12),
+                    ),
                   ),
                 ),
-              ),
+              ],
             ],
 
             const SizedBox(height: 30),
