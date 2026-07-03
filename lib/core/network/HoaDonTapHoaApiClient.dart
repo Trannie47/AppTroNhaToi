@@ -77,7 +77,7 @@ class HoaDonTapHoaApiClient {
     HoaDonTapHoaDTO hoaDonTapHoaDTO,
   ) async {
     try {
-      final response = await _dio.put(
+      final response = await _dio.patch(
         "hoa-don-tap-hoa/${hoaDonTapHoaDTO.maHoaDon}",
         data: hoaDonTapHoaDTO.toMap(),
       );

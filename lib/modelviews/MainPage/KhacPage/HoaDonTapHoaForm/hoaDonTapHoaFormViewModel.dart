@@ -28,6 +28,7 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
 
   List<NguoiThue> dsNguoiThue = [];
   NguoiThue? selectedNguoiThue;
+  PhieuThuHdTh? phieuThu;
 
   String maHoaDon = "";
 
@@ -44,10 +45,11 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
     this._hoaDonTapHoaProvider,
     this._chiTietHoaDonTapHoaProvider, {
     String? maHoaDonEdit, // nếu có => đang sửa hóa đơn cũ
+    PhieuThuHdTh? phieuThuEdit,
   }) {
     _nguoiThueProvider.addListener(_onNguoiThueUpdate);
     _chiTietHoaDonTapHoaProvider.addListener(_onChiTietHoaDonTapHoaUpdate);
-
+    phieuThu = phieuThuEdit;
     dsNguoiThue = List.from(_nguoiThueProvider.list);
 
     Future.microtask(() async {
@@ -260,13 +262,16 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
         chiTietTapHoa: dsHangHoaChon
             .map(
               (hh) => ChiTietTapHoa(
+                maChiTietHoaDon: hh.chiTietTapHoa.maChiTietHoaDon ?? -1,
                 maHangHoa: hh.hangHoa.maHangHoa!,
+                maHoaDon: maHoaDon,
                 soLuong: hh.chiTietTapHoa.soLuong ?? 1,
               ),
             )
             .toList(),
         phieuThuHdTh: coPhieuThu
             ? PhieuThuHdTh(
+                maPhieuThu: phieuThu?.maPhieuThu ?? -1,
                 ngayThu: DateTime.now(),
                 soTien: tongTien,
                 nguoiDong: !nguoiThueTro
