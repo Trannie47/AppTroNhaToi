@@ -2,6 +2,7 @@ import 'package:AppTroNhaToi/models/loaiphong.dart';
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/chiTietHopDongPage/chiTietHopDongViewModel.dart';
+import 'package:AppTroNhaToi/states/phong_save_state.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietHopDongPage/chiTietHopDong_Model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,9 @@ class ChiTietPhongViewModel extends ChangeNotifier {
   final int _phongId;
   NguoiThueState _nguoiThueState= NguoiThueLoading();
   NguoiThueState get nguoiThueState => _nguoiThueState;
+
+  PhongSaveState _phongSaveState= PhongSaveInitial();
+  PhongSaveState get phongSaveState => _phongSaveState;
 
   ChiTietPhongViewModel(this._phongService, this._nguoiThueService, this._phongId) {
     _phongService.addListener(_onProviderUpdate);
@@ -36,6 +40,22 @@ class ChiTietPhongViewModel extends ChangeNotifier {
       _nguoiThueState= NguoiThueError(e.toString().replaceFirst('Exception: ', ''));
     }finally{
       notifyListeners();
+    }
+  }
+  Future<void> removePhong(int idPhong)async{
+    _phongSaveState= PhongSaveLoading();
+    notifyListeners();
+    try{
+      final result= await _phongService.removePhong(idPhong);
+      if(result !=null) {
+        _phongService.removeRoomFromList(idPhong);
+        _phongSaveState = PhongSaveSuccess(result);
+      }
+    }catch(e){
+      if (kDebugMode) {
+        print("Lỗi NguoiThueViewModel $e");
+      }
+      _phongSaveState= PhongSaveError(e.toString().replaceFirst('Exception: ', ''));
     }
   }
   void _onProviderUpdate() {

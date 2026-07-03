@@ -8,6 +8,8 @@ import '../../../../Provider/phong_provider.dart';
 import '../../../../Provider/nguoi_thue_provider.dart';
 import '../../../../modelviews/MainPage/PhongPage/ChiTietPhongPage/chiTietPhongViewModel.dart';
 import '../../../../states/NguoiThueState.dart';
+import '../../../../states/phong_save_state.dart';
+import '../../../../widgets/app_confirm_dialog.dart';
 import '../../../../widgets/app_error.dart';
 
 class PhongChiTiet extends StatefulWidget {
@@ -23,7 +25,6 @@ class PhongChiTiet extends StatefulWidget {
 
 }
   class _PhongChiTiet extends State<PhongChiTiet> {
-  //late NguoithueViewModel nguoithueViewModel;
     late ChiTietPhongViewModel vm;
   @override
   void initState(){
@@ -402,15 +403,55 @@ class PhongChiTiet extends StatefulWidget {
       ],
     );
   }
-  void  _showMoreOption(BuildContext context, ItemPhong room) {
-    showModalBottomSheet(
+    void _showMoreOption(BuildContext context, ItemPhong room) async {
+      final action = await showModalBottomSheet<String>(
         context: context,
         backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (_) => MoreOptionsSheet(room: room)
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        builder: (_) => MoreOptionsSheet(room: room),
+      );
 
-    );
-  }
+      if (action == "DELETE" && mounted) {
+        final dialogResult = await showDialog<bool>(
+          context: context,
+          builder: (dialogContext) => AppConfirmDialog(
+            title: "Xóa phòng trọ",
+            content: "Bạn có chắc chắn muốn xóa phòng ${room.tenPhong} không? Hành động này không thể hoàn tác.",
+            textConfirm: "Xóa ngay",
+            isDangerous: true,
+            onConfirm: () {
+              Navigator.pop(dialogContext, true);
+            },
+          ),
+        );
+
+        if (dialogResult == true && mounted) {
+          final navigator = Navigator.of(context);
+          final scaffoldMessenger = ScaffoldMessenger.of(context);
+
+
+          await vm.removePhong(room.phongId);
+
+          if (vm.phongSaveState is PhongSaveSuccess) {
+            scaffoldMessenger.showSnackBar(
+              const SnackBar(
+                content: Text("Xóa phòng trọ thành công!"),
+                backgroundColor: Colors.green,
+              ),
+            );
+            // Thoát khỏi màn hình Chi tiết phòng để quay về danh sách tổng
+            navigator.pop();
+          } else if (vm.phongSaveState is PhongSaveError) {
+            scaffoldMessenger.showSnackBar(
+              SnackBar(
+                content: Text("Xóa thất bại: ${(vm.phongSaveState as PhongSaveError).messageError}"),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        }
+      }
+    }
 }

@@ -56,7 +56,18 @@ class PhongProvider extends ChangeNotifier{
       rethrow;
     }
   }
-
+  Future<Phong?> removePhong(int idPhong)async{
+    try{
+      final result=await phongRepository.remove(idPhong);
+      if(result!=null){
+        return result;
+      }
+      return null;
+    } catch (e) {
+      if (kDebugMode) print("Lỗi removePhong tại Provider: $e");
+      rethrow;
+    }
+  }
 
   //thêm local vào ds sau khi khi thực hiện thao tác thêm mà ko cần fetch lại api
   void addRoom(ItemPhong room) {
@@ -70,5 +81,10 @@ class PhongProvider extends ChangeNotifier{
       _listPhong[index] = updateRoom;
       notifyListeners();
     }
+  }
+  //remove phongf khởi list mà ko phải fetch lại api
+  void removeRoomFromList(int idPhong) {
+    _listPhong.removeWhere((phong) => phong.phongId == idPhong);
+    notifyListeners();
   }
 }

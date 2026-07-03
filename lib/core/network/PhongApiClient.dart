@@ -68,6 +68,27 @@ class PhongApiClient {
       throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
     }
   }
+  Future<Phong?> removePhong(int idPhong) async{
+    try{
+      final response= await _dio.delete("phong/$idPhong");
+      if(response.statusCode==200 || response.statusCode==201){
+        if(response.data !=null){
+          return Phong.fromMap(response.data);
+        }
+      }
+      return null;
+    }on DioException catch(e){
+      if (kDebugMode) {
+        print("Lỗi tầng PhongApiClient $e");
+      }
+      throw Exception(_mapErrorToMessage(e));
+    }catch(e){
+      if (kDebugMode) {
+        print("Lỗi không xác định PhongApiClient: $e");
+      }
+      throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
+    }
+  }
 
   String _mapErrorToMessage(DioException e){
     if (e.type == DioExceptionType.connectionError ||

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../view_models/phong_view_model.dart';
+import '../../../../../widgets/app_confirm_dialog.dart';
 
 class MoreOptionsSheet extends StatelessWidget {
   final ItemPhong room;
@@ -61,8 +62,18 @@ class MoreOptionsSheet extends StatelessWidget {
             leading: const Icon(Icons.delete_outline, color: Colors.red),
             title: const Text('Xóa phòng trọ này', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.red)),
             onTap: () {
-              Navigator.pop(context);
-
+              if (room.dsHopDong.isNotEmpty) {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).clearSnackBars();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Không thể xóa! Phòng đang có dữ liệu Hợp đồng liên kết. Vui lòng thanh lý hoặc xử lý hợp đồng trước!"),
+                    backgroundColor: Color(0xFF1E293B),
+                  ),
+                );
+                return;
+              }
+              Navigator.pop(context,"DELETE"); // Nếu trống thì đóng menu
             },
           ),
           const SizedBox(height: 12),

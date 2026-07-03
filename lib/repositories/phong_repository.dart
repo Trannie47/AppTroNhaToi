@@ -17,4 +17,8 @@ class PhongRepository {
   Future<Phong?> updateRoom(Phong room) async{
     return await _phongApiClient.updateRoom(room);
   }
+  Future<Phong?> remove(int idPhong) async{
+    return await _phongApiClient.removePhong(idPhong);
+  }
+
 }
