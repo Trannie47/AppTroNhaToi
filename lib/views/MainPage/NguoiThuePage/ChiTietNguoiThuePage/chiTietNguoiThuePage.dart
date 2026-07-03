@@ -13,6 +13,7 @@ import '../../../../Provider/nguoi_thue_provider.dart';
 import '../../../../core/utils/launcher_utils.dart';
 import '../../../../modelviews/MainPage/NguoiThuePage/ChiTietNguoiThuePage/chiTietNguoiThuePageViewModel.dart';
 import '../../../../states/chi_tiet_nguoi_thue_state.dart';
+import '../../../../widgets/app_confirm_dialog.dart';
 import '../../../../widgets/app_error.dart';
 
 class ChiTietNguoiThuePage extends StatefulWidget {
@@ -517,7 +518,7 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                       ),
 
                       label: const Text(
-                        "Xóa người thuê này",
+                        "Ẩn người thuê này",
 
                         style: TextStyle(
                           color: Colors.red,
@@ -538,101 +539,17 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
   }
 
   Future<void> _thucHienXoaNguoiThue() async {
-    bool? confirmDelete = await showDialog<bool>(
+    final confirmDelete = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
-        contentPadding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 56,
-              height: 56,
-              decoration: const BoxDecoration(
-                color: Color(0xffFFF1F1),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.delete_forever_rounded,
-                color: Colors.red,
-                size: 28,
-              ),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              "Xác nhận xóa",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w800,
-                color: Color(0xff1C1C1E),
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              "Bạn có chắc muốn xóa người thuê này không? Hành động này không thể hoàn tác.",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14,
-                color: Color(0xff666666),
-                height: 1.4,
-              ),
-            ),
-          ],
-        ),
-        actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        actions: [
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: () => Navigator.pop(context, false),
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(44),
-                    side: BorderSide(color: Colors.grey.shade300),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: const Text(
-                    "Hủy",
-                    style: TextStyle(
-                      color: Color(0xff666666),
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context, true),
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(44),
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: const Text(
-                    "Xóa",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
+      barrierDismissible: false,// ngăn người dùng nhấn ra ngoài làm trả về null
+      builder: (dialogContext) => AppConfirmDialog(
+        title: "Ẩn người thuê",
+        content: "Bạn có chắc chắn muốn ẩn người thuê ${widget.nguoiThue.hoTen} không?",
+        textConfirm: "Ẩn ngay",
+        isDangerous: true,
+        onConfirm: () {
+          Navigator.pop(dialogContext, true);
+        },
       ),
     );
 
@@ -645,13 +562,13 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
 
         if (isSuccess && context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Xóa người thuê thành công!')),
+            const SnackBar(content: Text('Ẩn người thuê thành công!')),
           );
           Navigator.pop(context, true); // Quay lại màn hình danh sách chính
         }
       }
     } catch (e) {
-      String errorMessage = "Không thể xóa người thuê này!";
+      String errorMessage = "Không thể ẩn người thuê này!";
       if (e is DioException && e.response?.data != null) {
         final data = e.response?.data;
         if (data is Map && data.containsKey('message')) {

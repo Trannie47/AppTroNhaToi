@@ -91,11 +91,13 @@ class PhongApiClient {
   }
 
   String _mapErrorToMessage(DioException e){
-    if (e.type == DioExceptionType.connectionError ||
-        e.type == DioExceptionType.connectionTimeout ||
+    if (e.type == DioExceptionType.connectionTimeout ||
         e.type == DioExceptionType.receiveTimeout ||
         e.type == DioExceptionType.sendTimeout) {
-      return "Không có kết nối mạng, vui lòng thử lại";
+      return "Kết nối quá chậm, vui lòng thử lại";
+    }
+    if (e.type == DioExceptionType.connectionError) {
+      return "Không thể kết nối đến máy chủ, vui lòng thử lại sau";
     }
     if (e.response?.data != null && e.response?.data['message'] != null) {
       final msg = e.response?.data['message'];

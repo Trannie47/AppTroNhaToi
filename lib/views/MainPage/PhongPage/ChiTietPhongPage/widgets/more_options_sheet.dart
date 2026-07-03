@@ -60,14 +60,14 @@ class MoreOptionsSheet extends StatelessWidget {
 
           ListTile(
             leading: const Icon(Icons.delete_outline, color: Colors.red),
-            title: const Text('Xóa phòng trọ này', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.red)),
+            title: const Text('Ẩn phòng trọ này', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.red)),
             onTap: () {
               if (room.dsHopDong.isNotEmpty) {
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).clearSnackBars();
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    content: Text("Không thể xóa! Phòng đang có dữ liệu Hợp đồng liên kết. Vui lòng thanh lý hoặc xử lý hợp đồng trước!"),
+                    content: Text("Không thể ẩn! Phòng đang có dữ liệu Hợp đồng liên kết. Vui lòng thanh lý hoặc xử lý hợp đồng trước!"),
                     backgroundColor: Color(0xFF1E293B),
                   ),
                 );

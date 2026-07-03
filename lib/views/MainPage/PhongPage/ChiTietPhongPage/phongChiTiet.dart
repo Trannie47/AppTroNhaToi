@@ -417,9 +417,9 @@ class PhongChiTiet extends StatefulWidget {
         final dialogResult = await showDialog<bool>(
           context: context,
           builder: (dialogContext) => AppConfirmDialog(
-            title: "Xóa phòng trọ",
-            content: "Bạn có chắc chắn muốn xóa phòng ${room.tenPhong} không? Hành động này không thể hoàn tác.",
-            textConfirm: "Xóa ngay",
+            title: "Ẩn phòng trọ",
+            content: "Bạn có chắc chắn muốn ẩn phòng ${room.tenPhong} không?",
+            textConfirm: "Ẩn ngay",
             isDangerous: true,
             onConfirm: () {
               Navigator.pop(dialogContext, true);
@@ -437,7 +437,7 @@ class PhongChiTiet extends StatefulWidget {
           if (vm.phongSaveState is PhongSaveSuccess) {
             scaffoldMessenger.showSnackBar(
               const SnackBar(
-                content: Text("Xóa phòng trọ thành công!"),
+                content: Text("Ẩn phòng trọ thành công!"),
                 backgroundColor: Colors.green,
               ),
             );
@@ -446,7 +446,7 @@ class PhongChiTiet extends StatefulWidget {
           } else if (vm.phongSaveState is PhongSaveError) {
             scaffoldMessenger.showSnackBar(
               SnackBar(
-                content: Text("Xóa thất bại: ${(vm.phongSaveState as PhongSaveError).messageError}"),
+                content: Text("Ẩn thất bại: ${(vm.phongSaveState as PhongSaveError).messageError}"),
                 backgroundColor: Colors.red,
               ),
             );
