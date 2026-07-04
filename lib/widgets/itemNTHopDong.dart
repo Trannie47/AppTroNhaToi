@@ -1,8 +1,9 @@
+import 'package:AppTroNhaToi/core/utils/string_formatter.dart';
+import 'package:AppTroNhaToi/models/DTO/HopDongDTO.dart';
 import 'package:flutter/material.dart';
-import 'package:AppTroNhaToi/models/hop_dong.dart';
 
 class ItemNTHopDong extends StatelessWidget {
-  final HopDong hopDong;
+  final HopDongDTO hopDong;
   final VoidCallback? onTap;
 
   const ItemNTHopDong({
@@ -32,8 +33,8 @@ class ItemNTHopDong extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
               alignment: Alignment.center,
-              child: const Text(
-                "NA",
+              child: Text(
+                vietTat(hopDong.nguoithue.hoTen),
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
@@ -48,8 +49,8 @@ class ItemNTHopDong extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    "Nguyễn Văn An",
+                   Text(
+                    hopDong.nguoithue.hoTen,
                     style: TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.w700,

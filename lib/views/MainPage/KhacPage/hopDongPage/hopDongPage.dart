@@ -1,8 +1,12 @@
 import 'package:AppTroNhaToi/models/hop_dong.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/HopDongForm/hopDongForm.dart';
-import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietHopDongPage/chiTietHopDongPage.dart';
 import 'package:AppTroNhaToi/widgets/itemNTHopDong.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../../../modelviews/MainPage/KhacPage/hopDongPage/HopDongPageViewModel.dart';
+import '../../../../states/hop_dong_state.dart';
+import '../../../../widgets/app_error.dart';
 
 class HopDongPage extends StatefulWidget {
   HopDongPage({super.key});
@@ -12,6 +16,13 @@ class HopDongPage extends StatefulWidget {
 }
 
 class _HopDongPageState extends State<HopDongPage> {
+  @override
+  void initState(){
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      context.read<HopDongPageViewModel>().loadListHD();
+    });
+  }
   String boLoc = "TAT_CA";
   String tuKhoa = "";
 
@@ -27,33 +38,6 @@ class _HopDongPageState extends State<HopDongPage> {
     return "$ngay$thang$nam$soThuTu";
   }
 
-  //final List<HopDong> danhSachHopDong = [];
-
-  final List<HopDong> danhSachHopDong = [
-    HopDong(
-      hopDongID: "1",
-      phongID: 101,
-      giaPhongThucTe: 3000000,
-      trangThai: 1,
-      ngayHetHan: DateTime(2026, 12, 31),
-    ),
-
-    // HopDong(
-    //   hopDongID: 2,
-    //   phongID: 102,
-    //   giaPhongThucTe: 3500000,
-    //   trangThai: "SAP_HET_HAN",
-    //   ngayHetHan: DateTime.now().add(const Duration(days: 15)),
-    // ),
-    //
-    // HopDong(
-    //   hopDongID: 3,
-    //   phongID: 103,
-    //   giaPhongThucTe: 2800000,
-    //   trangThai: "DA_KET_THUC",
-    //   ngayHetHan: DateTime.now().subtract(const Duration(days: 10)),
-    // ),
-  ];
 
   void moTrangTaoHopDong() {
     Navigator.push(
@@ -64,74 +48,7 @@ class _HopDongPageState extends State<HopDongPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<HopDong> danhSachHienThi;
-
-    switch (boLoc) {
-      case "HIEU_LUC":
-        danhSachHienThi = danhSachHopDong
-            .where((e) => e.trangThai == "HIEU_LUC")
-            .toList();
-        break;
-
-      // case "SAP_HET_HAN":
-      //   danhSachHienThi = danhSachHopDong.where((hd) {
-      //     if (hd.ngayHetHan == null) return false;
-
-      //     final soNgayConLai =
-      //         hd.ngayHetHan!.difference(DateTime.now()).inDays;
-
-      //     return soNgayConLai <= 30 &&
-      //         soNgayConLai >= 0;
-      //   }).toList();
-      //   break;
-
-      case "SAP_HET_HAN":
-        danhSachHienThi = danhSachHopDong
-            .where((e) => e.trangThai == "SAP_HET_HAN")
-            .toList();
-        break;
-
-      case "DA_KET_THUC":
-        danhSachHienThi = danhSachHopDong
-            .where((e) => e.trangThai == "DA_KET_THUC")
-            .toList();
-        break;
-
-      default:
-        danhSachHienThi = danhSachHopDong;
-    }
-
-    if (tuKhoa.isNotEmpty) {
-      danhSachHienThi = danhSachHienThi.where((hd) {
-        return hd.phongID.toString().contains(tuKhoa);
-      }).toList();
-    }
-
-    int tongHopDong = danhSachHopDong.length;
-
-    int hopDongHieuLuc = danhSachHopDong
-        .where((e) => e.trangThai == "HIEU_LUC")
-        .length;
-
-    int hopDongKetThuc = danhSachHopDong
-        .where((e) => e.trangThai == "DA_KET_THUC")
-        .length;
-
-    // int hopDongSapHetHan = danhSachHopDong.where((hd) {
-    //   final ngayHetHan = hd.ngayHetHan;
-
-    //   if (ngayHetHan == null) return false;
-
-    //   final soNgayConLai =
-    //       ngayHetHan.difference(DateTime.now()).inDays;
-
-    //   return soNgayConLai <= 30 && soNgayConLai >= 0;
-    // }).length;
-
-    int hopDongSapHetHan = danhSachHopDong
-        .where((e) => e.trangThai == "SAP_HET_HAN")
-        .length;
-
+    final vm = context.watch<HopDongPageViewModel>();
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -239,7 +156,7 @@ class _HopDongPageState extends State<HopDongPage> {
                         });
                       },
                       child: _buildFilter(
-                        title: "Tất cả ($tongHopDong)",
+                        title: "Tất cả (0)",
                         color: Colors.grey.shade700,
                         bgColor: Colors.white,
                       ),
@@ -254,7 +171,7 @@ class _HopDongPageState extends State<HopDongPage> {
                         });
                       },
                       child: _buildFilter(
-                        title: "Hiệu lực ($hopDongHieuLuc)",
+                        title: "Hiệu lực (0)",
                         color: Colors.green,
                         bgColor: const Color(0xffE8F5E9),
                       ),
@@ -269,7 +186,7 @@ class _HopDongPageState extends State<HopDongPage> {
                         });
                       },
                       child: _buildFilter(
-                        title: "Sắp hết hạn ($hopDongSapHetHan)",
+                        title: "Sắp hết hạn (0)",
                         color: const Color(0xffD97706),
                         bgColor: const Color(0xffFEF3C7),
                       ),
@@ -284,7 +201,7 @@ class _HopDongPageState extends State<HopDongPage> {
                         });
                       },
                       child: _buildFilter(
-                        title: "Đã kết thúc ($hopDongKetThuc)",
+                        title: "Đã kết thúc (0)",
                         color: Colors.red,
                         bgColor: const Color(0xffFFEBEE),
                       ),
@@ -297,28 +214,45 @@ class _HopDongPageState extends State<HopDongPage> {
             const SizedBox(height: 12),
 
             Expanded(
-              child: Container(
-                color: const Color(0xFFF4F4F4),
-                child: ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: danhSachHienThi.length,
+              child: switch (vm.hopDongState) {
+                HopDongLoading() => const Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xff2E7D32)),
+                  ),
+                ),
+
+                HopDongError(errorMessage: final msg) =>
+                AppErrorWidget(
+                  message: msg,
+                  onRetry:(){
+                    vm.loadListHD();
+                  }
+                ),
+
+                HopDongSuccess(listHD: final danhSach) => danhSach.isEmpty
+                    ? const Center(child: Text("Không có hợp đồng nào."))
+                    : ListView.builder(
+                  padding: const EdgeInsets.only(left: 16, right: 16, top: 12),
+                  itemCount: danhSach.length,
                   itemBuilder: (context, index) {
+                    final itemHD = danhSach[index];
                     return ItemNTHopDong(
-                      hopDong: danhSachHienThi[index],
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => ChiTietHopDongPage(
-                              hopDong: danhSachHienThi[index],
-                            ),
-                          ),
-                        );
+                      hopDong: danhSach[index],
+                      onTap: ()  {
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (_) => ChiTietHopDongPage(hopDong: itemHD),
+                        //   ),
+                        // );
                       },
                     );
                   },
                 ),
-              ),
+
+              // 4. Trạng thái khởi tạo ban đầu
+                HopDongInitial() => const SizedBox.shrink(),
+              },
             ),
           ],
         ),

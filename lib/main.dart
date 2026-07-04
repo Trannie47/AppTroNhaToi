@@ -3,6 +3,7 @@ import 'package:AppTroNhaToi/Provider/hang_hoa_provider.dart';
 import 'package:AppTroNhaToi/Provider/hoa_don_tap_hoa_provider.dart';
 import 'package:AppTroNhaToi/Provider/nguoi_thue_provider.dart';
 import 'package:AppTroNhaToi/Provider/thiet_bi_provider.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/hopDongPage/HopDongPageViewModel.dart';
 import 'package:AppTroNhaToi/view_models/nguoithue_view_model.dart';
 import 'package:AppTroNhaToi/view_models/phong_view_model.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
+import 'Provider/hop_dong_provider.dart';
 import 'Provider/loai_phong_provider.dart';
 import 'views/page.dart';
 
@@ -23,6 +25,8 @@ void main() {
         //Khai báo ở đây để làm Global, mặc định Flutter chạy chế độ Lazy (khi nào gọi mới đẻ)
         ChangeNotifierProvider(create: (_) => PhongProvider()),
         ChangeNotifierProvider(create: (_) => LoaiPhongProvider()),
+        ChangeNotifierProvider(create: (_)=> HopDongProvider()),
+        ChangeNotifierProvider(create: (_)=> HopDongPageViewModel()),
         //File Service được khởi tạo ở đây
         ChangeNotifierProvider(create: (_) => HangHoaProvider()),
         ChangeNotifierProvider(create: (_) => HoaDonTapHoaProvider()),
