@@ -2,6 +2,8 @@ import 'package:AppTroNhaToi/core/utils/string_formatter.dart';
 import 'package:AppTroNhaToi/models/DTO/HopDongDTO.dart';
 import 'package:flutter/material.dart';
 
+import '../core/utils/currency_formatter.dart';
+
 class ItemNTHopDong extends StatelessWidget {
   final HopDongDTO hopDong;
   final VoidCallback? onTap;
@@ -101,7 +103,7 @@ class ItemNTHopDong extends StatelessWidget {
                       const SizedBox(width: 10),
 
                       Text(
-                        "${hopDong.giaPhongThucTe?.toStringAsFixed(0)}đ/tháng",
+                        "${formatMoney( hopDong.giaPhongThucTe)}/tháng",
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
