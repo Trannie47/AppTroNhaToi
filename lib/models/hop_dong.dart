@@ -8,6 +8,7 @@ class HopDong {
   final DateTime? ngayHetHan;
   final double? tienCoc;
   final double? giaPhongThucTe;
+  final String? ghiChu;
   final int? trangThai; //0: Khởi tạo , 1 Đã ký , 2: Hết hạn
   final Phong?
   phong; // cái này dùng để lấy thông tin phòng hiển thị phòng trên chi tiết ngthue vì cần ngày ký
@@ -21,6 +22,7 @@ class HopDong {
     this.tienCoc,
     this.giaPhongThucTe,
     this.trangThai,
+    this.ghiChu,
     this.phong,
   });
 
@@ -43,6 +45,7 @@ class HopDong {
           ? double.tryParse(map['giaPhongThucTe'].toString())
           : null,
       trangThai: map['trangThai'] as int?,
+      ghiChu: map['ghiChu'] as String?,
       phong: map['phong'] != null
           ? Phong.fromMap(map['phong'] as Map<String, dynamic>)
           : null,
@@ -59,6 +62,7 @@ class HopDong {
       'tienCoc': tienCoc,
       'giaPhongThucTe': giaPhongThucTe,
       'trangThai': trangThai,
+      'ghiChu': ghiChu,
     };
   }
 
@@ -70,6 +74,7 @@ class HopDong {
     DateTime? ngayHetHan,
     double? tienCoc,
     double? giaPhongThucTe,
+    String? ghiChu,
     int? trangThai,
   }) {
     return HopDong(
@@ -80,6 +85,7 @@ class HopDong {
       ngayHetHan: ngayHetHan ?? this.ngayHetHan,
       tienCoc: tienCoc ?? this.tienCoc,
       giaPhongThucTe: giaPhongThucTe ?? this.giaPhongThucTe,
+      ghiChu: ghiChu ?? this.ghiChu,
       trangThai: trangThai ?? this.trangThai,
     );
   }
@@ -88,6 +94,6 @@ class HopDong {
   String toString() {
     return 'HopDong(hopDongID: $hopDongID, idnt: $idnt, phongID: $phongID, '
         'ngayKy: $ngayKy, ngayHetHan: $ngayHetHan, tienCoc: $tienCoc, '
-        'giaPhongThucTe: $giaPhongThucTe, trangThai: $trangThai)';
+        'giaPhongThucTe: $giaPhongThucTe, trangThai: $trangThai,ghiChu: $ghiChu)';
   }
 }

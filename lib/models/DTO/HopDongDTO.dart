@@ -8,6 +8,7 @@ class HopDongDTO {
   final double giaPhongThucTe;
   final int trangThai;
   final PhongHD phong;
+  final String? ghiChu;
   final NguoiThueHD nguoithue;
   HopDongDTO({
     required this.hopDongID,
@@ -17,6 +18,7 @@ class HopDongDTO {
     required this.ngayHetHan,
     required this.tienCoc,
     required this.giaPhongThucTe,
+    this.ghiChu,
     required this.trangThai,
     required this.phong,
     required this.nguoithue,
@@ -34,6 +36,7 @@ class HopDongDTO {
       giaPhongThucTe: json['giaPhongThucTe'] is num
           ? (json['giaPhongThucTe'] as num).toDouble()
           : double.tryParse(json['giaPhongThucTe']?.toString() ?? '') ?? 0.0,
+      ghiChu: json['ghiChu'] as String?,
       trangThai: json['trangThai'] ?? 0,
       phong: PhongHD.fromMap(json['phong'] ?? {}),
       nguoithue: NguoiThueHD.fromMap(json['nguoithue'] ?? {}),
