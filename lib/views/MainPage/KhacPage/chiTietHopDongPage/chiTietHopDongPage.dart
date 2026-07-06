@@ -1,6 +1,7 @@
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/string_formatter.dart';
+import 'package:AppTroNhaToi/models/DTO/HopDongDTO.dart';
 import 'package:AppTroNhaToi/models/hop_dong.dart';
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/chiTietHopDongPage/chiTietHopDongViewModel.dart';
@@ -8,7 +9,7 @@ import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietHopDongPage/chiTietH
 import 'package:flutter/material.dart';
 
 class ChiTietHopDongPage extends StatefulWidget {
-  final HopDong hopDong;
+  final HopDongDTO hopDong;
   const ChiTietHopDongPage({super.key, required this.hopDong});
 
   @override
@@ -20,10 +21,10 @@ class _ChiTietHopDongPageState extends State<ChiTietHopDongPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
-    super.initState();
-    vm = ChiTietHopDongViewModel();
-    vm.init(widget.hopDong);
+
+     super.initState();
+     vm = ChiTietHopDongViewModel();
+     vm.init(widget.hopDong);
     vm.addListener(() {
       if (mounted) {
         setState(() {});
@@ -40,32 +41,34 @@ class _ChiTietHopDongPageState extends State<ChiTietHopDongPage> {
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: false,
-        leadingWidth: 80,
+        leadingWidth: 56,
         leading: Padding(
           padding: const EdgeInsets.only(left: 16),
-          child: Container(
-            width: 12,
-            height: 12,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(36),
-            ),
-            child: IconButton(
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
-              icon: const Icon(
-                Icons.arrow_back_ios_new,
-                color: Colors.black,
-                size: 18,
+          child: Center(
+            child: Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: const Color(0xffF3F3F3),
+                borderRadius: BorderRadius.circular(36),
               ),
-              onPressed: () => Navigator.pop(context),
+              child: IconButton(
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                icon: const Icon(
+                  Icons.arrow_back_ios_new,
+                  color: Colors.black,
+                  size: 18,
+                ),
+                onPressed: () => Navigator.pop(context),
+              ),
             ),
           ),
         ),
 
         titleSpacing: 16,
 
-        title: const Column(
+        title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -78,7 +81,7 @@ class _ChiTietHopDongPageState extends State<ChiTietHopDongPage> {
               ),
             ),
             Text(
-              "HD-101-AN-01",
+              vm.hopDong.hopDongID,
               style: TextStyle(fontSize: 14, color: Color(0xff888888)),
             ),
           ],
@@ -110,17 +113,15 @@ class _ChiTietHopDongPageState extends State<ChiTietHopDongPage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            _tenantInfo(),
+            _tenantInfo(vm.hopDong),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 children: [
                   const SizedBox(height: 16),
                   _thongTinThuePhong(vm.hopDong),
-                  const SizedBox(height: 20),
-                  _thanhVienCungPhong(vm.danhSachChungPhong),
                   const SizedBox(height: 150),
-                  // _chiTietPhongButton(),
+                  //_chiTietPhongButton(),
                   // const SizedBox(height: 16),
                   // _ketThucHopDongButton(),
                   // const SizedBox(height: 16),
@@ -146,7 +147,7 @@ class _ChiTietHopDongPageState extends State<ChiTietHopDongPage> {
   }
 }
 
-Widget _tenantInfo() {
+Widget _tenantInfo(HopDongDTO hopDong) {
   return Container(
     decoration: BoxDecoration(
       color: Colors.white,
@@ -165,7 +166,7 @@ Widget _tenantInfo() {
           alignment: Alignment.center,
 
           child: Text(
-            "NA",
+            vietTat(hopDong.nguoithue.hoTen),
             style: TextStyle(
               color: Color(0xff3B5DD8),
               fontWeight: FontWeight.bold,
@@ -178,11 +179,11 @@ Widget _tenantInfo() {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Nguyễn Văn An",
+              hopDong.nguoithue.hoTen,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             Text(
-              "Phòng 101",
+              "Phòng ${hopDong.phong.tenPhong}",
               style: TextStyle(color: Colors.grey, fontSize: 13),
             ),
             SizedBox(height: 8),
@@ -215,7 +216,7 @@ Widget _tenantInfo() {
   );
 }
 
-Widget _thongTinThuePhong(HopDong hopDong) {
+Widget _thongTinThuePhong(HopDongDTO hopDong) {
   return Container(
     padding: const EdgeInsets.all(18),
     decoration: BoxDecoration(
@@ -237,15 +238,15 @@ Widget _thongTinThuePhong(HopDong hopDong) {
 
         _item(
           "Giá thuê",
-          formatMoney(hopDong.giaPhongThucTe ?? 0) + "/tháng",
+          "${formatMoney(hopDong.giaPhongThucTe)}/tháng",
           color: Color(0xff2E7D32),
         ),
-        _item("Tiền đặt cọc", formatMoney(hopDong.tienCoc ?? 0)),
+        _item("Tiền đặt cọc", formatMoney(hopDong.tienCoc)),
         _item("Ngày bắt đầu", formatDate(hopDong.ngayKy)),
         _item("Hạn hợp đồng", formatDate(hopDong.ngayHetHan)),
         _item(
           "Ghi chú",
-          "Hợp đồng ban đầu chỉ ở 1 người.",
+          hopDong.ghiChu??'',
           color: Color(0xff888888),
         ),
       ],
@@ -277,101 +278,7 @@ Widget _item(String title, String value, {Color color = Colors.black}) {
   );
 }
 
-Widget _thanhVienCungPhong(List<chiTietHopDongModel> danhSachChungPhong) {
-  return Container(
-    padding: const EdgeInsets.all(18),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(20),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Thành viên cùng phòng (${danhSachChungPhong.length})",
-          style: const TextStyle(
-            color: Color(0xff2E7D32),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 15),
 
-        if (danhSachChungPhong.isEmpty)
-          Container(
-            height: 90,
-            alignment: Alignment.center,
-            child: const Text(
-              "Chưa có thành viên",
-              style: TextStyle(color: Colors.grey),
-            ),
-          )
-        else
-          ...danhSachChungPhong.map((item) {
-            final NguoiThue nguoiThue = item.nguoiThue;
-            final HopDong hopDong = item.hopDong;
-
-            return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    backgroundColor: const Color(0xffDCE6FF),
-                    child: Text(vietTat(nguoiThue.hoTen ?? "")),
-                  ),
-                  const SizedBox(width: 15),
-
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          nguoiThue.hoTen ?? "",
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 13,
-                          ),
-                        ),
-                        Text(
-                          "Mã HĐ: ${hopDong.hopDongID ?? ""}",
-                          style: const TextStyle(
-                            color: Colors.grey,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 15,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: const Color(0xffE8F3E7),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      formatMoney(hopDong.giaPhongThucTe ?? 0),
-                      style: const TextStyle(
-                        color: Color(0xff2E7D32),
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }),
-      ],
-    ),
-  );
-}
 
 Widget _chiTietPhongButton() {
   return SizedBox(

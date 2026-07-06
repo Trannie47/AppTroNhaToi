@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../../../../modelviews/MainPage/KhacPage/hopDongPage/HopDongPageViewModel.dart';
 import '../../../../states/hop_dong_state.dart';
 import '../../../../widgets/app_error.dart';
+import '../chiTietHopDongPage/chiTietHopDongPage.dart';
 
 class HopDongPage extends StatefulWidget {
   HopDongPage({super.key});
@@ -241,12 +242,12 @@ class _HopDongPageState extends State<HopDongPage> {
                     return ItemNTHopDong(
                       hopDong: danhSach[index],
                       onTap: ()  {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (_) => ChiTietHopDongPage(hopDong: itemHD),
-                        //   ),
-                        // );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ChiTietHopDongPage(hopDong: itemHD),
+                          ),
+                        );
                       },
                     );
                   },
