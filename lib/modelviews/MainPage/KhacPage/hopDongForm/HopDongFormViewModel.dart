@@ -1,11 +1,19 @@
+import 'package:AppTroNhaToi/Provider/hop_dong_provider.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
+import 'package:AppTroNhaToi/models/DTO/RoomAvailableDTO.dart';
 import 'package:AppTroNhaToi/models/hop_dong.dart';
 import 'package:AppTroNhaToi/models/loaiphong.dart';
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
+import 'package:AppTroNhaToi/states/hop_dong_state.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../core/utils/map_dio_error_to_message.dart';
+
 class HopDongFormViewModel extends ChangeNotifier {
+   final HopDongProvider _hopDongProvider= HopDongProvider();
   final txtPhong = TextEditingController();
   final txtNguoiThue = TextEditingController();
 
@@ -20,6 +28,39 @@ class HopDongFormViewModel extends ChangeNotifier {
   final txtGhiChu = TextEditingController();
 
   int soNguoiHienTai = 0;
+
+  HopDongState _roomsAvailable= HopDongInitial();
+  HopDongState get roomsAvailable => _roomsAvailable;
+
+  Future<void> getRoomsAvailableForContract() async{
+    _roomsAvailable= HopDongLoading();
+    notifyListeners();
+    try{
+        final result= await _hopDongProvider.getRoomsAvailable();
+        _roomsAvailable= HopDongSuccess(result); //Nếu hệ thôngs không lỗi thì trả về ds phòng available
+
+    }catch(e){
+      String loi = "Đã có lỗi xảy ra, vui lòng thử lại sau!";
+      if(e is DioException){
+        loi= mapDioErrorToMessage(e);
+      }else{
+        if (kDebugMode) {
+          print("Lỗi logic hệ thôngs trong HopDongFormViewModel: $e");
+        } else {
+          loi = "Hệ thống đang gặp sự cố kỹ thuật, vui lòng quay lại sau!";
+        }
+      }
+      _roomsAvailable= HopDongError(loi);
+    }finally{
+      notifyListeners();
+    }
+  }
+
+
+
+
+
+
 
   //Ds Phòng có thể thuê
   List<Phong> dsPhong = [
@@ -45,7 +86,7 @@ class HopDongFormViewModel extends ChangeNotifier {
       moTa: "Phòng có sân thượng",
     ),
   ];
-  Phong? selectedPhong;
+
 
   List<LoaiPhong> dsLoaiPhong = [
     LoaiPhong(
@@ -99,16 +140,14 @@ class HopDongFormViewModel extends ChangeNotifier {
   NguoiThue? selectedNguoiThue;
   bool get isEdit => hopDong != null;
 
+   RoomAvailableDTO? selectedPhong;
   //Chọn phòng sẽ tự động tính tổng giá phòng
-  void onSelectedPhong(Phong? phong) {
+  void onSelectedPhong(RoomAvailableDTO? phong) {
     selectedPhong = phong;
     if (phong != null) {
-      final loaiPhong = dsLoaiPhong.firstWhere(
-        (e) => e.maLoaiPhong == phong.maLoaiPhong,
-      );
-      txtTongGiaPhong.text = loaiPhong.giaTien.toString();
+      txtTongGiaPhong.text = phong.giaPhongGoc.toString();
     } else {
-      txtTongGiaPhong.text = "";
+      txtTongGiaPhong.text = "0";
     }
     notifyListeners();
   }

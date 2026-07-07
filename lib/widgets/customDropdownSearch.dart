@@ -3,41 +3,44 @@ import 'package:flutter/material.dart';
 
 class CustomDropdownSearch<T> extends StatelessWidget {
   final String label;
-  final List<T> items;
+  final List<T>? items;
   final T? selectedItem;
   final String Function(T item) itemAsString;
   final void Function(T? value)? onChanged;
   final bool enabled;
-
-  /// Chiều cao popup
   final double popupHeight;
+  final Future<List<T>> Function(String filter)? asyncItems;
 
   const CustomDropdownSearch({
     super.key,
     this.label = '',
-    required this.items,
+    this.items,
     required this.itemAsString,
     this.selectedItem,
     this.onChanged,
     this.enabled = true,
     this.popupHeight = 300,
+    this.asyncItems,
   });
 
   @override
   Widget build(BuildContext context) {
     return DropdownSearch<T>(
       enabled: enabled,
-      items: (filter, _) {
-        final f = filter.toLowerCase();
-
-        if (f.isEmpty) {
-          return items;
+      items: (filter, loadProps) async {
+        if (asyncItems != null) {
+          return await asyncItems!(filter);
         }
 
-        return items
+        final f = filter.toLowerCase();
+        if (f.isEmpty) {
+          return items?? const [];
+        }
+        return (items ?? const [])
             .where((e) => itemAsString(e).toLowerCase().contains(f))
             .toList();
       },
+
       selectedItem: selectedItem,
       itemAsString: itemAsString,
       popupProps: PopupProps.menu(

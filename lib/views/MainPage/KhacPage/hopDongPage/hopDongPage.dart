@@ -232,7 +232,7 @@ class _HopDongPageState extends State<HopDongPage> {
                         }
                     ),
 
-                HopDongSuccess(listHD: final danhSach) => danhSach.isEmpty
+                HopDongSuccess(data: final danhSach) => danhSach.isEmpty
                     ? const Center(child: Text("Không có hợp đồng nào."))
                     : ListView.builder(
                   padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),

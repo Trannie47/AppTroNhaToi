@@ -1,11 +1,13 @@
 import 'package:AppTroNhaToi/models/hop_dong.dart';
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
-import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/hopDongForm/HopDongFormViewModel.dart';
+import 'package:AppTroNhaToi/states/hop_dong_state.dart';
 import 'package:AppTroNhaToi/widgets/customDropdownSearch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
+
+import '../../../../models/DTO/RoomAvailableDTO.dart';
 
 class HopDongForm extends StatefulWidget {
   final HopDong? hopDong;
@@ -22,7 +24,6 @@ class _TaoHopDongPageState extends State<HopDongForm> {
   @override
   void initState() {
     super.initState();
-
     vm = HopDongFormViewModel();
     vm.init(hopDong: widget.hopDong);
     vm.addListener(() {
@@ -82,21 +83,67 @@ class _TaoHopDongPageState extends State<HopDongForm> {
               child: Column(
                 children: [
                   _label("Phòng thuê"),
-                  CustomDropdownSearch<Phong>(
-                    items: vm.dsPhong,
-                    selectedItem: vm.selectedPhong,
-                    itemAsString: (item) => item.tenPhong,
-                    onChanged: (value) {
-                      setState(() {
-                        vm.selectedPhong = value;
-                        vm.onSelectedPhong(vm.selectedPhong);
-                      });
-                    },
-                  ),
+                  const SizedBox(height: 6),
+                  Builder(
+                      builder: (context) {
+                        return CustomDropdownSearch<RoomAvailableDTO>(
+                          asyncItems: (filter) async {
+                            if (vm.roomsAvailable is! HopDongSuccess<RoomAvailableDTO>) {
+                              await vm.getRoomsAvailableForContract();
+                            }
+
+                            // 2. Nếu gọi xong mà dính lỗi, bắn SnackBar thông báo và trả về mảng rỗng để không bung menu lỗi
+                            if (vm.roomsAvailable is HopDongError) {
+                              final errorState = vm.roomsAvailable as HopDongError;
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(errorState.errorMessage),
+                                  backgroundColor: Colors.red.shade700,
+                                  behavior: SnackBarBehavior.floating,
+                                ),
+                              );
+                              return [];
+                            }
+
+                            // 3. Nếu thành công, trả về list data từ Server để Dropdown tự động vẽ lên màn hình
+                            if (vm.roomsAvailable is HopDongSuccess<RoomAvailableDTO>) {
+                              final data = (vm.roomsAvailable as HopDongSuccess<RoomAvailableDTO>).data;
+
+                              // Tiện tay lọc chữ tìm kiếm theo tên phòng cho chủ trọ dễ dùng
+                              final f = filter.toLowerCase();
+                              if (f.isEmpty) return data;
+                              return data.where((e) => e.tenPhong.toLowerCase().contains(f)).toList();
+                            }
+
+                            return [];
+                          },
+
+                          selectedItem: vm.selectedPhong, // Đã khớp kiểu dữ liệu RoomAvailableDTO? trong ViewModel của Tài
+                          itemAsString: (item) => item.tenPhong,
+                          onChanged: (value) {
+                            setState(() {
+                              vm.selectedPhong = value;
+                              vm.onSelectedPhong(value); // Đổ tiền phòng gốc từ API vào ô Tổng giá phòng
+                            });
+                          },
+                        );
+
+                      },
+                  // CustomDropdownSearch<Phong>(
+                  //   items: vm.dsPhong,
+                  //   selectedItem: vm.selectedPhong,
+                  //   itemAsString: (item) => item.tenPhong,
+                  //   onChanged: (value) {
+                  //     setState(() {
+                  //       vm.selectedPhong = value;
+                  //       vm.onSelectedPhong(vm.selectedPhong);
+                  //     });
+                  //   },
+                   ),
 
                   const SizedBox(height: 16),
 
-                  _label("Người thuê chính"),
+                  _label("Người thuê"),
                   CustomDropdownSearch<NguoiThue>(
                     items: vm.dsNguoiThue,
                     selectedItem: vm.selectedNguoiThue,

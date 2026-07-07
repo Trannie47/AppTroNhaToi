@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:AppTroNhaToi/core/network/retrofit_client.dart';
 import 'package:AppTroNhaToi/models/DTO/HopDongDTO.dart';
+import 'package:AppTroNhaToi/models/DTO/RoomAvailableDTO.dart';
 import 'package:AppTroNhaToi/models/hop_dong.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -23,6 +24,22 @@ class HopDongApiClient {
       } catch (e) {
       if (kDebugMode) {
         print("Loi HopDongApiClient $e");
+      }
+      rethrow;
+    }
+  }
+
+  Future<List<RoomAvailableDTO>> getRoomsAvailableForContract() async{
+    try{
+      final response=  await _dio.get("hop-dong/roomsAvailable");
+      if(response.statusCode==200 || response.statusCode==201){
+        List<dynamic> data= response.data;
+        return data.map((json)=> RoomAvailableDTO.fromJson(json as Map<String,dynamic>)).toList();
+      }
+      throw Exception("Lấy ds phòng available thất bại (Mã lỗi: ${response.statusCode})");
+    }catch(e){
+      if (kDebugMode) {
+        print("Loi getRoomsAvailableForContract trong HopDongApiClient $e");
       }
       rethrow;
     }
