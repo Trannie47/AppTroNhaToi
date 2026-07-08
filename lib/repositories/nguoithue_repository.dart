@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:AppTroNhaToi/core/network/NguoiThueApiClient.dart';
+import 'package:retrofit/http.dart';
 
 import '../models/nguoi_thue.dart';
 
@@ -21,5 +22,9 @@ class NguoithueRepository {
 
   Future<List<NguoiThue>> getListNguoiThueFromIdPhong(int idPhong) async{
     return await nguoiThueApiClient.getListNguoiThueFromIdPhong(idPhong);
+  }
+
+  Future<List<NguoiThue>> getListNguoiThueAvailableForContract(){
+    return nguoiThueApiClient.getNguoiThueAvailableForContract();
   }
 }

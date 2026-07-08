@@ -54,6 +54,10 @@ class NguoiThueProvider extends ChangeNotifier {
     return result;
   }
 
+  Future<List<NguoiThue>> getListNguoiThueAvailableForContract()async{
+    final result= await _repo.getListNguoiThueAvailableForContract();
+    return result;
+  }
   Future<List<NguoiThue>> getListNguoiThueFromIdPhong(int idPhong) async {
     return await _repo.getListNguoiThueFromIdPhong(idPhong);
   }

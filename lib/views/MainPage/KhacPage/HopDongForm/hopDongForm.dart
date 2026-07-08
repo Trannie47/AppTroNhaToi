@@ -92,7 +92,7 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                               await vm.getRoomsAvailableForContract();
                             }
 
-                            // 2. Nếu gọi xong mà dính lỗi, bắn SnackBar thông báo và trả về mảng rỗng để không bung menu lỗi
+                            //Nếu gọi xong mà dính lỗi, bắn SnackBar thông báo và trả về mảng rỗng để không bung menu lỗi
                             if (vm.roomsAvailable is HopDongError) {
                               final errorState = vm.roomsAvailable as HopDongError;
                               ScaffoldMessenger.of(context).showSnackBar(
@@ -105,11 +105,11 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                               return [];
                             }
 
-                            // 3. Nếu thành công, trả về list data từ Server để Dropdown tự động vẽ lên màn hình
+                            // Nếu thành công, trả về list data từ Server để Dropdown tự động vẽ lên màn hình
                             if (vm.roomsAvailable is HopDongSuccess<RoomAvailableDTO>) {
                               final data = (vm.roomsAvailable as HopDongSuccess<RoomAvailableDTO>).data;
 
-                              // Tiện tay lọc chữ tìm kiếm theo tên phòng cho chủ trọ dễ dùng
+                              // lọc chữ tìm kiếm theo tên phòng
                               final f = filter.toLowerCase();
                               if (f.isEmpty) return data;
                               return data.where((e) => e.tenPhong.toLowerCase().contains(f)).toList();
@@ -118,40 +118,66 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                             return [];
                           },
 
-                          selectedItem: vm.selectedPhong, // Đã khớp kiểu dữ liệu RoomAvailableDTO? trong ViewModel của Tài
+                          selectedItem: vm.selectedPhong,
                           itemAsString: (item) => item.tenPhong,
                           onChanged: (value) {
                             setState(() {
                               vm.selectedPhong = value;
-                              vm.onSelectedPhong(value); // Đổ tiền phòng gốc từ API vào ô Tổng giá phòng
+                              vm.onSelectedPhong(value);
                             });
                           },
                         );
 
                       },
-                  // CustomDropdownSearch<Phong>(
-                  //   items: vm.dsPhong,
-                  //   selectedItem: vm.selectedPhong,
-                  //   itemAsString: (item) => item.tenPhong,
-                  //   onChanged: (value) {
-                  //     setState(() {
-                  //       vm.selectedPhong = value;
-                  //       vm.onSelectedPhong(vm.selectedPhong);
-                  //     });
-                  //   },
                    ),
 
                   const SizedBox(height: 16),
 
                   _label("Người thuê"),
-                  CustomDropdownSearch<NguoiThue>(
-                    items: vm.dsNguoiThue,
-                    selectedItem: vm.selectedNguoiThue,
-                    itemAsString: (item) => item.hoTen!,
-                    onChanged: (value) {
-                      setState(() {
-                        vm.selectedNguoiThue = value;
-                      });
+                  const SizedBox(height: 6),
+                  Builder(
+                    builder: (context) {
+                      return CustomDropdownSearch<NguoiThue>(
+                        asyncItems: (filter) async {
+                          if (vm.tenantsAvailable is! HopDongSuccess<NguoiThue>) {
+                            await vm.getNguoiThueAvailableForContract();
+                          }
+
+                          //Nếu gọi xong mà dính lỗi, bắn SnackBar thông báo và trả về mảng rỗng để không bung menu lỗi
+                          if (vm.tenantsAvailable is HopDongError) {
+                            final errorState = vm.tenantsAvailable as HopDongError;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(errorState.errorMessage),
+                                backgroundColor: Colors.red.shade700,
+                                behavior: SnackBarBehavior.floating,
+                              ),
+                            );
+                            return [];
+                          }
+
+                          // Nếu thành công, trả về list data từ Server để Dropdown tự động vẽ lên màn hình
+                          if (vm.tenantsAvailable is HopDongSuccess<NguoiThue>) {
+                            final data = (vm.tenantsAvailable as HopDongSuccess<NguoiThue>).data;
+
+                            //lọc chữ tìm kiếm theo tên phòng
+                            final f = filter.toLowerCase();
+                            if (f.isEmpty) return data;
+                            return data.where((e) => e.hoTen!.toLowerCase().contains(f)).toList();
+                          }
+
+                          return [];
+                        },
+
+                        selectedItem: vm.selectedNguoiThue,
+                        itemAsString: (item) => item.hoTen!,
+                        onChanged: (value) {
+                          setState(() {
+                            vm.selectedNguoiThue = value;
+                          });
+                        },
+                      );
+
                     },
                   ),
 
@@ -190,12 +216,13 @@ class _TaoHopDongPageState extends State<HopDongForm> {
               title: "Thiết lập giá thuê",
               child: Column(
                 children: [
-                  _label("Tổng giá phòng"),
+                  _label("Giá gốc của phòng thuê"),
                   _textfield(
                     controller: vm.txtTongGiaPhong,
-                    hint: "Nhập tổng giá phòng",
+                    hint: "0",
                     errorText: vm.errTongGiaPhong,
                     keyboardType: TextInputType.number,
+                    readOnly: true,
                     inputFormatters: [
                       FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                     ],
@@ -212,23 +239,12 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                     inputFormatters: [
                       FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                     ],
-                    onChanged: (value) {
-                      vm.capNhatGiaDeXuat();
-                    },
                   ),
 
                   const SizedBox(height: 16),
 
-                  _label("Giá thuê đề xuất cho người đang ở"),
-                  _textfield(
-                    controller: vm.txtGiaDeXuat,
-                    hint: "Nhập giá đề xuất",
-                    errorText: vm.errGiaDeXuat,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-                    ],
-                  ),
+
+
                 ],
               ),
             ),
@@ -369,7 +385,7 @@ class _TaoHopDongPageState extends State<HopDongForm> {
     int maxLines = 1,
     List<TextInputFormatter>? inputFormatters,
     Function(String)? onChanged,
-    bool enabled = false,
+    bool readOnly = false,
   }) {
     return Container(
       margin: const EdgeInsets.only(top: 6),
@@ -379,7 +395,7 @@ class _TaoHopDongPageState extends State<HopDongForm> {
         maxLines: maxLines,
         inputFormatters: inputFormatters,
         onChanged: onChanged,
-        enabled: enabled,
+        readOnly: readOnly,
         decoration: InputDecoration(
           errorText: errorText,
           errorMaxLines: 2,

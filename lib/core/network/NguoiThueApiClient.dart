@@ -55,6 +55,22 @@ class NguoiThueApiClient {
       rethrow;
     }
   }
+  // lấy ds người thuê có trạng thái 0 or 1 lên màn tạo hợp đồng
+  Future<List<NguoiThue>> getNguoiThueAvailableForContract() async{
+    try{
+      final response= await _dio.get("nguoi-thue/nguoiThueAvailableForContract");
+      if(response.statusCode==200||response.statusCode==201){
+        final List<dynamic> data= response.data;
+        return data.map((json)=> NguoiThue.fromMap(json)).toList();
+      }
+      throw Exception("Lấy ds người thuê avalable thất bại (Mã lỗi: ${response.statusCode}");
+    }catch(e){
+      if (kDebugMode) {
+        print("Loi getNguoiThueAvailableForContract trong NguoiThueApiClient $e");
+      }
+      rethrow;
+    }
+  }
 
   Future<List<NguoiThue>> getListNguoiThueFromIdPhong(int idPhong) async {
     try {

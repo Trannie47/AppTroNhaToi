@@ -1,4 +1,6 @@
 import 'package:AppTroNhaToi/Provider/hop_dong_provider.dart';
+import 'package:AppTroNhaToi/Provider/nguoi_thue_provider.dart';
+import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/models/DTO/RoomAvailableDTO.dart';
 import 'package:AppTroNhaToi/models/hop_dong.dart';
@@ -14,6 +16,7 @@ import '../../../../core/utils/map_dio_error_to_message.dart';
 
 class HopDongFormViewModel extends ChangeNotifier {
    final HopDongProvider _hopDongProvider= HopDongProvider();
+   final NguoiThueProvider _nguoiThueProvider= NguoiThueProvider();
   final txtPhong = TextEditingController();
   final txtNguoiThue = TextEditingController();
 
@@ -22,7 +25,7 @@ class HopDongFormViewModel extends ChangeNotifier {
 
   final txtTongGiaPhong = TextEditingController();
   final txtGiaHopDong = TextEditingController();
-  final txtGiaDeXuat = TextEditingController();
+
 
   final txtTienCoc = TextEditingController();
   final txtGhiChu = TextEditingController();
@@ -32,6 +35,10 @@ class HopDongFormViewModel extends ChangeNotifier {
   HopDongState _roomsAvailable= HopDongInitial();
   HopDongState get roomsAvailable => _roomsAvailable;
 
+  HopDongState _tenantsAvailable= HopDongInitial();
+  HopDongState get tenantsAvailable=> _tenantsAvailable;
+
+  // hàm gọi api để hiênr thị list phòng khi tạo hợp đồng mới
   Future<void> getRoomsAvailableForContract() async{
     _roomsAvailable= HopDongLoading();
     notifyListeners();
@@ -51,6 +58,29 @@ class HopDongFormViewModel extends ChangeNotifier {
         }
       }
       _roomsAvailable= HopDongError(loi);
+    }finally{
+      notifyListeners();
+    }
+  }
+
+  Future<void> getNguoiThueAvailableForContract() async{
+    _tenantsAvailable= HopDongLoading();
+    notifyListeners();
+    try{
+      final result= await  _nguoiThueProvider.getListNguoiThueAvailableForContract();
+      _tenantsAvailable=HopDongSuccess(result);
+    }catch(e){
+      String loi = "Đã có lỗi xảy ra, vui lòng thử lại sau!";
+      if(e is DioException){
+        loi= mapDioErrorToMessage(e);
+      }else{
+        if (kDebugMode) {
+          print("Lỗi logic hệ thôngs trong HopDongFormViewModel: $e");
+        } else {
+          loi = "Hệ thống đang gặp sự cố kỹ thuật, vui lòng quay lại sau!";
+        }
+      }
+      _tenantsAvailable= HopDongError(loi);
     }finally{
       notifyListeners();
     }
@@ -145,7 +175,7 @@ class HopDongFormViewModel extends ChangeNotifier {
   void onSelectedPhong(RoomAvailableDTO? phong) {
     selectedPhong = phong;
     if (phong != null) {
-      txtTongGiaPhong.text = phong.giaPhongGoc.toString();
+      txtTongGiaPhong.text =formatMoney(phong.giaPhongGoc);
     } else {
       txtTongGiaPhong.text = "0";
     }
@@ -272,13 +302,7 @@ class HopDongFormViewModel extends ChangeNotifier {
       hopLe = false;
     }
 
-    double? giaDeXuat = double.tryParse(txtGiaDeXuat.text);
 
-    if (giaDeXuat == null || giaDeXuat < 0) {
-      errGiaDeXuat = "Giá đề xuất phải là số ≥ 0";
-
-      hopLe = false;
-    }
     if (txtPhong.text.trim().isEmpty) {
       errPhong = "Vui lòng nhập phòng thuê";
 
@@ -296,19 +320,6 @@ class HopDongFormViewModel extends ChangeNotifier {
     return hopLe;
   }
 
-  void capNhatGiaDeXuat() {
-    double giaHopDong = double.tryParse(txtGiaHopDong.text) ?? 0;
-
-    if (soNguoiHienTai <= 0) {
-      txtGiaDeXuat.text = giaHopDong.round().toString();
-    } else {
-      double giaDeXuat = giaHopDong / (soNguoiHienTai + 1);
-
-      txtGiaDeXuat.text = giaDeXuat.round().toString();
-    }
-
-    notifyListeners();
-  }
 
   @override
   void dispose() {
@@ -318,7 +329,6 @@ class HopDongFormViewModel extends ChangeNotifier {
     txtNgayHetHan.dispose();
     txtTongGiaPhong.dispose();
     txtGiaHopDong.dispose();
-    txtGiaDeXuat.dispose();
     txtTienCoc.dispose();
     txtGhiChu.dispose();
     super.dispose();
