@@ -6,6 +6,7 @@ class NguoiThue {
   final String? sdt;
   final String? queQuan;
   final String? ghiChu;
+  final int? trangThai; //0 chưa thuê, 1 đang thuê, 2 đã dọn đi
   final bool? gioiTinh;
 
   NguoiThue({
@@ -16,6 +17,7 @@ class NguoiThue {
     this.sdt,
     this.queQuan,
     this.ghiChu,
+    this.trangThai,
     this.gioiTinh,
   });
 
@@ -30,6 +32,7 @@ class NguoiThue {
       sdt: map['sdt'] as String?,
       queQuan: map['queQuan'] as String?,
       ghiChu: map['ghiChu'] as String?,
+      trangThai: map['trangThai'] as int?,
       gioiTinh: map['gioiTinh'] != null
           ? map['gioiTinh'] == 1 || map['gioiTinh'] == true
           : null,
@@ -45,6 +48,7 @@ class NguoiThue {
       'sdt': sdt,
       'queQuan': queQuan,
       'ghiChu': ghiChu,
+      'trangThai': trangThai,
       'gioiTinh': gioiTinh == true ? 1 : 0,
     };
   }
@@ -57,6 +61,7 @@ class NguoiThue {
     String? sdt,
     String? queQuan,
     String? ghiChu,
+    int? trangThai,
     bool? gioiTinh,
   }) {
     return NguoiThue(
@@ -67,6 +72,7 @@ class NguoiThue {
       sdt: sdt ?? this.sdt,
       queQuan: queQuan ?? this.queQuan,
       ghiChu: ghiChu ?? this.ghiChu,
+      trangThai: trangThai?? this.trangThai,
       gioiTinh: gioiTinh ?? this.gioiTinh,
     );
   }

@@ -331,11 +331,18 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
 
                     const SizedBox(height: 4),
 
-                    const Text(
-                      "Đang thuê hoạt động",
-
+                     Text(
+                       detail.trangThai==0
+                           ? "Chưa có hợp đồng"
+                       : detail.trangThai==1
+                       ? "Đang thuê hoạt động"
+                       : "Đã dọn đi",
                       style: TextStyle(
-                        color: Color(0xff1F9D3A),
+                        color: detail.trangThai == 0
+                            ? Colors.orange.shade700
+                            : detail.trangThai == 1
+                            ? const Color(0xff1F9D3A)
+                            : Colors.red.shade700,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
