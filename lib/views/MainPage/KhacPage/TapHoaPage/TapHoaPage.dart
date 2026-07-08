@@ -1,4 +1,5 @@
 import 'package:AppTroNhaToi/Provider/chi-tiet-hoa_don_tap_hoa_provider.dart';
+import 'package:AppTroNhaToi/Provider/phieu-thu-hoa_don_tap_hoa_provider.dart';
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/models/hang_hoa.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/TapHoaPageViewModel/TapHoaPageViewModel.dart';
@@ -105,8 +106,11 @@ class _TapHoaPageState extends State<TapHoaPage> {
                         ChangeNotifierProvider(
                           create: (_) => ChiTietTapHoaProvider(),
                         ),
+                        ChangeNotifierProvider(
+                          create: (_) => PhieuThuHdThProvider(),
+                        ),
                       ],
-                      child: const HoaDonTapHoaForm(),
+                      child: HoaDonTapHoaForm(hoaDonModel: null),
                     ),
                   ),
                 );
@@ -337,8 +341,8 @@ class _TapHoaPageState extends State<TapHoaPage> {
                   /// HÓA ĐƠN
                   if (vm.currentTab == 2) {
                     return ItemHoaDonTapHoa(
-                      hoaDon: vm.dsHoaDonTapHoa[index].hoaDon,
-                      phieuThu: vm.dsHoaDonTapHoa[index].phieuThu,
+                      hoaDonTapHoaModel: vm.dsHoaDonTapHoa[index],
+
                       tenNguoiThue: vm.dsHoaDonTapHoa[index].tenNguoiMua,
 
                       /// SỬA
@@ -350,6 +354,9 @@ class _TapHoaPageState extends State<TapHoaPage> {
                               providers: [
                                 ChangeNotifierProvider(
                                   create: (_) => ChiTietTapHoaProvider(),
+                                ),
+                                ChangeNotifierProvider(
+                                  create: (_) => PhieuThuHdThProvider(),
                                 ),
                               ],
                               child: HoaDonTapHoaForm(
@@ -385,11 +392,17 @@ class _TapHoaPageState extends State<TapHoaPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => ChangeNotifierProvider(
-                              create: (_) => ChiTietTapHoaProvider(),
+                            builder: (_) => MultiProvider(
+                              providers: [
+                                ChangeNotifierProvider(
+                                  create: (_) => ChiTietTapHoaProvider(),
+                                ),
+                                ChangeNotifierProvider(
+                                  create: (_) => PhieuThuHdThProvider(),
+                                ),
+                              ],
                               child: ChiTietHoaDonTapHoa(
                                 hoaDon: vm.dsHoaDonTapHoa[index].hoaDon,
-                                phieuThu: vm.dsHoaDonTapHoa[index].phieuThu,
                                 tenNguoiMua:
                                     vm.dsHoaDonTapHoa[index].tenNguoiMua,
                               ),
@@ -448,8 +461,7 @@ class _TapHoaPageState extends State<TapHoaPage> {
                   // công nợ
                   if (vm.currentTab == 1) {
                     return ItemHoaDonTapHoa(
-                      hoaDon: vm.dsCongNoTapHoa[index].hoaDon,
-                      phieuThu: vm.dsCongNoTapHoa[index].phieuThu,
+                      hoaDonTapHoaModel: vm.dsCongNoTapHoa[index],
                       tenNguoiThue: vm.dsCongNoTapHoa[index].tenNguoiMua,
 
                       onSua: () async {
@@ -461,9 +473,12 @@ class _TapHoaPageState extends State<TapHoaPage> {
                                 ChangeNotifierProvider(
                                   create: (_) => ChiTietTapHoaProvider(),
                                 ),
+                                ChangeNotifierProvider(
+                                  create: (_) => PhieuThuHdThProvider(),
+                                ),
                               ],
                               child: HoaDonTapHoaForm(
-                                hoaDonModel: vm.dsCongNoTapHoa[index],
+                                hoaDonModel: vm.dsHoaDonTapHoa[index],
                               ),
                             ),
                           ),
@@ -494,11 +509,17 @@ class _TapHoaPageState extends State<TapHoaPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => ChangeNotifierProvider(
-                              create: (_) => ChiTietTapHoaProvider(),
+                            builder: (_) => MultiProvider(
+                              providers: [
+                                ChangeNotifierProvider(
+                                  create: (_) => ChiTietTapHoaProvider(),
+                                ),
+                                ChangeNotifierProvider(
+                                  create: (_) => PhieuThuHdThProvider(),
+                                ),
+                              ],
                               child: ChiTietHoaDonTapHoa(
                                 hoaDon: vm.dsCongNoTapHoa[index].hoaDon,
-                                phieuThu: vm.dsCongNoTapHoa[index].phieuThu,
                                 tenNguoiMua:
                                     vm.dsCongNoTapHoa[index].tenNguoiMua,
                               ),

@@ -24,6 +24,7 @@ class HoaDonTapHoaProvider extends ChangeNotifier {
       _list.sort(
         (a, b) => (b.hoaDon.maHoaDon ?? '').compareTo(a.hoaDon.maHoaDon ?? ''),
       );
+      print(_list);
     } catch (e) {
       _list = [];
     } finally {

@@ -1,6 +1,4 @@
-import 'package:AppTroNhaToi/models/hang_hoa.dart';
 import 'package:AppTroNhaToi/models/hoa_don_tap_hoa.dart';
-import 'package:AppTroNhaToi/models/phieu_thu_hd_th.dart';
 
 //SQL
 //Select HoaDon.*, PhieuThuHdTh.*, NguoiThue.hoTen as  tenNguoiMua
@@ -10,22 +8,26 @@ import 'package:AppTroNhaToi/models/phieu_thu_hd_th.dart';
 class HoaDonTapHoaModel {
   final HoaDonTapHoa hoaDon;
 
-  final PhieuThuHdTh? phieuThu;
+  /// Tổng số tiền đã thu
+  final double daThu;
+
+  /// Tổng tiền hóa đơn
+  final double tongTien;
 
   final String? tenNguoiMua;
 
-  HoaDonTapHoaModel({required this.hoaDon, this.phieuThu, this.tenNguoiMua});
+  HoaDonTapHoaModel({
+    required this.hoaDon,
+    required this.daThu,
+    required this.tongTien,
+    this.tenNguoiMua,
+  });
 
   factory HoaDonTapHoaModel.fromMap(Map<String, dynamic> map) {
     return HoaDonTapHoaModel(
-      hoaDon: map['hoaDon'] is Map
-          ? HoaDonTapHoa.fromMap(map['hoaDon'] as Map<String, dynamic>)
-          : HoaDonTapHoa.fromMap(map),
-
-      phieuThu: map['phieuThu'] != null
-          ? PhieuThuHdTh.fromMap(map['phieuThu'] as Map<String, dynamic>)
-          : null,
-
+      hoaDon: HoaDonTapHoa.fromMap(map['hoaDon'] as Map<String, dynamic>),
+      daThu: (map['daThu'] as num?)?.toDouble() ?? 0,
+      tongTien: (map['tongtien'] as num?)?.toDouble() ?? 0,
       tenNguoiMua: map['tenNguoiMua'] as String?,
     );
   }
@@ -33,9 +35,8 @@ class HoaDonTapHoaModel {
   Map<String, dynamic> toMap() {
     return {
       'hoaDon': hoaDon.toMap(),
-
-      if (phieuThu != null) 'phieuThu': phieuThu!.toMap(),
-
+      'daThu': daThu,
+      'tongtien': tongTien,
       'tenNguoiMua': tenNguoiMua,
     };
   }
@@ -44,9 +45,10 @@ class HoaDonTapHoaModel {
   String toString() {
     return 'HoaDonTapHoaModel('
         'hoaDon: ${hoaDon.maHoaDon}, '
-        'idnguoiMua : ${hoaDon.idnt ?? 'null'}'
-        'tenNguoiMua: ${tenNguoiMua ?? 'null'}, '
-        'phieuThu: ${phieuThu?.toString() ?? 'null'}, '
+        'idNguoiMua: ${hoaDon.idnt}, '
+        'tenNguoiMua: $tenNguoiMua, '
+        'daThu: $daThu, '
+        'tongTien: $tongTien'
         ')';
   }
 }

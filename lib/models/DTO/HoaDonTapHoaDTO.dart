@@ -5,35 +5,36 @@ class HoaDonTapHoaDTO {
   final String? maHoaDon;
   final int? idnt;
   final DateTime ngayBan;
-  final double? tongTien;
+  final double tongTien;
   final List<ChiTietTapHoa> chiTietTapHoa;
-  final PhieuThuHdTh? phieuThuHdTh;
+  final List<PhieuThuHdTh> phieuThuHdTh;
 
   HoaDonTapHoaDTO({
+    this.maHoaDon,
     this.idnt,
     required this.ngayBan,
     required this.tongTien,
     required this.chiTietTapHoa,
-    this.phieuThuHdTh,
-    this.maHoaDon,
+    this.phieuThuHdTh = const [],
   });
 
   factory HoaDonTapHoaDTO.fromMap(Map<String, dynamic> map) {
     return HoaDonTapHoaDTO(
       maHoaDon: map["maHoaDon"] as String?,
       idnt: map["idnt"] as int?,
-      ngayBan: DateTime.parse(map["ngayBan"].toString()),
-      tongTien: map['tongTien'] == null
-          ? null
-          : double.tryParse(map['tongTien'].toString()),
+      ngayBan:
+          DateTime.tryParse(map["ngayBan"]?.toString() ?? "") ?? DateTime.now(),
+      tongTien: double.tryParse(map["tongTien"]?.toString() ?? "0") ?? 0,
       chiTietTapHoa:
           (map["chiTietTapHoa"] as List<dynamic>?)
               ?.map((e) => ChiTietTapHoa.fromMap(e))
               .toList() ??
           [],
-      phieuThuHdTh: map["phieuThuHdTh"] != null
-          ? PhieuThuHdTh.fromMap(map["phieuThuHdTh"])
-          : null,
+      phieuThuHdTh:
+          (map["phieuThuHdTh"] as List<dynamic>?)
+              ?.map((e) => PhieuThuHdTh.fromMap(e))
+              .toList() ??
+          [],
     );
   }
 
@@ -41,20 +42,25 @@ class HoaDonTapHoaDTO {
     return {
       if (maHoaDon != null && maHoaDon!.isNotEmpty) "maHoaDon": maHoaDon,
 
-      "idnt": idnt,
+      if (idnt != null) "idnt": idnt,
+
       "ngayBan": ngayBan.toUtc().toIso8601String(),
       "tongTien": tongTien,
 
-      "chiTietTapHoa": chiTietTapHoa.map((e) {
-        return {"maHangHoa": e.maHangHoa, "soLuong": e.soLuong};
-      }).toList(),
+      "chiTietTapHoa": chiTietTapHoa
+          .map((e) => {"maHangHoa": e.maHangHoa, "soLuong": e.soLuong})
+          .toList(),
 
-      if (phieuThuHdTh != null)
-        "phieuThuHdTh": {
-          "ngayThu": phieuThuHdTh!.ngayThu?.toUtc().toIso8601String(),
-          "soTien": phieuThuHdTh!.soTien,
-          "nguoiDong": phieuThuHdTh!.nguoiDong,
-        },
+      "phieuThuHdTh": phieuThuHdTh
+          .map(
+            (e) => {
+              if (e.maPhieuThu != null) "maPhieuThu": e.maPhieuThu,
+              "ngayThu": e.ngayThu?.toUtc().toIso8601String(),
+              "soTien": e.soTien,
+              "nguoiDong": e.nguoiDong,
+            },
+          )
+          .toList(),
     };
   }
 

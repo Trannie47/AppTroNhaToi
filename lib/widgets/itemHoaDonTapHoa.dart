@@ -1,11 +1,11 @@
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/models/hoa_don_tap_hoa.dart';
 import 'package:AppTroNhaToi/models/phieu_thu_hd_th.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/TapHoaPage/HoaDonTapHoaModel.dart';
 import 'package:flutter/material.dart';
 
 class ItemHoaDonTapHoa extends StatelessWidget {
-  final HoaDonTapHoa hoaDon;
-  final PhieuThuHdTh? phieuThu;
+  final HoaDonTapHoaModel hoaDonTapHoaModel;
   final String? tenNguoiThue;
 
   final VoidCallback? onChiTiet;
@@ -14,8 +14,7 @@ class ItemHoaDonTapHoa extends StatelessWidget {
 
   const ItemHoaDonTapHoa({
     super.key,
-    required this.hoaDon,
-    this.phieuThu,
+    required this.hoaDonTapHoaModel,
     this.tenNguoiThue,
     this.onChiTiet,
     this.onSua,
@@ -44,7 +43,7 @@ class ItemHoaDonTapHoa extends StatelessWidget {
                 children: [
                   /// Mã hóa đơn
                   Text(
-                    "${hoaDon.maHoaDon}",
+                    "${hoaDonTapHoaModel.hoaDon.maHoaDon}",
                     style: const TextStyle(
                       fontSize: 19,
                       fontWeight: FontWeight.w700,
@@ -52,20 +51,32 @@ class ItemHoaDonTapHoa extends StatelessWidget {
                   ),
 
                   const SizedBox(height: 6),
-
-                  Text(
-                    "${tenNguoiThue ?? 'Khách vãng lai'} - ${formatMoney(hoaDon.tongTien ?? 0)}",
-                    style: TextStyle(
-                      color: Colors.grey.shade600,
-                      fontSize: 17,
-                      fontWeight: FontWeight.w500,
+                  if ((hoaDonTapHoaModel.hoaDon.tongTien ?? 0) -
+                          hoaDonTapHoaModel.daThu >
+                      0)
+                    Text(
+                      "${tenNguoiThue ?? 'Khách vãng lai'} - ${formatMoney((hoaDonTapHoaModel.hoaDon.tongTien ?? 0) - hoaDonTapHoaModel.daThu)}",
+                      style: TextStyle(
+                        color: Colors.grey.shade600,
+                        fontSize: 17,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    )
+                  else
+                    Text(
+                      "${tenNguoiThue ?? 'Khách vãng lai'} - ${formatMoney(hoaDonTapHoaModel.hoaDon.tongTien ?? 0)}",
+                      style: TextStyle(
+                        color: Colors.grey.shade600,
+                        fontSize: 17,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  ),
 
                   const SizedBox(height: 5),
 
                   Text(
-                    (phieuThu != null || hoaDon.idnt == null)
+                    (hoaDonTapHoaModel.daThu ==
+                            hoaDonTapHoaModel.hoaDon.tongTien)
                         ? "Đã thu"
                         : "Chưa thu",
                     style: const TextStyle(
@@ -78,7 +89,7 @@ class ItemHoaDonTapHoa extends StatelessWidget {
               ),
             ),
 
-            if (phieuThu != null || hoaDon.idnt == null)
+            if (hoaDonTapHoaModel.daThu == hoaDonTapHoaModel.hoaDon.tongTien)
               const Icon(Icons.chevron_right, color: Colors.grey, size: 24)
             else ...[
               /// Sửa
@@ -101,24 +112,6 @@ class ItemHoaDonTapHoa extends StatelessWidget {
               //   ),
               if (onSua != null && onXoa != null) const SizedBox(width: 10),
 
-              /// Xóa
-              // if (onXoa != null)
-              //   Container(
-              //     width: 42,
-              //     height: 42,
-              //     decoration: BoxDecoration(
-              //       color: const Color(0xffFFF0F0),
-              //       borderRadius: BorderRadius.circular(12),
-              //     ),
-              //     child: IconButton(
-              //       onPressed: onXoa,
-              //       icon: const Icon(
-              //         Icons.delete_outline,
-              //         color: Colors.red,
-              //         size: 20,
-              //       ),
-              //     ),
-              //   ),
               if (onSua != null)
                 Container(
                   width: 42,

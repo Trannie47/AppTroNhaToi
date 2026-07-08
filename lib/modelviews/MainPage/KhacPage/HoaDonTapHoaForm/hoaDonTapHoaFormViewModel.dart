@@ -1,5 +1,6 @@
 import 'package:AppTroNhaToi/Provider/chi-tiet-hoa_don_tap_hoa_provider.dart';
 import 'package:AppTroNhaToi/Provider/hoa_don_tap_hoa_provider.dart';
+import 'package:AppTroNhaToi/Provider/phieu-thu-hoa_don_tap_hoa_provider.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/models/DTO/HoaDonTapHoaDTO.dart';
 import 'package:AppTroNhaToi/models/chi_tiet_tap_hoa.dart';
@@ -15,9 +16,12 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
   final NguoiThueProvider _nguoiThueProvider;
   final HoaDonTapHoaProvider _hoaDonTapHoaProvider;
   final ChiTietTapHoaProvider _chiTietHoaDonTapHoaProvider;
+  final PhieuThuHdThProvider _phieuThuHdThProvider;
 
   bool nguoiThueTro = true;
   bool coPhieuThu = true;
+  bool isXacNhanPhieuThu = false;
+  double SoTienConThieu = 0;
 
   String? errNguoiThue;
   String? errHangHoa;
@@ -33,23 +37,30 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
   String maHoaDon = "";
 
   bool _isLoading = false;
-  bool get isLoading => _isLoading || _chiTietHoaDonTapHoaProvider.isLoading;
+  bool get isLoading =>
+      _isLoading ||
+      _chiTietHoaDonTapHoaProvider.isLoading ||
+      _phieuThuHdThProvider.isLoading;
 
   // Danh sách hàng hóa đã chọn trong form (editable, người dùng thêm/bớt)
   List<chiTietHoaDonTapHoaPageModel> dsHangHoaChon = [];
   List<chiTietHoaDonTapHoaPageModel> get list =>
       List.unmodifiable(dsHangHoaChon);
 
+  List<PhieuThuHdTh> dsPhieuThu = [];
+  List<PhieuThuHdTh> get listPhieuThu => List.unmodifiable(dsPhieuThu);
+
   HoaDonTapHoaFormViewModel(
     this._nguoiThueProvider,
     this._hoaDonTapHoaProvider,
-    this._chiTietHoaDonTapHoaProvider, {
-    String? maHoaDonEdit, // nếu có => đang sửa hóa đơn cũ
-    PhieuThuHdTh? phieuThuEdit,
+    this._chiTietHoaDonTapHoaProvider,
+    this._phieuThuHdThProvider, {
+    HoaDonTapHoa? hoaDonEdit,
   }) {
     _nguoiThueProvider.addListener(_onNguoiThueUpdate);
     _chiTietHoaDonTapHoaProvider.addListener(_onChiTietHoaDonTapHoaUpdate);
-    phieuThu = phieuThuEdit;
+    _phieuThuHdThProvider.addListener(_onPhieuThuUpdate);
+
     dsNguoiThue = List.from(_nguoiThueProvider.list);
 
     Future.microtask(() async {
@@ -59,14 +70,24 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
         _onNguoiThueUpdate();
       }
 
-      if (maHoaDonEdit != null && maHoaDonEdit.isNotEmpty) {
-        maHoaDon = maHoaDonEdit;
-        await _chiTietHoaDonTapHoaProvider.fetchByMaHoaDon(maHoaDonEdit);
+      if (hoaDonEdit != null &&
+          hoaDonEdit.maHoaDon != null &&
+          hoaDonEdit.maHoaDon!.isNotEmpty) {
+        maHoaDon = hoaDonEdit.maHoaDon!;
+        isXacNhanPhieuThu = false;
+        await Future.wait([
+          _chiTietHoaDonTapHoaProvider.fetchByMaHoaDon(maHoaDon),
+          _phieuThuHdThProvider.fetchByMaHoaDon(maHoaDon),
+        ]);
+
         _onChiTietHoaDonTapHoaUpdate();
+        _onPhieuThuUpdate();
       }
     });
 
-    txtNgayMua.text = formatDate(DateTime.now());
+    txtNgayMua.text = hoaDonEdit?.ngayBan != null
+        ? formatDate(hoaDonEdit?.ngayBan!)
+        : formatDate(DateTime.now());
   }
 
   Future<void> refresh() async {
@@ -134,9 +155,8 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
 
       txtNguoiMua.clear();
 
-      coPhieuThu = true;
-
-      txtNguoiDongTien.clear();
+      dsPhieuThu.clear();
+      isXacNhanPhieuThu = false;
 
       errNguoiThue = null;
     }
@@ -171,7 +191,7 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
         ),
       );
     }
-
+    tinhSoTienConThieu();
     notifyListeners();
   }
 
@@ -188,7 +208,7 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
       hangHoa: item.hangHoa,
       chiTietTapHoa: item.chiTietTapHoa.copyWith(soLuong: sl + 1),
     );
-
+    tinhSoTienConThieu();
     notifyListeners();
   }
 
@@ -205,6 +225,7 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
       hangHoa: item.hangHoa,
       chiTietTapHoa: item.chiTietTapHoa.copyWith(soLuong: value),
     );
+    tinhSoTienConThieu();
 
     notifyListeners();
   }
@@ -217,7 +238,6 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
     if (index == -1) return;
 
     final sl = dsHangHoaChon[index].chiTietTapHoa.soLuong ?? 1;
-
     if (sl > 1) {
       dsHangHoaChon[index] = chiTietHoaDonTapHoaPageModel(
         hangHoa: item.hangHoa,
@@ -226,6 +246,7 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
     } else {
       dsHangHoaChon.removeAt(index);
     }
+    tinhSoTienConThieu();
 
     notifyListeners();
   }
@@ -269,18 +290,21 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
               ),
             )
             .toList(),
-        phieuThuHdTh: coPhieuThu
-            ? PhieuThuHdTh(
-                maPhieuThu: phieuThu?.maPhieuThu ?? -1,
-                ngayThu: DateTime.now(),
-                soTien: tongTien,
-                nguoiDong: !nguoiThueTro
-                    ? (txtNguoiMua.text.trim().isNotEmpty
-                          ? txtNguoiMua.text.trim()
-                          : (selectedNguoiThue?.hoTen ?? ""))
-                    : (selectedNguoiThue?.hoTen ?? ""),
-              )
-            : null,
+        phieuThuHdTh: dsPhieuThu.isNotEmpty
+            ? dsPhieuThu
+                  .map(
+                    (e) => e.copyWith(
+                      ngayThu: e.ngayThu ?? DateTime.now(),
+                      soTien: e.soTien ?? 0,
+                      nguoiDong: !nguoiThueTro
+                          ? (txtNguoiMua.text.trim().isNotEmpty
+                                ? txtNguoiMua.text.trim()
+                                : (selectedNguoiThue?.hoTen ?? ""))
+                          : (selectedNguoiThue?.hoTen ?? ""),
+                    ),
+                  )
+                  .toList()
+            : [],
       );
 
       if (dto.maHoaDon != '') {
@@ -298,10 +322,37 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
     }
   }
 
+  void tinhSoTienConThieu() {
+    final daThu = dsPhieuThu.fold<double>(
+      0,
+      (tong, item) => tong + (item.soTien ?? 0),
+    );
+
+    SoTienConThieu = tongTien - daThu;
+
+    if (SoTienConThieu < 0) {
+      SoTienConThieu = 0;
+    }
+  }
+
+  void themPhieuThu() {
+    dsPhieuThu.add(PhieuThuHdTh());
+    isXacNhanPhieuThu = true;
+    tinhSoTienConThieu();
+    notifyListeners();
+  }
+
+  void _onPhieuThuUpdate() {
+    dsPhieuThu = List.from(_phieuThuHdThProvider.list);
+    tinhSoTienConThieu();
+    notifyListeners();
+  }
+
   @override
   void dispose() {
     _nguoiThueProvider.removeListener(_onNguoiThueUpdate);
     _chiTietHoaDonTapHoaProvider.removeListener(_onChiTietHoaDonTapHoaUpdate);
+    _phieuThuHdThProvider.removeListener(_onPhieuThuUpdate);
 
     txtNgayMua.dispose();
     txtNguoiDongTien.dispose();

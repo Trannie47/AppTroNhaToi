@@ -34,7 +34,11 @@ class TapHoaPageViewModel extends ChangeNotifier {
     // tạo 5 record trong dsHoaDonTapHoa
     //Nếu hoá đơn tạp hoá chưa có phiếu thu trở thành danh sách công nợ và id người thuê trên hoá đơn phải khác null
     dsCongNoTapHoa = dsHoaDonTapHoa
-        .where((item) => (item.phieuThu == null) && (item.hoaDon.idnt != null))
+        .where(
+          (item) =>
+              ((item.hoaDon.tongTien ?? 0) - item.daThu > 0) &&
+              (item.hoaDon.idnt != null),
+        )
         .toList();
 
     notifyListeners();
@@ -80,7 +84,7 @@ class TapHoaPageViewModel extends ChangeNotifier {
     dsHoaDonTapHoa.insert(0, hoaDonModel);
 
     // Nếu chưa có phiếu thu và có id người thuê
-    if (hoaDonModel.phieuThu == null && hoaDonModel.hoaDon.idnt != null) {
+    if (hoaDonModel.daThu == 0 && hoaDonModel.hoaDon.idnt != null) {
       dsCongNoTapHoa.insert(0, hoaDonModel);
     }
 
@@ -118,7 +122,7 @@ class TapHoaPageViewModel extends ChangeNotifier {
   double get tongCongNo {
     return dsCongNoTapHoa.fold<double>(
       0,
-      (sum, item) => sum + (item.hoaDon.tongTien ?? 0),
+      (sum, item) => sum + (item.hoaDon.tongTien ?? 0) - (item.daThu),
     );
   }
 

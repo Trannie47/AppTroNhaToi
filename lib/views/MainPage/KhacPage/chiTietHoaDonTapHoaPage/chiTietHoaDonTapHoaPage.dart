@@ -1,4 +1,5 @@
 import 'package:AppTroNhaToi/Provider/chi-tiet-hoa_don_tap_hoa_provider.dart';
+import 'package:AppTroNhaToi/Provider/phieu-thu-hoa_don_tap_hoa_provider.dart';
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/chiTietHoaDonTapHoaPage/chiTietHoaDonTapHoaPageViewModel.dart';
@@ -10,13 +11,11 @@ import 'package:provider/provider.dart';
 
 class ChiTietHoaDonTapHoa extends StatefulWidget {
   final HoaDonTapHoa hoaDon;
-  final PhieuThuHdTh? phieuThu;
   final String? tenNguoiMua;
 
   const ChiTietHoaDonTapHoa({
     super.key,
     required this.hoaDon,
-    this.phieuThu,
     this.tenNguoiMua,
   });
 
@@ -33,9 +32,9 @@ class _ChiTietHoaDonTapHoaState extends State<ChiTietHoaDonTapHoa> {
 
     vm = ChiTietHoaDonTapHoaPageViewModel(
       hoaDon: widget.hoaDon,
-      phieuThu: widget.phieuThu,
       tenNguoiMua: widget.tenNguoiMua,
-      provider: context.read<ChiTietTapHoaProvider>(),
+      chiTietProvider: context.read<ChiTietTapHoaProvider>(),
+      phieuThuProvider: context.read<PhieuThuHdThProvider>(),
     );
 
     vm.addListener(() {
@@ -91,29 +90,31 @@ class _ChiTietHoaDonTapHoaState extends State<ChiTietHoaDonTapHoa> {
             ),
 
             const SizedBox(height: 16),
-            if (vm.phieuThu != null) ...[
-              _section(
-                title: "Thông tin Phiếu thu tạp hoá",
-                child: Column(
-                  children: [
-                    _infoRow(
-                      "Mã phiếu thu",
-                      vm.phieuThu?.maPhieuThu?.toString() ?? "",
+            if (vm.dsPhieuThu.isNotEmpty) ...[
+              ...vm.dsPhieuThu.map(
+                (phieuThu) => Padding(
+                  padding: const EdgeInsets.only(bottom: 24),
+                  child: _section(
+                    title: "Thông tin Phiếu thu tạp hoá",
+                    child: Column(
+                      children: [
+                        _infoRow(
+                          "Mã phiếu thu",
+                          phieuThu.maPhieuThu?.toString() ?? "",
+                        ),
+                        _infoRow("Ngày lập", formatDate(phieuThu.ngayThu)),
+                        _infoRow(
+                          "Tên người thanh toán",
+                          phieuThu.nguoiDong ?? "",
+                        ),
+                        _infoRow(
+                          "Đã trả",
+                          formatMoney(phieuThu.soTien ?? 0),
+                          isLast: true,
+                        ),
+                      ],
                     ),
-
-                    _infoRow("Ngày lập", formatDate(vm.phieuThu?.ngayThu)),
-
-                    _infoRow(
-                      "Tên người thanh toán",
-                      vm.phieuThu?.nguoiDong ?? "",
-                    ),
-
-                    _infoRow(
-                      "Tổng tiền",
-                      formatMoney(vm.phieuThu?.soTien),
-                      isLast: true,
-                    ),
-                  ],
+                  ),
                 ),
               ),
 
