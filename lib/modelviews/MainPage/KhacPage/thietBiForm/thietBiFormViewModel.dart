@@ -11,7 +11,6 @@ class ThietBiFormViewModel extends ChangeNotifier {
   ThietBi? _thietBiDangSua;
   bool get isEditMode => _thietBiDangSua != null;
 
-
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   final TextEditingController txtTenThietBi = TextEditingController();
@@ -19,12 +18,10 @@ class ThietBiFormViewModel extends ChangeNotifier {
   final TextEditingController txtNgayMua = TextEditingController();
 
   String? loaiThietBi;
-  int? phongID;
   String? trangThai;
 
   String? errTenThietBi;
   String? errLoaiThietBi;
-  String? errPhong;
   String? errNgayMua;
   String? errGiaTri;
   String? errTrangThai;
@@ -44,11 +41,7 @@ class ThietBiFormViewModel extends ChangeNotifier {
 
   final List<String> dsTrangThai = ["Tốt", "Đang sửa"];
 
-  ThietBiFormViewModel(
-      this._service,{
-        ThietBi? thietBiInput,
-        List<LapRap>? dsLapRap,
-      }) {
+  ThietBiFormViewModel(this._service, {ThietBi? thietBiInput}) {
     if (thietBiInput != null) {
       _thietBiDangSua = thietBiInput;
       thietBi = thietBiInput;
@@ -64,20 +57,12 @@ class ThietBiFormViewModel extends ChangeNotifier {
 
       loaiThietBi = thietBi.loai;
       trangThai = thietBi.trangThaiText;
-      if (dsLapRap != null) {
-        LapRap lapRap = dsLapRap.firstWhere(
-          (e) => e.thietBiID == thietBiInput!.thietBiID,
-        );
-
-        phongID = lapRap.phongID;
-      }
     }
   }
 
   bool kiemTraDuLieu() {
     errTenThietBi = null;
     errLoaiThietBi = null;
-    errPhong = null;
     errNgayMua = null;
     errGiaTri = null;
     errTrangThai = null;
@@ -93,12 +78,6 @@ class ThietBiFormViewModel extends ChangeNotifier {
     // Loại thiết bị
     if (loaiThietBi == null) {
       errLoaiThietBi = "Vui lòng chọn loại thiết bị";
-      hopLe = false;
-    }
-
-    // Phòng
-    if (phongID == null) {
-      errPhong = "Vui lòng chọn phòng";
       hopLe = false;
     }
 
@@ -171,13 +150,10 @@ class ThietBiFormViewModel extends ChangeNotifier {
       );
 
       if (isEditMode) {
-
         final ok = await _service.capNhat(tb);
 
         return ok ? tb : null;
-
       } else {
-
         // return await _service.them(tb);
 
         print(tb.toMap());
@@ -188,12 +164,9 @@ class ThietBiFormViewModel extends ChangeNotifier {
 
         return result;
       }
-
     } finally {
-
       _isLoading = false;
       notifyListeners();
-
     }
   }
 

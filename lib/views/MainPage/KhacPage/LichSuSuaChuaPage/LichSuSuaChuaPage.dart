@@ -9,14 +9,9 @@ import 'package:AppTroNhaToi/widgets/itemLichSuSuaChua.dart';
 import 'package:flutter/material.dart';
 
 class LichSuSuaChuaPage extends StatefulWidget {
-  final Phong phong;
   final ThietBi thietBi;
 
-  const LichSuSuaChuaPage({
-    super.key,
-    required this.phong,
-    required this.thietBi,
-  });
+  const LichSuSuaChuaPage({super.key, required this.thietBi});
 
   @override
   State<LichSuSuaChuaPage> createState() => _LichSuSuaChuaPageState();
@@ -31,7 +26,7 @@ class _LichSuSuaChuaPageState extends State<LichSuSuaChuaPage> {
 
     vm = LichSuSuaChuaPageViewModel();
 
-    vm.init(widget.phong, widget.thietBi);
+    vm.init(widget.thietBi);
 
     vm.addListener(() {
       if (mounted) {
@@ -51,9 +46,7 @@ class _LichSuSuaChuaPageState extends State<LichSuSuaChuaPage> {
   void taoMoi(BuildContext context) async {
     bool? result = await Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (_) => PhieuSuaChuaForm(phong: vm.phong, thietBi: vm.thietBi),
-      ),
+      MaterialPageRoute(builder: (_) => PhieuSuaChuaForm(thietBi: vm.thietBi)),
     );
 
     if (result == true) {
@@ -106,7 +99,7 @@ class _LichSuSuaChuaPageState extends State<LichSuSuaChuaPage> {
             ),
 
             Text(
-              "${widget.thietBi.tenThietBi} - ${widget.phong.tenPhong}",
+              "${widget.thietBi.tenThietBi} - ${101}",
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
@@ -197,7 +190,6 @@ class _LichSuSuaChuaPageState extends State<LichSuSuaChuaPage> {
                           builder: (_) => ChiTietLichSuSuaChuaPage(
                             suaChua: item.suaChua!,
                             hoaDonSuaChua: item.hoaDonSuaChua,
-                            phong: widget.phong,
                             thietBi: widget.thietBi,
                           ),
                         ),

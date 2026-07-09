@@ -7,23 +7,24 @@ import 'package:flutter/material.dart';
 class ChiTietLichSuSuaChuaPageViewModel extends ChangeNotifier {
   late SuaChua suaChua;
   HoaDonSuaChua? hoaDonSuaChua;
-  late Phong phong;
+
   late ThietBi thietBi;
+  late Phong phong;
 
   void init(
     SuaChua suaChuaData,
     HoaDonSuaChua? hoaDonSuaChuaData,
-    Phong phongData,
     ThietBi thietBiData,
   ) {
     suaChua = suaChuaData;
     hoaDonSuaChua = hoaDonSuaChuaData;
-    phong = phongData;
     thietBi = thietBiData;
-  }
-
-  String get tenPhong {
-    return phong.tenPhong;
+    phong = Phong(
+      phongID: 101,
+      tenPhong: "Phòng 101",
+      trangThai: 1,
+      maLoaiPhong: 1,
+    );
   }
 
   String get tenThietBi {

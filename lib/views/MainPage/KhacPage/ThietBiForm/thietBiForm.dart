@@ -12,15 +12,8 @@ import 'package:provider/provider.dart';
 
 class ThietBiForm extends StatefulWidget {
   final ThietBi? thietBi;
-  final List<LapRap> dsLapRap;
-  final List<Phong> dsPhong;
 
-  const ThietBiForm({
-    super.key,
-    this.thietBi,
-    required this.dsLapRap,
-    required this.dsPhong,
-  });
+  const ThietBiForm({super.key, this.thietBi});
 
   @override
   State<ThietBiForm> createState() => _ThietBiFormState();
@@ -175,53 +168,53 @@ class _ThietBiFormState extends State<ThietBiForm> {
     );
   }
 
-  Widget _dropDownPhong() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  // Widget _dropDownPhong() {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
 
-      children: [
-        const Text(
-          "Phòng lắp đặt",
-          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-        ),
+  //     children: [
+  //       const Text(
+  //         "Phòng lắp đặt",
+  //         style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+  //       ),
 
-        const SizedBox(height: 8),
+  //       const SizedBox(height: 8),
 
-        DropdownButtonFormField<int>(
-          value: vm.phongID,
+  //       DropdownButtonFormField<int>(
+  //         value: vm.phongID,
 
-          decoration: InputDecoration(
-            errorText: vm.errPhong,
+  //         decoration: InputDecoration(
+  //           errorText: vm.errPhong,
 
-            filled: true,
-            fillColor: const Color(0xffF8F8F8),
+  //           filled: true,
+  //           fillColor: const Color(0xffF8F8F8),
 
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide.none,
-            ),
-          ),
+  //           border: OutlineInputBorder(
+  //             borderRadius: BorderRadius.circular(14),
+  //             borderSide: BorderSide.none,
+  //           ),
+  //         ),
 
-          hint: const Text("--Chọn phòng--"),
+  //         hint: const Text("--Chọn phòng--"),
 
-          items: widget.dsPhong
-              .map(
-                (e) => DropdownMenuItem<int>(
-                  value: e.phongID,
-                  child: Text(e.tenPhong),
-                ),
-              )
-              .toList(),
+  //         items: widget.dsPhong
+  //             .map(
+  //               (e) => DropdownMenuItem<int>(
+  //                 value: e.phongID,
+  //                 child: Text(e.tenPhong),
+  //               ),
+  //             )
+  //             .toList(),
 
-          onChanged: (value) {
-            setState(() {
-              vm.phongID = value;
-            });
-          },
-        ),
-      ],
-    );
-  }
+  //         onChanged: (value) {
+  //           setState(() {
+  //             vm.phongID = value;
+  //           });
+  //         },
+  //       ),
+  //     ],
+  //   );
+  // }
 
   DateTime? chuyenNgay(String ngay) {
     try {
@@ -244,7 +237,6 @@ class _ThietBiFormState extends State<ThietBiForm> {
     vm = ThietBiFormViewModel(
       context.read<ThietBiProvider>(),
       thietBiInput: widget.thietBi,
-      dsLapRap: widget.dsLapRap,
     );
   }
 
@@ -319,19 +311,14 @@ class _ThietBiFormState extends State<ThietBiForm> {
             //
             //   Navigator.pop(context, thietBiMoi);
             // },
-
             onPressed: () async {
-
               final result = await vm.luu();
 
               setState(() {});
 
               if (result != null) {
-
                 Navigator.pop(context, result);
-
               }
-
             },
 
             child: Text(
@@ -382,60 +369,49 @@ class _ThietBiFormState extends State<ThietBiForm> {
 
               _dropDownLoaiThietBi(),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
 
-              _dropDownPhong(),
-              const SizedBox(height: 16),
+              // _dropDownPhong(),
+              // const SizedBox(height: 16),
+              _input(
+                title: "Ngày mua",
+                hint: "dd/MM/yyyy",
+                controller: vm.txtNgayMua,
+                errorText: vm.errNgayMua,
 
-              Row(
-                children: [
-                  Expanded(
-                    child: _input(
-                      title: "Ngày mua",
-                      hint: "dd/MM/yyyy",
-                      controller: vm.txtNgayMua,
-                      errorText: vm.errNgayMua,
+                keyboardType: TextInputType.number,
 
-                      keyboardType: TextInputType.number,
+                inputFormatters: [MaskedInputFormatter('##/##/####')],
 
-                      inputFormatters: [MaskedInputFormatter('##/##/####')],
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.calendar_today_outlined, size: 20),
 
-                      suffixIcon: IconButton(
-                        icon: const Icon(
-                          Icons.calendar_today_outlined,
-                          size: 20,
-                        ),
+                  onPressed: () async {
+                    DateTime? pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime.now(),
+                    );
 
-                        onPressed: () async {
-                          DateTime? pickedDate = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime.now(),
-                          );
+                    if (pickedDate != null) {
+                      vm.txtNgayMua.text = formatDate(pickedDate);
 
-                          if (pickedDate != null) {
-                            vm.txtNgayMua.text = formatDate(pickedDate);
+                      setState(() {});
+                    }
+                  },
+                ),
+              ),
 
-                            setState(() {});
-                          }
-                        },
-                      ),
-                    ),
-                  ),
+              const SizedBox(width: 12),
 
-                  const SizedBox(width: 12),
-
-                  Expanded(
-                    child: _input(
-                      title: "Giá trị (đ)",
-                      hint: "0",
-                      controller: vm.txtGiaTri,
-                      keyboardType: TextInputType.number,
-                      errorText: vm.errGiaTri,
-                    ),
-                  ),
-                ],
+              _input(
+                title: "Giá trị (đ)",
+                hint: "0",
+                controller: vm.txtGiaTri,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                errorText: vm.errGiaTri,
               ),
 
               const SizedBox(height: 16),

@@ -8,23 +8,14 @@ import 'package:AppTroNhaToi/views/MainPage/KhacPage/LichSuSuaChuaPage/LichSuSua
 import 'package:flutter/material.dart';
 
 class ChiTietThietBiPageViewModel extends ChangeNotifier {
-  late List<Phong> dsPhong;
-  late List<LapRap> dsLapRap;
   late ThietBi thietBi;
   bool hienMenu = false;
 
   late List<ThietBi> dsThietBi;
 
-  void init(
-    ThietBi tb,
-    List<Phong> phongList,
-    List<LapRap> lapRapList,
-    List<ThietBi> thietBiList,
-  ) {
+  void init(ThietBi tb) {
     thietBi = tb;
-    dsPhong = phongList;
-    dsLapRap = lapRapList;
-    dsThietBi = thietBiList;
+
     // load fake repair history for this device
     _loadFakeLichSuSuaChua();
   }
@@ -68,38 +59,6 @@ class ChiTietThietBiPageViewModel extends ChangeNotifier {
     return thietBi.trangThaiText;
   }
 
-  String get tenPhong {
-    LapRap? lapRap;
-
-    try {
-      lapRap = dsLapRap.firstWhere((e) => e.thietBiID == thietBi.thietBiID);
-    } catch (_) {
-      return "";
-    }
-
-    try {
-      return dsPhong.firstWhere((e) => e.phongID == lapRap!.phongID).tenPhong;
-    } catch (_) {
-      return "";
-    }
-  }
-
-  Phong? get phongHienTai {
-    LapRap? lapRap;
-
-    try {
-      lapRap = dsLapRap.firstWhere((e) => e.thietBiID == thietBi.thietBiID);
-    } catch (_) {
-      return null;
-    }
-
-    try {
-      return dsPhong.firstWhere((e) => e.phongID == lapRap!.phongID);
-    } catch (_) {
-      return null;
-    }
-  }
-
   void xoaLichSu(int index) {
     lichSuSuaChua.removeAt(index);
 
@@ -120,7 +79,7 @@ class ChiTietThietBiPageViewModel extends ChangeNotifier {
     // create some sample repair records for the current device
     final s1 = SuaChua(
       id: 101,
-      phongID: dsPhong.isNotEmpty ? dsPhong.first.phongID : 0,
+      phongID: 1,
       nguyenNhan: 'Lỗi nguồn',
       ngaySuaChua: DateTime(2024, 1, 15),
     );
@@ -135,7 +94,7 @@ class ChiTietThietBiPageViewModel extends ChangeNotifier {
 
     final s2 = SuaChua(
       id: 102,
-      phongID: dsPhong.isNotEmpty ? dsPhong.first.phongID : 0,
+      phongID: 1,
       nguyenNhan: 'Thay linh kiện',
       ngaySuaChua: DateTime(2023, 11, 5),
     );
@@ -150,7 +109,7 @@ class ChiTietThietBiPageViewModel extends ChangeNotifier {
 
     final s3 = SuaChua(
       id: 103,
-      phongID: dsPhong.isNotEmpty ? dsPhong.first.phongID : 0,
+      phongID: 1,
       nguyenNhan: 'Bảo trì định kỳ',
       ngaySuaChua: DateTime(2023, 6, 20),
     );

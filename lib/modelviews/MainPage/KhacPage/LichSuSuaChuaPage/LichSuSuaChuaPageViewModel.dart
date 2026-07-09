@@ -6,7 +6,6 @@ import 'package:AppTroNhaToi/views/MainPage/KhacPage/LichSuSuaChuaPage/LichSuSua
 import 'package:flutter/material.dart';
 
 class LichSuSuaChuaPageViewModel extends ChangeNotifier {
-  late Phong phong;
   late ThietBi thietBi;
 
   final txtSearch = TextEditingController();
@@ -14,8 +13,7 @@ class LichSuSuaChuaPageViewModel extends ChangeNotifier {
   List<LichSuSuaChuaPageModel> dsGoc = [];
   List<LichSuSuaChuaPageModel> lichSuSuaChua = [];
 
-  void init(Phong phongList, ThietBi thietBiList) {
-    phong = phongList;
+  void init(ThietBi thietBiList) {
     thietBi = thietBiList;
 
     loadData();
@@ -28,7 +26,7 @@ class LichSuSuaChuaPageViewModel extends ChangeNotifier {
       LichSuSuaChuaPageModel(
         suaChua: SuaChua(
           id: 201,
-          phongID: phong.phongID,
+          phongID: 101,
           nguyenNhan: 'Lỗi nguồn',
           ngaySuaChua: DateTime(2024, 5, 10),
         ),
@@ -45,7 +43,7 @@ class LichSuSuaChuaPageViewModel extends ChangeNotifier {
       LichSuSuaChuaPageModel(
         suaChua: SuaChua(
           id: 202,
-          phongID: phong.phongID,
+          phongID: 101,
           nguyenNhan: 'Thay ổ cắm',
           ngaySuaChua: DateTime(2024, 4, 2),
         ),
@@ -62,7 +60,7 @@ class LichSuSuaChuaPageViewModel extends ChangeNotifier {
       LichSuSuaChuaPageModel(
         suaChua: SuaChua(
           id: 203,
-          phongID: phong.phongID,
+          phongID: 101,
           nguyenNhan: 'Bảo trì quạt trần',
           ngaySuaChua: DateTime(2024, 3, 18),
         ),
@@ -79,7 +77,7 @@ class LichSuSuaChuaPageViewModel extends ChangeNotifier {
       LichSuSuaChuaPageModel(
         suaChua: SuaChua(
           id: 204,
-          phongID: phong.phongID,
+          phongID: 101,
           nguyenNhan: 'Rò rỉ nước',
           ngaySuaChua: DateTime(2023, 12, 5),
         ),
@@ -88,7 +86,7 @@ class LichSuSuaChuaPageViewModel extends ChangeNotifier {
       LichSuSuaChuaPageModel(
         suaChua: SuaChua(
           id: 205,
-          phongID: phong.phongID,
+          phongID: 101,
           nguyenNhan: 'Thay đèn',
           ngaySuaChua: DateTime(2023, 10, 20),
         ),

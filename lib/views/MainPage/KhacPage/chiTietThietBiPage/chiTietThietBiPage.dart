@@ -16,18 +16,7 @@ import 'package:intl/intl.dart';
 class ChiTietThietBiPage extends StatefulWidget {
   final ThietBi thietBi;
 
-  final List<Phong> dsPhong;
-
-  final List<LapRap> dsLapRap;
-  final List<ThietBi> dsThietBi;
-
-  const ChiTietThietBiPage({
-    super.key,
-    required this.thietBi,
-    required this.dsPhong,
-    required this.dsLapRap,
-    required this.dsThietBi,
-  });
+  const ChiTietThietBiPage({super.key, required this.thietBi});
 
   @override
   State<ChiTietThietBiPage> createState() => _ChiTietThietBiPageState();
@@ -42,7 +31,7 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
 
     vm = ChiTietThietBiPageViewModel();
 
-    vm.init(widget.thietBi, widget.dsPhong, widget.dsLapRap, widget.dsThietBi);
+    vm.init(widget.thietBi);
   }
 
   @override
@@ -233,8 +222,6 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
 
                         _rowThongTin("Loại", vm.thietBi.loai ?? ""),
 
-                        _rowThongTin("Phòng lắp đặt", vm.tenPhong),
-
                         _rowThongTin(
                           "Ngày mua",
                           DateFormat("MM/yyyy").format(vm.thietBi.ngayMua!),
@@ -295,7 +282,6 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
                                     MaterialPageRoute(
                                       builder: (_) => LichSuSuaChuaPage(
                                         thietBi: vm.thietBi,
-                                        phong: vm.phongHienTai!,
                                       ),
                                     ),
                                   );
@@ -334,7 +320,6 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
                                     builder: (_) => ChiTietLichSuSuaChuaPage(
                                       suaChua: item.suaChua!,
                                       hoaDonSuaChua: item.hoaDonSuaChua,
-                                      phong: vm.phongHienTai!,
                                       thietBi: widget.thietBi,
                                     ),
                                   ),
@@ -531,17 +516,13 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
                 final result = await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => ThietBiForm(
-                      thietBi: vm.thietBi,
-                      dsLapRap: widget.dsLapRap,
-                      dsPhong: widget.dsPhong,
-                    ),
+                    builder: (_) => ThietBiForm(thietBi: vm.thietBi),
                   ),
                 );
 
                 if (result is ThietBi) {
                   setState(() {
-                    vm.init(result, vm.dsPhong, vm.dsLapRap, vm.dsThietBi);
+                    vm.init(result);
                   });
                 }
               },
@@ -615,11 +596,7 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
                     context,
 
                     MaterialPageRoute(
-                      builder: (_) => PhieuSuaChuaForm(
-                        thietBi: vm.thietBi,
-
-                        phong: vm.phongHienTai!,
-                      ),
+                      builder: (_) => PhieuSuaChuaForm(thietBi: vm.thietBi),
                     ),
                   );
 

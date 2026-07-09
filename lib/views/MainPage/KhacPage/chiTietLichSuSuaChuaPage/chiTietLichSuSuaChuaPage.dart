@@ -11,14 +11,13 @@ import 'package:flutter/material.dart';
 class ChiTietLichSuSuaChuaPage extends StatefulWidget {
   final SuaChua suaChua;
   final HoaDonSuaChua? hoaDonSuaChua;
-  final Phong phong;
+
   final ThietBi thietBi;
 
   const ChiTietLichSuSuaChuaPage({
     super.key,
     required this.suaChua,
     this.hoaDonSuaChua,
-    required this.phong,
     required this.thietBi,
   });
 
@@ -36,7 +35,7 @@ class _ChiTietLichSuSuaChuaPageState extends State<ChiTietLichSuSuaChuaPage> {
 
     vm = ChiTietLichSuSuaChuaPageViewModel();
 
-    vm.init(widget.suaChua, widget.hoaDonSuaChua, widget.phong, widget.thietBi);
+    vm.init(widget.suaChua, widget.hoaDonSuaChua, widget.thietBi);
 
     vm.addListener(() {
       if (mounted) setState(() {});
@@ -55,7 +54,6 @@ class _ChiTietLichSuSuaChuaPageState extends State<ChiTietLichSuSuaChuaPage> {
       context,
       MaterialPageRoute(
         builder: (_) => PhieuSuaChuaForm(
-          phong: widget.phong,
           thietBi: widget.thietBi,
           suaChua: vm.suaChua,
           hoaDonSuaChua: vm.hoaDonSuaChua,
@@ -167,7 +165,7 @@ class _ChiTietLichSuSuaChuaPageState extends State<ChiTietLichSuSuaChuaPage> {
             ),
 
             Text(
-              "${widget.thietBi.tenThietBi} - ${widget.phong.tenPhong}",
+              "${widget.thietBi.tenThietBi} - ${vm.phong.tenPhong}",
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,

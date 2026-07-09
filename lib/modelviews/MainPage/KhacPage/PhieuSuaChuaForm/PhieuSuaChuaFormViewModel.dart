@@ -169,12 +169,10 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
   }
 
   void init(
-    Phong phongData,
     ThietBi thietBiData, {
     SuaChua? suaChuaData,
     HoaDonSuaChua? hoaDonData,
   }) {
-    phong = phongData;
     thietBi = thietBiData;
 
     suaChua = suaChuaData;

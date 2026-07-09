@@ -36,7 +36,7 @@ class ThietBi {
       'tenThietBi': tenThietBi,
       'loai': loai,
       'giaTri': giaTri,
-      'ngayMua': ngayMua?.toIso8601String(),
+      'ngayMua': ngayMua?.toUtc().toIso8601String(),
       'trangThai': trangThai,
     };
   }

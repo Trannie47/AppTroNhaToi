@@ -1,4 +1,5 @@
 import 'package:AppTroNhaToi/Provider/thiet_bi_provider.dart';
+import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/ThietBiPage/thietBiPageViewModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThietBiForm/thietBiForm.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietThietBiPage/chiTietThietBiPage.dart';
@@ -19,9 +20,7 @@ class _ThietBiPageState extends State<ThietBiPage> {
   @override
   void initState() {
     super.initState();
-    vm = ThietBiPageViewModel(
-      context.read<ThietBiProvider>()
-    );
+    vm = ThietBiPageViewModel(context.read<ThietBiProvider>());
     vm.addListener(() {
       if (mounted) {
         setState(() {});
@@ -86,15 +85,12 @@ class _ThietBiPageState extends State<ThietBiPage> {
 
             child: ElevatedButton.icon(
               onPressed: () async {
-                bool? result = await Navigator.push(
+                ThietBi? result = await Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) =>
-                        ThietBiForm(dsLapRap: vm.dsLapRap, dsPhong: vm.dsPhong),
-                  ),
+                  MaterialPageRoute(builder: (_) => ThietBiForm()),
                 );
 
-                if (result == true) {
+                if (result is ThietBi) {
                   setState(() {});
                 }
               },
@@ -144,12 +140,8 @@ class _ThietBiPageState extends State<ThietBiPage> {
                         context,
 
                         MaterialPageRoute(
-                          builder: (_) => ChiTietThietBiPage(
-                            thietBi: vm.dsHienThi[index],
-                            dsPhong: vm.dsPhong,
-                            dsLapRap: vm.dsLapRap,
-                            dsThietBi: vm.dsThietBi,
-                          ),
+                          builder: (_) =>
+                              ChiTietThietBiPage(thietBi: vm.dsHienThi[index]),
                         ),
                       );
 

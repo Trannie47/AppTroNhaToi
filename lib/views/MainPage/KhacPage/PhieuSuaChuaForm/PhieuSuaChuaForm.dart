@@ -10,14 +10,12 @@ import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:intl/intl.dart';
 
 class PhieuSuaChuaForm extends StatefulWidget {
-  final Phong phong;
   final ThietBi thietBi;
   final SuaChua? suaChua;
   final HoaDonSuaChua? hoaDonSuaChua;
 
   const PhieuSuaChuaForm({
     super.key,
-    required this.phong,
     required this.thietBi,
     this.suaChua,
     this.hoaDonSuaChua,
@@ -34,7 +32,6 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
   void initState() {
     super.initState();
     vm.init(
-      widget.phong,
       widget.thietBi,
       suaChuaData: widget.suaChua,
       hoaDonData: widget.hoaDonSuaChua,
@@ -97,7 +94,7 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
             ),
 
             Text(
-              "${widget.thietBi.tenThietBi} - ${widget.phong.tenPhong}",
+              "${widget.thietBi.tenThietBi} ",
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
@@ -322,7 +319,7 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
               if (vm.kiemTraDuLieu()) {
                 SuaChua suaChua = SuaChua(
                   id: vm.maSuaChua,
-                  phongID: widget.phong.phongID,
+                  phongID: 101,
                   nguyenNhan: vm.txtNguyenNhan.text,
                   ngaySuaChua: DateFormat(
                     "dd/MM/yyyy",
