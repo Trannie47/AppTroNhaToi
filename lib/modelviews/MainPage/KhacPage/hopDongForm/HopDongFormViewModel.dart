@@ -86,12 +86,6 @@ class HopDongFormViewModel extends ChangeNotifier {
     }
   }
 
-
-
-
-
-
-
   //Ds Phòng có thể thuê
   List<Phong> dsPhong = [
     Phong(
