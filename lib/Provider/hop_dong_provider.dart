@@ -14,7 +14,7 @@ class HopDongProvider extends ChangeNotifier {
   List<HopDongDTO> _listHD= [];
   List<HopDongDTO> get listHD => _listHD;
 
-  Future<List<HopDongDTO>> fetchListHD() async{
+  Future<List<HopDongDTO>> getListHD() async{
     try{
       final list =await hopdongRepository.getListHopDong();
       _listHD= list;

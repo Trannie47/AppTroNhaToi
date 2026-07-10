@@ -13,7 +13,7 @@ class HopDongApiClient {
   final Dio _dio= RetrofitClient().dio;
 
 
-  Future<List<HopDongDTO>> fetchListHopDong() async{
+  Future<List<HopDongDTO>> getListHopDong() async{
     try{
       final request= await _dio.get("hop-dong/findAll");
       if(request.statusCode==200 || request.statusCode==201) {
@@ -79,7 +79,7 @@ class HopDongApiClient {
 
 
 
-  Future<List<HopDong>> fetchRoomByNguoithue(int idnt) async{
+  Future<List<HopDong>> getRoomByNguoithue(int idnt) async{
     try{
       final resquest= await _dio.get("nguoi-thue/$idnt/listRoomNguoiThue");
       if(resquest.statusCode==200 || resquest.statusCode==201){

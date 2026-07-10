@@ -37,7 +37,7 @@ class PhongPageViewModel extends ChangeNotifier {
     _currentFilter = filterValue;
     notifyListeners();
   }
-  Future<void> refresh() => _service.fetchPhong();
+  Future<void> refresh() => _service.getListPhong();
 
   void _onProviderUpdate() {
     notifyListeners();

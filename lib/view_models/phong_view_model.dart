@@ -41,7 +41,7 @@ class PhongViewModel extends ChangeNotifier{
     _isLoading= true;
     notifyListeners();
     try{
-      _listPhong= await phongRepository.fetchPhong();
+      _listPhong= await phongRepository.getListPhong();
       if (kDebugMode) {
         print("List Phong lay được là: $_listPhong");
       }

@@ -16,7 +16,7 @@ class HopDongPageViewModel extends ChangeNotifier {
     _hopDongState= HopDongLoading();
     notifyListeners();
     try{
-      final result= await hopDongProvider.fetchListHD();
+      final result= await hopDongProvider.getListHD();
       _hopDongState= HopDongSuccess(result);
     }catch(e){
       String loi = "Đã có lỗi xảy ra, vui lòng thử lại sau!";

@@ -7,8 +7,8 @@ class PhongRepository {
  final PhongApiClient _phongApiClient= PhongApiClient();
 
 
-  Future<List<ItemPhong>> fetchPhong() async{
-    return await _phongApiClient.fetchListPhong();
+  Future<List<ItemPhong>> getListPhong() async{
+    return await _phongApiClient.getListPhong();
   }
   Future<Phong?> saveRoom(Phong room) async{
     return await _phongApiClient.SaveRoom(room);

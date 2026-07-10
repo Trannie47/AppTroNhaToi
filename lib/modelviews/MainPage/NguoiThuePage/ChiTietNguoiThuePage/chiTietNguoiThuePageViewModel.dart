@@ -27,7 +27,7 @@ class ChiTietNguoiThuePageViewModel extends ChangeNotifier {
     _chiTietNguoiThueState = ChiTietNguoiThueLoading();
     notifyListeners();
     try {
-      final result = await _hopDongRepository.fetchRoomByNguoiThue(idnt);
+      final result = await _hopDongRepository.getRoomByNguoiThue(idnt);
       _chiTietNguoiThueState = ChiTietNguoiThueSuccess(result);
     } catch (e) {
       String loi = "Đã có lỗi xảy ra, vui lòng thử lại sau!";

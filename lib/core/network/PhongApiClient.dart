@@ -7,7 +7,7 @@ import 'package:flutter/foundation.dart';
 class PhongApiClient {
   final Dio _dio= RetrofitClient().dio;
 
-  Future<List<ItemPhong>> fetchListPhong() async{
+  Future<List<ItemPhong>> getListPhong() async{
     try{
         final response= await _dio.get("phong/findAll");
         if(response.statusCode==200 || response.statusCode==201){

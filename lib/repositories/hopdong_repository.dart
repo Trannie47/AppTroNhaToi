@@ -10,7 +10,7 @@ class HopdongRepository {
   final HopDongApiClient hopDongApiClient= HopDongApiClient();
 
   Future<List<HopDongDTO>> getListHopDong(){
-    return hopDongApiClient.fetchListHopDong();
+    return hopDongApiClient.getListHopDong();
   }
   Future<HopDong> createContract(HopDong hopDong, List<File> imageHopDong){
     return hopDongApiClient.createContract(hopDong, imageHopDong);
@@ -20,8 +20,8 @@ class HopdongRepository {
     return hopDongApiClient.getRoomsAvailableForContract();
   }
 
-  Future<List<HopDong>> fetchRoomByNguoiThue(int idnt){
-    final result= hopDongApiClient.fetchRoomByNguoithue(idnt);
+  Future<List<HopDong>> getRoomByNguoiThue(int idnt){
+    final result= hopDongApiClient.getRoomByNguoithue(idnt);
     return result;
   }
 }

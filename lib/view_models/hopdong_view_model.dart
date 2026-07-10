@@ -21,7 +21,7 @@ class HopdongViewModel extends ChangeNotifier{
       _chiTietNguoiThueState= ChiTietNguoiThueLoading();
       _isLoading=true;
       notifyListeners();
-      _listHopDongNguoiThue= await hopdongRepository.fetchRoomByNguoiThue(idnt);
+      _listHopDongNguoiThue= await hopdongRepository.getRoomByNguoiThue(idnt);
       _chiTietNguoiThueState= ChiTietNguoiThueSuccess(_listHopDongNguoiThue);
       print("LIST HOP DONG LAY DUOC LA: $_listHopDongNguoiThue");
     }catch(e){

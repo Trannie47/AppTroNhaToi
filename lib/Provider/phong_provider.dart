@@ -17,12 +17,12 @@ class PhongProvider extends ChangeNotifier{
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  Future<void> fetchPhong() async {
+  Future<void> getListPhong() async {
     if (_isLoading) return;
     _isLoading = true;
     notifyListeners();
     try {
-      _listPhong = await phongRepository.fetchPhong();
+      _listPhong = await phongRepository.getListPhong();
     } catch (e) {
       _listPhong = [];
     } finally {
