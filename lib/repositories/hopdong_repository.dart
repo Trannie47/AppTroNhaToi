@@ -1,4 +1,6 @@
 
+import 'dart:io';
+
 import 'package:AppTroNhaToi/core/network/HopDongApiClient.dart';
 import 'package:AppTroNhaToi/models/DTO/HopDongDTO.dart';
 import 'package:AppTroNhaToi/models/DTO/RoomAvailableDTO.dart';
@@ -9,6 +11,9 @@ class HopdongRepository {
 
   Future<List<HopDongDTO>> getListHopDong(){
     return hopDongApiClient.fetchListHopDong();
+  }
+  Future<HopDong> createContract(HopDong hopDong, List<File> imageHopDong){
+    return hopDongApiClient.createContract(hopDong, imageHopDong);
   }
 
   Future<List<RoomAvailableDTO>> getRoomsAvailableForContract(){

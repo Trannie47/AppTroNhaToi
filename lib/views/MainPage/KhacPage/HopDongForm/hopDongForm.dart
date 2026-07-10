@@ -6,8 +6,12 @@ import 'package:AppTroNhaToi/widgets/customDropdownSearch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
+import 'package:provider/provider.dart';
 
+import '../../../../Provider/hop_dong_provider.dart';
+import '../../../../Provider/nguoi_thue_provider.dart';
 import '../../../../models/DTO/RoomAvailableDTO.dart';
+import '../../../../states/create_contract_state.dart';
 
 class HopDongForm extends StatefulWidget {
   final HopDong? hopDong;
@@ -24,10 +28,38 @@ class _TaoHopDongPageState extends State<HopDongForm> {
   @override
   void initState() {
     super.initState();
-    vm = HopDongFormViewModel();
+    final globalHopDongProvider = Provider.of<HopDongProvider>(context, listen: false);
+    final globalNguoiThueProvider = Provider.of<NguoiThueProvider>(context, listen: false);
+    vm = HopDongFormViewModel(globalHopDongProvider,globalNguoiThueProvider);
     vm.init(hopDong: widget.hopDong);
     vm.addListener(() {
       if (mounted) {
+        if (vm.createContractState is CreateContractSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Tạo hợp đồng thành công!"),
+              backgroundColor: Colors.green,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+          Navigator.pop(context,); // Quay về màn hình danh sách hợp đồng
+        }
+        if (vm.createContractState is CreateContractError) {
+          final errorState = vm.createContractState as CreateContractError;
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text("Thất bại"),
+              content: Text(errorState.errorMessage),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("Đóng"),
+                )
+              ],
+            ),
+          );
+        }
         setState(() {});
       }
     });
@@ -86,66 +118,18 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                   const SizedBox(height: 6),
                   Builder(
                       builder: (context) {
-                        return CustomDropdownSearch<RoomAvailableDTO>(
-                          asyncItems: (filter) async {
-                            if (vm.roomsAvailable is! HopDongSuccess<RoomAvailableDTO>) {
-                              await vm.getRoomsAvailableForContract();
-                            }
-
-                            //Nếu gọi xong mà dính lỗi, bắn SnackBar thông báo và trả về mảng rỗng để không bung menu lỗi
-                            if (vm.roomsAvailable is HopDongError) {
-                              final errorState = vm.roomsAvailable as HopDongError;
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(errorState.errorMessage),
-                                  backgroundColor: Colors.red.shade700,
-                                  behavior: SnackBarBehavior.floating,
-                                ),
-                              );
-                              return [];
-                            }
-
-                            // Nếu thành công, trả về list data từ Server để Dropdown tự động vẽ lên màn hình
-                            if (vm.roomsAvailable is HopDongSuccess<RoomAvailableDTO>) {
-                              final data = (vm.roomsAvailable as HopDongSuccess<RoomAvailableDTO>).data;
-
-                              // lọc chữ tìm kiếm theo tên phòng
-                              final f = filter.toLowerCase();
-                              if (f.isEmpty) return data;
-                              return data.where((e) => e.tenPhong.toLowerCase().contains(f)).toList();
-                            }
-
-                            return [];
-                          },
-
-                          selectedItem: vm.selectedPhong,
-                          itemAsString: (item) => item.tenPhong,
-                          onChanged: (value) {
-                            setState(() {
-                              vm.selectedPhong = value;
-                              vm.onSelectedPhong(value);
-                            });
-                          },
-                        );
-
-                      },
-                   ),
-
-                  const SizedBox(height: 16),
-
-                  _label("Người thuê"),
-                  const SizedBox(height: 6),
-                  Builder(
-                    builder: (context) {
-                      return CustomDropdownSearch<NguoiThue>(
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                        CustomDropdownSearch<RoomAvailableDTO>(
                         asyncItems: (filter) async {
-                          if (vm.tenantsAvailable is! HopDongSuccess<NguoiThue>) {
-                            await vm.getNguoiThueAvailableForContract();
+                          if (vm.roomsAvailable is! HopDongSuccess<RoomAvailableDTO>) {
+                            await vm.getRoomsAvailableForContract();
                           }
 
                           //Nếu gọi xong mà dính lỗi, bắn SnackBar thông báo và trả về mảng rỗng để không bung menu lỗi
-                          if (vm.tenantsAvailable is HopDongError) {
-                            final errorState = vm.tenantsAvailable as HopDongError;
+                          if (vm.roomsAvailable is HopDongError) {
+                            final errorState = vm.roomsAvailable as HopDongError;
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(errorState.errorMessage),
@@ -157,26 +141,101 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                           }
 
                           // Nếu thành công, trả về list data từ Server để Dropdown tự động vẽ lên màn hình
-                          if (vm.tenantsAvailable is HopDongSuccess<NguoiThue>) {
-                            final data = (vm.tenantsAvailable as HopDongSuccess<NguoiThue>).data;
+                          if (vm.roomsAvailable is HopDongSuccess<RoomAvailableDTO>) {
+                            final data = (vm.roomsAvailable as HopDongSuccess<RoomAvailableDTO>).data;
 
-                            //lọc chữ tìm kiếm theo tên phòng
+                            // lọc chữ tìm kiếm theo tên phòng
                             final f = filter.toLowerCase();
                             if (f.isEmpty) return data;
-                            return data.where((e) => e.hoTen!.toLowerCase().contains(f)).toList();
+                            return data.where((e) => e.tenPhong.toLowerCase().contains(f)).toList();
                           }
 
                           return [];
                         },
 
-                        selectedItem: vm.selectedNguoiThue,
-                        itemAsString: (item) => item.hoTen!,
+                        selectedItem: vm.selectedPhong,
+                        itemAsString: (item) => item.tenPhong,
                         onChanged: (value) {
-                          setState(() {
-                            vm.selectedNguoiThue = value;
-                          });
+                        setState(() {
+                        vm.selectedPhong = value;
+                        vm.onSelectedPhong(value);
+                        });
                         },
+                        ),
+                            if (vm.errPhong != null) ...[
+                              const SizedBox(height: 4),
+                              Text(
+                                vm.errPhong!,
+                                style: const TextStyle(color: Colors.red, fontSize: 12),
+                              ),
+                            ],
+                          ],
+                        );
+
+
+                      },
+                   ),
+
+                  const SizedBox(height: 16),
+
+                  _label("Người thuê"),
+                  const SizedBox(height: 6),
+                  Builder(
+                    builder: (context) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                      CustomDropdownSearch<NguoiThue>(
+                      asyncItems: (filter) async {
+                        if (vm.tenantsAvailable is! HopDongSuccess<NguoiThue>) {
+                          await vm.getNguoiThueAvailableForContract();
+                        }
+
+                        //Nếu gọi xong mà dính lỗi, bắn SnackBar thông báo và trả về mảng rỗng để không bung menu lỗi
+                        if (vm.tenantsAvailable is HopDongError) {
+                          final errorState = vm.tenantsAvailable as HopDongError;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(errorState.errorMessage),
+                              backgroundColor: Colors.red.shade700,
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                          return [];
+                        }
+
+                        // Nếu thành công, trả về list data từ Server để Dropdown tự động vẽ lên màn hình
+                        if (vm.tenantsAvailable is HopDongSuccess<NguoiThue>) {
+                          final data = (vm.tenantsAvailable as HopDongSuccess<NguoiThue>).data;
+
+                          //lọc chữ tìm kiếm theo tên phòng
+                          final f = filter.toLowerCase();
+                          if (f.isEmpty) return data;
+                          return data.where((e) => e.hoTen!.toLowerCase().contains(f)).toList();
+                        }
+
+                        return [];
+                      },
+
+                      selectedItem: vm.selectedNguoiThue,
+                      itemAsString: (item) => item.hoTen!,
+                      onChanged: (value) {
+                      setState(() {
+                      vm.selectedNguoiThue = value;
+                      });
+                      },
+
+                      ),
+                          if (vm.errNguoiThue != null) ...[
+                            const SizedBox(height: 4),
+                            Text(
+                              vm.errNguoiThue!,
+                              style: const TextStyle(color: Colors.red, fontSize: 12),
+                            ),
+                          ],
+                        ],
                       );
+
 
                     },
                   ),
@@ -276,6 +335,109 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                 ],
               ),
             ),
+            const SizedBox(height: 12),
+
+            _section(
+              title: "Ảnh hợp đồng",
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (vm.listImageContract.isEmpty)
+                    InkWell(
+                      onTap: vm.selectImageCotract,
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(vertical: 28),
+                        decoration: BoxDecoration(
+                          color: const Color(0xffF7F7F7),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.grey.shade300, width: 1.2),
+                        ),
+                        child: Column(
+                          children: [
+                            Icon(Icons.add_a_photo_outlined,
+                                color: Colors.grey.shade600, size: 28),
+                            const SizedBox(height: 8),
+                            Text(
+                              "Chạm để thêm ảnh hợp đồng",
+                              style: TextStyle(
+                                color: Colors.grey.shade600,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  else
+
+                    Wrap(
+                      spacing: 10,
+                      runSpacing: 10,
+                      children: [
+                        ...List.generate(vm.listImageContract.length, (index) {
+                          final file = vm.listImageContract[index];
+                          return Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.file(
+                                  file,
+                                  width: 90,
+                                  height: 90,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              Positioned(
+                                top: -6,
+                                right: -6,
+                                child: InkWell(
+                                  onTap: () => vm.deleteImageContract(index),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: const BoxDecoration(
+                                      color: Colors.red,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(Icons.close,
+                                        size: 14, color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        }),
+                        InkWell(
+                          onTap: vm.selectImageCotract,
+                          borderRadius: BorderRadius.circular(10),
+                          child: Container(
+                            width: 90,
+                            height: 90,
+                            decoration: BoxDecoration(
+                              color: const Color(0xffF7F7F7),
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: Colors.grey.shade300),
+                            ),
+                            child: Icon(Icons.add,
+                                color: Colors.grey.shade600, size: 26),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                  if (vm.errImageContract != null) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      vm.errImageContract!,
+                      style: const TextStyle(color: Colors.red, fontSize: 12),
+                    ),
+                  ],
+                ],
+              ),
+            ),
 
             const SizedBox(height: 20),
 
@@ -283,29 +445,27 @@ class _TaoHopDongPageState extends State<HopDongForm> {
               width: double.infinity,
               height: 52,
               child: ElevatedButton(
-                onPressed: () {
-                  bool hopLe = vm.kiemTraDuLieu();
+                onPressed: vm.createContractState is CreateContractLoading
+                    ? null // khoá nút khi đang gửi, tránh spam
+                    : () async {
+                await vm.createHopDong();
 
-                  if (!hopLe) {
-                    return;
-                  }
-
-                  print("Lưu hợp đồng");
                 },
-
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xff2E7D32),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text(
+                child: vm.createContractState is CreateContractLoading
+                    ? const SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                )
+                    : const Text(
                   "Tạo hợp đồng",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white),
                 ),
               ),
             ),

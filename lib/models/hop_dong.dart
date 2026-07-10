@@ -9,6 +9,7 @@ class HopDong {
   final double? tienCoc;
   final double? giaPhongThucTe;
   final String? ghiChu;
+  final List<String>? dsAnhHopDong;
   final int? trangThai; //0: Khởi tạo , 1 Đã ký , 2: Hết hạn
   final Phong?
   phong; // cái này dùng để lấy thông tin phòng hiển thị phòng trên chi tiết ngthue vì cần ngày ký
@@ -22,6 +23,7 @@ class HopDong {
     this.tienCoc,
     this.giaPhongThucTe,
     this.trangThai,
+    this.dsAnhHopDong,
     this.ghiChu,
     this.phong,
   });
@@ -45,6 +47,9 @@ class HopDong {
           ? double.tryParse(map['giaPhongThucTe'].toString())
           : null,
       trangThai: map['trangThai'] as int?,
+      dsAnhHopDong: map['dsAnhHopDong'] != null
+          ? List<String>.from(map['dsAnhHopDong'])
+          : null,
       ghiChu: map['ghiChu'] as String?,
       phong: map['phong'] != null
           ? Phong.fromMap(map['phong'] as Map<String, dynamic>)
@@ -63,6 +68,7 @@ class HopDong {
       'giaPhongThucTe': giaPhongThucTe,
       'trangThai': trangThai,
       'ghiChu': ghiChu,
+      if (dsAnhHopDong != null) 'dsAnhHopDong': dsAnhHopDong,
     };
   }
 
@@ -76,6 +82,7 @@ class HopDong {
     double? giaPhongThucTe,
     String? ghiChu,
     int? trangThai,
+    List<String>? dsAnhHopDong,
   }) {
     return HopDong(
       hopDongID: hopDongID ?? this.hopDongID,
@@ -87,6 +94,7 @@ class HopDong {
       giaPhongThucTe: giaPhongThucTe ?? this.giaPhongThucTe,
       ghiChu: ghiChu ?? this.ghiChu,
       trangThai: trangThai ?? this.trangThai,
+      dsAnhHopDong: dsAnhHopDong ?? this.dsAnhHopDong,
     );
   }
 
@@ -94,6 +102,6 @@ class HopDong {
   String toString() {
     return 'HopDong(hopDongID: $hopDongID, idnt: $idnt, phongID: $phongID, '
         'ngayKy: $ngayKy, ngayHetHan: $ngayHetHan, tienCoc: $tienCoc, '
-        'giaPhongThucTe: $giaPhongThucTe, trangThai: $trangThai,ghiChu: $ghiChu)';
+        'giaPhongThucTe: $giaPhongThucTe, trangThai: $trangThai,ghiChu: $ghiChu, dsAnhHopDong: $dsAnhHopDong)';
   }
 }

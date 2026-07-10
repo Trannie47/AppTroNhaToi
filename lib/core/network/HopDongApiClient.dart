@@ -1,5 +1,6 @@
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:AppTroNhaToi/core/network/retrofit_client.dart';
 import 'package:AppTroNhaToi/models/DTO/HopDongDTO.dart';
@@ -27,6 +28,37 @@ class HopDongApiClient {
       }
       rethrow;
     }
+  }
+  Future<HopDong> createContract(HopDong hopDong, List<File> imageHopDong)async{
+    final formData= FormData.fromMap({
+      'idnt': hopDong.idnt,
+      'phongId': hopDong.phongID,
+      'ngayKy': hopDong.ngayKy?.toIso8601String().split('T').first,
+      'ngayHetHan': hopDong.ngayHetHan?.toIso8601String().split('T').first,
+      'tienCoc': hopDong.tienCoc,
+      'giaPhongThucTe': hopDong.giaPhongThucTe,
+      'ghiChu': hopDong.ghiChu,
+
+      // Danh sách file ảnh thật (binary)
+      'files': [
+        for (var file in imageHopDong)
+          await MultipartFile.fromFile(file.path, filename: file.path.split('/').last),
+      ],
+    });
+    try{
+      final request= await _dio.post("hop-dong/createContract",data: formData);
+      if(request.statusCode==200|| request.statusCode ==201){
+        final responseData = request.data['data'];
+        return HopDong.fromMap(responseData);
+      }
+      throw Exception("Lưu hợp đồng thất bại, (Mã lỗi: ${request.statusCode})");
+    }catch(e){
+      if (kDebugMode) {
+        print("Loi HopDongApiClient $e");
+      }
+      rethrow;
+    }
+
   }
 
   Future<List<RoomAvailableDTO>> getRoomsAvailableForContract() async{

@@ -1,7 +1,12 @@
+import 'dart:io';
+
 import 'package:AppTroNhaToi/models/DTO/HopDongDTO.dart';
 import 'package:AppTroNhaToi/models/DTO/RoomAvailableDTO.dart';
 import 'package:AppTroNhaToi/repositories/hopdong_repository.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+
+import '../models/hop_dong.dart';
 
 class HopDongProvider extends ChangeNotifier {
   final HopdongRepository hopdongRepository= HopdongRepository();
@@ -15,6 +20,14 @@ class HopDongProvider extends ChangeNotifier {
       _listHD= list;
       notifyListeners();
       return list;
+    }catch(e){
+      rethrow;
+    }
+  }
+  Future<HopDong> createHopDong(HopDong hopDong, List<File> imageHopDong) async{
+    try{
+      final result= await hopdongRepository.createContract(hopDong, imageHopDong);
+      return result;
     }catch(e){
       rethrow;
     }
