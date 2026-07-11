@@ -12,6 +12,7 @@ import '../../../../Provider/hop_dong_provider.dart';
 import '../../../../Provider/nguoi_thue_provider.dart';
 import '../../../../models/DTO/RoomAvailableDTO.dart';
 import '../../../../states/create_contract_state.dart';
+import '../../../../widgets/app_confirm_dialog.dart';
 
 class HopDongForm extends StatefulWidget {
   final HopDong? hopDong;
@@ -66,7 +67,7 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                   shape: const CircleBorder(),
                   child: InkWell(
                     customBorder: const CircleBorder(),
-                    onTap: () => Navigator.pop(context),
+                    onTap: () => _hienThiXacNhanThoat(),
                     child: const Center(
                       child: Icon(Icons.arrow_back_ios_new, size: 14),
                     ),
@@ -471,7 +472,7 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                   height: 52,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pop(context);
+                     _hienThiXacNhanThoat();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xffC62828),
@@ -614,6 +615,33 @@ class _TaoHopDongPageState extends State<HopDongForm> {
         ),
       ),
     );
+  }
+  void _hienThiXacNhanThoat()async {
+    //Nếu chưa có dữ liệu trên form thì thoát luôn
+    if (!vm.coThayDoi) {
+      Navigator.pop(context);
+      return;
+    }
+    final confirmDelete =await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,// ngăn người dùng nhấn ra ngoài làm trả về null
+      builder: (dialogContext) => AppConfirmDialog(
+        title: "Thoát khỏi form?",
+        content: "Dữ liệu bạn đã nhập sẽ bị mất nếu thoát.\nBạn có chắc chắn muốn thoát không?",
+        textConfirm: "Thoát",
+        textCancel: "Ở lại",
+        isDangerous: true,
+        onConfirm: () {
+          Navigator.pop(dialogContext, true);
+        },
+      ),
+    );
+    if (confirmDelete != true) {
+      return;
+    }
+    if(confirmDelete == true &&context.mounted){
+      Navigator.pop(context);
+    }
   }
 
   Widget _dateField(TextEditingController controller, String? errorText) {

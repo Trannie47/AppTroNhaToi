@@ -243,6 +243,15 @@ class HopDongFormViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+  //check xem trên form có dữ liệu không để code hàm thoát
+  bool get coThayDoi =>
+      selectedPhong != null ||
+          selectedNguoiThue != null ||
+          txtNgayHetHan.text.isNotEmpty ||
+          txtGiaHopDong.text.isNotEmpty ||
+          txtTienCoc.text.isNotEmpty ||
+          txtGhiChu.text.isNotEmpty ||
+          listImageContract.isNotEmpty;
 
   bool kiemTraDuLieu() {
     errPhong = null;
