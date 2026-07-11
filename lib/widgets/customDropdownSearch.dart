@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 class CustomDropdownSearch<T> extends StatelessWidget {
   final String label;
+  final String? hintText;
   final List<T>? items;
   final T? selectedItem;
   final String Function(T item) itemAsString;
@@ -14,6 +15,7 @@ class CustomDropdownSearch<T> extends StatelessWidget {
   const CustomDropdownSearch({
     super.key,
     this.label = '',
+    this.hintText,
     this.items,
     required this.itemAsString,
     this.selectedItem,
@@ -57,7 +59,8 @@ class CustomDropdownSearch<T> extends StatelessWidget {
       ),
       decoratorProps: DropDownDecoratorProps(
         decoration: InputDecoration(
-          labelText: label,
+          labelText: label.isNotEmpty? label : null,
+          hintText: hintText,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
