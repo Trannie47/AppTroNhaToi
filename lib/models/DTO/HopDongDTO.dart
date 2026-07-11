@@ -6,7 +6,7 @@ class HopDongDTO {
   final DateTime ngayHetHan;
   final double tienCoc;
   final double giaPhongThucTe;
-  final int trangThai;
+  final int trangThai; //0: hợp đồng khởi tạo(chưa tới ngày hiệu lực), 1: HD hiệu lực, 2: hết hiệu lực
   final PhongHD phong;
   final String? ghiChu;
   final NguoiThueHD nguoithue;

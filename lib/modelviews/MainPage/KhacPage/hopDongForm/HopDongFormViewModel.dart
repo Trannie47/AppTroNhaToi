@@ -304,6 +304,20 @@ class HopDongFormViewModel extends ChangeNotifier {
       errImageContract = "Vui lòng chụp hoặc thêm ít nhất một ảnh hợp đồng";
       hopLe = false;
     }
+    //check trùng hợp đồng, tránh trươngf hợp ng đó đã tạo hợp dôndgf rồi mà chủ trọ tạo lại
+    if (selectedPhong != null && selectedNguoiThue != null) {
+      final danhSachHD = _hopDongProvider.listHD; // List đã load sẵn
+      final isDuplicate = danhSachHD.any((hd) =>
+      hd.phongID == selectedPhong!.id &&
+          hd.idnt == selectedNguoiThue!.idnt &&
+          hd.trangThai !=2 // chỉ check hợp đồng đang hiệu lực và HD đã khởi tạo
+      );
+
+      if (isDuplicate) {
+        errPhong = "Người thuê này đã có hợp đồng với phòng đã chọn!";
+        hopLe = false;
+      }
+    }
 
     notifyListeners();
     return hopLe;
