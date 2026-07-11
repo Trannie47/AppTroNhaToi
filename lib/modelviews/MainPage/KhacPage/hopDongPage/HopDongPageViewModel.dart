@@ -7,7 +7,8 @@ import 'package:flutter/material.dart';
 import '../../../../core/utils/map_dio_error_to_message.dart';
 
 class HopDongPageViewModel extends ChangeNotifier {
-  final  HopDongProvider hopDongProvider= HopDongProvider();
+  final  HopDongProvider hopDongProvider;
+  HopDongPageViewModel({required this.hopDongProvider});
 
   HopDongState _hopDongState = HopDongInitial();
   HopDongState get hopDongState=> _hopDongState;

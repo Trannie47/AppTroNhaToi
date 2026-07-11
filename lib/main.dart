@@ -26,7 +26,6 @@ void main() {
         ChangeNotifierProvider(create: (_) => PhongProvider()),
         ChangeNotifierProvider(create: (_) => LoaiPhongProvider()),
         ChangeNotifierProvider(create: (_)=> HopDongProvider()),
-        ChangeNotifierProvider(create: (_)=> HopDongPageViewModel()),
         //File Service được khởi tạo ở đây
         ChangeNotifierProvider(create: (_) => HangHoaProvider()),
         ChangeNotifierProvider(create: (_) => HoaDonTapHoaProvider()),

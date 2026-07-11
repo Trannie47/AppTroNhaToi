@@ -4,6 +4,7 @@ import 'package:AppTroNhaToi/widgets/itemNTHopDong.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../Provider/hop_dong_provider.dart';
 import '../../../../modelviews/MainPage/KhacPage/hopDongPage/HopDongPageViewModel.dart';
 import '../../../../states/hop_dong_state.dart';
 import '../../../../widgets/app_error.dart';
@@ -17,13 +18,26 @@ class HopDongPage extends StatefulWidget {
 }
 
 class _HopDongPageState extends State<HopDongPage> {
+  late HopDongPageViewModel vm;
   @override
   void initState(){
     super.initState();
+    vm= HopDongPageViewModel(hopDongProvider: context.read<HopDongProvider>());
+    vm.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
     WidgetsBinding.instance.addPostFrameCallback((_){
-      context.read<HopDongPageViewModel>().loadListHD();
+      vm.loadListHD();
     });
   }
+  @override
+  void dispose() {
+    vm.dispose();
+    super.dispose();
+  }
+
   String boLoc = "TAT_CA";
   String tuKhoa = "";
 
@@ -40,16 +54,18 @@ class _HopDongPageState extends State<HopDongPage> {
   }
 
 
-  void moTrangTaoHopDong() {
-    Navigator.push(
+  void moTrangTaoHopDong() async{
+   final result=await Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => const HopDongForm()),
     );
+   if (result == true && mounted) {
+    vm.loadListHD();
+   }
   }
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<HopDongPageViewModel>();
     return Scaffold(
       backgroundColor: const Color(0xffF6F6F6),
       body: SafeArea(

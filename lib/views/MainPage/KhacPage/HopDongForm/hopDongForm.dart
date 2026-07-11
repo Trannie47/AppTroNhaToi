@@ -42,7 +42,7 @@ class _TaoHopDongPageState extends State<HopDongForm> {
               behavior: SnackBarBehavior.floating,
             ),
           );
-          Navigator.pop(context,); // Quay về màn hình danh sách hợp đồng
+          Navigator.pop(context,true); // Quay về màn hình danh sách hợp đồng
         }
         if (vm.createContractState is CreateContractError) {
           final errorState = vm.createContractState as CreateContractError;
