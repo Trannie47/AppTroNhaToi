@@ -121,10 +121,7 @@ class _ChiTietHopDongPageState extends State<ChiTietHopDongPage> {
                   const SizedBox(height: 16),
                   _anhHopDong(context, vm.hopDong.dsAnhHopDong),
                   const SizedBox(height: 16),
-                  //_chiTietPhongButton(),
-                  // const SizedBox(height: 16),
-                  // _ketThucHopDongButton(),
-                  // const SizedBox(height: 16),
+
                 ],
               ),
             ),
@@ -137,7 +134,7 @@ class _ChiTietHopDongPageState extends State<ChiTietHopDongPage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _chiTietPhongButton(),
+            _chiTietPhongButton(vm.hopDong.phong.tenPhong),
             const SizedBox(height: 16),
             _ketThucHopDongButton(),
           ],
@@ -148,6 +145,28 @@ class _ChiTietHopDongPageState extends State<ChiTietHopDongPage> {
 }
 
 Widget _tenantInfo(HopDongDTO hopDong) {
+  // Mặc định màu sắc và chữ dựa theo trạng thái hợp đồng
+  String statusText = "Không rõ";
+  Color textColor = Colors.black;
+  Color bgColor = Colors.grey.shade200;
+
+  switch (hopDong.trangThai) {
+    case 0:
+      statusText = "Chờ hiệu lực";
+      textColor = const Color(0xffB45309); // vàng
+      bgColor = const Color(0xffFEF3C7);
+      break;
+    case 1:
+      statusText = "Đang hoạt động";
+      textColor = Colors.green[700]!; // Xanh lá
+      bgColor = const Color(0xffE8F3E7);
+      break;
+    case 2:
+      statusText = "Đã kết thúc";
+      textColor = const Color(0xff4B5563); // Xám
+      bgColor = const Color(0xffF3F4F6);
+      break;
+  }
   return Container(
     decoration: BoxDecoration(
       color: Colors.white,
@@ -190,18 +209,18 @@ Widget _tenantInfo(HopDongDTO hopDong) {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: Color(0xffE8F3E7),
+                color: bgColor,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.circle, color: Colors.green, size: 10),
+                  Icon(Icons.circle, color: textColor, size: 10),
                   SizedBox(width: 5),
                   Text(
-                    "Đang hoạt động",
+                    statusText,
                     style: TextStyle(
-                      color: Colors.green[700],
+                      color: textColor,
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
                     ),
@@ -423,7 +442,7 @@ Widget _anhHopDong(BuildContext context, List<String> dsAnh) {
 }
 
 
-Widget _chiTietPhongButton() {
+Widget _chiTietPhongButton(String tenPhong) {
   return SizedBox(
     width: double.infinity,
     height: 52,
@@ -433,8 +452,8 @@ Widget _chiTietPhongButton() {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
       onPressed: () {},
-      child: const Text(
-        "Chi tiết Phòng 101",
+      child:Text(
+        "Chi tiết Phòng $tenPhong",
         style: TextStyle(
           color: Color(0xff1D2433),
           fontSize: 15,
