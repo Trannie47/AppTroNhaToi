@@ -46,14 +46,15 @@ class _LichSuSuaChuaPageState extends State<LichSuSuaChuaPage> {
 
   //Thêm Phiếu Sửa chữa
   void taoMoi(BuildContext context) async {
-    bool? result = await Navigator.push(
+    final result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => PhieuSuaChuaForm(thietBi: vm.thietBi)),
+      MaterialPageRoute(
+        builder: (_) => ChangeNotifierProvider.value(
+          value: context.read<SuaChuaProvider>(),
+          child: PhieuSuaChuaForm(thietBi: vm.thietBi),
+        ),
+      ),
     );
-
-    if (result == true) {
-      //
-    }
   }
 
   @override
@@ -189,10 +190,13 @@ class _LichSuSuaChuaPageState extends State<LichSuSuaChuaPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => ChiTietLichSuSuaChuaPage(
-                            suaChua: item.suaChua!,
-                            hoaDonSuaChua: item.hoaDonSuaChua,
-                            thietBi: widget.thietBi,
+                          builder: (_) => ChangeNotifierProvider.value(
+                            value: context.read<SuaChuaProvider>(),
+                            child: ChiTietLichSuSuaChuaPage(
+                              suaChua: item.suaChua!,
+                              hoaDonSuaChua: item.hoaDonSuaChua,
+                              thietBi: widget.thietBi,
+                            ),
                           ),
                         ),
                       );

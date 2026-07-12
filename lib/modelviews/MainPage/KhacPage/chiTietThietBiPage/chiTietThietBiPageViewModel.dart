@@ -1,11 +1,12 @@
 import 'package:AppTroNhaToi/Provider/sua_chua_provider.dart';
+import 'package:AppTroNhaToi/models/DTO/SuaChuaDTO.dart';
 import 'package:AppTroNhaToi/models/sua_chua.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/LichSuSuaChuaPage/LichSuSuaChuaPageModel.dart';
 import 'package:flutter/material.dart';
 
 class ChiTietThietBiPageViewModel extends ChangeNotifier {
-  final ThietBi thietBi;
+  ThietBi thietBi;
 
   final SuaChuaProvider _suaChuaProvider;
 
@@ -49,18 +50,12 @@ class ChiTietThietBiPageViewModel extends ChangeNotifier {
   String get trangThai => thietBi.trangThaiText;
 
   void capNhatTrangThai(String trangThaiMoi) {
-    int index = dsThietBi.indexWhere((e) => e.thietBiID == thietBi.thietBiID);
-
-    if (index != -1) {
-      dsThietBi[index] = dsThietBi[index].copyWith(
-        trangThai: trangThaiMoi == "Tốt" ? 0 : 1,
-      );
-    }
+    thietBi = thietBi.copyWith(trangThai: trangThaiMoi == "Tốt" ? 0 : 1);
 
     notifyListeners();
   }
 
-  Future<SuaChua?> themLichSuSuaChua(SuaChua suaChua) async {
+  Future<SuaChuaDTO?> themLichSuSuaChua(SuaChuaDTO suaChua) async {
     return await _suaChuaProvider.them(suaChua);
   }
 

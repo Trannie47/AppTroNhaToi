@@ -1,8 +1,12 @@
 import 'dart:ffi';
 
+import 'package:AppTroNhaToi/Provider/phong_provider.dart';
+import 'package:AppTroNhaToi/Provider/sua_chua_provider.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
+import 'package:AppTroNhaToi/core/utils/date_formatter.dart' as DateFormate;
+import 'package:AppTroNhaToi/models/DTO/SuaChuaDTO.dart';
 import 'package:AppTroNhaToi/models/hoa_don_sua_chua.dart';
-import 'package:AppTroNhaToi/models/phong.dart';
+import 'package:AppTroNhaToi/models/item_phong.dart';
 import 'package:AppTroNhaToi/models/sua_chua.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:flutter/material.dart';
@@ -23,10 +27,32 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
   String? errNgaySuaChua;
   String? errNguyenNhan;
   String? errChiPhi;
+  String? errPhong;
   int? loaiSua = 0;
   int? trangThai = 0;
-  late Phong phong;
+  int? phongID;
   late ThietBi thietBi;
+  final PhongProvider _phongProvider;
+  final SuaChuaProvider _suaChuaProvider;
+
+  List<ItemPhong> get dsPhong => _phongProvider.listPhong;
+  bool get isLoadingPhong => _phongProvider.isLoading;
+
+  PhieuSuaChuaViewModel({
+    required PhongProvider phongProvider,
+    required SuaChuaProvider suaChuaProvider,
+  }) : _phongProvider = phongProvider,
+       _suaChuaProvider = suaChuaProvider {
+    _phongProvider.addListener(_onProviderUpdate);
+
+    Future.microtask(() async {
+      await _phongProvider.getListPhong();
+    });
+  }
+
+  void _onProviderUpdate() {
+    notifyListeners();
+  }
 
   SuaChua? suaChua;
   HoaDonSuaChua? hoaDonSuaChua;
@@ -90,11 +116,18 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
     errNguyenNhan = null;
     errChiPhi = null;
     errNgayHoaDon = null;
+    errPhong = null;
 
     if (taoHoaDon) {
       DateTime? ngaySua = chuyenNgay(txtNgaySuaChua.text);
 
       DateTime? ngayHoaDon = chuyenNgay(txtNgayHoaDon.text);
+
+      if (phongID == null || phongID == 0) {
+        errPhong = "Vui lòng chọn phòng";
+
+        hopLe = false;
+      }
 
       if (ngaySua != null &&
           ngayHoaDon != null &&
@@ -177,7 +210,8 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
 
     suaChua = suaChuaData;
     hoaDonSuaChua = hoaDonData;
-
+    print(suaChuaData);
+    phongID = suaChua?.phongID;
     if (suaChua == null) {
       txtNgaySuaChua.text = formatDate(DateTime.now());
 
@@ -211,8 +245,42 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
     }
   }
 
+  Future<SuaChuaDTO?> luu() async {
+    if (!kiemTraDuLieu()) return null;
+
+    final dto = SuaChuaDTO(
+      id: maSuaChua,
+      phongId: phongID,
+      thietBiId: thietBi.thietBiID,
+      nguyenNhan: txtNguyenNhan.text.trim(),
+      ngaySuaChua: DateFormate.chuyenNgay(txtNgaySuaChua.text)!,
+      hoaDonSuaChua: taoHoaDon
+          ? HoaDonSuaChua(
+              maHoaDonSC: daTaoHoaDon ? maHoaDon : null,
+              trangThai: trangThai,
+              giaTien: double.parse(txtChiPhi.text),
+              loaiSua: loaiSua,
+              ngayLapHoaDonSC: DateFormate.chuyenNgay(txtNgayHoaDon.text),
+            )
+          : null,
+    );
+
+    if (maSuaChua == null) {
+      return await _suaChuaProvider.them(dto);
+    } else {
+      bool success = await _suaChuaProvider.capNhat(dto);
+      if (success) {
+        return dto;
+      } else {
+        return null;
+      }
+    }
+  }
+
   @override
   void dispose() {
+    _phongProvider.removeListener(_onProviderUpdate);
+
     txtNgaySuaChua.dispose();
     txtNguyenNhan.dispose();
     txtChiPhi.dispose();
@@ -235,21 +303,5 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
     }
 
     notifyListeners();
-  }
-
-  void taoMaHoaDon() {
-    DateTime now = DateTime.now();
-
-    String nam = now.year.toString();
-
-    String thang = now.month.toString().padLeft(2, '0');
-
-    String ngay = now.day.toString().padLeft(2, '0');
-
-    String stt = sttHoaDon.toString().padLeft(3, '0');
-
-    maHoaDon = "PSC${nam}${thang}${ngay}$stt";
-
-    sttHoaDon++;
   }
 }

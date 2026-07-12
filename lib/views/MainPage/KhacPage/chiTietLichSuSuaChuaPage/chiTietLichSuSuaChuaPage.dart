@@ -1,12 +1,13 @@
+import 'package:AppTroNhaToi/Provider/sua_chua_provider.dart';
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/models/hoa_don_sua_chua.dart';
-import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/sua_chua.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/chiTietLichSuSuaChuaPage/chiTietLichSuSuaChuaPageViewModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/PhieuSuaChuaForm/PhieuSuaChuaForm.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ChiTietLichSuSuaChuaPage extends StatefulWidget {
   final SuaChua suaChua;
@@ -53,18 +54,21 @@ class _ChiTietLichSuSuaChuaPageState extends State<ChiTietLichSuSuaChuaPage> {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => PhieuSuaChuaForm(
-          thietBi: widget.thietBi,
-          suaChua: vm.suaChua,
-          hoaDonSuaChua: vm.hoaDonSuaChua,
+        builder: (_) => ChangeNotifierProvider.value(
+          value: context.read<SuaChuaProvider>(),
+          child: PhieuSuaChuaForm(
+            suaChua: widget.suaChua,
+            hoaDonSuaChua: widget.hoaDonSuaChua,
+            thietBi: widget.thietBi,
+          ),
         ),
       ),
     );
 
     if (result != null) {
       setState(() {
-        vm.suaChua = result['suaChua'];
-        vm.hoaDonSuaChua = result['hoaDonSuaChua'];
+        vm.suaChua = (result['suaChua'] as SuaChua?)!;
+        vm.hoaDonSuaChua = (result['hoaDonSuaChua'] as HoaDonSuaChua?)!;
       });
     }
   }

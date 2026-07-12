@@ -1,8 +1,6 @@
 import 'package:AppTroNhaToi/Provider/sua_chua_provider.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
-import 'package:AppTroNhaToi/models/lap_rap.dart';
-import 'package:AppTroNhaToi/models/phong.dart';
-import 'package:AppTroNhaToi/models/sua_chua.dart';
+import 'package:AppTroNhaToi/models/DTO/SuaChuaDTO.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/chiTietThietBiPage/chiTietThietBiPageViewModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/LichSuSuaChuaPage/LichSuSuaChuaPage.dart';
@@ -346,11 +344,16 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) => ChiTietLichSuSuaChuaPage(
-                                      suaChua: item.suaChua!,
-                                      hoaDonSuaChua: item.hoaDonSuaChua,
-                                      thietBi: widget.thietBi,
-                                    ),
+                                    builder: (_) =>
+                                        ChangeNotifierProvider.value(
+                                          value: context
+                                              .read<SuaChuaProvider>(),
+                                          child: ChiTietLichSuSuaChuaPage(
+                                            suaChua: item.suaChua!,
+                                            hoaDonSuaChua: item.hoaDonSuaChua,
+                                            thietBi: vm.thietBi,
+                                          ),
+                                        ),
                                   ),
                                 );
                               },
@@ -621,13 +624,15 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
                 onPressed: () async {
                   final result = await Navigator.push(
                     context,
-
                     MaterialPageRoute(
-                      builder: (_) => PhieuSuaChuaForm(thietBi: vm.thietBi),
+                      builder: (_) => ChangeNotifierProvider.value(
+                        value: context.read<SuaChuaProvider>(),
+                        child: PhieuSuaChuaForm(thietBi: vm.thietBi),
+                      ),
                     ),
                   );
 
-                  if (result is SuaChua) {
+                  if (result is SuaChuaDTO) {
                     vm.capNhatTrangThai("Đang sửa");
 
                     vm.themLichSuSuaChua(result);

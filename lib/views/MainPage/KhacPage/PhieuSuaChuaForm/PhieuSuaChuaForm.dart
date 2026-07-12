@@ -1,4 +1,7 @@
+import 'package:AppTroNhaToi/Provider/phong_provider.dart';
+import 'package:AppTroNhaToi/Provider/sua_chua_provider.dart';
 import 'package:AppTroNhaToi/models/hoa_don_sua_chua.dart';
+import 'package:AppTroNhaToi/models/item_phong.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/sua_chua.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
@@ -8,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class PhieuSuaChuaForm extends StatefulWidget {
   final ThietBi thietBi;
@@ -26,16 +30,23 @@ class PhieuSuaChuaForm extends StatefulWidget {
 }
 
 class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
-  final vm = PhieuSuaChuaViewModel();
+  late PhieuSuaChuaViewModel vm;
 
   @override
   void initState() {
     super.initState();
+
+    vm = PhieuSuaChuaViewModel(
+      phongProvider: context.read<PhongProvider>(),
+      suaChuaProvider: context.read<SuaChuaProvider>(),
+    );
+
     vm.init(
       widget.thietBi,
       suaChuaData: widget.suaChua,
       hoaDonData: widget.hoaDonSuaChua,
     );
+
     vm.addListener(() {
       if (mounted) {
         setState(() {});
@@ -47,6 +58,39 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
   void dispose() {
     vm.dispose();
     super.dispose();
+  }
+
+  Widget _dropDownPhong() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CustomDropdownSearch<ItemPhong>(
+          label: "Phòng lắp đặt",
+          hintText: "-- Chọn phòng --",
+          items: vm.dsPhong,
+          selectedItem: vm.dsPhong
+              .where((e) => e.phongId == vm.phongID)
+              .cast<ItemPhong?>()
+              .firstOrNull,
+          itemAsString: (item) => item.tenPhong,
+          onChanged: (value) {
+            setState(() {
+              vm.phongID = value?.phongId;
+              vm.errPhong = null;
+            });
+          },
+        ),
+
+        if (vm.errPhong != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 6, left: 12),
+            child: Text(
+              vm.errPhong!,
+              style: const TextStyle(color: Colors.red, fontSize: 12),
+            ),
+          ),
+      ],
+    );
   }
 
   @override
@@ -128,7 +172,8 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
                   ),
 
                   const SizedBox(height: 18),
-
+                  _dropDownPhong(),
+                  const SizedBox(height: 18),
                   _input(
                     title: "Ngày sửa chữa",
                     hint: "dd/MM/yyyy",
@@ -315,45 +360,12 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
                 borderRadius: BorderRadius.circular(18),
               ),
             ),
-            onPressed: () {
-              if (vm.kiemTraDuLieu()) {
-                SuaChua suaChua = SuaChua(
-                  id: vm.maSuaChua,
-                  phongID: 101,
-                  nguyenNhan: vm.txtNguyenNhan.text,
-                  ngaySuaChua: DateFormat(
-                    "dd/MM/yyyy",
-                  ).parse(vm.txtNgaySuaChua.text),
-                );
+            onPressed: () async {
+              final result = await vm.luu();
 
-                HoaDonSuaChua? hd;
-
-                if (vm.taoHoaDon) {
-                  hd = HoaDonSuaChua(
-                    maHoaDonSC: vm.daTaoHoaDon ? vm.maHoaDon! : null,
-                    idSuaChua: vm.maSuaChua,
-                    ngayLapHoaDonSC: DateFormat(
-                      "dd/MM/yyyy",
-                    ).parse(vm.txtNgayHoaDon.text),
-                    giaTien: double.tryParse(vm.txtChiPhi.text) ?? 0,
-                    loaiSua: vm.loaiSua,
-                    trangThai: vm.trangThai,
-                  );
-                }
-                print(hd);
-                if (vm.maSuaChua != null) {
-                  print('Cập nhật');
-                } else {
-                  print('Tạo mới');
-                }
-
-                Navigator.pop(context, {
-                  'suaChua': suaChua,
-                  'hoaDonSuaChua': hd,
-                });
+              if (result != null && mounted) {
+                Navigator.pop(context, result);
               }
-
-              setState(() {});
             },
             child: const Text(
               "Lưu phiếu sửa chữa",

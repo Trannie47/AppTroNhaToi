@@ -4,7 +4,6 @@ class SuaChua {
   final int? thietBiID;
   final String? nguyenNhan;
   final DateTime? ngaySuaChua;
-  final bool isDelete;
 
   SuaChua({
     this.id,
@@ -12,30 +11,27 @@ class SuaChua {
     this.thietBiID,
     this.nguyenNhan,
     this.ngaySuaChua,
-    this.isDelete = false,
   });
 
   factory SuaChua.fromMap(Map<String, dynamic> map) {
     return SuaChua(
       id: map['id'] as int?,
-      phongID: map['PhongID'] as int?,
-      thietBiID: map['thietBiID'] as int?,
+      phongID: map['phongId'] as int?,
+      thietBiID: map['thietBiId'] as int?,
       nguyenNhan: map['nguyenNhan'] as String?,
       ngaySuaChua: map['ngaySuaChua'] != null
           ? DateTime.tryParse(map['ngaySuaChua'].toString())
           : null,
-      isDelete: map['isDelete'] == true || map['isDelete'] == 1,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
       if (id != null) 'id': id,
-      'PhongID': phongID,
-      'thietBiID': thietBiID,
+      'phongId': phongID,
+      'thietBiId': thietBiID,
       'nguyenNhan': nguyenNhan,
       'ngaySuaChua': ngaySuaChua?.toIso8601String().split('T').first,
-      'isDelete': isDelete,
     };
   }
 
@@ -53,7 +49,6 @@ class SuaChua {
       thietBiID: thietBiID ?? this.thietBiID,
       nguyenNhan: nguyenNhan ?? this.nguyenNhan,
       ngaySuaChua: ngaySuaChua ?? this.ngaySuaChua,
-      isDelete: isDelete ?? this.isDelete,
     );
   }
 
@@ -65,7 +60,6 @@ class SuaChua {
         'thietBiID: $thietBiID, '
         'nguyenNhan: $nguyenNhan, '
         'ngaySuaChua: $ngaySuaChua, '
-        'isDelete: $isDelete'
         ')';
   }
 }

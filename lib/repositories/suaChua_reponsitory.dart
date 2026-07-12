@@ -1,4 +1,5 @@
 import 'package:AppTroNhaToi/core/network/SuaChuaApiClient.dart';
+import 'package:AppTroNhaToi/models/DTO/SuaChuaDTO.dart';
 import 'package:AppTroNhaToi/models/sua_chua.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/LichSuSuaChuaPage/LichSuSuaChuaPageModel.dart';
 
@@ -17,11 +18,11 @@ class SuaChuaRepository {
     return await suaChuaApiClient.getTheoThietBi(thietBiID);
   }
 
-  Future<SuaChua?> themSuaChua(SuaChua suaChua) async {
+  Future<SuaChuaDTO?> themSuaChua(SuaChuaDTO suaChua) async {
     return await suaChuaApiClient.themSuaChua(suaChua);
   }
 
-  Future<SuaChua?> capNhatSuaChua(SuaChua suaChua) async {
+  Future<SuaChuaDTO?> capNhatSuaChua(SuaChuaDTO suaChua) async {
     return await suaChuaApiClient.capNhatSuaChua(suaChua);
   }
 

@@ -19,12 +19,14 @@ class HoaDonSuaChua {
 
   factory HoaDonSuaChua.fromMap(Map<String, dynamic> map) {
     return HoaDonSuaChua(
-      maHoaDonSC: map['maHoaDonSC'] as String?,
-      trangThai: map['TrangThai'] as int,
-      giaTien: (map['giaTien'] as num?)?.toDouble(),
-      loaiSua: map['loaiSua'] as int,
-      ngayLapHoaDonSC: map['ngayLapHoaDonSC'] != null
-          ? DateTime.tryParse(map['ngayLapHoaDonSC'] as String)
+      maHoaDonSC: map['maHoaDonSc'] as String?,
+      trangThai: map['TrangThai'] as int? ?? 0,
+      giaTien: map['giaTien'] != null
+          ? double.tryParse(map['giaTien'].toString())
+          : null,
+      loaiSua: map['loaiSua'] as int? ?? 0,
+      ngayLapHoaDonSC: map['ngayLapHoaDonSc'] != null
+          ? DateTime.tryParse(map['ngayLapHoaDonSc'] as String)
           : null,
       idSuaChua: map['id'] as int?,
     );
@@ -32,11 +34,11 @@ class HoaDonSuaChua {
 
   Map<String, dynamic> toMap() {
     return {
-      if (maHoaDonSC != null) 'maHoaDonSC': maHoaDonSC,
+      if (maHoaDonSC != null) 'maHoaDonSc': maHoaDonSC,
       'TrangThai': trangThai,
       'giaTien': giaTien,
       'loaiSua': loaiSua,
-      'ngayLapHoaDonSC': ngayLapHoaDonSC?.toIso8601String().split('T').first,
+      'ngayLapHoaDonSc': ngayLapHoaDonSC?.toIso8601String().split('T').first,
       'idSuaChua': idSuaChua,
     };
   }

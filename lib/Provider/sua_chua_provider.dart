@@ -1,3 +1,4 @@
+import 'package:AppTroNhaToi/models/DTO/SuaChuaDTO.dart';
 import 'package:AppTroNhaToi/models/sua_chua.dart';
 import 'package:AppTroNhaToi/repositories/suaChua_reponsitory.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/LichSuSuaChuaPage/LichSuSuaChuaPageModel.dart';
@@ -30,21 +31,21 @@ class SuaChuaProvider extends ChangeNotifier {
     }
   }
 
-  Future<SuaChua?> them(SuaChua suaChua) async {
+  Future<SuaChuaDTO?> them(SuaChuaDTO suaChua) async {
     final result = await _repo.themSuaChua(suaChua);
 
     if (result != null) {
-      await fetchByThietBi(result.thietBiID!);
+      await fetchByThietBi(result.thietBiId!);
     }
 
     return result;
   }
 
-  Future<bool> capNhat(SuaChua suaChua) async {
+  Future<bool> capNhat(SuaChuaDTO suaChua) async {
     final result = await _repo.capNhatSuaChua(suaChua);
 
     if (result != null) {
-      await fetchByThietBi(result.thietBiID!);
+      await fetchByThietBi(result.thietBiId!);
       return true;
     }
 
