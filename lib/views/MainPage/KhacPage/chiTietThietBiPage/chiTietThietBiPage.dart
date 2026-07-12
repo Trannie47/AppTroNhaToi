@@ -1,3 +1,4 @@
+import 'package:AppTroNhaToi/Provider/sua_chua_provider.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/models/lap_rap.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
@@ -12,6 +13,7 @@ import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietLichSuSuaChuaPage/ch
 import 'package:AppTroNhaToi/widgets/itemLichSuSuaChua.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class ChiTietThietBiPage extends StatefulWidget {
   final ThietBi thietBi;
@@ -29,9 +31,44 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
   void initState() {
     super.initState();
 
-    vm = ChiTietThietBiPageViewModel();
+    vm = ChiTietThietBiPageViewModel(
+      thietBi: widget.thietBi,
+      suaChuaProvider: context.read<SuaChuaProvider>(),
+    );
 
-    vm.init(widget.thietBi);
+    vm.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    vm.dispose();
+    super.dispose();
+  }
+
+  Future<void> _moLichSuSuaChua() async {
+    final bool? result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MultiProvider(
+          providers: [ChangeNotifierProvider(create: (_) => SuaChuaProvider())],
+          child: LichSuSuaChuaPage(thietBi: widget.thietBi),
+        ),
+      ),
+    );
+
+    if (result == true) {
+      setState(() {
+        // Nếu ViewModel có danh sách riêng
+        // vm.lichSuSuaChua = result;
+
+        // Hoặc nếu dùng Provider thì chỉ cần fetch lại
+        // vm.refresh();
+      });
+    }
   }
 
   @override
@@ -224,7 +261,7 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
 
                         _rowThongTin(
                           "Ngày mua",
-                          DateFormat("MM/yyyy").format(vm.thietBi.ngayMua!),
+                          DateFormat("dd/MM/yyyy").format(vm.thietBi.ngayMua!),
                         ),
 
                         _rowThongTin(
@@ -277,14 +314,7 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
 
                               TextButton(
                                 onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => LichSuSuaChuaPage(
-                                        thietBi: vm.thietBi,
-                                      ),
-                                    ),
-                                  );
+                                  _moLichSuSuaChua();
                                 },
 
                                 child: const Text(
@@ -309,7 +339,6 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
                           ) {
                             final LichSuSuaChuaPageModel item =
                                 vm.lichSuSuaChua[index];
-
                             return ItemLichSuSuaChua(
                               suaChua: item.suaChua,
                               hoaDonSuaChua: item.hoaDonSuaChua,
@@ -521,9 +550,7 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
                 );
 
                 if (result is ThietBi) {
-                  setState(() {
-                    vm.init(result);
-                  });
+                  setState(() {});
                 }
               },
             ),

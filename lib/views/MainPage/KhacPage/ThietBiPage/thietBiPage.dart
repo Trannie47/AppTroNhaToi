@@ -1,3 +1,4 @@
+import 'package:AppTroNhaToi/Provider/sua_chua_provider.dart';
 import 'package:AppTroNhaToi/Provider/thiet_bi_provider.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/ThietBiPage/thietBiPageViewModel.dart';
@@ -140,8 +141,16 @@ class _ThietBiPageState extends State<ThietBiPage> {
                         context,
 
                         MaterialPageRoute(
-                          builder: (_) =>
-                              ChiTietThietBiPage(thietBi: vm.dsHienThi[index]),
+                          builder: (_) => MultiProvider(
+                            providers: [
+                              ChangeNotifierProvider(
+                                create: (_) => SuaChuaProvider(),
+                              ),
+                            ],
+                            child: ChiTietThietBiPage(
+                              thietBi: vm.dsHienThi[index],
+                            ),
+                          ),
                         ),
                       );
 

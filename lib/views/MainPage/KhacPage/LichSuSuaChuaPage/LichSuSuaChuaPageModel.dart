@@ -9,18 +9,20 @@ class LichSuSuaChuaPageModel {
 
   factory LichSuSuaChuaPageModel.fromMap(Map<String, dynamic> map) {
     return LichSuSuaChuaPageModel(
-      suaChua: SuaChua.fromMap(map['suaChua'] as Map<String, dynamic>),
-      hoaDonSuaChua: map['hoaDonSuaChua'] != null
-          ? HoaDonSuaChua.fromMap(map['hoaDonSuaChua'] as Map<String, dynamic>)
+      suaChua: SuaChua.fromMap(map),
+
+      hoaDonSuaChua: map['hoadonsuachua'] != null
+          ? HoaDonSuaChua.fromMap(map['hoadonsuachua'] as Map<String, dynamic>)
           : null,
     );
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'suaChua': suaChua.toMap(),
-      'hoaDonSuaChua': hoaDonSuaChua?.toMap(),
-    };
+    final data = suaChua.toMap();
+
+    data['hoadonsuachua'] = hoaDonSuaChua?.toMap();
+
+    return data;
   }
 
   LichSuSuaChuaPageModel copyWith({
@@ -37,6 +39,7 @@ class LichSuSuaChuaPageModel {
   String toString() {
     return 'LichSuSuaChuaPageModel('
         'suaChua: $suaChua, '
-        'hoaDonSuaChua: $hoaDonSuaChua)';
+        'hoaDonSuaChua: $hoaDonSuaChua'
+        ')';
   }
 }

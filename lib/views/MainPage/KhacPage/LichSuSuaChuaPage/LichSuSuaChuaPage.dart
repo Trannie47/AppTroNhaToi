@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:AppTroNhaToi/Provider/sua_chua_provider.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/LichSuSuaChuaPage/LichSuSuaChuaPageViewModel.dart';
@@ -7,6 +8,7 @@ import 'package:AppTroNhaToi/views/MainPage/KhacPage/PhieuSuaChuaForm/PhieuSuaCh
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietLichSuSuaChuaPage/chiTietLichSuSuaChuaPage.dart';
 import 'package:AppTroNhaToi/widgets/itemLichSuSuaChua.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LichSuSuaChuaPage extends StatefulWidget {
   final ThietBi thietBi;
@@ -24,9 +26,10 @@ class _LichSuSuaChuaPageState extends State<LichSuSuaChuaPage> {
   void initState() {
     super.initState();
 
-    vm = LichSuSuaChuaPageViewModel();
-
-    vm.init(widget.thietBi);
+    vm = LichSuSuaChuaPageViewModel(
+      thietBi: widget.thietBi,
+      suaChuaProvider: context.read<SuaChuaProvider>(),
+    );
 
     vm.addListener(() {
       if (mounted) {
@@ -38,7 +41,6 @@ class _LichSuSuaChuaPageState extends State<LichSuSuaChuaPage> {
   @override
   void dispose() {
     vm.dispose();
-
     super.dispose();
   }
 
@@ -99,7 +101,7 @@ class _LichSuSuaChuaPageState extends State<LichSuSuaChuaPage> {
             ),
 
             Text(
-              "${widget.thietBi.tenThietBi} - ${101}",
+              "${widget.thietBi.tenThietBi}",
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,

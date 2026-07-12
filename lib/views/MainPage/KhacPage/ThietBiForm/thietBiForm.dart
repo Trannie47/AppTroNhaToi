@@ -262,7 +262,7 @@ class _ThietBiFormState extends State<ThietBiForm> {
 
             child: IconButton(
               onPressed: () {
-                Navigator.pop(context, true);
+                Navigator.pop(context);
               },
 
               icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 16),
