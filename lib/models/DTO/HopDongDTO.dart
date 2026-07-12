@@ -10,6 +10,7 @@ class HopDongDTO {
   final PhongHD phong;
   final String? ghiChu;
   final NguoiThueHD nguoithue;
+  final List<String> dsAnhHopDong;
   HopDongDTO({
     required this.hopDongID,
     required this.idnt,
@@ -22,6 +23,7 @@ class HopDongDTO {
     required this.trangThai,
     required this.phong,
     required this.nguoithue,
+    required this.dsAnhHopDong,
 });
   factory HopDongDTO.fromMap(Map<String,dynamic> json){
     return HopDongDTO(
@@ -38,9 +40,18 @@ class HopDongDTO {
           : double.tryParse(json['giaPhongThucTe']?.toString() ?? '') ?? 0.0,
       ghiChu: json['ghiChu'] as String?,
       trangThai: json['trangThai'] ?? 0,
+      dsAnhHopDong: json['anhHopDong'] != null
+          ? List<String>.from(json['anhHopDong'])
+          : [],
       phong: PhongHD.fromMap(json['phong'] ?? {}),
-      nguoithue: NguoiThueHD.fromMap(json['nguoithue'] ?? {}),
+      nguoithue: NguoiThueHD.fromMap(json['nguoithue'] ?? {}
+      ),
+
     );
+  }
+  @override
+  String toString() {
+    return 'HopDongDTO(hopDongID: $hopDongID, idnt: $idnt, phongID: $phongID, ngayKy: $ngayKy, ngayHetHan: $ngayHetHan, tienCoc: $tienCoc, giaPhongThucTe: $giaPhongThucTe, trangThai: $trangThai, phong: ${phong.tenPhong}, ghiChu: $ghiChu, nguoithue: ${nguoithue.hoTen}, dsAnhHopDong: $dsAnhHopDong)';
   }
 }
 class PhongHD{

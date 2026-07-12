@@ -2,7 +2,6 @@
 // import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 // import 'package:AppTroNhaToi/models/phong.dart';
 // import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/ChiTietPhongPage/chiTietPhongViewModel.dart';
-// import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietHopDongPage/chiTietHopDong_Model.dart';
 // import 'package:flutter/material.dart';
 // import 'package:provider/provider.dart';
 //

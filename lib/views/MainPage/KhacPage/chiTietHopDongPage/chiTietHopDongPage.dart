@@ -2,10 +2,8 @@ import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/string_formatter.dart';
 import 'package:AppTroNhaToi/models/DTO/HopDongDTO.dart';
-import 'package:AppTroNhaToi/models/hop_dong.dart';
-import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/chiTietHopDongPage/chiTietHopDongViewModel.dart';
-import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietHopDongPage/chiTietHopDong_Model.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietHopDongPage/xemAnhHopDong.dart';
 import 'package:flutter/material.dart';
 
 class ChiTietHopDongPage extends StatefulWidget {
@@ -120,7 +118,9 @@ class _ChiTietHopDongPageState extends State<ChiTietHopDongPage> {
                 children: [
                   const SizedBox(height: 16),
                   _thongTinThuePhong(vm.hopDong),
-                  const SizedBox(height: 150),
+                  const SizedBox(height: 16),
+                  _anhHopDong(context, vm.hopDong.dsAnhHopDong),
+                  const SizedBox(height: 16),
                   //_chiTietPhongButton(),
                   // const SizedBox(height: 16),
                   // _ketThucHopDongButton(),
@@ -278,6 +278,149 @@ Widget _item(String title, String value, {Color color = Colors.black}) {
   );
 }
 
+Widget _anhHopDong(BuildContext context, List<String> dsAnh) {
+  return Container(
+    width: double.infinity,
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(20),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Hợp đồng đã ký",
+          style: TextStyle(
+            color: Color(0xff2E7D32),
+            fontWeight: FontWeight.bold,
+            fontSize: 11,
+          ),
+        ),
+        const SizedBox(height: 12),
+
+        if (dsAnh.isEmpty)
+          Row(
+            children: [
+              Icon(Icons.image_not_supported_outlined,
+                  color: Colors.grey.shade400, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                "Chưa có ảnh hợp đồng",
+                style: TextStyle(color: Colors.grey.shade500, fontSize: 13),
+              ),
+            ],
+          )
+        else
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => XemAnhHopDong(dsAnh: dsAnh),
+                ),
+              );
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xffEAEAEA)),
+              ),
+              child: Row(
+                children: [
+                  //anhr bìa là ảnh đầu tiên
+                  ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(11),
+                      bottomLeft: Radius.circular(11),
+                    ),
+                    child: Stack(
+                      children: [
+                        Image.network(
+                          dsAnh.first,
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Container(
+                            width: 80,
+                            height: 80,
+                            color: Colors.grey.shade200,
+                            child: Icon(Icons.broken_image,
+                                color: Colors.grey.shade400),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(width: 12),
+
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Bản hợp đồng giấy",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Icon(Icons.check_circle,
+                                color: Colors.green.shade600, size: 13),
+                            const SizedBox(width: 4),
+                            Text(
+                              "${dsAnh.length} ảnh đã upload",
+                              style: TextStyle(
+                                color: Colors.green.shade600,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Nút xem
+                  Padding(
+                    padding: const EdgeInsets.only(right: 12),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: const Color(0xffF0F7F0),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.photo_library_outlined,
+                              size: 14, color: Color(0xff2E7D32)),
+                          SizedBox(width: 4),
+                          Text(
+                            "Xem",
+                            style: TextStyle(
+                              color: Color(0xff2E7D32),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+      ],
+    ),
+  );
+}
 
 
 Widget _chiTietPhongButton() {

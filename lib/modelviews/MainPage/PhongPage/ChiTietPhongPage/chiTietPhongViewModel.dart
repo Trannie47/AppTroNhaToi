@@ -1,9 +1,5 @@
-import 'package:AppTroNhaToi/models/loaiphong.dart';
-import 'package:AppTroNhaToi/models/nguoi_thue.dart';
-import 'package:AppTroNhaToi/models/phong.dart';
-import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/chiTietHopDongPage/chiTietHopDongViewModel.dart';
+
 import 'package:AppTroNhaToi/states/phong_save_state.dart';
-import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietHopDongPage/chiTietHopDong_Model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 

@@ -47,8 +47,8 @@ class HopDong {
           ? double.tryParse(map['giaPhongThucTe'].toString())
           : null,
       trangThai: map['trangThai'] as int?,
-      dsAnhHopDong: map['dsAnhHopDong'] != null
-          ? List<String>.from(map['dsAnhHopDong'])
+      dsAnhHopDong: map['anhHopDong'] != null
+          ? List<String>.from(map['anhHopDong'])
           : null,
       ghiChu: map['ghiChu'] as String?,
       phong: map['phong'] != null
