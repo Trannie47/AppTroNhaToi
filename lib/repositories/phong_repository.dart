@@ -20,5 +20,7 @@ class PhongRepository {
   Future<Phong?> remove(int idPhong) async{
     return await _phongApiClient.removePhong(idPhong);
   }
-
+  Future<ItemPhong> getInforPhong(int maPhong){
+    return _phongApiClient.getInforPhong(maPhong);
+  }
 }

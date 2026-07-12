@@ -89,6 +89,20 @@ class PhongApiClient {
       throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
     }
   }
+  Future<ItemPhong> getInforPhong(int idPhong)async{
+    try{
+      final response= await _dio.get("phong/$idPhong");
+      if(response.statusCode==200|| response.statusCode==201){
+        return ItemPhong.fromMap(response.data);
+      }
+      throw Exception("Lấy thông tin phong thất bại, Mã lỗi ${response.statusCode}");
+    }catch(e){
+      if (kDebugMode) {
+        print("Loi PhongApiClient $e");
+      }
+      rethrow;
+    }
+  }
 
   String _mapErrorToMessage(DioException e){
     if (e.type == DioExceptionType.connectionTimeout ||

@@ -68,6 +68,15 @@ class PhongProvider extends ChangeNotifier{
       rethrow;
     }
   }
+  Future<ItemPhong> getInforPhong(int maPhong)async{
+    try{
+      final result=await phongRepository.getInforPhong(maPhong);
+        return result;
+    } catch (e) {
+      if (kDebugMode) print("Lỗi getInforPhong tại Provider: $e");
+      rethrow;
+    }
+  }
 
   //thêm local vào ds sau khi khi thực hiện thao tác thêm mà ko cần fetch lại api
   void addRoom(ItemPhong room) {

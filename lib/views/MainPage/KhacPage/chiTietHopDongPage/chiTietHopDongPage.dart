@@ -1,3 +1,4 @@
+import 'package:AppTroNhaToi/Provider/phong_provider.dart';
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/string_formatter.dart';
@@ -5,6 +6,9 @@ import 'package:AppTroNhaToi/models/DTO/HopDongDTO.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/chiTietHopDongPage/chiTietHopDongViewModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietHopDongPage/xemAnhHopDong.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../PhongPage/ChiTietPhongPage/phongChiTiet.dart';
 
 class ChiTietHopDongPage extends StatefulWidget {
   final HopDongDTO hopDong;
@@ -21,7 +25,8 @@ class _ChiTietHopDongPageState extends State<ChiTietHopDongPage> {
   void initState() {
 
      super.initState();
-     vm = ChiTietHopDongViewModel();
+     //final phongProvider = Provider.of<PhongProvider>(context, listen: false);
+     vm = ChiTietHopDongViewModel(context.read<PhongProvider>());
      vm.init(widget.hopDong);
     vm.addListener(() {
       if (mounted) {
@@ -134,7 +139,7 @@ class _ChiTietHopDongPageState extends State<ChiTietHopDongPage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _chiTietPhongButton(vm.hopDong.phong.tenPhong),
+            _chiTietPhongButton(context,vm),
             const SizedBox(height: 16),
             _ketThucHopDongButton(),
           ],
@@ -442,7 +447,7 @@ Widget _anhHopDong(BuildContext context, List<String> dsAnh) {
 }
 
 
-Widget _chiTietPhongButton(String tenPhong) {
+Widget _chiTietPhongButton(BuildContext context, ChiTietHopDongViewModel vm) {
   return SizedBox(
     width: double.infinity,
     height: 52,
@@ -451,9 +456,39 @@ Widget _chiTietPhongButton(String tenPhong) {
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
-      onPressed: () {},
-      child:Text(
-        "Chi tiết Phòng $tenPhong",
+      onPressed: vm.isLoadingPhong
+          ? null // Khóa nút khi đang gọi API
+          : () async {
+        final itemPhong = await vm.getInforPhong(vm.hopDong.phongID);
+        if (!context.mounted) return;
+
+        if (itemPhong != null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => PhongChiTiet(room: itemPhong),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Không tìm thấy thông tin phòng!"),
+              backgroundColor: Colors.red,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+      },
+      child: vm.isLoadingPhong
+          ? const SizedBox(
+        width: 20,
+        height: 20,
+        child: CircularProgressIndicator(
+          strokeWidth: 2,
+          color: Color(0xff2E7D32),
+        ),
+      ):Text(
+        "Chi tiết Phòng ${vm.hopDong.phong.tenPhong}",
         style: TextStyle(
           color: Color(0xff1D2433),
           fontSize: 15,
