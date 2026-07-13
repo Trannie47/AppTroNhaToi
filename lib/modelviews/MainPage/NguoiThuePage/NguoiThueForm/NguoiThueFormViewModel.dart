@@ -64,6 +64,19 @@ class NguoiThueFormViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+  bool checkTrungCCCD(){
+    String cccd= txtCCCD.text.trim();
+    if (cccd.isEmpty) return false;
+    List<NguoiThue> ds= _service.list;
+    return ds.any((nt) => nt.cccd == cccd);
+  }
+  bool checkTrungSDT() {
+    String sdt = txtSDT.text.trim();
+    if (sdt.isEmpty) return false;
+
+    List<NguoiThue> ds = _service.list;
+    return ds.any((nt) => nt.sdt == sdt);
+  }
 
   void parseCCCDQR(String raw) {
     final parts = raw.split('|');
