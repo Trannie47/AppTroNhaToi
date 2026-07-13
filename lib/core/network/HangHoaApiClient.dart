@@ -54,7 +54,7 @@ class HangHoaApiClient {
       return false;
     } catch (e) {
       if (kDebugMode) {
-        print("Lỗi xóa hàng hóa $e");
+        print("Lỗi ẩn hàng hóa $e");
       }
 
       rethrow;

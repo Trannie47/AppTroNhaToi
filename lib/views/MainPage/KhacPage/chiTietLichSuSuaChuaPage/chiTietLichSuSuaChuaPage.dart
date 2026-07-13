@@ -222,7 +222,7 @@ class _ChiTietLichSuSuaChuaPageState extends State<ChiTietLichSuSuaChuaPage> {
                   contentPadding: EdgeInsets.zero,
                   leading: const Icon(Icons.delete_outline, color: Colors.red),
                   title: const Text(
-                    "Xóa chi tiết",
+                    "Ẩn chi tiết",
                     style: TextStyle(color: Colors.red),
                   ),
                   subtitle: const Text(

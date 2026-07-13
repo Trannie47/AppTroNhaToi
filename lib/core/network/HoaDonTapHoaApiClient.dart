@@ -60,7 +60,7 @@ class HoaDonTapHoaApiClient {
       return response.statusCode == 200 || response.statusCode == 201;
     } on DioException catch (e) {
       if (kDebugMode) {
-        print("Lỗi xóa hóa đơn tạp hóa $e");
+        print("Lỗi ẩn hóa đơn tạp hóa $e");
       }
 
       throw Exception(_mapErrorToMessage(e));

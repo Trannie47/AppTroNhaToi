@@ -294,9 +294,9 @@ class _TapHoaPageState extends State<TapHoaPage> {
                           context: context,
                           builder: (context) {
                             return AlertDialog(
-                              title: const Text("Xóa hàng hóa"),
+                              title: const Text("Ẩn hàng hóa"),
                               content: Text(
-                                "Bạn có muốn xóa '${vm.dsHangHoa[index].tenHangHoa}' không?",
+                                "Bạn có muốn ẩn'${vm.dsHangHoa[index].tenHangHoa}' không?",
                               ),
 
                               actions: [
@@ -315,7 +315,7 @@ class _TapHoaPageState extends State<TapHoaPage> {
                                     Navigator.pop(context, true);
                                   },
                                   child: const Text(
-                                    "Xóa",
+                                    "Ẩn",
                                     style: TextStyle(color: Colors.white),
                                   ),
                                 ),
@@ -411,16 +411,16 @@ class _TapHoaPageState extends State<TapHoaPage> {
                         );
                       },
 
-                      /// XÓA
+                      /// ẩn
                       onXoa: () async {
                         bool? xacNhan = await showDialog<bool>(
                           context: context,
                           builder: (dialogContext) {
                             return AlertDialog(
-                              title: const Text("Xóa hóa đơn"),
+                              title: const Text("Ẩn hóa đơn"),
 
                               content: Text(
-                                "Bạn có muốn xóa hóa đơn ${vm.dsHoaDonTapHoa[index].hoaDon.maHoaDon} không?",
+                                "Bạn có muốn ẩn hóa đơn ${vm.dsHoaDonTapHoa[index].hoaDon.maHoaDon} không?",
                               ),
 
                               actions: [
@@ -441,7 +441,7 @@ class _TapHoaPageState extends State<TapHoaPage> {
                                   },
 
                                   child: const Text(
-                                    "Xóa",
+                                    "Ẩn",
                                     style: TextStyle(color: Colors.white),
                                   ),
                                 ),
@@ -533,9 +533,9 @@ class _TapHoaPageState extends State<TapHoaPage> {
                           context: context,
                           builder: (dialogContext) {
                             return AlertDialog(
-                              title: const Text("Xóa hóa đơn"),
+                              title: const Text("Ẩn hóa đơn"),
                               content: Text(
-                                "Bạn có muốn xóa hóa đơn ${vm.dsCongNoTapHoa[index].hoaDon.maHoaDon} không?",
+                                "Bạn có muốn ẩn hóa đơn ${vm.dsCongNoTapHoa[index].hoaDon.maHoaDon} không?",
                               ),
                               actions: [
                                 TextButton(
@@ -553,7 +553,7 @@ class _TapHoaPageState extends State<TapHoaPage> {
                                     Navigator.pop(dialogContext, true);
                                   },
                                   child: const Text(
-                                    "Xóa",
+                                    "Ẩn",
                                     style: TextStyle(color: Colors.white),
                                   ),
                                 ),

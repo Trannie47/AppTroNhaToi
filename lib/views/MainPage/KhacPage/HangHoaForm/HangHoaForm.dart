@@ -321,9 +321,9 @@ class _HangHoaFormState extends State<HangHoaForm> {
                       context: context,
                       builder: (context) {
                         return AlertDialog(
-                          title: const Text("Xóa hàng hóa"),
+                          title: const Text("Ẩn hàng hóa"),
                           content: Text(
-                            "Bạn có muốn xóa '${widget.hangHoa?.tenHangHoa}' không?",
+                            "Bạn có muốn ẩn '${widget.hangHoa?.tenHangHoa}' không?",
                           ),
                           actions: [
                             TextButton(
@@ -341,7 +341,7 @@ class _HangHoaFormState extends State<HangHoaForm> {
                                 Navigator.pop(context, true);
                               },
                               child: const Text(
-                                "Xóa",
+                                "Ẩn",
                                 style: TextStyle(color: Colors.white),
                               ),
                             ),
@@ -373,7 +373,7 @@ class _HangHoaFormState extends State<HangHoaForm> {
                     ),
                   ),
                   child: const Text(
-                    "Xóa hàng hóa này",
+                    "Ẩn hàng hóa này",
                     style: TextStyle(
                       color: Colors.red,
                       fontWeight: FontWeight.bold,

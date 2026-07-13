@@ -101,7 +101,7 @@ class TapHoaPageViewModel extends ChangeNotifier {
     }
   }
 
-  /// xóa hàng hóa
+  /// ẩn hàng hóa
   void xoaHangHoa(int maHangHoa) {
     dsHangHoa.removeWhere((e) => e.maHangHoa == maHangHoa);
 

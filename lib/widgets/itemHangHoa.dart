@@ -102,7 +102,7 @@ class ItemHangHoa extends StatelessWidget {
 
               const SizedBox(width: 10),
 
-              /// Nút xóa
+              /// Nút ẩn
               if (onXoa != null) ...[
                 InkWell(
                   onTap: onXoa,

@@ -383,7 +383,7 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
                       onPressed: _showXoaDialog,
 
                       child: const Text(
-                        "Xóa thiết bị",
+                        "Ẩn thiết bị",
 
                         style: TextStyle(
                           color: Colors.red,
@@ -589,7 +589,7 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
 
               iconBg: const Color(0xffFFECEC),
 
-              title: "Xóa thiết bị",
+              title: "Ẩn thiết bị",
 
               subTitle: "Không thể hoàn tác",
 
@@ -668,10 +668,10 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
             borderRadius: BorderRadius.circular(20),
           ),
 
-          title: const Text("Xóa thiết bị"),
+          title: const Text("Ẩn thiết bị"),
 
           content: Text(
-            "Bạn có chắc chắn muốn xóa '${vm.thietBi.tenThietBi}' ?\n\nHành động này không thể hoàn tác.",
+            "Bạn có chắc chắn muốn ẩn '${vm.thietBi.tenThietBi}' ?\n\nHành động này không thể hoàn tác.",
           ),
 
           actions: [
@@ -696,7 +696,7 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
                 });
               },
 
-              child: const Text("Xóa", style: TextStyle(color: Colors.white)),
+              child: const Text("Ẩn", style: TextStyle(color: Colors.white)),
             ),
           ],
         );

@@ -54,7 +54,7 @@ class ThietBiApiClient {
       return false;
     } catch (e) {
       if (kDebugMode) {
-        print("Lỗi xóa thiết bị $e");
+        print("Lỗi ẩn thiết bị $e");
       }
 
       rethrow;
