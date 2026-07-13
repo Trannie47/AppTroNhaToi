@@ -7,26 +7,28 @@ import 'package:flutter/material.dart';
 class ThietBiFormViewModel extends ChangeNotifier {
   final ThietBiProvider _service;
   bool _isLoading = false;
+
   bool get isLoading => _isLoading;
   ThietBi? _thietBiDangSua;
+
   bool get isEditMode => _thietBiDangSua != null;
 
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   final TextEditingController txtTenThietBi = TextEditingController();
   final TextEditingController txtGiaTri = TextEditingController();
   final TextEditingController txtNgayMua = TextEditingController();
 
   String? loaiThietBi;
+  int? phongID;
   String? trangThai;
 
   String? errTenThietBi;
   String? errLoaiThietBi;
+  String? errPhong;
   String? errNgayMua;
   String? errGiaTri;
   String? errTrangThai;
 
-  late ThietBi thietBi;
 
   final List<String> dsLoaiThietBi = [
     "Điều hòa",
@@ -38,31 +40,50 @@ class ThietBiFormViewModel extends ChangeNotifier {
     "Bình nóng lạnh",
     "Bếp điện",
   ];
+  final List<String> dsTrangThai = [
+    "Tốt",
+    "Đang sửa",
+  ];
 
-  final List<String> dsTrangThai = ["Tốt", "Đang sửa"];
-
-  ThietBiFormViewModel(this._service, {ThietBi? thietBiInput}) {
+  ThietBiFormViewModel(
+      this._service, {
+        ThietBi? thietBiInput,
+      }) {
     if (thietBiInput != null) {
-      _thietBiDangSua = thietBiInput;
-      thietBi = thietBiInput;
-
-      txtTenThietBi.text = thietBi.tenThietBi ?? "";
-
-      txtGiaTri.text = thietBi.giaTri?.toInt().toString() ?? "";
-
-      txtNgayMua.text =
-          "${thietBi.ngayMua?.day.toString().padLeft(2, '0')}/"
-          "${thietBi.ngayMua?.month.toString().padLeft(2, '0')}/"
-          "${thietBi.ngayMua?.year}";
-
-      loaiThietBi = thietBi.loai;
-      trangThai = thietBi.trangThaiText;
+      loadDeSua(thietBiInput);
     }
+  }
+
+  void loadDeSua(ThietBi tb, {List<LapRap>? dsLapRap}) {
+    _thietBiDangSua = tb;
+
+    txtTenThietBi.text = tb.tenThietBi ?? "";
+    txtGiaTri.text = tb.giaTri?.toString() ?? "";
+
+    if (tb.ngayMua != null) {
+      txtNgayMua.text =
+      "${tb.ngayMua!.day.toString().padLeft(2, '0')}/"
+          "${tb.ngayMua!.month.toString().padLeft(2, '0')}/"
+          "${tb.ngayMua!.year}";
+    }
+
+
+    loaiThietBi = tb.loai;
+    trangThai = tb.trangThaiText;
+
+    if (dsLapRap != null) {
+      final lapRap = dsLapRap.firstWhere((e) => e.thietBiID == tb.thietBiID);
+
+      phongID = lapRap.phongID;
+    }
+
+    notifyListeners();
   }
 
   bool kiemTraDuLieu() {
     errTenThietBi = null;
     errLoaiThietBi = null;
+    errPhong = null;
     errNgayMua = null;
     errGiaTri = null;
     errTrangThai = null;
@@ -78,6 +99,12 @@ class ThietBiFormViewModel extends ChangeNotifier {
     // Loại thiết bị
     if (loaiThietBi == null) {
       errLoaiThietBi = "Vui lòng chọn loại thiết bị";
+      hopLe = false;
+    }
+
+    // Phòng
+    if (phongID == null) {
+      errPhong = "Vui lòng chọn phòng";
       hopLe = false;
     }
 
@@ -164,11 +191,55 @@ class ThietBiFormViewModel extends ChangeNotifier {
 
         return result;
       }
+    } catch (e) {
+      return null;
+
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
+
+  void clear() {
+    _thietBiDangSua = null;
+
+    txtTenThietBi.clear();
+    txtGiaTri.clear();
+    txtNgayMua.clear();
+
+    loaiThietBi = null;
+    phongID = null;
+    trangThai = null;
+
+    errTenThietBi = null;
+    errLoaiThietBi = null;
+    errPhong = null;
+    errNgayMua = null;
+    errGiaTri = null;
+    errTrangThai = null;
+
+    notifyListeners();
+  }
+
+  Future<bool> xoa() async {
+    if (_thietBiDangSua == null) return false;
+
+    if (_isLoading) return false;
+
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      return await _service.xoa(_thietBiDangSua!.thietBiID!);
+    } catch (e) {
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+
 
   @override
   void dispose() {

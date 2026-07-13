@@ -5,9 +5,8 @@ import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:flutter/material.dart';
 
 class ThietBiPageViewModel extends ChangeNotifier {
-  int currentIndex = 0;
-
   final ThietBiProvider _serviceTB;
+  final txtSearch = TextEditingController();
 
   bool get isLoading => _serviceTB.isLoading;
 
@@ -26,11 +25,16 @@ class ThietBiPageViewModel extends ChangeNotifier {
 
   Future<void> refresh() => _serviceTB.fetchAll();
 
+  void search() {
+    notifyListeners();
+  }
   @override
   void dispose() {
+    txtSearch.dispose();
     _serviceTB.removeListener(_onThietBiUpdate);
     super.dispose();
   }
+
   List<Phong> dsPhong = [
     Phong(phongID: 1, tenPhong: "P101", trangThai: 1, maLoaiPhong: 1),
 
@@ -46,30 +50,18 @@ class ThietBiPageViewModel extends ChangeNotifier {
   ];
 
 
-
   List<ThietBi> get dsHienThi {
-    switch (currentIndex) {
-      case 1:
-        return dsThietBi.where((e) => e.trangThai == "Tốt").toList();
+    final keyword = txtSearch.text.trim().toLowerCase();
 
-      case 2:
-        return dsThietBi.where((e) => e.trangThai == "Đang sửa").toList();
-
-      default:
-        return dsThietBi;
+    if (keyword.isEmpty) {
+      return dsThietBi;
     }
+
+    return dsThietBi.where((e) {
+      return (e.tenThietBi ?? "")
+          .toLowerCase()
+          .contains(keyword);
+    }).toList();
   }
 
-  void changeTab(int index) {
-    currentIndex = index;
-
-    notifyListeners();
-  }
-
-  int get tongSoThietBi => dsThietBi.length;
-
-  int get tongDangDung => dsThietBi.where((e) => e.trangThai == "Tốt").length;
-
-  int get tongHongSua =>
-      dsThietBi.where((e) => e.trangThai == "Đang sửa").length;
 }

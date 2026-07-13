@@ -153,7 +153,6 @@ class _ThietBiFormState extends State<ThietBiForm> {
           child: CustomDropdownSearch<String>(
             popupHeight: 160,
 
-            items: vm.dsTrangThai,
 
             selectedItem: vm.trangThai,
 

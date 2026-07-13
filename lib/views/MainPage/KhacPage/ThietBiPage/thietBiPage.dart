@@ -91,8 +91,8 @@ class _ThietBiPageState extends State<ThietBiPage> {
                   MaterialPageRoute(builder: (_) => ThietBiForm()),
                 );
 
-                if (result is ThietBi) {
-                  setState(() {});
+                if (result != null) {
+                  await vm.refresh();
                 }
               },
 
@@ -118,15 +118,27 @@ class _ThietBiPageState extends State<ThietBiPage> {
           children: [
             const SizedBox(height: 16),
 
-            Row(
-              children: [
-                _tab("Tất cả (${vm.tongSoThietBi})", 0),
-
-                _tab("Đang dùng (${vm.tongDangDung})", 1),
-
-                _tab("Hỏng/Sửa (${vm.tongHongSua})", 2),
-              ],
+            Container(
+              height: 52,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: TextField(
+                controller: vm.txtSearch,
+                decoration: const InputDecoration(
+                  border: InputBorder.none,
+                  icon: Icon(Icons.search),
+                  hintText: "Tìm thiết bị",
+                ),
+                onChanged: (_) {
+                  vm.search();
+                },
+              ),
             ),
+
+            const SizedBox(height: 16),
 
             const SizedBox(height: 16),
 
@@ -165,59 +177,6 @@ class _ThietBiPageState extends State<ThietBiPage> {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _tab(String text, int index) {
-    bool selected = vm.currentIndex == index;
-
-    Color backgroundColor = const Color(0xffF3F3F3);
-    Color textColor = const Color(0xff757575);
-
-    if (selected) {
-      switch (index) {
-        case 1:
-          backgroundColor = const Color(0xffE7F5EA);
-          textColor = const Color(0xff2D7A3A);
-          break;
-
-        case 2:
-          backgroundColor = const Color(0xffFFEAEA);
-          textColor = Colors.red;
-          break;
-
-        default:
-          backgroundColor = const Color(0xffF3F3F3);
-          textColor = Colors.black87;
-      }
-    }
-
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          vm.changeTab(index);
-        });
-      },
-
-      child: Container(
-        margin: const EdgeInsets.only(right: 8),
-
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(20),
-        ),
-
-        child: Text(
-          text,
-          style: TextStyle(
-            color: textColor,
-            fontSize: 11,
-            fontWeight: FontWeight.w700,
-          ),
         ),
       ),
     );
