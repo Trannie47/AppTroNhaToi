@@ -1,10 +1,12 @@
 import 'package:AppTroNhaToi/Provider/sua_chua_provider.dart';
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
+import 'package:AppTroNhaToi/models/DTO/SuaChuaDTO.dart';
 import 'package:AppTroNhaToi/models/hoa_don_sua_chua.dart';
 import 'package:AppTroNhaToi/models/sua_chua.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/chiTietLichSuSuaChuaPage/chiTietLichSuSuaChuaPageViewModel.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/LichSuSuaChuaPage/LichSuSuaChuaPageModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/PhieuSuaChuaForm/PhieuSuaChuaForm.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,7 +14,7 @@ import 'package:provider/provider.dart';
 class ChiTietLichSuSuaChuaPage extends StatefulWidget {
   final SuaChua suaChua;
   final HoaDonSuaChua? hoaDonSuaChua;
-
+  final String? tenPhong;
   final ThietBi thietBi;
 
   const ChiTietLichSuSuaChuaPage({
@@ -20,6 +22,7 @@ class ChiTietLichSuSuaChuaPage extends StatefulWidget {
     required this.suaChua,
     this.hoaDonSuaChua,
     required this.thietBi,
+    this.tenPhong,
   });
 
   @override
@@ -65,10 +68,16 @@ class _ChiTietLichSuSuaChuaPageState extends State<ChiTietLichSuSuaChuaPage> {
       ),
     );
 
-    if (result != null) {
+    if (result is SuaChuaDTO) {
       setState(() {
-        vm.suaChua = (result['suaChua'] as SuaChua?)!;
-        vm.hoaDonSuaChua = (result['hoaDonSuaChua'] as HoaDonSuaChua?)!;
+        vm.suaChua = SuaChua(
+          id: result.id,
+          phongID: result.phongId,
+          thietBiID: result.thietBiId,
+          nguyenNhan: result.nguyenNhan,
+          ngaySuaChua: result.ngaySuaChua,
+        );
+        vm.hoaDonSuaChua = result.hoaDonSuaChua;
       });
     }
   }
@@ -169,7 +178,7 @@ class _ChiTietLichSuSuaChuaPageState extends State<ChiTietLichSuSuaChuaPage> {
             ),
 
             Text(
-              "${widget.thietBi.tenThietBi} - ${vm.phong.tenPhong}",
+              "${widget.thietBi.tenThietBi} - ${widget.tenPhong}",
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
@@ -203,18 +212,20 @@ class _ChiTietLichSuSuaChuaPageState extends State<ChiTietLichSuSuaChuaPage> {
             icon: const Icon(Icons.more_vert),
 
             itemBuilder: (context) => [
-              PopupMenuItem<String>(
-                value: "update",
-                child: ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: const Icon(
-                    Icons.edit_outlined,
-                    color: Color(0xff2D7A3A),
+              if (!(vm.hoaDonSuaChua?.trangThai == 2 ||
+                  vm.hoaDonSuaChua?.trangThai == 3))
+                PopupMenuItem<String>(
+                  value: "update",
+                  child: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(
+                      Icons.edit_outlined,
+                      color: Color(0xff2D7A3A),
+                    ),
+                    title: const Text("Cập nhật thông tin"),
+                    subtitle: const Text("Sửa lỗi, loại sửa"),
                   ),
-                  title: const Text("Cập nhật thông tin"),
-                  subtitle: const Text("Sửa lỗi, loại sửa"),
                 ),
-              ),
 
               PopupMenuItem<String>(
                 value: "delete",

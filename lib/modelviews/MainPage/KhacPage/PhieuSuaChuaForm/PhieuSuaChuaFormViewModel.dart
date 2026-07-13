@@ -35,7 +35,7 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
   final PhongProvider _phongProvider;
   final SuaChuaProvider _suaChuaProvider;
 
-  List<ItemPhong> get dsPhong => _phongProvider.listPhong;
+  List<ItemPhong> get dsPhong => _phongProvider.listPhongByThietBi;
   bool get isLoadingPhong => _phongProvider.isLoading;
 
   PhieuSuaChuaViewModel({
@@ -44,10 +44,6 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
   }) : _phongProvider = phongProvider,
        _suaChuaProvider = suaChuaProvider {
     _phongProvider.addListener(_onProviderUpdate);
-
-    Future.microtask(() async {
-      await _phongProvider.getListPhong();
-    });
   }
 
   void _onProviderUpdate() {
@@ -243,6 +239,9 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
 
       trangThai = hoaDonSuaChua!.trangThai ?? 0;
     }
+    Future.microtask(() async {
+      await _phongProvider.getListByThietBi(thietBiData.thietBiID!);
+    });
   }
 
   Future<SuaChuaDTO?> luu() async {

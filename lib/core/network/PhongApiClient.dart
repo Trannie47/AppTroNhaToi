@@ -5,17 +5,17 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
 class PhongApiClient {
-  final Dio _dio= RetrofitClient().dio;
+  final Dio _dio = RetrofitClient().dio;
 
-  Future<List<ItemPhong>> getListPhong() async{
-    try{
-        final response= await _dio.get("phong/findAll");
-        if(response.statusCode==200 || response.statusCode==201){
-          final List<dynamic> data= response.data;
-          return data.map((json)=> ItemPhong.fromMap(json)).toList();
-        }
-        return [];
-    }catch(e){
+  Future<List<ItemPhong>> getListPhong() async {
+    try {
+      final response = await _dio.get("phong/findAll");
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final List<dynamic> data = response.data;
+        return data.map((json) => ItemPhong.fromMap(json)).toList();
+      }
+      return [];
+    } catch (e) {
       if (kDebugMode) {
         print("Lỗi PhongApiClient $e");
       }
@@ -23,80 +23,86 @@ class PhongApiClient {
     }
   }
 
-  Future<Phong?> SaveRoom(Phong room)async{
-    try{
-      final response= await _dio.post("phong", data: room.toMap());
-      if(response.statusCode==200 || response.statusCode==201){
-        if(response.data!=null){
+  Future<Phong?> SaveRoom(Phong room) async {
+    try {
+      final response = await _dio.post("phong", data: room.toMap());
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        if (response.data != null) {
           return Phong.fromMap(response.data);
         }
       }
       return null;
-    }on DioException catch(e){
+    } on DioException catch (e) {
       if (kDebugMode) {
         print("Lỗi PhongApiClient");
       }
       throw Exception(_mapErrorToMessage(e));
-    }
-    catch(e){
+    } catch (e) {
       if (kDebugMode) {
         print("Lỗi không xác định PhongApiClient: $e");
       }
       throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
     }
   }
-  Future<Phong?> updateRoom(Phong room) async{
-    try{
-      final response=await _dio.patch("phong/${room.phongID}", data: room.toMap());
 
-      if(response.statusCode==200 || response.statusCode==201){
-        if(response.data!=null){
+  Future<Phong?> updateRoom(Phong room) async {
+    try {
+      final response = await _dio.patch(
+        "phong/${room.phongID}",
+        data: room.toMap(),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        if (response.data != null) {
           return Phong.fromMap(response.data);
         }
       }
       return null;
-    }on DioException catch(e){
+    } on DioException catch (e) {
       if (kDebugMode) {
         print("Lỗi PhongApiClient");
       }
       throw Exception(_mapErrorToMessage(e));
-    }
-    catch(e){
+    } catch (e) {
       if (kDebugMode) {
         print("Lỗi không xác định PhongApiClient: $e");
       }
       throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
     }
   }
-  Future<Phong?> removePhong(int idPhong) async{
-    try{
-      final response= await _dio.delete("phong/$idPhong");
-      if(response.statusCode==200 || response.statusCode==201){
-        if(response.data !=null){
+
+  Future<Phong?> removePhong(int idPhong) async {
+    try {
+      final response = await _dio.delete("phong/$idPhong");
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        if (response.data != null) {
           return Phong.fromMap(response.data);
         }
       }
       return null;
-    }on DioException catch(e){
+    } on DioException catch (e) {
       if (kDebugMode) {
         print("Lỗi tầng PhongApiClient $e");
       }
       throw Exception(_mapErrorToMessage(e));
-    }catch(e){
+    } catch (e) {
       if (kDebugMode) {
         print("Lỗi không xác định PhongApiClient: $e");
       }
       throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
     }
   }
-  Future<ItemPhong> getInforPhong(int idPhong)async{
-    try{
-      final response= await _dio.get("phong/$idPhong");
-      if(response.statusCode==200|| response.statusCode==201){
+
+  Future<ItemPhong> getInforPhong(int idPhong) async {
+    try {
+      final response = await _dio.get("phong/$idPhong");
+      if (response.statusCode == 200 || response.statusCode == 201) {
         return ItemPhong.fromMap(response.data);
       }
-      throw Exception("Lấy thông tin phong thất bại, Mã lỗi ${response.statusCode}");
-    }catch(e){
+      throw Exception(
+        "Lấy thông tin phong thất bại, Mã lỗi ${response.statusCode}",
+      );
+    } catch (e) {
       if (kDebugMode) {
         print("Loi PhongApiClient $e");
       }
@@ -104,7 +110,7 @@ class PhongApiClient {
     }
   }
 
-  String _mapErrorToMessage(DioException e){
+  String _mapErrorToMessage(DioException e) {
     if (e.type == DioExceptionType.connectionTimeout ||
         e.type == DioExceptionType.receiveTimeout ||
         e.type == DioExceptionType.sendTimeout) {
@@ -127,6 +133,29 @@ class PhongApiClient {
         return "Hệ thống đang gặp sự cố, vui lòng thử lại sau";
       default:
         return "Đã có lỗi xảy ra, vui lòng thử lại sau";
+    }
+  }
+
+  Future<List<ItemPhong>> getListByThietBi(int thietBiId) async {
+    try {
+      final response = await _dio.get("phong/thiet-bi/$thietBiId");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final List<dynamic> data = response.data;
+        return data.map((json) => ItemPhong.fromMap(json)).toList();
+      }
+
+      return [];
+    } on DioException catch (e) {
+      if (kDebugMode) {
+        print("Lỗi getListByThietBi: $e");
+      }
+      throw Exception(_mapErrorToMessage(e));
+    } catch (e) {
+      if (kDebugMode) {
+        print("Lỗi không xác định getListByThietBi: $e");
+      }
+      throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
     }
   }
 }

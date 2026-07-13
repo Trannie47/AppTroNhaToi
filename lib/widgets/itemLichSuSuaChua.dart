@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 class ItemLichSuSuaChua extends StatelessWidget {
   final SuaChua suaChua;
   final HoaDonSuaChua? hoaDonSuaChua;
+  final String? tenPhong;
   final VoidCallback? onClick;
 
   const ItemLichSuSuaChua({
@@ -14,6 +15,7 @@ class ItemLichSuSuaChua extends StatelessWidget {
     required this.suaChua,
     this.hoaDonSuaChua,
     this.onClick,
+    this.tenPhong,
   });
 
   @override
@@ -35,7 +37,9 @@ class ItemLichSuSuaChua extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    suaChua.nguyenNhan ?? "",
+                    suaChua.nguyenNhan ??
+                        ""
+                            "- ${tenPhong ?? ""}",
                     style: const TextStyle(
                       fontWeight: FontWeight.w700,
                       fontSize: 14,

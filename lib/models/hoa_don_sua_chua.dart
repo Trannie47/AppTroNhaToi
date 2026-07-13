@@ -20,7 +20,7 @@ class HoaDonSuaChua {
   factory HoaDonSuaChua.fromMap(Map<String, dynamic> map) {
     return HoaDonSuaChua(
       maHoaDonSC: map['maHoaDonSc'] as String?,
-      trangThai: map['TrangThai'] as int? ?? 0,
+      trangThai: map['trangThai'] as int? ?? 0,
       giaTien: map['giaTien'] != null
           ? double.tryParse(map['giaTien'].toString())
           : null,
@@ -35,7 +35,7 @@ class HoaDonSuaChua {
   Map<String, dynamic> toMap() {
     return {
       if (maHoaDonSC != null) 'maHoaDonSc': maHoaDonSC,
-      'TrangThai': trangThai,
+      'trangThai': trangThai,
       'giaTien': giaTien,
       'loaiSua': loaiSua,
       'ngayLapHoaDonSc': ngayLapHoaDonSC?.toIso8601String().split('T').first,

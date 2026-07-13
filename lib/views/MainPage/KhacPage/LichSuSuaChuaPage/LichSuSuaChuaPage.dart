@@ -196,6 +196,7 @@ class _LichSuSuaChuaPageState extends State<LichSuSuaChuaPage> {
                               suaChua: item.suaChua!,
                               hoaDonSuaChua: item.hoaDonSuaChua,
                               thietBi: widget.thietBi,
+                              tenPhong: item.tenPhong,
                             ),
                           ),
                         ),

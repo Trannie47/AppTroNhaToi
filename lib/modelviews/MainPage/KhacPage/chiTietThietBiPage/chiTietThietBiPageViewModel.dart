@@ -33,8 +33,13 @@ class ChiTietThietBiPageViewModel extends ChangeNotifier {
   }
 
   void _onProviderUpdate() {
-    print("ViewModel: ${_suaChuaProvider.list.length}");
     notifyListeners();
+  }
+
+  Future<void> reloadLichSuSuaChua() async {
+    if (thietBi.thietBiID != null) {
+      await _suaChuaProvider.fetchByThietBi(thietBi.thietBiID!);
+    }
   }
 
   bool get dangSua => thietBi.trangThaiText.toLowerCase() == "đang sửa";

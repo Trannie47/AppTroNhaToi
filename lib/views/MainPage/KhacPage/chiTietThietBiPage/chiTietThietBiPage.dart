@@ -58,15 +58,27 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
       ),
     );
 
-    if (result == true) {
-      setState(() {
-        // Nếu ViewModel có danh sách riêng
-        // vm.lichSuSuaChua = result;
+    vm.reloadLichSuSuaChua();
+  }
 
-        // Hoặc nếu dùng Provider thì chỉ cần fetch lại
-        // vm.refresh();
-      });
-    }
+  Future<void> moChiTietLichSuSuaChua(LichSuSuaChuaPageModel item) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ChangeNotifierProvider.value(
+          value: context.read<SuaChuaProvider>(),
+          child: ChiTietLichSuSuaChuaPage(
+            suaChua: item.suaChua!,
+            hoaDonSuaChua: item.hoaDonSuaChua,
+            thietBi: vm.thietBi,
+            tenPhong: item.tenPhong,
+          ),
+        ),
+      ),
+    );
+
+    // Nếu muốn load lại khi quay về
+    await vm.reloadLichSuSuaChua();
   }
 
   @override
@@ -340,23 +352,7 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
                             return ItemLichSuSuaChua(
                               suaChua: item.suaChua,
                               hoaDonSuaChua: item.hoaDonSuaChua,
-                              onClick: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) =>
-                                        ChangeNotifierProvider.value(
-                                          value: context
-                                              .read<SuaChuaProvider>(),
-                                          child: ChiTietLichSuSuaChuaPage(
-                                            suaChua: item.suaChua!,
-                                            hoaDonSuaChua: item.hoaDonSuaChua,
-                                            thietBi: vm.thietBi,
-                                          ),
-                                        ),
-                                  ),
-                                );
-                              },
+                              onClick: () => moChiTietLichSuSuaChua(item),
                             );
                           }),
                         ),
