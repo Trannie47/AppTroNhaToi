@@ -268,7 +268,9 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                         if (!RegExp(r'^0\d{9}$').hasMatch(value)) {
                           return "Số điện thoại phải gồm đúng 10 số";
                         }
-
+                        if (vm.checkTrungSDT()) {
+                          return "Số điện thoại này đã tồn tại trong hệ thống";
+                        }
                         return null;
                       },
                     ),
@@ -276,7 +278,6 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                     _input(
                       title: "Số CCCD ( Căn cước công dân)",
                       hint: "Nhập số CCCD/CMND",
-                      //controller: vm.txtCCCD,
                       controller: vm.txtCCCD,
                       keyboardType: TextInputType.number,
                       validator: (value) {
@@ -286,6 +287,9 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
 
                         if (!RegExp(r'^\d{12}$').hasMatch(value)) {
                           return "CCCD phải gồm đúng 12 số";
+                        }
+                        if (vm.checkTrungCCCD()) {
+                          return "Số CCCD này đã tồn tại trong hệ thống";
                         }
 
                         return null;
@@ -350,8 +354,8 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                                         tuoi--;
                                       }
 
-                                      if (tuoi < 0 || tuoi > 120) {
-                                        return "Tuổi không hợp lệ";
+                                      if (tuoi < 18 || tuoi > 120) {
+                                        return "Phải từ 18 tuổi trở lên";
                                       }
 
                                     } catch (_) {
