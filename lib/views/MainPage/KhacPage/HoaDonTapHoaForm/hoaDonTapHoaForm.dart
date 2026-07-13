@@ -11,6 +11,8 @@ import 'package:AppTroNhaToi/widgets/customDropdownSearch.dart';
 import 'package:AppTroNhaToi/widgets/itemHangHoaChon.dart';
 import 'package:AppTroNhaToi/widgets/itemPhieuThuTapHoa.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_multi_formatter/formatters/masked_input_formatter.dart';
 import 'package:provider/provider.dart';
 
 class HoaDonTapHoaForm extends StatefulWidget {
@@ -75,6 +77,8 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
     required TextEditingController controller,
     String? hint,
     Widget? suffixIcon,
+    TextInputType keyboardType = TextInputType.text,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,6 +99,8 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
           ),
           child: TextField(
             controller: controller,
+            keyboardType: keyboardType,
+            inputFormatters: inputFormatters,
             decoration: InputDecoration(
               hintText: hint,
               suffixIcon: suffixIcon,
@@ -244,10 +250,10 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
                     SizedBox(
                       height: 48,
                       child: CustomDropdownSearch<NguoiThue>(
+                        popupHeight: 210,
                         items: vm.dsNguoiThue,
                         selectedItem: vm.selectedNguoiThue,
                         itemAsString: (item) => item.hoTen!,
-
                         onChanged: (value) {
                           setState(() {
                             vm.selectedNguoiThue = value;
@@ -279,9 +285,13 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
                     title: "Ngày mua",
 
                     controller: vm.txtNgayMua,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [MaskedInputFormatter('##/##/####')],
 
                     suffixIcon: IconButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        await vm.chonNgay(context, vm.txtNgayMua);
+                      },
 
                       icon: const Icon(Icons.calendar_today_outlined),
                     ),

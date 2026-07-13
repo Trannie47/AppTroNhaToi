@@ -348,6 +348,24 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> chonNgay(
+      BuildContext context,
+      TextEditingController controller,
+      ) async {
+    DateTime? ngay = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(DateTime.now().year, DateTime.now().month, 1),
+      lastDate: DateTime.now(),
+    );
+
+    if (ngay != null) {
+      controller.text = formatDate(ngay);
+
+      notifyListeners();
+    }
+  }
+
   @override
   void dispose() {
     _nguoiThueProvider.removeListener(_onNguoiThueUpdate);

@@ -296,7 +296,7 @@ class _TapHoaPageState extends State<TapHoaPage> {
                             return AlertDialog(
                               title: const Text("Ẩn hàng hóa"),
                               content: Text(
-                                "Bạn có muốn ẩn'${vm.dsHangHoa[index].tenHangHoa}' không?",
+                                "Bạn có muốn ẩn '${vm.dsHangHoa[index].tenHangHoa}' không?",
                               ),
 
                               actions: [

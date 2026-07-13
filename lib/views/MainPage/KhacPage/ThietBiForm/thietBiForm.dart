@@ -4,6 +4,7 @@ import 'package:AppTroNhaToi/models/lap_rap.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/thietBiForm/thietBiFormViewModel.dart';
+import 'package:AppTroNhaToi/widgets/customDropdownSearch.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -85,42 +86,50 @@ class _ThietBiFormState extends State<ThietBiForm> {
   Widget _dropDownLoaiThietBi() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-
       children: [
         const Text(
           "Loại thiết bị",
-          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+          ),
         ),
 
         const SizedBox(height: 8),
 
-        DropdownButtonFormField<String>(
-          value: vm.loaiThietBi,
+        SizedBox(
+          height: 48,
+          child: CustomDropdownSearch<String>(
+            popupHeight: 210, // hiện khoảng 3 dòng
 
-          decoration: InputDecoration(
-            errorText: vm.errLoaiThietBi,
+            items: vm.dsLoaiThietBi,
 
-            filled: true,
-            fillColor: const Color(0xffF8F8F8),
+            selectedItem: vm.loaiThietBi,
 
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide.none,
+            itemAsString: (item) => item,
+
+            onChanged: (value) {
+              setState(() {
+                vm.loaiThietBi = value;
+              });
+            },
+          ),
+        ),
+
+        if (vm.errLoaiThietBi != null) ...[
+          const SizedBox(height: 4),
+
+          Padding(
+            padding: const EdgeInsets.only(left: 6),
+            child: Text(
+              vm.errLoaiThietBi!,
+              style: const TextStyle(
+                color: Colors.red,
+                fontSize: 12,
+              ),
             ),
           ),
-
-          hint: const Text("--Chọn loại thiết bị--"),
-
-          items: vm.dsLoaiThietBi
-              .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-              .toList(),
-
-          onChanged: (value) {
-            setState(() {
-              vm.loaiThietBi = value;
-            });
-          },
-        ),
+        ],
       ],
     );
   }
@@ -128,42 +137,50 @@ class _ThietBiFormState extends State<ThietBiForm> {
   Widget _dropDownTrangThai() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-
       children: [
         const Text(
           "Trạng thái",
-          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+          ),
         ),
 
         const SizedBox(height: 8),
 
-        DropdownButtonFormField<String>(
-          value: vm.trangThai,
+        SizedBox(
+          height: 48,
+          child: CustomDropdownSearch<String>(
+            popupHeight: 160,
 
-          decoration: InputDecoration(
-            errorText: vm.errTrangThai,
+            items: vm.dsTrangThai,
 
-            filled: true,
-            fillColor: const Color(0xffF8F8F8),
+            selectedItem: vm.trangThai,
 
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide.none,
+            itemAsString: (item) => item,
+
+            onChanged: (value) {
+              setState(() {
+                vm.trangThai = value;
+              });
+            },
+          ),
+        ),
+
+        if (vm.errTrangThai != null) ...[
+          const SizedBox(height: 4),
+
+          Padding(
+            padding: const EdgeInsets.only(left: 6),
+            child: Text(
+              vm.errTrangThai!,
+              style: const TextStyle(
+                color: Colors.red,
+                fontSize: 12,
+              ),
             ),
           ),
-
-          hint: const Text("--Chọn trạng thái--"),
-
-          items: vm.dsTrangThai
-              .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-              .toList(),
-
-          onChanged: (value) {
-            setState(() {
-              vm.trangThai = value;
-            });
-          },
-        ),
+        ],
       ],
     );
   }

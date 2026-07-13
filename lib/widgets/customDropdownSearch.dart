@@ -27,49 +27,173 @@ class CustomDropdownSearch<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+
     return DropdownSearch<T>(
       enabled: enabled,
+
       items: (filter, loadProps) async {
         if (asyncItems != null) {
           return await asyncItems!(filter);
         }
 
-        final f = filter.toLowerCase();
-        if (f.isEmpty) {
-          return items?? const [];
+        final keyword = filter.toLowerCase();
+
+        if (keyword.isEmpty) {
+          return items ?? <T>[];
         }
-        return (items ?? const [])
-            .where((e) => itemAsString(e).toLowerCase().contains(f))
+
+        return (items ?? <T>[])
+            .where(
+              (e) => itemAsString(e)
+              .toLowerCase()
+              .contains(keyword),
+        )
             .toList();
       },
 
       selectedItem: selectedItem,
       itemAsString: itemAsString,
+      compareFn: (a, b) => a == b,
+      onSelected: onChanged,
+
+      decoratorProps: DropDownDecoratorProps(
+        decoration: InputDecoration(
+          labelText: label.isEmpty ? null : label,
+          hintText: hintText,
+          filled: true,
+          fillColor: enabled ? Colors.white : Colors.grey.shade100,
+
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
+
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(
+              color: Colors.grey.shade300,
+            ),
+          ),
+
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(
+              color: primary,
+              width: 2,
+            ),
+          ),
+
+          disabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(
+              color: Colors.grey.shade300,
+            ),
+          ),
+
+          suffixIcon: const Icon(
+            Icons.keyboard_arrow_down_rounded,
+          ),
+        ),
+      ),
+
       popupProps: PopupProps.menu(
         showSearchBox: true,
         fit: FlexFit.loose,
-        constraints: BoxConstraints(maxHeight: popupHeight),
-        searchFieldProps: const TextFieldProps(
+        constraints: BoxConstraints(
+          maxHeight: popupHeight,
+        ),
+
+        searchFieldProps: TextFieldProps(
           decoration: InputDecoration(
             hintText: "Tìm kiếm...",
-            prefixIcon: Icon(Icons.search),
-            border: OutlineInputBorder(),
+            prefixIcon: const Icon(Icons.search),
+            filled: true,
+            fillColor: Colors.grey.shade100,
+
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 10,
+            ),
+
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: Colors.grey.shade300,
+              ),
+            ),
+
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: primary,
+                width: 1.5,
+              ),
+            ),
           ),
         ),
+
+        itemBuilder: (
+            BuildContext context,
+            T item,
+            bool isDisabled,
+            bool isSelected,
+            ) {
+          return Container(
+            height: 48,
+
+            padding: const EdgeInsets.symmetric(
+              horizontal: 12,
+            ),
+
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? primary.withValues(alpha: 0.08)
+                  : Colors.transparent,
+
+              border: Border(
+                bottom: BorderSide(
+                  color: Colors.grey.shade300,
+                  width: 0.8,
+                ),
+              ),
+            ),
+
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    itemAsString(item),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.w500,
+                    ),
+                  ),
+                ),
+
+                if (isSelected)
+                  Icon(
+                    Icons.check,
+                    color: primary,
+                    size: 18,
+                  ),
+              ],
+            ),
+          );
+        },
       ),
-      decoratorProps: DropDownDecoratorProps(
-        decoration: InputDecoration(
-          labelText: label.isNotEmpty? label : null,
-          hintText: hintText,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 12,
-          ),
-        ),
-      ),
-      onSelected: onChanged,
-      compareFn: (a, b) => a == b,
     );
   }
 }
