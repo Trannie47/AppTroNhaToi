@@ -142,6 +142,7 @@ class _HopDongPageState extends State<HopDongPage> {
                           hintStyle: TextStyle(color: Colors.grey.shade400),
                           prefixIcon: const Icon(Icons.search, color: Colors.grey),
                           border: InputBorder.none,
+                          contentPadding: const EdgeInsets.symmetric(vertical: 12),
                         ),
                       ),
                     ),
@@ -210,7 +211,20 @@ class _HopDongPageState extends State<HopDongPage> {
                     ),
 
                 HopDongSuccess(data: final _) => (() {
-                  final dsHienThi = vm.listHDHienThi;
+                  final dsTheoTab = vm.listHDHienThi;
+
+                  final dsHienThi = dsTheoTab.where((hd) {
+                    if (tuKhoa.isEmpty) return true;
+
+                    final tenNguoiThue = hd.nguoithue.hoTen.toLowerCase();
+                    final tenPhong = hd.phong.tenPhong.toLowerCase();
+                    final maHD = hd.hopDongID.toLowerCase();
+
+                    return tenNguoiThue.contains(tuKhoa) ||
+                        tenPhong.contains(tuKhoa) ||
+                        maHD.contains(tuKhoa);
+                  }).toList();
+
                   return dsHienThi.isEmpty
                       ? const Center(child: Text("Không có hợp đồng nào."))
                       : ListView.builder(
