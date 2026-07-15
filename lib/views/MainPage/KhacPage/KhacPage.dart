@@ -1,5 +1,6 @@
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/TapHoaPage/TapHoaPage.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThietBiPage/thietBiPage.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThongKePage/thongKePage.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/hopDongPage/hopDongPage.dart';
 import 'package:flutter/material.dart';
 
@@ -121,6 +122,17 @@ class KhacPage extends StatelessWidget {
                     "Báo cáo doanh thu, chi phí,\nlợi nhuận theo tháng",
                     status: "Tháng 4: 27.5 tr",
                     statusColor: Colors.deepPurple,
+
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const ThongKePage(),
+                        ),
+
+                      );
+
+                    },
                   ),
                 ],
               ),
