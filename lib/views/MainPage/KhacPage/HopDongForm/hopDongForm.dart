@@ -230,7 +230,7 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                _label("Ngày ký"),
+                                _label("Ngày bắt đầu"),
                                 _dateField(vm.txtNgayKy, vm.errNgayKy),
                               ],
                             ),

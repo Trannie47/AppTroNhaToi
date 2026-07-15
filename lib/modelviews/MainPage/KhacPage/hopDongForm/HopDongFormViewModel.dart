@@ -324,13 +324,22 @@ class HopDongFormViewModel extends ChangeNotifier {
       if (!ngayHetHan.isAfter(ngayKy)) {
         errNgayHetHan = "Ngày hết hạn phải lớn hơn ngày ký";
         hopLe = false;
+      } else {
+        final khoangCach = ngayHetHan.difference(ngayKy).inDays;
+        if (khoangCach < 30) {
+          errNgayHetHan = "Hợp đồng tối thiểu phải 30 ngày";
+          hopLe = false;
+        } else if (khoangCach > 3650) {
+          errNgayHetHan = "Hợp đồng không được vượt quá 10 năm";
+          hopLe = false;
+        }
       }
     }
 
     final giaThue = txtGiaHopDong.text.replaceAll(RegExp(r'[^0-9]'), '');
     double? giaHopDong = double.tryParse(giaThue);
-    if (txtGiaHopDong.text.isEmpty || giaHopDong == null || giaHopDong < 0) {
-      errGiaHopDong = "Giá thuê phải là số ≥ 0";
+    if (txtGiaHopDong.text.isEmpty || giaHopDong == null || giaHopDong <= 0) {
+      errGiaHopDong = "Giá thuê phải lớn hơn 0";
       hopLe = false;
     }
 
@@ -371,8 +380,14 @@ class HopDongFormViewModel extends ChangeNotifier {
     // Khi update: Không cho phép đổi phòng khác
     if (isEdit && selectedPhong != null && hdDTO != null) {
       if (selectedPhong!.id != hdDTO!.phongID) {
-        errPhong = "Không thể chuyển hợp đồng sang phòng khác. Vui lòng tạo HĐ mới!";
+        errPhong = "Không thể chuyển hợp đồng sang phòng khác. Vui lòng tạo hợp đồng mới!";
         hopLe = false;
+      }
+    }
+    if(isEdit && selectedNguoiThue!=null && hdDTO!=null){
+      if(selectedNguoiThue!.idnt != hdDTO!.idnt){
+        errNguoiThue= "Không thể sửa hợp đồng sang người thuê khác. Vui lòng tạo hợp đồng mới";
+        hopLe=false;
       }
     }
 
