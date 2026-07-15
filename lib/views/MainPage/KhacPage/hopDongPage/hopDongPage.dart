@@ -257,13 +257,16 @@ class _HopDongPageState extends State<HopDongPage> {
                     final itemHD = danhSach[index];
                     return ItemNTHopDong(
                       hopDong: danhSach[index],
-                      onTap: ()  {
-                        Navigator.push(
+                      onTap: () async {
+                        final result = await Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (_) => ChiTietHopDongPage(hopDong: itemHD),
                           ),
                         );
+                        if (result == true && mounted) {
+                          vm.loadListHD();
+                        }
                       },
                     );
                   },

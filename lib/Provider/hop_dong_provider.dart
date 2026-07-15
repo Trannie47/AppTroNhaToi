@@ -32,6 +32,14 @@ class HopDongProvider extends ChangeNotifier {
       rethrow;
     }
   }
+  Future<HopDong> updateHopDong(HopDong hopDong, List<File> imageHopDong) async{
+    try{
+      final result = await hopdongRepository.updateContract(hopDong, imageHopDong);
+      return result;
+    }catch(e){
+      rethrow;
+    }
+  }
   Future<List<RoomAvailableDTO>> getRoomsAvailable() async{
     try{
       final list= await hopdongRepository.getRoomsAvailableForContract();

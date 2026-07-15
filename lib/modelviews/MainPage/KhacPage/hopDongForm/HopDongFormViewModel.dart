@@ -18,6 +18,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/utils/map_dio_error_to_message.dart';
+import '../../../../models/DTO/HopDongDTO.dart';
+import '../../../../states/hop_dong_update_state.dart';
 
 class HopDongFormViewModel extends ChangeNotifier {
   final HopDongProvider _hopDongProvider;
@@ -45,6 +47,9 @@ class HopDongFormViewModel extends ChangeNotifier {
   HopDongState _tenantsAvailable= HopDongInitial();
   HopDongState get tenantsAvailable=> _tenantsAvailable;
 
+  HopDongUpdateState _updateContractState = HopDongUpdateInitial();
+  HopDongUpdateState get updateContractState => _updateContractState;
+
   CreateContractState _createContractState= CreateContractInitial();
   CreateContractState get createContractState => _createContractState;
 
@@ -52,7 +57,7 @@ class HopDongFormViewModel extends ChangeNotifier {
   List<File> listImageContract = [];
   String? errImageContract;
 
-  HopDong? hopDong;
+  HopDongDTO? hdDTO;
 
   // hàm gọi api để hiênr thị list phòng khi tạo hợp đồng mới
   Future<void> getRoomsAvailableForContract() async{
@@ -79,8 +84,8 @@ class HopDongFormViewModel extends ChangeNotifier {
     }
   }
   Future<void> createHopDong() async{
-    if (!kiemTraDuLieu()) return;
     final hopDongInfor= getInforContract();
+    print("Lays duwojc infro laf $hopDongInfor");
     if(hopDongInfor== null) return;
     _createContractState= CreateContractLoading();
     notifyListeners();
@@ -103,6 +108,31 @@ class HopDongFormViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+  Future<void> updateHopDong() async{
+    final hopDongInfor= getInforContract();
+    if(hopDongInfor== null) return;
+    _updateContractState= HopDongUpdateLoading();
+    notifyListeners();
+    try{
+      final result= await _hopDongProvider.updateHopDong(hopDongInfor, listImageContract);
+      _updateContractState= HopDongUpdateSuccess(result);
+    }catch(e){
+      String loi = "Đã có lỗi xảy ra, vui lòng thử lại sau!";
+      if(e is DioException){
+        loi= mapDioErrorToMessage(e);
+      }else{
+        if (kDebugMode) {
+          print("Lỗi logic hệ thống trong HopDongFormViewModel (Update): $e");
+        } else {
+          loi = "Hệ thống đang gặp sự cố kỹ thuật, vui lòng quay lại sau!";
+        }
+      }
+      _updateContractState= HopDongUpdateError(loi);
+    }finally{
+      notifyListeners();
+    }
+  }
+
 
 
   Future<void> getNguoiThueAvailableForContract() async{
@@ -145,7 +175,7 @@ class HopDongFormViewModel extends ChangeNotifier {
 
 
   NguoiThue? selectedNguoiThue;
-  bool get isEdit => hopDong != null;
+  bool get isEdit => hdDTO != null;
 
   RoomAvailableDTO? selectedPhong;
   //Chọn phòng sẽ tự động lấy giá phòng gốc hiển thị lên
@@ -170,18 +200,27 @@ class HopDongFormViewModel extends ChangeNotifier {
   String? errGiaDeXuat;
   String? errGhiChu;
 
-  void init({HopDong? hopDong}) {
-    this.hopDong = hopDong;
+  void init({HopDongDTO? hopDong}) {
+    hdDTO = hopDong;
 
     if (hopDong != null) {
       txtNgayKy.text = formatDate(hopDong.ngayKy);
       txtNgayHetHan.text = formatDate(hopDong.ngayHetHan);
+      txtGiaHopDong.text = formatMoney(hopDong.giaPhongThucTe.toInt()).toString();
+      txtTienCoc.text = formatMoney(hopDong.tienCoc.toInt()).toString();
+      txtGhiChu.text = hopDong.ghiChu ?? "";
 
-      txtGiaHopDong.text = (hopDong.giaPhongThucTe ?? 0).toString();
+      selectedPhong = RoomAvailableDTO(
+        id: hopDong.phongID,
+        tenPhong: hopDong.phong.tenPhong,
+        giaPhongGoc: hopDong.phong.giaPhongGoc,
+      );
+      txtTongGiaPhong.text = formatMoney(hopDong.phong.giaPhongGoc);
 
-      txtTienCoc.text = (hopDong.tienCoc ?? 0).toString();
-
-      txtGhiChu.text = "";
+      selectedNguoiThue = NguoiThue(
+        idnt: hopDong.idnt,
+        hoTen: hopDong.nguoithue.hoTen,
+      );
     }
     else{
       txtNgayKy.text = formatDate(DateTime.now());
@@ -199,7 +238,9 @@ class HopDongFormViewModel extends ChangeNotifier {
     double tienCocParsed = double.tryParse(txtTienCoc.text.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0.0;
     double giaHopDongParsed = double.tryParse(txtGiaHopDong.text.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0.0;
 
-    hopDong= HopDong(
+    return HopDong(
+      hopDongID: hdDTO?.hopDongID,
+      trangThai: hdDTO?.trangThai,
       phongID: selectedPhong?.id,
       idnt: selectedNguoiThue?.idnt,
       ngayKy: ngayKyParsed,
@@ -208,7 +249,7 @@ class HopDongFormViewModel extends ChangeNotifier {
       giaPhongThucTe: giaHopDongParsed,
       ghiChu: txtGhiChu.text.toString(),
     );
-    return hopDong;
+
   }
 
 
@@ -313,17 +354,24 @@ class HopDongFormViewModel extends ChangeNotifier {
       errImageContract = "Vui lòng chụp hoặc thêm ít nhất một ảnh hợp đồng";
       hopLe = false;
     }
-    //check trùng hợp đồng, tránh trươngf hợp ng đó đã tạo hợp dôndgf rồi mà chủ trọ tạo lại
-    if (selectedPhong != null && selectedNguoiThue != null) {
+    // Check trùng hợp đồng khi tạo mới còn update thì ko
+    if (selectedPhong != null && selectedNguoiThue != null && !isEdit) {
       final danhSachHD = _hopDongProvider.listHD; // List đã load sẵn
       final isDuplicate = danhSachHD.any((hd) =>
       hd.phongID == selectedPhong!.id &&
           hd.idnt == selectedNguoiThue!.idnt &&
-          hd.trangThai !=2 // chỉ check hợp đồng đang hiệu lực và HD đã khởi tạo
+          hd.trangThai != 2 // chỉ check hợp đồng đang hiệu lực và HD đã khởi tạo
       );
 
       if (isDuplicate) {
         errPhong = "Người thuê này đã có hợp đồng với phòng đã chọn!";
+        hopLe = false;
+      }
+    }
+    // Khi update: Không cho phép đổi phòng khác
+    if (isEdit && selectedPhong != null && hdDTO != null) {
+      if (selectedPhong!.id != hdDTO!.phongID) {
+        errPhong = "Không thể chuyển hợp đồng sang phòng khác. Vui lòng tạo HĐ mới!";
         hopLe = false;
       }
     }

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../models/DTO/HopDongDTO.dart';
+import '../../../../models/hop_dong.dart';
 import '../../../../models/item_phong.dart';
 
 class ChiTietHopDongViewModel extends ChangeNotifier {
@@ -15,6 +16,7 @@ class ChiTietHopDongViewModel extends ChangeNotifier {
 
   bool _isLoadingPhong = false;
   bool get isLoadingPhong => _isLoadingPhong;
+  bool isUpdated = false;
 
 
   void init(HopDongDTO hd) {
@@ -43,4 +45,23 @@ class ChiTietHopDongViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+  // Hàm update lại dữ liệu trên màn chi tiết sau khi sửa thành công mà không cần load lại API
+  void updateHopDongData(HopDong hd) {
+    _hopDong = HopDongDTO(
+      hopDongID: hd.hopDongID ?? _hopDong.hopDongID,
+      idnt: hd.idnt ?? _hopDong.idnt,
+      phongID: hd.phongID ?? _hopDong.phongID,
+      ngayKy: hd.ngayKy ?? _hopDong.ngayKy,
+      ngayHetHan: hd.ngayHetHan ?? _hopDong.ngayHetHan,
+      tienCoc: hd.tienCoc ?? _hopDong.tienCoc,
+      giaPhongThucTe: hd.giaPhongThucTe ?? _hopDong.giaPhongThucTe,
+      ghiChu: hd.ghiChu,
+      dsAnhHopDong: (hd.dsAnhHopDong != null && hd.dsAnhHopDong!.isNotEmpty) ? hd.dsAnhHopDong! : _hopDong!.dsAnhHopDong,
+      trangThai: hd.trangThai ?? _hopDong.trangThai,
+      phong: _hopDong.phong,
+      nguoithue: _hopDong.nguoithue,
+    );
+    isUpdated = true;
+    notifyListeners();
+    }
 }

@@ -51,14 +51,28 @@ class HopDongDTO {
   }
   @override
   String toString() {
-    return 'HopDongDTO(hopDongID: $hopDongID, idnt: $idnt, phongID: $phongID, ngayKy: $ngayKy, ngayHetHan: $ngayHetHan, tienCoc: $tienCoc, giaPhongThucTe: $giaPhongThucTe, trangThai: $trangThai, phong: ${phong.tenPhong}, ghiChu: $ghiChu, nguoithue: ${nguoithue.hoTen}, dsAnhHopDong: $dsAnhHopDong)';
+    return 'HopDongDTO(hopDongID: $hopDongID, idnt: $idnt, phongID: $phongID, ngayKy: $ngayKy, ngayHetHan: $ngayHetHan, tienCoc: $tienCoc, giaPhongThucTe: $giaPhongThucTe, trangThai: $trangThai, phong: ${phong.tenPhong}, ghiChu: $ghiChu, nguoithue: ${nguoithue.hoTen}, dsAnhHopDong: $dsAnhHopDong giaGocCuaPhong: ${phong.giaPhongGoc})';
   }
 }
 class PhongHD{
   final String tenPhong;
-  PhongHD({required this.tenPhong});
-  factory PhongHD.fromMap(Map<String,dynamic> json) =>
-      PhongHD(tenPhong: json['tenPhong']?? 'Không rõ');
+  final double giaPhongGoc; // dùng ddeer hiển thị giá gốc của phòng đó lên form Update Hợp đồng
+  PhongHD({required this.tenPhong, required this.giaPhongGoc,});
+  factory PhongHD.fromMap(Map<String,dynamic> json){
+    final loaiPhongMap = json['loaiPhong'] as Map<String, dynamic>?;
+    // Parse giá tiền từ chuỗi
+    final giaRaw = loaiPhongMap?['giaTien'];
+    double giaParsed = 0.0;
+    if (giaRaw is num) {
+      giaParsed = giaRaw.toDouble();
+    } else if (giaRaw is String) {
+      giaParsed = double.tryParse(giaRaw) ?? 0.0;
+    }
+    return PhongHD(
+      tenPhong: json['tenPhong'] ?? 'Không rõ',
+      giaPhongGoc: giaParsed,
+    );
+  }
 }
 class NguoiThueHD{
   final String hoTen;

@@ -4,6 +4,7 @@ import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/string_formatter.dart';
 import 'package:AppTroNhaToi/models/DTO/HopDongDTO.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/chiTietHopDongPage/chiTietHopDongViewModel.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietHopDongPage/widget/hopDongFormMenu.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietHopDongPage/xemAnhHopDong.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -37,7 +38,8 @@ class _ChiTietHopDongPageState extends State<ChiTietHopDongPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return
+      Scaffold(
       backgroundColor: const Color(0xffF3F3F3),
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -63,7 +65,7 @@ class _ChiTietHopDongPageState extends State<ChiTietHopDongPage> {
                   color: Colors.black,
                   size: 18,
                 ),
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => Navigator.pop(context,vm.isUpdated),
               ),
             ),
           ),
@@ -89,26 +91,11 @@ class _ChiTietHopDongPageState extends State<ChiTietHopDongPage> {
             ),
           ],
         ),
-
+      //Menu
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16),
-            child: Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: Color(0xffF3F3F3),
-                borderRadius: BorderRadius.circular(36),
-              ),
-              child: IconButton(
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-                onPressed: () {},
-                icon: const Center(
-                  child: Icon(Icons.more_vert, color: Colors.black, size: 18),
-                ),
-              ),
-            ),
+            child: _menu(context, vm)
           ),
         ],
       ),
@@ -517,6 +504,28 @@ Widget _ketThucHopDongButton() {
           fontWeight: FontWeight.bold,
         ),
       ),
+    ),
+  );
+}
+
+Widget _menu(BuildContext context, ChiTietHopDongViewModel vm) {
+  return GestureDetector(
+    onTap: () {
+      showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        builder: (_) => HopDongFormMenu(vm: vm),
+      );
+    },
+    child: Container(
+      width: 36,
+      height: 36,
+      decoration: BoxDecoration(
+        color: const Color(0xffF3F3F3),
+        borderRadius: BorderRadius.circular(36),
+      ),
+      child: const Icon(Icons.more_vert, color: Colors.black, size: 18),
     ),
   );
 }

@@ -83,7 +83,7 @@ class ItemNTHopDong extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          "Phòng ${hopDong.phongID}",
+                          "Phòng ${hopDong.phong.tenPhong}",
                           style: const TextStyle(
                             fontSize: 12,
                             color: Color(0xff2E7D32),

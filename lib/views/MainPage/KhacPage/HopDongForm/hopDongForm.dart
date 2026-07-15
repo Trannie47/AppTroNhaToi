@@ -10,12 +10,14 @@ import 'package:provider/provider.dart';
 
 import '../../../../Provider/hop_dong_provider.dart';
 import '../../../../Provider/nguoi_thue_provider.dart';
+import '../../../../models/DTO/HopDongDTO.dart';
 import '../../../../models/DTO/RoomAvailableDTO.dart';
 import '../../../../states/create_contract_state.dart';
+import '../../../../states/hop_dong_update_state.dart';
 import '../../../../widgets/app_confirm_dialog.dart';
 
 class HopDongForm extends StatefulWidget {
-  final HopDong? hopDong;
+  final HopDongDTO? hopDong;
 
   const HopDongForm({super.key, this.hopDong});
 
@@ -48,7 +50,7 @@ class _TaoHopDongPageState extends State<HopDongForm> {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = vm.createContractState is CreateContractLoading;
+    final isLoading = vm.createContractState is CreateContractLoading|| vm.updateContractState is HopDongUpdateLoading;
     return Stack(
       children: [
         Scaffold(
@@ -75,7 +77,7 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                 ),
               ),
             ),
-            title: const Text(
+            title: Text( vm.isEdit? "Cập nhật hợp đồng":
               "Tạo hợp đồng",
               style: TextStyle(
                 fontSize: 21,
@@ -425,32 +427,91 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                   width: double.infinity,
                   height: 52,
                   child: ElevatedButton(
-                    onPressed: vm.createContractState is CreateContractLoading
+                    onPressed: vm.createContractState is CreateContractLoading || vm.updateContractState is HopDongUpdateLoading
                         ? null // khoá nút khi đang gửi, tránh spam
                         : () async {
-                      await vm.createHopDong();
-                      if (!mounted) return;
-                      if (vm.createContractState is CreateContractSuccess) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("Tạo hợp đồng thành công!"),
-                            backgroundColor: Colors.green,
-                            behavior: SnackBarBehavior.floating,
-                          ),
-                        );
-                        Navigator.pop(context,true); // Quay về màn hình danh sách hợp đồng
-                      }
-                      if (vm.createContractState is CreateContractError) {
-                        final errorState = vm.createContractState as CreateContractError;
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(errorState.errorMessage),
-                            backgroundColor: Colors.red.shade700,
-                            behavior: SnackBarBehavior.floating,
-                          ),
-                        );
-                      }
+                      if (!vm.kiemTraDuLieu()) return;
+                      if(vm.isEdit){
+                        if (vm.hdDTO?.trangThai == 1) {
+                          final confirm = await showDialog<bool>(
+                            context: context,
+                            builder: (context) => AppConfirmDialog(
+                              title: "Cập nhật hợp đồng",
+                              content: "Lưu ý trước khi cập nhật hợp đồng\n\n"
+                                  "- Hợp đồng hiện tại sẽ bị kết thúc và một hợp đồng mới sẽ được tạo để thay thế.\n"
+                                  "\n"
+                                  "- Nếu ngày bắt đầu hợp đồng mới không liền kề với hợp đồng cũ, khoảng thời gian trống đó sẽ không được hệ thống tính hóa đơn tự động",
+                              textConfirm: "Đồng ý",
+                              textCancel: "Hủy",
+                              isDangerous: true,
+                              onConfirm: () {
+                                Navigator.pop(context, true);
+                              },
+                            ),
+                          );
+                          if (confirm == true) {
+                            await vm.updateHopDong();
+                          }
+                        } else {
+                          // Nếu trạng thái là 0 (khởi tạo) thì update luôn
+                          await vm.updateHopDong();
+                        }
+                        if (!mounted) return;
+                        if (vm.updateContractState is HopDongUpdateSuccess) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Cập nhật hợp đồng thành công!"),
+                              backgroundColor: Colors.green,
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
 
+                          final updatedData = (vm.updateContractState as HopDongUpdateSuccess).data;
+
+                          if (vm.hdDTO?.trangThai == 0) {
+                            // Trạng thái 0 trả về object mới để màn hình chi tiết tự cập nhật
+                            Navigator.pop(context, updatedData);
+                          } else {
+                            // Trạng thái 1 tắt form với flag true, sau đó menu sẽ tắt ChiTietHopDongPage để về List
+                            Navigator.pop(context, true);
+                          }
+                        }
+                        if (vm.updateContractState is HopDongUpdateError) {
+                          final errorState = vm.updateContractState as HopDongUpdateError;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(errorState.errorMessage),
+                              backgroundColor: Colors.red.shade700,
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                        }
+
+                      }
+                      else{
+                        await vm.createHopDong();
+                        if (!mounted) return;
+                        if (vm.createContractState is CreateContractSuccess) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Tạo hợp đồng thành công!"),
+                              backgroundColor: Colors.green,
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                          Navigator.pop(context,true); // Quay về màn hình danh sách hợp đồng
+                        }
+                        if (vm.createContractState is CreateContractError) {
+                          final errorState = vm.createContractState as CreateContractError;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(errorState.errorMessage),
+                              backgroundColor: Colors.red.shade700,
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                        }
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xff2E7D32),
@@ -458,7 +519,7 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text(
+                    child: Text( vm.isEdit? "Lưu thay đổi":
                       "Tạo hợp đồng",
                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white),
                     ),

@@ -15,6 +15,9 @@ class HopdongRepository {
   Future<HopDong> createContract(HopDong hopDong, List<File> imageHopDong){
     return hopDongApiClient.createContract(hopDong, imageHopDong);
   }
+  Future<HopDong> updateContract(HopDong hopDong, List<File> imageHopDong){
+    return hopDongApiClient.updateContract(hopDong, imageHopDong);
+  }
 
   Future<List<RoomAvailableDTO>> getRoomsAvailableForContract(){
     return hopDongApiClient.getRoomsAvailableForContract();
