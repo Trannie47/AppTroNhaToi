@@ -29,7 +29,7 @@ class _HopDongPageState extends State<HopDongPage> {
       }
     });
     WidgetsBinding.instance.addPostFrameCallback((_){
-      vm.loadListHD();
+      vm.loadList();
     });
   }
   @override
@@ -38,20 +38,8 @@ class _HopDongPageState extends State<HopDongPage> {
     super.dispose();
   }
 
-  String boLoc = "TAT_CA";
   String tuKhoa = "";
 
-  String taoMaHopDong(DateTime ngayKy, int stt) {
-    String ngay = ngayKy.day.toString().padLeft(2, '0');
-
-    String thang = ngayKy.month.toString().padLeft(2, '0');
-
-    String nam = ngayKy.year.toString();
-
-    String soThuTu = stt.toString().padLeft(2, '0');
-
-    return "$ngay$thang$nam$soThuTu";
-  }
 
 
   void moTrangTaoHopDong() async{
@@ -163,68 +151,41 @@ class _HopDongPageState extends State<HopDongPage> {
                   Container(
                     color: Colors.white,
                     padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                boLoc = "TAT_CA";
-                              });
-                            },
-                            child: _buildFilter(
-                              title: "Tất cả (0)",
-                              color: Colors.grey.shade700,
+                    child: SizedBox(
+                      height: 38,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            _itemFilter(
+                              filter: -1,
+                              text: "Tất cả (${vm.listHD.length})",
                               bgColor: const Color(0xFFF5F5F5),
+                              textColor: Colors.grey.shade700,
                             ),
-                          ),
-
-                          const SizedBox(width: 8),
-
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                boLoc = "HIEU_LUC";
-                              });
-                            },
-                            child: _buildFilter(
-                              title: "Hiệu lực (0)",
-                              color: Colors.green,
+                            const SizedBox(width: 8),
+                            _itemFilter(
+                              filter: 1,
+                              text: "Hiệu lực (${vm.listHDHieuLuc.length})",
                               bgColor: const Color(0xffE8F5E9),
+                              textColor: Colors.green,
                             ),
-                          ),
-
-                          const SizedBox(width: 8),
-
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                boLoc = "SAP_HET_HAN";
-                              });
-                            },
-                            child: _buildFilter(
-                              title: "Sắp hết hạn (0)",
-                              color: const Color(0xffD97706),
+                            const SizedBox(width: 8),
+                            _itemFilter(
+                              filter: 0,
+                              text: "Khởi tạo (${vm.listHDKhoiTao.length})",
                               bgColor: const Color(0xffFEF3C7),
+                              textColor: const Color(0xffD97706),
                             ),
-                          ),
-
-                          const SizedBox(width: 8),
-
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                boLoc = "DA_KET_THUC";
-                              });
-                            },
-                            child: _buildFilter(
-                              title: "Đã kết thúc (0)",
-                              color: Colors.red,
+                            const SizedBox(width: 8),
+                            _itemFilter(
+                              filter: 2,
+                              text: "Đã kết thúc (${vm.listHDKetThuc.length})",
                               bgColor: const Color(0xffFFEBEE),
+                              textColor: Colors.red,
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -248,29 +209,32 @@ class _HopDongPageState extends State<HopDongPage> {
                         }
                     ),
 
-                HopDongSuccess(data: final danhSach) => danhSach.isEmpty
-                    ? const Center(child: Text("Không có hợp đồng nào."))
-                    : ListView.builder(
-                  padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
-                  itemCount: danhSach.length,
-                  itemBuilder: (context, index) {
-                    final itemHD = danhSach[index];
-                    return ItemNTHopDong(
-                      hopDong: danhSach[index],
-                      onTap: () async {
-                        final result = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => ChiTietHopDongPage(hopDong: itemHD),
-                          ),
-                        );
-                        if (result == true && mounted) {
-                          vm.loadListHD();
-                        }
-                      },
-                    );
-                  },
-                ),
+                HopDongSuccess(data: final _) => (() {
+                  final dsHienThi = vm.listHDHienThi;
+                  return dsHienThi.isEmpty
+                      ? const Center(child: Text("Không có hợp đồng nào."))
+                      : ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    itemCount: dsHienThi.length,
+                    itemBuilder: (context, index) {
+                      final itemHD = dsHienThi[index];
+                      return ItemNTHopDong(
+                        hopDong: itemHD,
+                        onTap: () async {
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ChiTietHopDongPage(hopDong: itemHD),
+                            ),
+                          );
+                          if (result == true && mounted) {
+                            vm.loadListHD();
+                          }
+                        },
+                      );
+                    },
+                  );
+                })(),
 
                 HopDongInitial() => const SizedBox.shrink(),
               },
@@ -280,24 +244,38 @@ class _HopDongPageState extends State<HopDongPage> {
       ),
     );
   }
-
-  Widget _buildFilter({
-    required String title,
-    required Color color,
+  Widget _itemFilter({
+    required int filter,
+    required String text,
     required Color bgColor,
+    required Color textColor,
   }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+    final isSelected = vm.currentFilter == filter;
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 250),
+      alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(20),
+        color: isSelected ? textColor : bgColor,
+        borderRadius: BorderRadius.circular(30),
       ),
-      child: Text(
-        title,
-        style: TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w600,
-          color: color,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(30),
+          onTap: () => vm.setFilter(filter),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Center(
+              child: Text(
+                text,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: isSelected ? Colors.white : textColor,
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );
