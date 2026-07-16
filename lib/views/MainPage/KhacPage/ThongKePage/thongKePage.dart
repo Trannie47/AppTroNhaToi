@@ -1,3 +1,4 @@
+import 'package:AppTroNhaToi/Provider/thong_ke_provider.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/ThongKePage/ThongKeViewModel.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -5,17 +6,50 @@ import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class ThongKePage extends StatefulWidget {
-
   const ThongKePage({super.key});
   @override
-
   State<ThongKePage> createState() => _ThongKePageState();
 }
 
 class _ThongKePageState extends State<ThongKePage> {
+  late ThongKeViewModel vm;
+
+  @override
+  void initState() {
+    super.initState();
+
+    vm = ThongKeViewModel(context.read<ThongKeProvider>());
+
+    vm.loadThongKe();
+    vm.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
+
+  // ================== HELPER FORMAT ==================
+
+  String _tien(num? value) {
+    final v = (value ?? 0).toInt();
+    final str = v.abs().toString();
+    final buffer = StringBuffer();
+    int count = 0;
+    for (int i = str.length - 1; i >= 0; i--) {
+      buffer.write(str[i]);
+      count++;
+      if (count % 3 == 0 && i != 0) buffer.write('.');
+    }
+    final result = buffer.toString().split('').reversed.join();
+    return '${v < 0 ? '-' : ''}${result}đ';
+  }
+
+  String _phanTram(num value) {
+    return '${value.toStringAsFixed(0)}%';
+  }
+
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<ThongKeViewModel>();
     return Scaffold(
       backgroundColor: const Color(0xFFF6F7FB),
       body: SafeArea(
@@ -36,45 +70,43 @@ class _ThongKePageState extends State<ThongKePage> {
                 padding: const EdgeInsets.only(bottom: 24),
 
                 itemBuilder: (context, index) {
-
                   switch (index) {
-
                     case 0:
-                      return _buildKpiSection();
+                      return _buildKpiSection(vm);
 
                     case 1:
-                      return _buildRevenueChart();
+                      return _buildRevenueChart(vm);
 
                     case 2:
-                      return _buildPieChart();
+                      return _buildPieChart(vm);
 
                     case 3:
-                      return _buildRoomSection();
+                      return _buildRoomSection(vm);
 
                     case 4:
-                      return _buildTenantSection();
+                      return _buildTenantSection(vm);
 
                     case 5:
-                      return _buildDeviceSection();
+                      return _buildDeviceSection(vm);
 
                     case 6:
-                      return _buildExpenseSection();
+                      return _buildExpenseSection(vm);
 
                     case 7:
-                      return _buildTopRevenue();
+                      return _buildTopRevenue(vm);
 
                     case 8:
-                      return _buildTopDebt();
+                      return _buildTopDebt(vm);
 
                     case 9:
-                      return _buildRecentActivity();
+                      return _buildRecentActivity(vm);
 
                     default:
                       return const SizedBox();
                   }
                 },
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -128,10 +160,7 @@ class _ThongKePageState extends State<ThongKePage> {
                 color: const Color(0xFFF5F6FA),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(
-                Icons.tune_rounded,
-                color: Colors.black87,
-              ),
+              child: const Icon(Icons.tune_rounded, color: Colors.black87),
             ),
 
             offset: const Offset(0, 10),
@@ -286,7 +315,7 @@ class _ThongKePageState extends State<ThongKePage> {
                 ),
               ),
             ],
-          )
+          ),
         ],
       ),
     );
@@ -305,7 +334,7 @@ class _ThongKePageState extends State<ThongKePage> {
               height: 46,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
-                itemCount:vm.filters.length,
+                itemCount: vm.filters.length,
                 separatorBuilder: (_, __) => const SizedBox(width: 10),
                 itemBuilder: (_, index) {
                   final selected = vm.selectedFilter == index;
@@ -313,7 +342,7 @@ class _ThongKePageState extends State<ThongKePage> {
                   return InkWell(
                     borderRadius: BorderRadius.circular(14),
                     onTap: () {
-                        vm.changeFilter(index);
+                      vm.changeFilter(index);
                     },
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 250),
@@ -371,15 +400,26 @@ class _ThongKePageState extends State<ThongKePage> {
 
   // KPI
 
-  Widget _buildKpiSection() {
+  Widget _buildKpiSection(ThongKeViewModel vm) {
+    final tongDoanhThu = vm.tongDoanhThu;
+    final daThu = vm.daThu;
+    final chuaThu = vm.chuaThu;
+    final tongChiPhi = vm.tongChiPhi;
+
+    final phanTramDaThu = tongDoanhThu > 0 ? (daThu / tongDoanhThu * 100) : 0;
+    final phanTramChuaThu = tongDoanhThu > 0
+        ? (chuaThu / tongDoanhThu * 100)
+        : 0;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 18, 16, 0),
       child: Column(
         children: [
           _buildKpiCard(
             title: "Tổng doanh thu",
-            value: "150.000.000đ",
-            subTitle: "↑ +12% so với kỳ trước",
+            value: _tien(tongDoanhThu),
+            // TODO: cần API trả thêm % so với kỳ trước để gán động dòng này
+            subTitle: "So với kỳ trước",
             icon: Icons.account_balance_wallet_rounded,
             iconColor: const Color(0xFF7C4DFF),
             iconBg: const Color(0xFFEDE4FF),
@@ -391,8 +431,8 @@ class _ThongKePageState extends State<ThongKePage> {
 
           _buildKpiCard(
             title: "Đã thu",
-            value: "120.000.000đ",
-            subTitle: "80% tổng doanh thu",
+            value: _tien(daThu),
+            subTitle: "${_phanTram(phanTramDaThu)} tổng doanh thu",
             icon: Icons.account_balance_wallet,
             iconColor: Colors.green,
             iconBg: const Color(0xFFDDF7E6),
@@ -404,8 +444,8 @@ class _ThongKePageState extends State<ThongKePage> {
 
           _buildKpiCard(
             title: "Chưa thu",
-            value: "30.000.000đ",
-            subTitle: "20% tổng doanh thu",
+            value: _tien(chuaThu),
+            subTitle: "${_phanTram(phanTramChuaThu)} tổng doanh thu",
             icon: Icons.receipt_long_rounded,
             iconColor: Colors.orange,
             iconBg: const Color(0xFFFFF1D8),
@@ -417,8 +457,9 @@ class _ThongKePageState extends State<ThongKePage> {
 
           _buildKpiCard(
             title: "Tổng chi phí",
-            value: "25.000.000đ",
-            subTitle: "↓ -5% so với kỳ trước",
+            value: _tien(tongChiPhi),
+            // TODO: cần API trả thêm % so với kỳ trước để gán động dòng này
+            subTitle: "So với kỳ trước",
             icon: Icons.pie_chart_rounded,
             iconColor: Colors.red,
             iconBg: const Color(0xFFFFE5E8),
@@ -502,10 +543,10 @@ class _ThongKePageState extends State<ThongKePage> {
   }
 
   // REVENUE CHART
-
-  Widget _buildRevenueChart() {
+  // TODO: cần biết cấu trúc field của vm.chart (ví dụ: ngay/label, doanhThu)
+  // để vẽ đúng dữ liệu thật bằng fl_chart LineChart thay vì CustomPainter demo.
+  Widget _buildRevenueChart(ThongKeViewModel vm) {
     return Container(
-
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
         child: Container(
@@ -552,8 +593,9 @@ class _ThongKePageState extends State<ThongKePage> {
   }
 
   // PIE CHART
-
-  Widget _buildPieChart() {
+  // TODO: cần biết field cơ cấu doanh thu (tiền phòng/điện/nước/tạp hóa/khác)
+  // trong model để thay list "data" cứng bên dưới bằng dữ liệu thật.
+  Widget _buildPieChart(ThongKeViewModel vm) {
     final List<Map<String, dynamic>> data = [
       {"title": "Tiền phòng", "value": "60%", "color": const Color(0xFF7C4DFF)},
       {"title": "Tiền điện", "value": "18%", "color": Colors.blue},
@@ -563,416 +605,412 @@ class _ThongKePageState extends State<ThongKePage> {
     ];
 
     return Container(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(22),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 16,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Row(
+                children: [
+                  Icon(Icons.pie_chart_rounded, color: Color(0xFF7C4DFF)),
+                  SizedBox(width: 10),
+                  Text(
+                    "Cơ cấu doanh thu",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
 
-        child: Padding(
-      padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(22),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Row(
-              children: [
-                Icon(Icons.pie_chart_rounded, color: Color(0xFF7C4DFF)),
-                SizedBox(width: 10),
-                Text(
-                  "Cơ cấu doanh thu",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 8),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: 140,
-                  height: 140,
-                  child: PieChart(
-                    PieChartData(
-                      centerSpaceRadius: 35,
-                      sectionsSpace: 2,
-                      borderData: FlBorderData(show: false),
-                      sections: [
-                        PieChartSectionData(
-                          value: 60,
-                          color: const Color(0xFF7C4DFF),
-                          title: "60%",
-                          radius: 28,
-                        ),
-                        PieChartSectionData(
-                          value: 18,
-                          color: Colors.green,
-                          title: "18%",
-                          radius: 28,
-                        ),
-                        PieChartSectionData(
-                          value: 10,
-                          color: Colors.orange,
-                          title: "10%",
-                          radius: 28,
-                        ),
-                        PieChartSectionData(
-                          value: 8,
-                          color: Colors.blue,
-                          title: "8%",
-                          radius: 28,
-                        ),
-                        PieChartSectionData(
-                          value: 4,
-                          color: Colors.red,
-                          title: "4%",
-                          radius: 28,
-                        ),
-                      ],
+              const SizedBox(height: 8),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 140,
+                    height: 140,
+                    child: PieChart(
+                      PieChartData(
+                        centerSpaceRadius: 35,
+                        sectionsSpace: 2,
+                        borderData: FlBorderData(show: false),
+                        sections: [
+                          PieChartSectionData(
+                            value: 60,
+                            color: const Color(0xFF7C4DFF),
+                            title: "60%",
+                            radius: 28,
+                          ),
+                          PieChartSectionData(
+                            value: 18,
+                            color: Colors.green,
+                            title: "18%",
+                            radius: 28,
+                          ),
+                          PieChartSectionData(
+                            value: 10,
+                            color: Colors.orange,
+                            title: "10%",
+                            radius: 28,
+                          ),
+                          PieChartSectionData(
+                            value: 8,
+                            color: Colors.blue,
+                            title: "8%",
+                            radius: 28,
+                          ),
+                          PieChartSectionData(
+                            value: 4,
+                            color: Colors.red,
+                            title: "4%",
+                            radius: 28,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
 
-                const SizedBox(width: 12),
+                  const SizedBox(width: 12),
 
-                Expanded(
-                  child: Column(
-                    children: data.map((item) {
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 16),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 14,
-                              height: 14,
-                              decoration: BoxDecoration(
-                                color: item["color"] as Color,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-
-                            const SizedBox(width: 12),
-
-                            Expanded(
-                              child: Text(
-                                item["title"] as String,
-                                style: const TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
+                  Expanded(
+                    child: Column(
+                      children: data.map((item) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 14,
+                                height: 14,
+                                decoration: BoxDecoration(
+                                  color: item["color"] as Color,
+                                  shape: BoxShape.circle,
                                 ),
                               ),
-                            ),
 
-                            Text(
-                              item["value"] as String,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
+                              const SizedBox(width: 12),
+
+                              Expanded(
+                                child: Text(
+                                  item["title"] as String,
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
+
+                              Text(
+                                item["value"] as String,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
-        ),
     );
   }
 
   // ROOM
 
-  Widget _buildRoomSection() {
+  Widget _buildRoomSection(ThongKeViewModel vm) {
     return Container(
-
-        child: Padding(
-      padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(22),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Row(
-              children: [
-                Icon(Icons.meeting_room_rounded, color: Color(0xFF7C4DFF)),
-                SizedBox(width: 10),
-                Text(
-                  "Tình trạng phòng",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 24),
-
-            Row(
-              children: [
-                Expanded(
-                  child: _buildStatisticCard(
-                    title: "Tổng phòng",
-                    value: "40",
-                    color: const Color(0xFF7C4DFF),
-                    icon: Icons.home_work_rounded,
-                  ),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: _buildStatisticCard(
-                    title: "Đang thuê",
-                    value: "34",
-                    color: Colors.green,
-                    icon: Icons.check_circle_rounded,
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 8),
-
-            Row(
-              children: [
-                Expanded(
-                  child: _buildStatisticCard(
-                    title: "Phòng trống",
-                    value: "6",
-                    color: Colors.orange,
-                    icon: Icons.meeting_room_outlined,
-                  ),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: _buildStatisticCard(
-                    title: "Lấp đầy",
-                    value: "85%",
-                    color: Colors.blue,
-                    icon: Icons.bar_chart_rounded,
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 24),
-
-            const Text(
-              "Tỷ lệ lấp đầy",
-              style: TextStyle(fontWeight: FontWeight.w600),
-            ),
-
-            const SizedBox(height: 10),
-
-            ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: LinearProgressIndicator(
-                value: .85,
-                minHeight: 10,
-                backgroundColor: Color(0xFFE9ECF2),
-                valueColor: AlwaysStoppedAnimation(Color(0xFF7C4DFF)),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(22),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 16,
+                offset: const Offset(0, 6),
               ),
-            ),
-          ],
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Row(
+                children: [
+                  Icon(Icons.meeting_room_rounded, color: Color(0xFF7C4DFF)),
+                  SizedBox(width: 10),
+                  Text(
+                    "Tình trạng phòng",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 24),
+
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildStatisticCard(
+                      title: "Tổng phòng",
+                      value: "${vm.tongPhong}",
+                      color: const Color(0xFF7C4DFF),
+                      icon: Icons.home_work_rounded,
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: _buildStatisticCard(
+                      title: "Đang thuê",
+                      value: "${vm.phongDangThue}",
+                      color: Colors.green,
+                      icon: Icons.check_circle_rounded,
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 8),
+
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildStatisticCard(
+                      title: "Phòng trống",
+                      value: "${vm.phongTrong}",
+                      color: Colors.orange,
+                      icon: Icons.meeting_room_outlined,
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: _buildStatisticCard(
+                      title: "Lấp đầy",
+                      value: _phanTram(vm.tyLeLapDay),
+                      color: Colors.blue,
+                      icon: Icons.bar_chart_rounded,
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 24),
+
+              const Text(
+                "Tỷ lệ lấp đầy",
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+
+              const SizedBox(height: 10),
+
+              ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: LinearProgressIndicator(
+                  value: (vm.tyLeLapDay / 100).clamp(0, 1).toDouble(),
+                  minHeight: 10,
+                  backgroundColor: const Color(0xFFE9ECF2),
+                  valueColor: const AlwaysStoppedAnimation(Color(0xFF7C4DFF)),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
-        ),
     );
   }
 
   // TENANT
 
-  Widget _buildTenantSection() {
+  Widget _buildTenantSection(ThongKeViewModel vm) {
     return Container(
-
-        child: Padding(
-      padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(22),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Row(
-              children: [
-                Icon(Icons.people_alt_rounded, color: Color(0xFF7C4DFF)),
-                SizedBox(width: 10),
-                Text(
-                  "Người thuê",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 24),
-
-            Row(
-              children: [
-                Expanded(
-                  child: _buildStatisticCard(
-                    title: "Tổng người thuê",
-                    value: "56",
-                    color: const Color(0xFF7C4DFF),
-                    icon: Icons.people,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(22),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 16,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Row(
+                children: [
+                  Icon(Icons.people_alt_rounded, color: Color(0xFF7C4DFF)),
+                  SizedBox(width: 10),
+                  Text(
+                    "Người thuê",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: _buildStatisticCard(
-                    title: "Đang ở",
-                    value: "54",
-                    color: Colors.green,
-                    icon: Icons.person,
-                  ),
-                ),
-              ],
-            ),
+                ],
+              ),
 
-            const SizedBox(height: 8),
+              const SizedBox(height: 24),
 
-            Row(
-              children: [
-                Expanded(
-                  child: _buildStatisticCard(
-                    title: "Đã trả phòng",
-                    value: "2",
-                    color: Colors.orange,
-                    icon: Icons.logout_rounded,
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildStatisticCard(
+                      title: "Tổng người thuê",
+                      value: "${vm.tongNguoiThue}",
+                      color: const Color(0xFF7C4DFF),
+                      icon: Icons.people,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: _buildStatisticCard(
-                    title: "HĐ sắp hết",
-                    value: "4",
-                    color: Colors.red,
-                    icon: Icons.event_busy_rounded,
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: _buildStatisticCard(
+                      title: "Đang ở",
+                      value: "${vm.nguoiDangO}",
+                      color: Colors.green,
+                      icon: Icons.person,
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+
+              const SizedBox(height: 8),
+
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildStatisticCard(
+                      title: "Đã trả phòng",
+                      value: "${vm.daTraPhong}",
+                      color: Colors.orange,
+                      icon: Icons.logout_rounded,
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: _buildStatisticCard(
+                      title: "HĐ sắp hết",
+                      value: "${vm.hopDongSapHet}",
+                      color: Colors.red,
+                      icon: Icons.event_busy_rounded,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
-        ),
     );
   }
 
   // DEVICE
 
-  Widget _buildDeviceSection() {
+  Widget _buildDeviceSection(ThongKeViewModel vm) {
     return Container(
-
-        child: Padding(
-      padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(22),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Row(
-              children: [
-                Icon(Icons.handyman_rounded, color: Color(0xFF7C4DFF)),
-                SizedBox(width: 10),
-                Text(
-                  "Thiết bị",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 24),
-
-            Row(
-              children: [
-                Expanded(
-                  child: _buildStatisticCard(
-                    title: "Tổng thiết bị",
-                    value: "180",
-                    color: const Color(0xFF7C4DFF),
-                    icon: Icons.inventory_2_rounded,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(22),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 16,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Row(
+                children: [
+                  Icon(Icons.handyman_rounded, color: Color(0xFF7C4DFF)),
+                  SizedBox(width: 10),
+                  Text(
+                    "Thiết bị",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: _buildStatisticCard(
-                    title: "Hoạt động",
-                    value: "171",
-                    color: Colors.green,
-                    icon: Icons.check_circle,
-                  ),
-                ),
-              ],
-            ),
+                ],
+              ),
 
-            const SizedBox(height: 8),
+              const SizedBox(height: 24),
 
-            Row(
-              children: [
-                Expanded(
-                  child: _buildStatisticCard(
-                    title: "Đang sửa",
-                    value: "6",
-                    color: Colors.orange,
-                    icon: Icons.build_circle_rounded,
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildStatisticCard(
+                      title: "Tổng thiết bị",
+                      value: "${vm.tongThietBi}",
+                      color: const Color(0xFF7C4DFF),
+                      icon: Icons.inventory_2_rounded,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: _buildStatisticCard(
-                    title: "Đã hỏng",
-                    value: "3",
-                    color: Colors.red,
-                    icon: Icons.error_rounded,
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: _buildStatisticCard(
+                      title: "Hoạt động",
+                      value: "${vm.thietBiHoatDong}",
+                      color: Colors.green,
+                      icon: Icons.check_circle,
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+
+              const SizedBox(height: 8),
+
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildStatisticCard(
+                      title: "Đang sửa",
+                      value: "${vm.thietBiDangSua}",
+                      color: Colors.orange,
+                      icon: Icons.build_circle_rounded,
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: _buildStatisticCard(
+                      title: "Đã hỏng",
+                      value: "${vm.thietBiHong}",
+                      color: Colors.red,
+                      icon: Icons.error_rounded,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
-        ),
     );
   }
 
@@ -1013,118 +1051,122 @@ class _ThongKePageState extends State<ThongKePage> {
   }
 
   // EXPENSE
-
-  Widget _buildExpenseSection() {
+  // TODO: cần biết field chi tiết chi phí (sửa chữa/mua thiết bị/khác) trong
+  // model để thay các giá trị cứng bên dưới bằng vm.tongChiPhi chi tiết.
+  Widget _buildExpenseSection(ThongKeViewModel vm) {
     return Container(
-        child: Padding(
-      padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(22),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Row(
-              children: [
-                Icon(Icons.payments_rounded, color: Color(0xFF7C4DFF)),
-                SizedBox(width: 10),
-                Text(
-                  "Chi phí",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 24),
-
-            _buildExpenseItem(
-              title: "Sửa chữa",
-              value: "12.000.000đ",
-              percent: .48,
-              color: Colors.red,
-            ),
-
-            const SizedBox(height: 16),
-
-            _buildExpenseItem(
-              title: "Mua thiết bị",
-              value: "8.000.000đ",
-              percent: .32,
-              color: Colors.orange,
-            ),
-
-            const SizedBox(height: 16),
-
-            _buildExpenseItem(
-              title: "Chi phí khác",
-              value: "5.000.000đ",
-              percent: .20,
-              color: Colors.blue,
-            ),
-
-            const Divider(height: 36),
-
-            Row(
-              children: const [
-                Expanded(
-                  child: Text(
-                    "Tổng chi phí",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                ),
-                Text(
-                  "25.000.000đ",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.red,
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 28),
-
-            const Row(
-              children: [
-                Icon(Icons.bar_chart_rounded, color: Color(0xFF7C4DFF)),
-                SizedBox(width: 8),
-                Text(
-                  "Biểu đồ chi phí",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 20),
-
-            SizedBox(
-              height: 180,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(22),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 16,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Row(
                 children: [
-                  _buildExpenseBar("Sửa", .95, Colors.red),
-                  _buildExpenseBar("TB", .70, Colors.orange),
-                  _buildExpenseBar("Khác", .45, Colors.blue),
-                  _buildExpenseBar("Tổng", 1, const Color(0xFF7C4DFF)),
+                  Icon(Icons.payments_rounded, color: Color(0xFF7C4DFF)),
+                  SizedBox(width: 10),
+                  Text(
+                    "Chi phí",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
                 ],
               ),
-            ),
-          ],
+
+              const SizedBox(height: 24),
+
+              _buildExpenseItem(
+                title: "Sửa chữa",
+                value: "12.000.000đ",
+                percent: .48,
+                color: Colors.red,
+              ),
+
+              const SizedBox(height: 16),
+
+              _buildExpenseItem(
+                title: "Mua thiết bị",
+                value: "8.000.000đ",
+                percent: .32,
+                color: Colors.orange,
+              ),
+
+              const SizedBox(height: 16),
+
+              _buildExpenseItem(
+                title: "Chi phí khác",
+                value: "5.000.000đ",
+                percent: .20,
+                color: Colors.blue,
+              ),
+
+              const Divider(height: 36),
+
+              Row(
+                children: [
+                  const Expanded(
+                    child: Text(
+                      "Tổng chi phí",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    _tien(vm.tongChiPhi),
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red,
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 28),
+
+              const Row(
+                children: [
+                  Icon(Icons.bar_chart_rounded, color: Color(0xFF7C4DFF)),
+                  SizedBox(width: 8),
+                  Text(
+                    "Biểu đồ chi phí",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 20),
+
+              SizedBox(
+                height: 180,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildExpenseBar("Sửa", .95, Colors.red),
+                    _buildExpenseBar("TB", .70, Colors.orange),
+                    _buildExpenseBar("Khác", .45, Colors.blue),
+                    _buildExpenseBar("Tổng", 1, const Color(0xFF7C4DFF)),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
-        ),
     );
   }
 
@@ -1182,8 +1224,8 @@ class _ThongKePageState extends State<ThongKePage> {
   }
 
   // TOP REVENUE
-
-  Widget _buildTopRevenue() {
+  // TODO: cần API/model danh sách top phòng doanh thu cao để thay list cứng.
+  Widget _buildTopRevenue(ThongKeViewModel vm) {
     final items = [
       {
         "room": "P101",
@@ -1218,105 +1260,104 @@ class _ThongKePageState extends State<ThongKePage> {
     ];
 
     return Container(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(22),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 16,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Row(
+                children: [
+                  Icon(Icons.emoji_events_rounded, color: Color(0xFF7C4DFF)),
+                  SizedBox(width: 10),
+                  Text(
+                    "Top 5 phòng doanh thu cao",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
 
-        child: Padding(
-      padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(22),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Row(
-              children: [
-                Icon(Icons.emoji_events_rounded, color: Color(0xFF7C4DFF)),
-                SizedBox(width: 10),
-                Text(
-                  "Top 5 phòng doanh thu cao",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
+              const SizedBox(height: 20),
 
-            const SizedBox(height: 20),
-
-            ...items.map(
-              (item) => Container(
-                margin: const EdgeInsets.only(bottom: 14),
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade50,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 22,
-                      backgroundColor: (item["color"] as Color).withOpacity(
-                        .12,
-                      ),
-                      child: Text(
-                        item["icon"].toString(),
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                    ),
-
-                    const SizedBox(width: 14),
-
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            item["room"].toString(),
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          const Text(
-                            "Doanh thu tháng",
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Flexible(
-                      child: Text(
-                        item["money"].toString(),
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.end,
-                        style: const TextStyle(
-                          color: Colors.green,
-                          fontWeight: FontWeight.bold,
+              ...items.map(
+                (item) => Container(
+                  margin: const EdgeInsets.only(bottom: 14),
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade50,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 22,
+                        backgroundColor: (item["color"] as Color).withOpacity(
+                          .12,
+                        ),
+                        child: Text(
+                          item["icon"].toString(),
+                          style: const TextStyle(fontSize: 18),
                         ),
                       ),
-                    ),
-                  ],
+
+                      const SizedBox(width: 14),
+
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              item["room"].toString(),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            const Text(
+                              "Doanh thu tháng",
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Flexible(
+                        child: Text(
+                          item["money"].toString(),
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.end,
+                          style: const TextStyle(
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
-        ),
     );
   }
 
   // TOP DEBT
-
-  Widget _buildTopDebt() {
+  // TODO: cần API/model danh sách top phòng còn nợ để thay list cứng.
+  Widget _buildTopDebt(ThongKeViewModel vm) {
     final items = [
       {"room": "P104", "money": "6.500.000đ"},
       {"room": "P210", "money": "5.000.000đ"},
@@ -1326,74 +1367,73 @@ class _ThongKePageState extends State<ThongKePage> {
     ];
 
     return Container(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(22),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 16,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Row(
+                children: [
+                  Icon(Icons.warning_amber_rounded, color: Colors.red),
+                  SizedBox(width: 10),
+                  Text(
+                    "Top 5 phòng còn nợ",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
 
-        child: Padding(
-      padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(22),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Row(
-              children: [
-                Icon(Icons.warning_amber_rounded, color: Colors.red),
-                SizedBox(width: 10),
-                Text(
-                  "Top 5 phòng còn nợ",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
+              const SizedBox(height: 20),
 
-            const SizedBox(height: 20),
+              ...List.generate(items.length, (index) {
+                final item = items[index];
 
-            ...List.generate(items.length, (index) {
-              final item = items[index];
-
-              return ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: CircleAvatar(
-                  backgroundColor: Colors.red.withOpacity(.08),
-                  child: Text(
-                    "${index + 1}",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red,
+                return ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: CircleAvatar(
+                    backgroundColor: Colors.red.withOpacity(.08),
+                    child: Text(
+                      "${index + 1}",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red,
+                      ),
                     ),
                   ),
-                ),
-                title: Text(item["room"].toString()),
-                subtitle: const Text("Chưa thanh toán"),
-                trailing: Text(
-                  item["money"].toString(),
-                  style: const TextStyle(
-                    color: Colors.red,
-                    fontWeight: FontWeight.bold,
+                  title: Text(item["room"].toString()),
+                  subtitle: const Text("Chưa thanh toán"),
+                  trailing: Text(
+                    item["money"].toString(),
+                    style: const TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-              );
-            }),
-          ],
+                );
+              }),
+            ],
+          ),
         ),
       ),
-        ),
     );
   }
 
   // RECENT ACTIVITY
-
-  Widget _buildRecentActivity() {
+  // TODO: chưa làm sẽ cập nhật lại sau
+  Widget _buildRecentActivity(ThongKeViewModel vm) {
     final activities = [
       {
         "icon": Icons.payments_rounded,
@@ -1428,64 +1468,62 @@ class _ThongKePageState extends State<ThongKePage> {
     ];
 
     return Container(
-
-        child: Padding(
-      padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(22),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Row(
-              children: [
-                Icon(Icons.history_rounded, color: Color(0xFF7C4DFF)),
-                SizedBox(width: 10),
-                Text(
-                  "Hoạt động gần đây",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 20),
-
-            ...activities.map(
-              (item) => ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: CircleAvatar(
-                  backgroundColor: (item["color"] as Color).withOpacity(.12),
-                  child: Icon(
-                    item["icon"] as IconData,
-                    color: item["color"] as Color,
-                  ),
-                ),
-                title: Text(
-                  item["title"].toString(),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-
-                subtitle: Text(item["time"].toString()),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(22),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 16,
+                offset: const Offset(0, 6),
               ),
-            ),
-          ],
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Row(
+                children: [
+                  Icon(Icons.history_rounded, color: Color(0xFF7C4DFF)),
+                  SizedBox(width: 10),
+                  Text(
+                    "Hoạt động gần đây",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 20),
+
+              ...activities.map(
+                (item) => ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: CircleAvatar(
+                    backgroundColor: (item["color"] as Color).withOpacity(.12),
+                    child: Icon(
+                      item["icon"] as IconData,
+                      color: item["color"] as Color,
+                    ),
+                  ),
+                  title: Text(
+                    item["title"].toString(),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+
+                  subtitle: Text(item["time"].toString()),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
-        ),
     );
   }
-
 }
 
 // REVENUE CHART PAINTER

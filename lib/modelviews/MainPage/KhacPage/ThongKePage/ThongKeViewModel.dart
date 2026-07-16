@@ -1,8 +1,21 @@
+import 'package:AppTroNhaToi/Provider/thong_ke_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class ThongKeViewModel extends ChangeNotifier {
-  /// FILTER
+  final ThongKeProvider _service;
+
+  ThongKeViewModel(this._service) {
+    _service.addListener(_onThongKeUpdate);
+
+    Future.microtask(() => _service.getThongKe());
+  }
+
+  void _onThongKeUpdate() {
+    notifyListeners();
+  }
+
+  ///================ FILTER ==================
 
   int selectedFilter = 2;
 
@@ -13,7 +26,7 @@ class ThongKeViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// SCROLL
+  ///================ SCROLL ==================
 
   final ItemScrollController itemScrollController = ItemScrollController();
 
@@ -28,156 +41,67 @@ class ThongKeViewModel extends ChangeNotifier {
     );
   }
 
-  /// KPI
+  ///================ API ==================
 
-  double tongDoanhThu = 150000000;
+  Future<void> loadThongKe({int? thang, int? nam}) async {
+    await _service.getThongKe(thang: thang, nam: nam);
+  }
 
-  double daThu = 120000000;
+  ///================ DATA ==================
 
-  double chuaThu = 30000000;
+  get data => _service.thongKe;
 
-  double tongChiPhi = 25000000;
+  ///================ KPI ==================
 
-  /// ROOM
+  double get tongDoanhThu => data?.doanhThu.tongDoanhThu ?? 0;
 
-  int tongPhong = 40;
+  double get daThu => data?.daThu.tongDaThu ?? 0;
 
-  int phongDangThue = 34;
+  double get chuaThu => data?.congNo.tongCongNo ?? 0;
 
-  int phongTrong = 6;
+  double get tongChiPhi => data?.chiPhi.tongChiPhi ?? 0;
 
-  double tyLeLapDay = 0.85;
+  ///================ ROOM ==================
 
-  /// TENANT
+  int get tongPhong => data?.phong.tongPhong ?? 0;
 
-  int tongNguoiThue = 56;
+  int get phongDangThue => data?.phong.phongDangThue ?? 0;
 
-  int nguoiDangO = 54;
+  int get phongTrong => data?.phong.phongTrong ?? 0;
 
-  int daTraPhong = 2;
+  double get tyLeLapDay => data?.phong.tiLeLapDay ?? 0;
 
-  int hopDongSapHet = 4;
+  ///================ TENANT ==================
 
-  /// DEVICE
+  int get tongNguoiThue => data?.nguoiThue.tongNguoiThue ?? 0;
 
-  int tongThietBi = 180;
+  int get nguoiDangO => data?.nguoiThue.nguoiDangThue ?? 0;
 
-  int thietBiHoatDong = 171;
+  int get daTraPhong => data?.nguoiThue.nguoiDaDonDi ?? 0;
 
-  int thietBiDangSua = 6;
+  int get hopDongSapHet => data?.nguoiThue.hopDongSapHet ?? 0;
 
-  int thietBiHong = 3;
+  ///================ DEVICE ==================
 
-  /// EXPENSE
+  int get tongThietBi => data?.thietBi.tongThietBi ?? 0;
 
-  double chiPhiSuaChua = 12000000;
+  int get thietBiHoatDong => data?.thietBi.thietBiHoatDong ?? 0;
 
-  double chiPhiMuaThietBi = 8000000;
+  int get thietBiDangSua => data?.thietBi.thietBiDangSua ?? 0;
 
-  double chiPhiKhac = 5000000;
+  int get thietBiHong => data?.thietBi.thietBiHong ?? 0;
 
-  /// PIE CHART
+  int get tongLapRap => data?.thietBi.tongLapRap ?? 0;
 
-  final List<Map<String, dynamic>> pieData = [
-    {
-      "title": "Tiền phòng",
-      "value": "60%",
-      "percent": 60.0,
-      "color": const Color(0xFF7C4DFF),
-    },
-    {
-      "title": "Tiền điện",
-      "value": "18%",
-      "percent": 18.0,
-      "color": Colors.green,
-    },
-    {
-      "title": "Tiền nước",
-      "value": "10%",
-      "percent": 10.0,
-      "color": Colors.orange,
-    },
-    {"title": "Tạp hóa", "value": "8%", "percent": 8.0, "color": Colors.blue},
-    {"title": "Khác", "value": "4%", "percent": 4.0, "color": Colors.red},
-  ];
+  int get tongSuaChua => data?.thietBi.tongSuaChua ?? 0;
 
-  /// TOP DOANH THU
+  ///================ CHART ==================
 
-  final List<Map<String, dynamic>> topRevenue = [
-    {
-      "room": "P101",
-      "money": "15.000.000đ",
-      "icon": "🥇",
-      "color": Colors.amber,
-    },
-    {
-      "room": "P203",
-      "money": "13.500.000đ",
-      "icon": "🥈",
-      "color": Colors.grey,
-    },
-    {
-      "room": "P305",
-      "money": "12.800.000đ",
-      "icon": "🥉",
-      "color": const Color(0xFFCD7F32),
-    },
-    {"room": "P102", "money": "12.000.000đ", "icon": "4", "color": Colors.blue},
-    {
-      "room": "P401",
-      "money": "11.500.000đ",
-      "icon": "5",
-      "color": Colors.green,
-    },
-  ];
-
-  /// TOP CÔNG NỢ
-
-  final List<Map<String, dynamic>> topDebt = [
-    {"room": "P104", "money": "6.500.000đ"},
-    {"room": "P210", "money": "5.000.000đ"},
-    {"room": "P305", "money": "4.000.000đ"},
-    {"room": "P110", "money": "3.500.000đ"},
-    {"room": "P402", "money": "2.800.000đ"},
-  ];
-
-  /// HOẠT ĐỘNG
-
-  final List<Map<String, dynamic>> activities = [
-    {
-      "icon": Icons.payments_rounded,
-      "title": "Thu tiền phòng P101",
-      "time": "10 phút trước",
-      "color": Colors.green,
-    },
-    {
-      "icon": Icons.build_rounded,
-      "title": "Thanh toán sửa chữa máy lạnh",
-      "time": "40 phút trước",
-      "color": Colors.orange,
-    },
-    {
-      "icon": Icons.inventory_rounded,
-      "title": "Nhập thiết bị mới",
-      "time": "1 giờ trước",
-      "color": Colors.blue,
-    },
-    {
-      "icon": Icons.logout_rounded,
-      "title": "Người thuê trả phòng",
-      "time": "Hôm nay",
-      "color": Colors.red,
-    },
-    {
-      "icon": Icons.description_rounded,
-      "title": "Lập hợp đồng mới",
-      "time": "Hôm nay",
-      "color": const Color(0xFF7C4DFF),
-    },
-  ];
+  get chart => data?.chart ?? [];
 
   @override
   void dispose() {
+    _service.removeListener(_onThongKeUpdate);
     super.dispose();
   }
 }
