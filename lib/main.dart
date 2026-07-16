@@ -3,10 +3,7 @@ import 'package:AppTroNhaToi/Provider/hang_hoa_provider.dart';
 import 'package:AppTroNhaToi/Provider/hoa_don_tap_hoa_provider.dart';
 import 'package:AppTroNhaToi/Provider/nguoi_thue_provider.dart';
 import 'package:AppTroNhaToi/Provider/thiet_bi_provider.dart';
-import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/ThongKePage/ThongKeViewModel.dart';
-import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/hopDongPage/HopDongPageViewModel.dart';
-import 'package:AppTroNhaToi/view_models/nguoithue_view_model.dart';
-import 'package:AppTroNhaToi/view_models/phong_view_model.dart';
+import 'package:AppTroNhaToi/Provider/thong_ke_provider.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -32,7 +29,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => HoaDonTapHoaProvider()),
         ChangeNotifierProvider(create: (_) => NguoiThueProvider()),
         ChangeNotifierProvider(create: (_) => ThietBiProvider()),
-        ChangeNotifierProvider(create: (_) => ThongKeViewModel()),
+        ChangeNotifierProvider(create: (_) => ThongKeProvider()),
       ],
       child: const MyApp(),
     ),
