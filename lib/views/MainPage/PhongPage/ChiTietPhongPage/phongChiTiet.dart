@@ -11,6 +11,7 @@ import '../../../../states/NguoiThueState.dart';
 import '../../../../states/phong_save_state.dart';
 import '../../../../widgets/app_confirm_dialog.dart';
 import '../../../../widgets/app_error.dart';
+import 'TrangChucNang/GhiDienNuocPage/ghiDienNuocPage.dart';
 
 class PhongChiTiet extends StatefulWidget {
   final ItemPhong room;
@@ -117,7 +118,7 @@ class PhongChiTiet extends StatefulWidget {
               const SizedBox(height: 16),
 
               // hàng chức năng tiện ích
-              _buildQuickActionsRow(),
+              _buildQuickActionsRow(room),
               const SizedBox(height: 20),
 
               // Thông tin phòng trọ
@@ -234,7 +235,7 @@ class PhongChiTiet extends StatefulWidget {
 
 
     // Hàng chức năng tiện ích cho phong
-    Widget _buildQuickActionsRow() {
+    Widget _buildQuickActionsRow(ItemPhong room) {
       return SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
@@ -242,7 +243,14 @@ class PhongChiTiet extends StatefulWidget {
             _actionChip(title: "Ghi điện nước",
                 icon: Icons.flash_on,
                 isActive: true,
-                onTap: () {}),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => GhiDienNuocPage(phongID: room.phongId,tenPhong: room.tenPhong)),
+                  );
+                }
+            ),
             const SizedBox(width: 8),
             _actionChip(title: "Tạo hóa đơn",
                 icon: Icons.receipt_long,
@@ -270,28 +278,31 @@ class PhongChiTiet extends StatefulWidget {
       required VoidCallback onTap,
     }) {
       Color mainColor = const Color(0xFF2D7A3A);
-      return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: isActive ? mainColor : Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-              color: isActive ? mainColor : Colors.grey.shade300, width: 1.2),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, size: 16,
-                color: isActive ? Colors.white : Colors.black54),
-            const SizedBox(width: 6),
-            Text(
-              title,
-              style: TextStyle(fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                  color: isActive ? Colors.white : Colors.black.withOpacity(
-                      0.7)),
-            ),
-          ],
-        ),
+      return GestureDetector(
+        onTap: onTap,
+        child:Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: isActive ? mainColor : Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+                color: isActive ? mainColor : Colors.grey.shade300, width: 1.2),
+          ),
+          child: Row(
+            children: [
+              Icon(icon, size: 16,
+                  color: isActive ? Colors.white : Colors.black54),
+              const SizedBox(width: 6),
+              Text(
+                title,
+                style: TextStyle(fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: isActive ? Colors.white : Colors.black.withOpacity(
+                        0.7)),
+              ),
+            ],
+          ),
+        ) ,
       );
     }
 
