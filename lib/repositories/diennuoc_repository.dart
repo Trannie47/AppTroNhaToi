@@ -5,8 +5,6 @@ import '../core/network/DienNuocApiClient.dart';
 class DienNuocRepository {
   final DienNuocApiClient _apiClient= DienNuocApiClient();
 
-
-
   Future<DienNuocInitResult> getInitData(int phongId, String thangNam) async {
     try {
       final rawData = await _apiClient.getInitData(phongId, thangNam);
@@ -29,7 +27,32 @@ class DienNuocRepository {
       throw Exception("Lỗi DienNuocRepository.fetchInitData: $e");
     }
   }
+  Future<DienNuoc> createDienNuoc(
+      DienNuoc dienNuoc, {
+        String? anhDienCuPath,
+        String? anhDienMoiPath,
+        String? anhNuocCuPath,
+        String? anhNuocMoiPath,
+      }) async {
+    try {
+      final rawData = await _apiClient.createDienNuoc(
+        dienNuoc,
+        anhDienCuPath: anhDienCuPath,
+        anhDienMoiPath: anhDienMoiPath,
+        anhNuocCuPath: anhNuocCuPath,
+        anhNuocMoiPath: anhNuocMoiPath,
+      );
+
+      return DienNuoc.fromMap(rawData);
+    } catch (e) {
+      if (e is Exception) {
+        rethrow;
+      }
+      throw Exception("Lỗi DienNuocRepository.createDienNuoc: $e");
+    }
+  }
 }
+
 
 class DienNuocInitResult {
   final String mode;// trả về giữ từ khóa update hay là create để hiển thị UI cho phù hợp

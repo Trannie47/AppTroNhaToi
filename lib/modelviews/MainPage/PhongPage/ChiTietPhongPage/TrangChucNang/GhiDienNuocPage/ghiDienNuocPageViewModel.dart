@@ -2,24 +2,39 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:AppTroNhaToi/Provider/dien_nuoc_provider.dart';
+import 'package:AppTroNhaToi/models/dien_nuoc.dart';
 
 class GhiDienNuocPageViewModel extends ChangeNotifier {
   final DienNuocProvider _provider;
 
   GhiDienNuocPageViewModel(this._provider);
 
+  int? phongId;
+  String? thangNam;
+  DateTime selectedDate = DateTime.now();
+
   bool isLoading = false;
+  bool isSubmitting = false;
   String? errorMessage;
+  String? submitErrorMessage;
+
   String? mode;
   bool isFirstTime = false;
 
-  int trangThaiDienNuoc = 0;
-  DateTime selectedDate = DateTime.now();
+  String? urlAnhDienCu;
+  String? urlAnhDienMoi;
+  String? urlAnhNuocCu;
+  String? urlAnhNuocMoi;
 
-  File? anhDienCu;
-  File? anhDienMoi;
-  File? anhNuocCu;
-  File? anhNuocMoi;
+  String? anhDienCuPath;
+  String? anhDienMoiPath;
+  String? anhNuocCuPath;
+  String? anhNuocMoiPath;
+
+  File? anhDienCuFile;
+  File? anhDienMoiFile;
+  File? anhNuocCuFile;
+  File? anhNuocMoiFile;
 
   final ImagePicker _picker = ImagePicker();
 
@@ -28,85 +43,163 @@ class GhiDienNuocPageViewModel extends ChangeNotifier {
   final TextEditingController nuocCuController = TextEditingController();
   final TextEditingController nuocMoiController = TextEditingController();
 
-  Future<void> init(int phongId, String thangNam) async {
+
+  Future<void> init(int phongId, String thangNam,{bool updateDateFromRecord = true}) async {
+    this.phongId = phongId;
+    this.thangNam = thangNam;
+
     isLoading = true;
     errorMessage = null;
     notifyListeners();
 
     try {
-      final parts = thangNam.split('/');
-      if (parts.length == 2) {
-        final month = int.tryParse(parts[0]) ?? DateTime.now().month;
-        final year = int.tryParse(parts[1]) ?? DateTime.now().year;
-        if (month == DateTime.now().month && year == DateTime.now().year) {
-          selectedDate = DateTime.now();
-        } else {
-          selectedDate = DateTime(year, month, 1);
-        }
-      }
-
       await _provider.getInitData(phongId, thangNam);
-
-      if (_provider.errorMessage != null) {
-        errorMessage = _provider.errorMessage;
-        return;
-      }
 
       mode = _provider.mode;
       isFirstTime = _provider.isFirstTime;
       final data = _provider.currentDienNuoc;
 
       if (data != null) {
-        trangThaiDienNuoc = data.trangThai ?? 0;
-
         dienCuController.text = data.chiSoDienCu?.toString() ?? '0';
         nuocCuController.text = data.chiSoNuocCu?.toString() ?? '0';
 
         if (mode == "UPDATE") {
-          dienMoiController.text = (data.chiSoDienMoi == null || data.chiSoDienMoi == 0) ? '' : data.chiSoDienMoi.toString();
-          nuocMoiController.text = (data.chiSoNuocMoi == null || data.chiSoNuocMoi == 0) ? '' : data.chiSoNuocMoi.toString();
+          dienMoiController.text = (data.chiSoDienMoi == null || data.chiSoDienMoi == 0)
+              ? ''
+              : data.chiSoDienMoi.toString();
+          nuocMoiController.text = (data.chiSoNuocMoi == null || data.chiSoNuocMoi == 0)
+              ? ''
+              : data.chiSoNuocMoi.toString();
+          //Load ngày lên khi mở màn lần đầu, ko đè ngày khi chủ trọ tự chọn ngày
+          if (updateDateFromRecord && data.ngayGhi != null) {
+            selectedDate = DateTime.parse(data.ngayGhi!);
+          }
         } else {
           dienMoiController.clear();
           nuocMoiController.clear();
         }
-      } else {
-        trangThaiDienNuoc = 0;
-        dienMoiController.clear();
-        nuocMoiController.clear();
+
+        // Đổ link ảnh online từ server vào biến trạng thái
+        urlAnhDienCu = data.anhDienCu;
+        urlAnhDienMoi = data.anhDienMoi;
+        urlAnhNuocCu = data.anhNuocCu;
+        urlAnhNuocMoi = data.anhNuocMoi;
+
+        // Reset file local cũ để tránh bị chồng chéo dữ liệu khi đổi tháng
+        _clearLocalFiles();
       }
     } catch (e) {
-      errorMessage = e.toString();
+      errorMessage = e.toString().replaceAll('Exception: ', '');
     } finally {
       isLoading = false;
       notifyListeners();
     }
   }
 
-  //khi thay đổi ngày thì gọi lại api để init lại dữ liệu trên UI
-  Future<void> changeSelectedDate(int phongId, DateTime newDate) async {
-    selectedDate = newDate;
-    final formatThangNam = "${newDate.month.toString().padLeft(2, '0')}/${newDate.year}";
-    await init(phongId, formatThangNam);
+  void _clearLocalFiles() {
+    anhDienCuPath = null; anhDienMoiPath = null; anhNuocCuPath = null; anhNuocMoiPath = null;
+    anhDienCuFile = null; anhDienMoiFile = null; anhNuocCuFile = null; anhNuocMoiFile = null;
   }
 
-  Future<void> pickImage(String type) async {
-    if (trangThaiDienNuoc == 1) return;
+  //Vì bộ khóa của điẹn nước là PhongID,thangnam,lan  nên mỗi lần chủ trọ bấm vào tháng khác thì sẽ là ghi chỉ số mới cho tháng đó vậy nên sẽ phải load lại trang
+  Future<void> changeSelectedDate(DateTime pickedDate) async {
+    final newThangNam = "${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year}";
+    //nếu trùng tháng/năm hiện tại (chỉ đổi ngày trong tháng)
+    // Thì KHÔNG gọi API, KHÔNG reset để giữ nguyên chỉ số đang nhập
+    if (newThangNam == this.thangNam) {
+      selectedDate = pickedDate;
+      notifyListeners();
+      return;
+    }
 
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      final file = File(image.path);
-      if (type == 'dienMoi') anhDienMoi = file;
-      if (type == 'nuocMoi') anhNuocMoi = file;
+    // Nếu KHÁC tháng/năm (chủ trọ chủ động chuyển sang hẳn kỳ tháng khác)
+    // Thì mới cập nhật ngày và load lại dữ liệu lịch sử của tháng mới đó
+    selectedDate = pickedDate;
+    if (phongId != null) {
+      await init(phongId!, newThangNam, updateDateFromRecord: false);
+    }
+  }
+
+  //Chọn ảnh từ máy
+  Future<void> pickImage(String type, {bool fromCamera = false}) async {
+    final XFile? image = await _picker.pickImage(
+      source: fromCamera ? ImageSource.camera : ImageSource.gallery,
+      imageQuality: 80,
+    );
+    if (image == null) return;
+
+    final file = File(image.path);
+    final path = image.path;
+
+    switch (type) {
+      case 'dienCu':
+        anhDienCuPath = path; anhDienCuFile = file; break;
+      case 'dienMoi':
+        anhDienMoiPath = path; anhDienMoiFile = file; break;
+      case 'nuocCu':
+        anhNuocCuPath = path; anhNuocCuFile = file; break;
+      case 'nuocMoi':
+        anhNuocMoiPath = path; anhNuocMoiFile = file; break;
+    }
+    notifyListeners();
+  }
+
+  // Gửi dữ liệu lưu lên Server
+  Future<void> createDienNuoc(BuildContext context) async {
+    final dienMoi = int.tryParse(dienMoiController.text.trim());
+    final nuocMoi = int.tryParse(nuocMoiController.text.trim());
+
+    if (dienMoi == null || nuocMoi == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Vui lòng nhập đầy đủ chỉ số mới!"), backgroundColor: Colors.orange),
+      );
+      return;
+    }
+
+    isSubmitting = true;
+    submitErrorMessage = null;
+    notifyListeners();
+
+    try {
+      final dienNuoc = DienNuoc(
+        phongId: phongId,
+        thangNam: thangNam,
+        chiSoDienCu: int.tryParse(dienCuController.text.trim()) ?? 0,
+        chiSoDienMoi: dienMoi,
+        chiSoNuocCu: int.tryParse(nuocCuController.text.trim()) ?? 0,
+        chiSoNuocMoi: nuocMoi,
+        ngayGhi: selectedDate.toIso8601String(),
+      );
+
+      await _provider.createDienNuoc(
+        dienNuoc,
+        anhDienCuPath: anhDienCuPath,
+        anhDienMoiPath: anhDienMoiPath,
+        anhNuocCuPath: anhNuocCuPath,
+        anhNuocMoiPath: anhNuocMoiPath,
+      );
+
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Lưu thông tin chỉ số thành công!"), backgroundColor: Color(0xff4B7A47)),
+      );
+      Navigator.pop(context, true);
+    } catch (e) {
+      submitErrorMessage = e.toString().replaceAll('Exception: ', '');
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(submitErrorMessage ?? "Lỗi hệ thống!"), backgroundColor: Colors.red),
+      );
+    } finally {
+      isSubmitting = false;
       notifyListeners();
     }
   }
 
   @override
   void dispose() {
-    dienCuController.dispose();
-    dienMoiController.dispose();
-    nuocCuController.dispose();
-    nuocMoiController.dispose();
+    dienCuController.dispose(); dienMoiController.dispose();
+    nuocCuController.dispose(); nuocMoiController.dispose();
     super.dispose();
   }
 }

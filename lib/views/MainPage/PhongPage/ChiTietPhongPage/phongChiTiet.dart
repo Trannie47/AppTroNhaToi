@@ -247,7 +247,7 @@ class PhongChiTiet extends StatefulWidget {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => GhiDienNuocPage(phongID: room.phongId,tenPhong: room.tenPhong)),
+                          builder: (context) => GhiDienNuocPage(phongId: room.phongId,tenPhong: room.tenPhong)),
                   );
                 }
             ),
