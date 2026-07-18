@@ -1,6 +1,5 @@
 import 'package:AppTroNhaToi/core/network/retrofit_client.dart';
 import 'package:AppTroNhaToi/models/DTO/HoaDonTapHoaDTO.dart';
-import 'package:AppTroNhaToi/models/hoa_don_tap_hoa.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/TapHoaPage/HoaDonTapHoaModel.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
