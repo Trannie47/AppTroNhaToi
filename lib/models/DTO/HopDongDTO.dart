@@ -40,9 +40,9 @@ class HopDongDTO {
           : double.tryParse(json['giaPhongThucTe']?.toString() ?? '') ?? 0.0,
       ghiChu: json['ghiChu'] as String?,
       trangThai: json['trangThai'] ?? 0,
-      dsAnhHopDong: json['anhHopDong'] != null
+      dsAnhHopDong: json['anhHopDong'] is List
           ? List<String>.from(json['anhHopDong'])
-          : [],
+          : (json['anhHopDong'] != null ? [json['anhHopDong'].toString()] : []),
       phong: PhongHD.fromMap(json['phong'] ?? {}),
       nguoithue: NguoiThueHD.fromMap(json['nguoithue'] ?? {}
       ),
@@ -76,7 +76,8 @@ class PhongHD{
 }
 class NguoiThueHD{
   final String hoTen;
-  NguoiThueHD({required this.hoTen});
+  final String soDienThoai;
+  NguoiThueHD({required this.hoTen,required this.soDienThoai,});
   factory NguoiThueHD.fromMap(Map<String,dynamic> json)=>
-      NguoiThueHD(hoTen: json['hoTen']?? 'Không rõ');
+      NguoiThueHD(hoTen: json['hoTen']?? 'Không rõ',soDienThoai: json['sdt']?.toString() ?? 'Không rõ',);
 }

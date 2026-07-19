@@ -77,11 +77,6 @@ class HopDongApiClient {
     try{
       final request = await _dio.post("hop-dong/${hopDong.hopDongID}/updateContract", data: formData);
       if(request.statusCode == 200 || request.statusCode == 201){
-        final responseData1 = request;
-        final responseData2 = request.data['data'];
-
-        print("HEEE $responseData1");
-        print("HAAA $responseData2");
         final responseData = request.data['data'] ?? request.data;
         return HopDong.fromMap(responseData as Map<String, dynamic>);
       }
@@ -105,6 +100,22 @@ class HopDongApiClient {
     }catch(e){
       if (kDebugMode) {
         print("Loi getRoomsAvailableForContract trong HopDongApiClient $e");
+      }
+      rethrow;
+    }
+  }
+
+  Future<List<HopDongDTO>> getLichSuThuePhong(int phongId) async {
+    try {
+      final request = await _dio.get("hop-dong/$phongId/lich-su");
+      if (request.statusCode == 200 || request.statusCode == 201) {
+        final List<dynamic> data = request.data;
+        return data.map((json) => HopDongDTO.fromMap(json as Map<String, dynamic>)).toList();
+      }
+      throw Exception("Tải danh sách lịch sử thuê phòng thất bại! (Mã lỗi: ${request.statusCode})");
+    } catch (e) {
+      if (kDebugMode) {
+        print("Lỗi getLichSuThuePhong trong HopDongApiClient: $e");
       }
       rethrow;
     }
