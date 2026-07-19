@@ -1,3 +1,4 @@
+import 'package:AppTroNhaToi/Provider/lich_su_Them_thiet_bi_provider.dart';
 import 'package:AppTroNhaToi/Provider/sua_chua_provider.dart';
 import 'package:AppTroNhaToi/Provider/thiet_bi_provider.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
@@ -157,6 +158,9 @@ class _ThietBiPageState extends State<ThietBiPage> {
                             providers: [
                               ChangeNotifierProvider(
                                 create: (_) => SuaChuaProvider(),
+                              ),
+                              ChangeNotifierProvider(
+                                create: (_) => LichSuMuaThietBiProvider(),
                               ),
                             ],
                             child: ChiTietThietBiPage(

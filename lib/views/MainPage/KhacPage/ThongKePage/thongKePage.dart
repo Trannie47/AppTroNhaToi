@@ -1,5 +1,7 @@
 import 'package:AppTroNhaToi/Provider/thong_ke_provider.dart';
-import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/ThongKePage/ThongKeViewModel.dart';
+import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
+import 'package:AppTroNhaToi/models/DTO/ThongKeDTO.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/ThongKePage/ThongKePageViewModel.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,13 +14,13 @@ class ThongKePage extends StatefulWidget {
 }
 
 class _ThongKePageState extends State<ThongKePage> {
-  late ThongKeViewModel vm;
+  late ThongKePageViewModel vm;
 
   @override
   void initState() {
     super.initState();
 
-    vm = ThongKeViewModel(context.read<ThongKeProvider>());
+    vm = ThongKePageViewModel(context.read<ThongKeProvider>());
 
     vm.loadThongKe();
     vm.addListener(() {
@@ -26,22 +28,6 @@ class _ThongKePageState extends State<ThongKePage> {
         setState(() {});
       }
     });
-  }
-
-  // ================== HELPER FORMAT ==================
-
-  String _tien(num? value) {
-    final v = (value ?? 0).toInt();
-    final str = v.abs().toString();
-    final buffer = StringBuffer();
-    int count = 0;
-    for (int i = str.length - 1; i >= 0; i--) {
-      buffer.write(str[i]);
-      count++;
-      if (count % 3 == 0 && i != 0) buffer.write('.');
-    }
-    final result = buffer.toString().split('').reversed.join();
-    return '${v < 0 ? '-' : ''}${result}đ';
   }
 
   String _phanTram(num value) {
@@ -115,7 +101,7 @@ class _ThongKePageState extends State<ThongKePage> {
 
   // HEADER
 
-  Widget _buildHeader(ThongKeViewModel vm) {
+  Widget _buildHeader(ThongKePageViewModel vm) {
     return Container(
       height: 72,
       padding: const EdgeInsets.symmetric(horizontal: 18),
@@ -323,7 +309,7 @@ class _ThongKePageState extends State<ThongKePage> {
 
   // FILTER
 
-  Widget _buildFilter(ThongKeViewModel vm) {
+  Widget _buildFilter(ThongKePageViewModel vm) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       color: Colors.white,
@@ -400,7 +386,7 @@ class _ThongKePageState extends State<ThongKePage> {
 
   // KPI
 
-  Widget _buildKpiSection(ThongKeViewModel vm) {
+  Widget _buildKpiSection(ThongKePageViewModel vm) {
     final tongDoanhThu = vm.tongDoanhThu;
     final daThu = vm.daThu;
     final chuaThu = vm.chuaThu;
@@ -417,7 +403,7 @@ class _ThongKePageState extends State<ThongKePage> {
         children: [
           _buildKpiCard(
             title: "Tổng doanh thu",
-            value: _tien(tongDoanhThu),
+            value: formatMoney(tongDoanhThu),
             // TODO: cần API trả thêm % so với kỳ trước để gán động dòng này
             subTitle: "So với kỳ trước",
             icon: Icons.account_balance_wallet_rounded,
@@ -431,7 +417,7 @@ class _ThongKePageState extends State<ThongKePage> {
 
           _buildKpiCard(
             title: "Đã thu",
-            value: _tien(daThu),
+            value: formatMoney(daThu),
             subTitle: "${_phanTram(phanTramDaThu)} tổng doanh thu",
             icon: Icons.account_balance_wallet,
             iconColor: Colors.green,
@@ -444,7 +430,7 @@ class _ThongKePageState extends State<ThongKePage> {
 
           _buildKpiCard(
             title: "Chưa thu",
-            value: _tien(chuaThu),
+            value: formatMoney(chuaThu),
             subTitle: "${_phanTram(phanTramChuaThu)} tổng doanh thu",
             icon: Icons.receipt_long_rounded,
             iconColor: Colors.orange,
@@ -457,8 +443,7 @@ class _ThongKePageState extends State<ThongKePage> {
 
           _buildKpiCard(
             title: "Tổng chi phí",
-            value: _tien(tongChiPhi),
-            // TODO: cần API trả thêm % so với kỳ trước để gán động dòng này
+            value: formatMoney(tongChiPhi),
             subTitle: "So với kỳ trước",
             icon: Icons.pie_chart_rounded,
             iconColor: Colors.red,
@@ -545,7 +530,7 @@ class _ThongKePageState extends State<ThongKePage> {
   // REVENUE CHART
   // TODO: cần biết cấu trúc field của vm.chart (ví dụ: ngay/label, doanhThu)
   // để vẽ đúng dữ liệu thật bằng fl_chart LineChart thay vì CustomPainter demo.
-  Widget _buildRevenueChart(ThongKeViewModel vm) {
+  Widget _buildRevenueChart(ThongKePageViewModel vm) {
     return Container(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
@@ -581,7 +566,7 @@ class _ThongKePageState extends State<ThongKePage> {
               SizedBox(
                 height: 200,
                 child: CustomPaint(
-                  painter: _RevenueChartPainter(),
+                  painter: _RevenueChartPainter(vm.data?.chart ?? []),
                   child: Container(),
                 ),
               ),
@@ -593,142 +578,119 @@ class _ThongKePageState extends State<ThongKePage> {
   }
 
   // PIE CHART
-  // TODO: cần biết field cơ cấu doanh thu (tiền phòng/điện/nước/tạp hóa/khác)
-  // trong model để thay list "data" cứng bên dưới bằng dữ liệu thật.
-  Widget _buildPieChart(ThongKeViewModel vm) {
-    final List<Map<String, dynamic>> data = [
-      {"title": "Tiền phòng", "value": "60%", "color": const Color(0xFF7C4DFF)},
-      {"title": "Tiền điện", "value": "18%", "color": Colors.blue},
-      {"title": "Tiền nước", "value": "10%", "color": Colors.green},
-      {"title": "Tạp hóa", "value": "8%", "color": Colors.orange},
-      {"title": "Khác", "value": "4%", "color": Colors.red},
-    ];
+  Widget _buildPieChart(ThongKePageViewModel vm) {
+    final data = vm.pieChartData;
+    final tong = vm.data?.doanhThu.tongDoanhThu ?? 0;
 
-    return Container(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(22),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.04),
-                blurRadius: 16,
-                offset: const Offset(0, 6),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Row(
-                children: [
-                  Icon(Icons.pie_chart_rounded, color: Color(0xFF7C4DFF)),
-                  SizedBox(width: 10),
-                  Text(
-                    "Cơ cấu doanh thu",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(22),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Row(
+              children: [
+                Icon(Icons.pie_chart_rounded, color: Color(0xFF7C4DFF)),
+                SizedBox(width: 10),
+                Text(
+                  "Cơ cấu doanh thu",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
 
-              const SizedBox(height: 8),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: 140,
-                    height: 140,
-                    child: PieChart(
-                      PieChartData(
-                        centerSpaceRadius: 35,
-                        sectionsSpace: 2,
-                        borderData: FlBorderData(show: false),
-                        sections: [
-                          PieChartSectionData(
-                            value: 60,
-                            color: const Color(0xFF7C4DFF),
-                            title: "60%",
-                            radius: 28,
-                          ),
-                          PieChartSectionData(
-                            value: 18,
-                            color: Colors.green,
-                            title: "18%",
-                            radius: 28,
-                          ),
-                          PieChartSectionData(
-                            value: 10,
-                            color: Colors.orange,
-                            title: "10%",
-                            radius: 28,
-                          ),
-                          PieChartSectionData(
-                            value: 8,
-                            color: Colors.blue,
-                            title: "8%",
-                            radius: 28,
-                          ),
-                          PieChartSectionData(
-                            value: 4,
-                            color: Colors.red,
-                            title: "4%",
-                            radius: 28,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+            const SizedBox(height: 8),
 
-                  const SizedBox(width: 12),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: 140,
+                  height: 140,
+                  child: PieChart(
+                    PieChartData(
+                      centerSpaceRadius: 35,
+                      sectionsSpace: 2,
+                      borderData: FlBorderData(show: false),
+                      sections: data.map((item) {
+                        final percent = tong == 0 ? 0 : item.value / tong * 100;
 
-                  Expanded(
-                    child: Column(
-                      children: data.map((item) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 16),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 14,
-                                height: 14,
-                                decoration: BoxDecoration(
-                                  color: item["color"] as Color,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-
-                              const SizedBox(width: 12),
-
-                              Expanded(
-                                child: Text(
-                                  item["title"] as String,
-                                  style: const TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-
-                              Text(
-                                item["value"] as String,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
+                        return PieChartSectionData(
+                          value: item.value,
+                          color: item.color,
+                          title: "${percent.toStringAsFixed(1)}%",
+                          radius: 28,
+                          titleStyle: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
                           ),
                         );
                       }).toList(),
                     ),
                   ),
-                ],
-              ),
-            ],
-          ),
+                ),
+
+                const SizedBox(width: 12),
+
+                Expanded(
+                  child: Column(
+                    children: data.map((item) {
+                      final percent = tong == 0 ? 0 : item.value / tong * 100;
+
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 14,
+                              height: 14,
+                              decoration: BoxDecoration(
+                                color: item.color,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+
+                            const SizedBox(width: 12),
+
+                            Expanded(
+                              child: Text(
+                                item.title,
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+
+                            Text(
+                              "${percent.toStringAsFixed(1)}%",
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
@@ -736,7 +698,7 @@ class _ThongKePageState extends State<ThongKePage> {
 
   // ROOM
 
-  Widget _buildRoomSection(ThongKeViewModel vm) {
+  Widget _buildRoomSection(ThongKePageViewModel vm) {
     return Container(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
@@ -842,7 +804,7 @@ class _ThongKePageState extends State<ThongKePage> {
 
   // TENANT
 
-  Widget _buildTenantSection(ThongKeViewModel vm) {
+  Widget _buildTenantSection(ThongKePageViewModel vm) {
     return Container(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
@@ -929,7 +891,7 @@ class _ThongKePageState extends State<ThongKePage> {
 
   // DEVICE
 
-  Widget _buildDeviceSection(ThongKeViewModel vm) {
+  Widget _buildDeviceSection(ThongKePageViewModel vm) {
     return Container(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
@@ -1053,7 +1015,7 @@ class _ThongKePageState extends State<ThongKePage> {
   // EXPENSE
   // TODO: cần biết field chi tiết chi phí (sửa chữa/mua thiết bị/khác) trong
   // model để thay các giá trị cứng bên dưới bằng vm.tongChiPhi chi tiết.
-  Widget _buildExpenseSection(ThongKeViewModel vm) {
+  Widget _buildExpenseSection(ThongKePageViewModel vm) {
     return Container(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
@@ -1125,7 +1087,7 @@ class _ThongKePageState extends State<ThongKePage> {
                     ),
                   ),
                   Text(
-                    _tien(vm.tongChiPhi),
+                    formatMoney(vm.tongChiPhi),
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -1224,208 +1186,195 @@ class _ThongKePageState extends State<ThongKePage> {
   }
 
   // TOP REVENUE
-  // TODO: cần API/model danh sách top phòng doanh thu cao để thay list cứng.
-  Widget _buildTopRevenue(ThongKeViewModel vm) {
-    final items = [
-      {
-        "room": "P101",
-        "money": "15.000.000đ",
-        "icon": "🥇",
-        "color": Colors.amber,
-      },
-      {
-        "room": "P203",
-        "money": "13.500.000đ",
-        "icon": "🥈",
-        "color": Colors.grey,
-      },
-      {
-        "room": "P305",
-        "money": "12.800.000đ",
-        "icon": "🥉",
-        "color": const Color(0xFFCD7F32),
-      },
-      {
-        "room": "P102",
-        "money": "12.000.000đ",
-        "icon": "4",
-        "color": Colors.blue,
-      },
-      {
-        "room": "P401",
-        "money": "11.500.000đ",
-        "icon": "5",
-        "color": Colors.green,
-      },
+  Widget _buildTopRevenue(ThongKePageViewModel vm) {
+    final items = vm.data?.topPhong ?? [];
+
+    final colors = [
+      Colors.amber,
+      Colors.grey,
+      const Color(0xFFCD7F32),
+      Colors.blue,
+      Colors.green,
     ];
 
-    return Container(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(22),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.04),
-                blurRadius: 16,
-                offset: const Offset(0, 6),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Row(
-                children: [
-                  Icon(Icons.emoji_events_rounded, color: Color(0xFF7C4DFF)),
-                  SizedBox(width: 10),
-                  Text(
-                    "Top 5 phòng doanh thu cao",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
+    final icons = ["🥇", "🥈", "🥉", "4", "5"];
 
-              const SizedBox(height: 20),
-
-              ...items.map(
-                (item) => Container(
-                  margin: const EdgeInsets.only(bottom: 14),
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade50,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 22,
-                        backgroundColor: (item["color"] as Color).withOpacity(
-                          .12,
-                        ),
-                        child: Text(
-                          item["icon"].toString(),
-                          style: const TextStyle(fontSize: 18),
-                        ),
-                      ),
-
-                      const SizedBox(width: 14),
-
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              item["room"].toString(),
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            const Text(
-                              "Doanh thu tháng",
-                              style: TextStyle(color: Colors.grey),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Flexible(
-                        child: Text(
-                          item["money"].toString(),
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.end,
-                          style: const TextStyle(
-                            color: Colors.green,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(22),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Row(
+              children: [
+                Icon(Icons.emoji_events_rounded, color: Color(0xFF7C4DFF)),
+                SizedBox(width: 10),
+                Text(
+                  "Top 5 phòng doanh thu cao",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
+
+            const SizedBox(height: 20),
+
+            ...List.generate(items.length, (index) {
+              final item = items[index];
+
+              return Container(
+                margin: const EdgeInsets.only(bottom: 14),
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade50,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 22,
+                      backgroundColor: colors[index].withValues(alpha: .12),
+                      child: Text(
+                        icons[index],
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                    ),
+
+                    const SizedBox(width: 14),
+
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item.tenPhong ?? "",
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+
+                          const SizedBox(height: 4),
+
+                          const Text(
+                            "Doanh thu tháng",
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    Flexible(
+                      child: Text(
+                        formatMoney(item.tongDoanhThu),
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.end,
+                        style: const TextStyle(
+                          color: Colors.green,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
+          ],
         ),
       ),
     );
   }
 
   // TOP DEBT
-  // TODO: cần API/model danh sách top phòng còn nợ để thay list cứng.
-  Widget _buildTopDebt(ThongKeViewModel vm) {
-    final items = [
-      {"room": "P104", "money": "6.500.000đ"},
-      {"room": "P210", "money": "5.000.000đ"},
-      {"room": "P305", "money": "4.000.000đ"},
-      {"room": "P110", "money": "3.500.000đ"},
-      {"room": "P402", "money": "2.800.000đ"},
-    ];
+  Widget _buildTopDebt(ThongKePageViewModel vm) {
+    final items = vm.data?.topCongNo;
 
-    return Container(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(22),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.04),
-                blurRadius: 16,
-                offset: const Offset(0, 6),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Row(
-                children: [
-                  Icon(Icons.warning_amber_rounded, color: Colors.red),
-                  SizedBox(width: 10),
-                  Text(
-                    "Top 5 phòng còn nợ",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(22),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Row(
+              children: [
+                Icon(Icons.warning_amber_rounded, color: Colors.red),
+                SizedBox(width: 10),
+                Text(
+                  "Top 5 khách còn nợ",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 20),
+
+            ...List.generate(items!.length, (index) {
+              final item = items[index];
+
+              return ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: CircleAvatar(
+                  backgroundColor: Colors.red.withValues(alpha: .08),
+                  child: Text(
+                    "${index + 1}",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red,
+                    ),
                   ),
-                ],
-              ),
+                ),
 
-              const SizedBox(height: 20),
+                title: Text(
+                  item.hoTen ?? "Không xác định",
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
 
-              ...List.generate(items.length, (index) {
-                final item = items[index];
+                subtitle: Text("Đã thu: ${formatMoney(item.tongDaThu)}"),
 
-                return ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.red.withOpacity(.08),
-                    child: Text(
-                      "${index + 1}",
+                trailing: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    const Text(
+                      "Còn nợ",
+                      style: TextStyle(fontSize: 11, color: Colors.grey),
+                    ),
+
+                    Text(
+                      formatMoney(item.tongCongNo),
                       style: const TextStyle(
-                        fontWeight: FontWeight.bold,
                         color: Colors.red,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ),
-                  title: Text(item["room"].toString()),
-                  subtitle: const Text("Chưa thanh toán"),
-                  trailing: Text(
-                    item["money"].toString(),
-                    style: const TextStyle(
-                      color: Colors.red,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                );
-              }),
-            ],
-          ),
+                  ],
+                ),
+              );
+            }),
+          ],
         ),
       ),
     );
@@ -1433,7 +1382,7 @@ class _ThongKePageState extends State<ThongKePage> {
 
   // RECENT ACTIVITY
   // TODO: chưa làm sẽ cập nhật lại sau
-  Widget _buildRecentActivity(ThongKeViewModel vm) {
+  Widget _buildRecentActivity(ThongKePageViewModel vm) {
     final activities = [
       {
         "icon": Icons.payments_rounded,
@@ -1529,8 +1478,14 @@ class _ThongKePageState extends State<ThongKePage> {
 // REVENUE CHART PAINTER
 
 class _RevenueChartPainter extends CustomPainter {
+  final List<ChartDoanhThuModel> chart;
+
+  _RevenueChartPainter(this.chart);
+
   @override
   void paint(Canvas canvas, Size size) {
+    if (chart.isEmpty) return;
+
     final gridPaint = Paint()
       ..color = const Color(0xFFE9ECF2)
       ..strokeWidth = 1;
@@ -1540,27 +1495,36 @@ class _RevenueChartPainter extends CustomPainter {
       canvas.drawLine(Offset(0, y), Offset(size.width, y), gridPaint);
     }
 
+    double maxValue = chart.first.doanhThu;
+
+    for (final item in chart) {
+      if (item.doanhThu > maxValue) {
+        maxValue = item.doanhThu;
+      }
+    }
+
+    if (maxValue == 0) maxValue = 1;
+
+    final points = <Offset>[];
+
+    for (int i = 0; i < chart.length; i++) {
+      final x = chart.length == 1
+          ? size.width / 2
+          : size.width * i / (chart.length - 1);
+
+      final y =
+          size.height - ((chart[i].doanhThu / maxValue) * size.height * .85);
+
+      points.add(Offset(x, y));
+    }
+
     final linePaint = Paint()
       ..color = const Color(0xFF7C4DFF)
       ..strokeWidth = 4
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 
-    final pointPaint = Paint()
-      ..color = const Color(0xFF7C4DFF)
-      ..style = PaintingStyle.fill;
-
     final path = Path();
-
-    final points = [
-      Offset(0, size.height * .82),
-      Offset(size.width * .15, size.height * .70),
-      Offset(size.width * .30, size.height * .62),
-      Offset(size.width * .45, size.height * .48),
-      Offset(size.width * .60, size.height * .56),
-      Offset(size.width * .75, size.height * .30),
-      Offset(size.width, size.height * .18),
-    ];
 
     path.moveTo(points.first.dx, points.first.dy);
 
@@ -1580,29 +1544,32 @@ class _RevenueChartPainter extends CustomPainter {
 
     canvas.drawPath(path, linePaint);
 
-    for (final point in points) {
-      canvas.drawCircle(point, 5, pointPaint);
+    final pointPaint = Paint()
+      ..color = const Color(0xFF7C4DFF)
+      ..style = PaintingStyle.fill;
 
+    for (final point in points) {
       canvas.drawCircle(
         point,
         9,
         Paint()
-          ..color = const Color(0xFF7C4DFF).withOpacity(.15)
+          ..color = const Color(0xFF7C4DFF).withValues(alpha: .15)
           ..style = PaintingStyle.fill,
       );
+
+      canvas.drawCircle(point, 5, pointPaint);
     }
 
-    const labels = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
-
+    // LABEL THÁNG
     final textStyle = const TextStyle(
       color: Colors.grey,
       fontSize: 12,
       fontWeight: FontWeight.w500,
     );
 
-    for (int i = 0; i < labels.length; i++) {
+    for (int i = 0; i < chart.length; i++) {
       final tp = TextPainter(
-        text: TextSpan(text: labels[i], style: textStyle),
+        text: TextSpan(text: "T${chart[i].thang}", style: textStyle),
         textDirection: TextDirection.ltr,
       );
 
@@ -1613,7 +1580,7 @@ class _RevenueChartPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return false;
+  bool shouldRepaint(covariant _RevenueChartPainter oldDelegate) {
+    return oldDelegate.chart != chart;
   }
 }

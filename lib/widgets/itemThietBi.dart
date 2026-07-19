@@ -62,16 +62,15 @@ class ItemThietBi extends StatelessWidget {
 
                   const SizedBox(height: 2),
 
-                  Text(
-                    thietBi.ngayMua != null
-                        ? "${thietBi.loai} · Mua ${DateFormat("MM/yyyy").format(thietBi.ngayMua!)}"
-                        : "${thietBi.loai}",
-                    style: const TextStyle(
-                      color: Color(0xff9A9A9A),
-                      fontSize: 12,
-                    ),
-                  ),
-
+                  // Text(
+                  //   thietBi.ngayMua != null
+                  //       ? "${thietBi.loai} · Mua ${DateFormat("MM/yyyy").format(thietBi.ngayMua!)}"
+                  //       : "${thietBi.loai}",
+                  //   style: const TextStyle(
+                  //     color: Color(0xff9A9A9A),
+                  //     fontSize: 12,
+                  //   ),
+                  // ),
                   const SizedBox(height: 4),
 
                   Row(
@@ -97,13 +96,13 @@ class ItemThietBi extends StatelessWidget {
 
                       const SizedBox(width: 8),
 
-                      Text(
-                        "${NumberFormat("#,###").format(thietBi.giaTri)}đ",
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: Color(0xff4F4F4F),
-                        ),
-                      ),
+                      // Text(
+                      //   "${NumberFormat("#,###").format(thietBi.giaTri)}đ",
+                      //   style: const TextStyle(
+                      //     fontSize: 13,
+                      //     color: Color(0xff4F4F4F),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ],

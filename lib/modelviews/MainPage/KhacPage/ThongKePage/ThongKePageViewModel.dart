@@ -1,11 +1,14 @@
 import 'package:AppTroNhaToi/Provider/thong_ke_provider.dart';
+import 'package:AppTroNhaToi/models/DTO/ThongKeDTO.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThongKePage/PieChartItem.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
-class ThongKeViewModel extends ChangeNotifier {
+class ThongKePageViewModel extends ChangeNotifier {
   final ThongKeProvider _service;
 
-  ThongKeViewModel(this._service) {
+  ThongKePageViewModel(this._service) {
     _service.addListener(_onThongKeUpdate);
 
     Future.microtask(() => _service.getThongKe());
@@ -49,7 +52,7 @@ class ThongKeViewModel extends ChangeNotifier {
 
   ///================ DATA ==================
 
-  get data => _service.thongKe;
+  ThongKeDTO? get data => _service.thongKe;
 
   ///================ KPI ==================
 
@@ -97,7 +100,49 @@ class ThongKeViewModel extends ChangeNotifier {
 
   ///================ CHART ==================
 
-  get chart => data?.chart ?? [];
+  List<PieChartItem> get pieChartData {
+    if (data == null) return [];
+
+    return [
+      PieChartItem(
+        title: "Tiền phòng",
+        value: data!.doanhThu.doanhThuPhong,
+        color: const Color(0xFF7C4DFF),
+      ),
+      PieChartItem(
+        title: "Gửi xe",
+        value: data!.doanhThu.doanhThuGuiXe,
+        color: Colors.blue,
+      ),
+      PieChartItem(
+        title: "Tạp hóa",
+        value: data!.doanhThu.doanhThuTapHoa,
+        color: Colors.orange,
+      ),
+    ];
+  }
+
+  List<PieChartSectionData> get pieSections {
+    final tong = data?.doanhThu.tongDoanhThu ?? 0;
+
+    if (tong == 0) return [];
+
+    return pieChartData.map((e) {
+      final percent = (e.value / tong) * 100;
+
+      return PieChartSectionData(
+        value: e.value,
+        color: e.color,
+        radius: 28,
+        title: "${percent.toStringAsFixed(1)}%",
+        titleStyle: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+          fontSize: 12,
+        ),
+      );
+    }).toList();
+  }
 
   @override
   void dispose() {

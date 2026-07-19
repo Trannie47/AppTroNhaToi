@@ -2,30 +2,15 @@ class ThietBi {
   final int? thietBiID;
   final String? tenThietBi;
   final String? loai;
-  final double? giaTri;
-  final DateTime? ngayMua;
   final int? trangThai;
 
-  const ThietBi({
-    this.thietBiID,
-    this.tenThietBi,
-    this.loai,
-    this.giaTri,
-    this.ngayMua,
-    this.trangThai,
-  });
+  const ThietBi({this.thietBiID, this.tenThietBi, this.loai, this.trangThai});
 
   factory ThietBi.fromMap(Map<String, dynamic> map) {
     return ThietBi(
       thietBiID: map['thietBiID'] as int?,
       tenThietBi: map['tenThietBi'] as String?,
       loai: map['loai'] as String?,
-      giaTri: map['giaTri'] == null
-          ? null
-          : double.tryParse(map['giaTri'].toString()),
-      ngayMua: map['ngayMua'] != null
-          ? DateTime.tryParse(map['ngayMua'].toString())
-          : null,
       trangThai: map['trangThai'] as int?,
     );
   }
@@ -35,8 +20,6 @@ class ThietBi {
       if (thietBiID != null) 'thietBiID': thietBiID,
       'tenThietBi': tenThietBi,
       'loai': loai,
-      'giaTri': giaTri,
-      'ngayMua': ngayMua?.toUtc().toIso8601String(),
       'trangThai': trangThai,
     };
   }
@@ -45,16 +28,12 @@ class ThietBi {
     int? thietBiID,
     String? tenThietBi,
     String? loai,
-    double? giaTri,
-    DateTime? ngayMua,
     int? trangThai,
   }) {
     return ThietBi(
       thietBiID: thietBiID ?? this.thietBiID,
       tenThietBi: tenThietBi ?? this.tenThietBi,
       loai: loai ?? this.loai,
-      giaTri: giaTri ?? this.giaTri,
-      ngayMua: ngayMua ?? this.ngayMua,
       trangThai: trangThai ?? this.trangThai,
     );
   }
@@ -82,8 +61,6 @@ class ThietBi {
         'thietBiID: $thietBiID, '
         'tenThietBi: $tenThietBi, '
         'loai: $loai, '
-        'giaTri: $giaTri, '
-        'ngayMua: $ngayMua, '
         'trangThai: $trangThai'
         ')';
   }

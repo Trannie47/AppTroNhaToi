@@ -41,15 +41,14 @@ class SuaChuaProvider extends ChangeNotifier {
     return result;
   }
 
-  Future<bool> capNhat(SuaChuaDTO suaChua) async {
+  Future<SuaChuaDTO?> capNhat(SuaChuaDTO suaChua) async {
     final result = await _repo.capNhatSuaChua(suaChua);
 
     if (result != null) {
       await fetchByThietBi(result.thietBiId!);
-      return true;
     }
 
-    return false;
+    return result;
   }
 
   Future<bool> xoa(int id, int thietBiID) async {

@@ -89,10 +89,7 @@ class _ThietBiFormState extends State<ThietBiForm> {
       children: [
         const Text(
           "Loại thiết bị",
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
         ),
 
         const SizedBox(height: 8),
@@ -123,10 +120,7 @@ class _ThietBiFormState extends State<ThietBiForm> {
             padding: const EdgeInsets.only(left: 6),
             child: Text(
               vm.errLoaiThietBi!,
-              style: const TextStyle(
-                color: Colors.red,
-                fontSize: 12,
-              ),
+              style: const TextStyle(color: Colors.red, fontSize: 12),
             ),
           ),
         ],
@@ -140,10 +134,7 @@ class _ThietBiFormState extends State<ThietBiForm> {
       children: [
         const Text(
           "Trạng thái",
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
         ),
 
         const SizedBox(height: 8),
@@ -152,7 +143,7 @@ class _ThietBiFormState extends State<ThietBiForm> {
           height: 48,
           child: CustomDropdownSearch<String>(
             popupHeight: 160,
-
+            items: vm.dsTrangThai,
 
             selectedItem: vm.trangThai,
 
@@ -173,10 +164,7 @@ class _ThietBiFormState extends State<ThietBiForm> {
             padding: const EdgeInsets.only(left: 6),
             child: Text(
               vm.errTrangThai!,
-              style: const TextStyle(
-                color: Colors.red,
-                fontSize: 12,
-              ),
+              style: const TextStyle(color: Colors.red, fontSize: 12),
             ),
           ),
         ],
@@ -389,47 +377,46 @@ class _ThietBiFormState extends State<ThietBiForm> {
 
               // _dropDownPhong(),
               // const SizedBox(height: 16),
-              _input(
-                title: "Ngày mua",
-                hint: "dd/MM/yyyy",
-                controller: vm.txtNgayMua,
-                errorText: vm.errNgayMua,
+              // _input(
+              //   title: "Ngày mua",
+              //   hint: "dd/MM/yyyy",
+              //   controller: vm.txtNgayMua,
+              //   errorText: vm.errNgayMua,
 
-                keyboardType: TextInputType.number,
+              //   keyboardType: TextInputType.number,
 
-                inputFormatters: [MaskedInputFormatter('##/##/####')],
+              //   inputFormatters: [MaskedInputFormatter('##/##/####')],
 
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.calendar_today_outlined, size: 20),
+              //   suffixIcon: IconButton(
+              //     icon: const Icon(Icons.calendar_today_outlined, size: 20),
 
-                  onPressed: () async {
-                    DateTime? pickedDate = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(2000),
-                      lastDate: DateTime.now(),
-                    );
+              //     onPressed: () async {
+              //       DateTime? pickedDate = await showDatePicker(
+              //         context: context,
+              //         initialDate: DateTime.now(),
+              //         firstDate: DateTime(2000),
+              //         lastDate: DateTime.now(),
+              //       );
 
-                    if (pickedDate != null) {
-                      vm.txtNgayMua.text = formatDate(pickedDate);
+              //       if (pickedDate != null) {
+              //         vm.txtNgayMua.text = formatDate(pickedDate);
 
-                      setState(() {});
-                    }
-                  },
-                ),
-              ),
+              //         setState(() {});
+              //       }
+              //     },
+              //   ),
+              // ),
 
-              const SizedBox(width: 12),
+              // const SizedBox(width: 12),
 
-              _input(
-                title: "Giá trị (đ)",
-                hint: "0",
-                controller: vm.txtGiaTri,
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                errorText: vm.errGiaTri,
-              ),
-
+              // _input(
+              //   title: "Giá trị (đ)",
+              //   hint: "0",
+              //   controller: vm.txtGiaTri,
+              //   keyboardType: TextInputType.number,
+              //   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              //   errorText: vm.errGiaTri,
+              // ),
               const SizedBox(height: 16),
 
               _dropDownTrangThai(),

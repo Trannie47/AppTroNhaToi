@@ -1,3 +1,5 @@
+import 'package:AppTroNhaToi/core/utils/model_formatter.dart';
+
 class ThongKeDTO {
   final DoanhThuThongKe doanhThu;
   final DaThuThongKe daThu;
@@ -6,8 +8,12 @@ class ThongKeDTO {
   final PhongThongKe phong;
   final NguoiThueThongKe nguoiThue;
   final ThietBiThongKe thietBi;
-  final List<ChartDoanhThu> chart;
-  final List<dynamic> hopDongSapHet;
+  final List<ChartDoanhThuModel> chart;
+  final List<TopPhongModel> topPhong;
+  final List<TopCongNoModel> topCongNo;
+  final List<TopHangHoaModel> topHangHoa;
+  final List<TopThietBiSuaModel> topThietBiSua;
+  final List<HopDongSapHetModel> hopDongSapHet;
 
   ThongKeDTO({
     required this.doanhThu,
@@ -18,22 +24,40 @@ class ThongKeDTO {
     required this.nguoiThue,
     required this.thietBi,
     required this.chart,
+    required this.topPhong,
+    required this.topCongNo,
+    required this.topHangHoa,
+    required this.topThietBiSua,
     required this.hopDongSapHet,
   });
 
   factory ThongKeDTO.fromMap(Map<String, dynamic> map) {
     return ThongKeDTO(
-      doanhThu: DoanhThuThongKe.fromMap(map['doanhThu']),
-      daThu: DaThuThongKe.fromMap(map['daThu']),
-      congNo: CongNoThongKe.fromMap(map['congNo']),
-      chiPhi: ChiPhiThongKe.fromMap(map['chiPhi']),
-      phong: PhongThongKe.fromMap(map['phong']),
-      nguoiThue: NguoiThueThongKe.fromMap(map['nguoiThue']),
-      thietBi: ThietBiThongKe.fromMap(map['thietBi']),
-      chart: (map['chart'] as List<dynamic>)
-          .map((e) => ChartDoanhThu.fromMap(e))
+      doanhThu: DoanhThuThongKe.fromMap(map['doanhThu'] ?? const {}),
+      daThu: DaThuThongKe.fromMap(map['daThu'] ?? const {}),
+      congNo: CongNoThongKe.fromMap(map['congNo'] ?? const {}),
+      chiPhi: ChiPhiThongKe.fromMap(map['chiPhi'] ?? const {}),
+      phong: PhongThongKe.fromMap(map['phong'] ?? const {}),
+      nguoiThue: NguoiThueThongKe.fromMap(map['nguoiThue'] ?? const {}),
+      thietBi: ThietBiThongKe.fromMap(map['thietBi'] ?? const {}),
+      chart: ((map['chart'] as List?) ?? [])
+          .map((e) => ChartDoanhThuModel.fromMap(e as Map<String, dynamic>))
           .toList(),
-      hopDongSapHet: List<dynamic>.from(map['hopDongSapHet'] ?? []),
+      topPhong: ((map['topPhong'] as List?) ?? [])
+          .map((e) => TopPhongModel.fromMap(e as Map<String, dynamic>))
+          .toList(),
+      topCongNo: ((map['topCongNo'] as List?) ?? [])
+          .map((e) => TopCongNoModel.fromMap(e as Map<String, dynamic>))
+          .toList(),
+      topHangHoa: ((map['topHangHoa'] as List?) ?? [])
+          .map((e) => TopHangHoaModel.fromMap(e as Map<String, dynamic>))
+          .toList(),
+      topThietBiSua: ((map['topThietBiSua'] as List?) ?? [])
+          .map((e) => TopThietBiSuaModel.fromMap(e as Map<String, dynamic>))
+          .toList(),
+      hopDongSapHet: ((map['hopDongSapHet'] as List?) ?? [])
+          .map((e) => HopDongSapHetModel.fromMap(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 
@@ -47,7 +71,11 @@ class ThongKeDTO {
       'nguoiThue': nguoiThue.toMap(),
       'thietBi': thietBi.toMap(),
       'chart': chart.map((e) => e.toMap()).toList(),
-      'hopDongSapHet': hopDongSapHet,
+      'topPhong': topPhong.map((e) => e.toMap()).toList(),
+      'topCongNo': topCongNo.map((e) => e.toMap()).toList(),
+      'topHangHoa': topHangHoa.map((e) => e.toMap()).toList(),
+      'topThietBiSua': topThietBiSua.map((e) => e.toMap()).toList(),
+      'hopDongSapHet': hopDongSapHet.map((e) => e.toMap()).toList(),
     };
   }
 
@@ -59,8 +87,12 @@ class ThongKeDTO {
     PhongThongKe? phong,
     NguoiThueThongKe? nguoiThue,
     ThietBiThongKe? thietBi,
-    List<ChartDoanhThu>? chart,
-    List<dynamic>? hopDongSapHet,
+    List<ChartDoanhThuModel>? chart,
+    List<TopPhongModel>? topPhong,
+    List<TopCongNoModel>? topCongNo,
+    List<TopHangHoaModel>? topHangHoa,
+    List<TopThietBiSuaModel>? topThietBiSua,
+    List<HopDongSapHetModel>? hopDongSapHet,
   }) {
     return ThongKeDTO(
       doanhThu: doanhThu ?? this.doanhThu,
@@ -71,6 +103,10 @@ class ThongKeDTO {
       nguoiThue: nguoiThue ?? this.nguoiThue,
       thietBi: thietBi ?? this.thietBi,
       chart: chart ?? this.chart,
+      topPhong: topPhong ?? this.topPhong,
+      topCongNo: topCongNo ?? this.topCongNo,
+      topHangHoa: topHangHoa ?? this.topHangHoa,
+      topThietBiSua: topThietBiSua ?? this.topThietBiSua,
       hopDongSapHet: hopDongSapHet ?? this.hopDongSapHet,
     );
   }
@@ -91,10 +127,10 @@ class DoanhThuThongKe {
 
   factory DoanhThuThongKe.fromMap(Map<String, dynamic> map) {
     return DoanhThuThongKe(
-      doanhThuPhong: (map['doanhThuPhong'] as num).toDouble(),
-      doanhThuGuiXe: (map['doanhThuGuiXe'] as num).toDouble(),
-      doanhThuTapHoa: (map['doanhThuTapHoa'] as num).toDouble(),
-      tongDoanhThu: (map['tongDoanhThu'] as num).toDouble(),
+      doanhThuPhong: numOf(map['doanhThuPhong']),
+      doanhThuGuiXe: numOf(map['doanhThuGuiXe']),
+      doanhThuTapHoa: numOf(map['doanhThuTapHoa']),
+      tongDoanhThu: numOf(map['tongDoanhThu']),
     );
   }
 
@@ -119,9 +155,9 @@ class DaThuThongKe {
 
   factory DaThuThongKe.fromMap(Map<String, dynamic> map) {
     return DaThuThongKe(
-      daThuPhong: (map['daThuPhong'] as num).toDouble(),
-      daThuTapHoa: (map['daThuTapHoa'] as num).toDouble(),
-      tongDaThu: (map['tongDaThu'] as num).toDouble(),
+      daThuPhong: numOf(map['daThuPhong']),
+      daThuTapHoa: numOf(map['daThuTapHoa']),
+      tongDaThu: numOf(map['tongDaThu']),
     );
   }
 
@@ -138,7 +174,7 @@ class CongNoThongKe {
   CongNoThongKe({required this.tongCongNo});
 
   factory CongNoThongKe.fromMap(Map<String, dynamic> map) {
-    return CongNoThongKe(tongCongNo: (map['tongCongNo'] as num).toDouble());
+    return CongNoThongKe(tongCongNo: numOf(map['tongCongNo']));
   }
 
   Map<String, dynamic> toMap() => {'tongCongNo': tongCongNo};
@@ -150,7 +186,7 @@ class ChiPhiThongKe {
   ChiPhiThongKe({required this.tongChiPhi});
 
   factory ChiPhiThongKe.fromMap(Map<String, dynamic> map) {
-    return ChiPhiThongKe(tongChiPhi: (map['tongChiPhi'] as num).toDouble());
+    return ChiPhiThongKe(tongChiPhi: numOf(map['tongChiPhi']));
   }
 
   Map<String, dynamic> toMap() => {'tongChiPhi': tongChiPhi};
@@ -171,10 +207,10 @@ class PhongThongKe {
 
   factory PhongThongKe.fromMap(Map<String, dynamic> map) {
     return PhongThongKe(
-      tongPhong: map['tongPhong'],
-      phongDangThue: map['phongDangThue'],
-      phongTrong: map['phongTrong'],
-      tiLeLapDay: (map['tiLeLapDay'] as num).toDouble(),
+      tongPhong: intOf(map['tongPhong']),
+      phongDangThue: intOf(map['phongDangThue']),
+      phongTrong: intOf(map['phongTrong']),
+      tiLeLapDay: numOf(map['tiLeLapDay']),
     );
   }
 
@@ -201,10 +237,10 @@ class NguoiThueThongKe {
 
   factory NguoiThueThongKe.fromMap(Map<String, dynamic> map) {
     return NguoiThueThongKe(
-      tongNguoiThue: map['tongNguoiThue'],
-      nguoiDangThue: map['nguoiDangThue'],
-      nguoiDaDonDi: map['nguoiDaDonDi'],
-      hopDongSapHet: map['hopDongSapHet'],
+      tongNguoiThue: intOf(map['tongNguoiThue']),
+      nguoiDangThue: intOf(map['nguoiDangThue']),
+      nguoiDaDonDi: intOf(map['nguoiDaDonDi']),
+      hopDongSapHet: intOf(map['hopDongSapHet']),
     );
   }
 
@@ -235,12 +271,12 @@ class ThietBiThongKe {
 
   factory ThietBiThongKe.fromMap(Map<String, dynamic> map) {
     return ThietBiThongKe(
-      tongThietBi: map['tongThietBi'],
-      thietBiHoatDong: map['thietBiHoatDong'],
-      thietBiDangSua: map['thietBiDangSua'],
-      thietBiHong: map['thietBiHong'],
-      tongLapRap: map['tongLapRap'],
-      tongSuaChua: map['tongSuaChua'],
+      tongThietBi: intOf(map['tongThietBi']),
+      thietBiHoatDong: intOf(map['thietBiHoatDong']),
+      thietBiDangSua: intOf(map['thietBiDangSua']),
+      thietBiHong: intOf(map['thietBiHong']),
+      tongLapRap: intOf(map['tongLapRap']),
+      tongSuaChua: intOf(map['tongSuaChua']),
     );
   }
 
@@ -254,18 +290,325 @@ class ThietBiThongKe {
   };
 }
 
-class ChartDoanhThu {
+/// ==========================================
+/// CHART DOANH THU (12 THÁNG)
+/// ==========================================
+class ChartDoanhThuModel {
   final int thang;
   final double doanhThu;
 
-  ChartDoanhThu({required this.thang, required this.doanhThu});
+  ChartDoanhThuModel({required this.thang, required this.doanhThu});
 
-  factory ChartDoanhThu.fromMap(Map<String, dynamic> map) {
-    return ChartDoanhThu(
-      thang: map['thang'],
-      doanhThu: (map['doanhThu'] as num).toDouble(),
+  factory ChartDoanhThuModel.fromMap(Map<String, dynamic> map) {
+    return ChartDoanhThuModel(
+      thang: intOf(map['thang']),
+      doanhThu: numOf(map['doanhThu']),
     );
   }
 
   Map<String, dynamic> toMap() => {'thang': thang, 'doanhThu': doanhThu};
+
+  ChartDoanhThuModel copyWith({int? thang, double? doanhThu}) {
+    return ChartDoanhThuModel(
+      thang: thang ?? this.thang,
+      doanhThu: doanhThu ?? this.doanhThu,
+    );
+  }
+}
+
+/// ==========================================
+/// TOP PHÒNG DOANH THU CAO
+/// ==========================================
+class TopPhongModel {
+  final int phongId;
+  final String? tenPhong;
+  final double tongDoanhThu;
+  final double tongDaThu;
+  final double tongCongNo;
+
+  TopPhongModel({
+    required this.phongId,
+    required this.tenPhong,
+    required this.tongDoanhThu,
+    required this.tongDaThu,
+    required this.tongCongNo,
+  });
+
+  factory TopPhongModel.fromMap(Map<String, dynamic> map) {
+    return TopPhongModel(
+      phongId: intOf(map['phongId']),
+      tenPhong: strOf(map['tenPhong']),
+      tongDoanhThu: numOf(map['tongDoanhThu']),
+      tongDaThu: numOf(map['tongDaThu']),
+      tongCongNo: numOf(map['tongCongNo']),
+    );
+  }
+
+  Map<String, dynamic> toMap() => {
+    'phongId': phongId,
+    'tenPhong': tenPhong,
+    'tongDoanhThu': tongDoanhThu,
+    'tongDaThu': tongDaThu,
+    'tongCongNo': tongCongNo,
+  };
+
+  TopPhongModel copyWith({
+    int? phongId,
+    String? tenPhong,
+    double? tongDoanhThu,
+    double? tongDaThu,
+    double? tongCongNo,
+  }) {
+    return TopPhongModel(
+      phongId: phongId ?? this.phongId,
+      tenPhong: tenPhong ?? this.tenPhong,
+      tongDoanhThu: tongDoanhThu ?? this.tongDoanhThu,
+      tongDaThu: tongDaThu ?? this.tongDaThu,
+      tongCongNo: tongCongNo ?? this.tongCongNo,
+    );
+  }
+}
+
+/// ==========================================
+/// TOP NGƯỜI THUÊ CÒN NỢ
+/// ==========================================
+class TopCongNoModel {
+  final int idnt;
+  final String? hoTen;
+  final double tongTien;
+  final double tongDaThu;
+  final double tongCongNo;
+
+  TopCongNoModel({
+    required this.idnt,
+    required this.hoTen,
+    required this.tongTien,
+    required this.tongDaThu,
+    required this.tongCongNo,
+  });
+
+  factory TopCongNoModel.fromMap(Map<String, dynamic> map) {
+    return TopCongNoModel(
+      idnt: intOf(map['idnt']),
+      hoTen: strOf(map['hoTen']),
+      tongTien: numOf(map['tongTien']),
+      tongDaThu: numOf(map['tongDaThu']),
+      tongCongNo: numOf(map['tongCongNo']),
+    );
+  }
+
+  Map<String, dynamic> toMap() => {
+    'idnt': idnt,
+    'hoTen': hoTen,
+    'tongTien': tongTien,
+    'tongDaThu': tongDaThu,
+    'tongCongNo': tongCongNo,
+  };
+
+  TopCongNoModel copyWith({
+    int? idnt,
+    String? hoTen,
+    double? tongTien,
+    double? tongDaThu,
+    double? tongCongNo,
+  }) {
+    return TopCongNoModel(
+      idnt: idnt ?? this.idnt,
+      hoTen: hoTen ?? this.hoTen,
+      tongTien: tongTien ?? this.tongTien,
+      tongDaThu: tongDaThu ?? this.tongDaThu,
+      tongCongNo: tongCongNo ?? this.tongCongNo,
+    );
+  }
+}
+
+/// ==========================================
+/// TOP HÀNG HÓA BÁN CHẠY
+/// ==========================================
+class TopHangHoaModel {
+  final int maHangHoa;
+  final String? tenHangHoa;
+  final String? donViTinh;
+  final double tongSoLuong;
+
+  TopHangHoaModel({
+    required this.maHangHoa,
+    required this.tenHangHoa,
+    required this.donViTinh,
+    required this.tongSoLuong,
+  });
+
+  factory TopHangHoaModel.fromMap(Map<String, dynamic> map) {
+    return TopHangHoaModel(
+      maHangHoa: intOf(map['maHangHoa']),
+      tenHangHoa: strOf(map['tenHangHoa']),
+      donViTinh: strOf(map['donViTinh']),
+      tongSoLuong: numOf(map['tongSoLuong']),
+    );
+  }
+
+  Map<String, dynamic> toMap() => {
+    'maHangHoa': maHangHoa,
+    'tenHangHoa': tenHangHoa,
+    'donViTinh': donViTinh,
+    'tongSoLuong': tongSoLuong,
+  };
+
+  TopHangHoaModel copyWith({
+    int? maHangHoa,
+    String? tenHangHoa,
+    String? donViTinh,
+    double? tongSoLuong,
+  }) {
+    return TopHangHoaModel(
+      maHangHoa: maHangHoa ?? this.maHangHoa,
+      tenHangHoa: tenHangHoa ?? this.tenHangHoa,
+      donViTinh: donViTinh ?? this.donViTinh,
+      tongSoLuong: tongSoLuong ?? this.tongSoLuong,
+    );
+  }
+}
+
+/// ==========================================
+/// TOP THIẾT BỊ SỬA NHIỀU NHẤT
+/// ==========================================
+class TopThietBiSuaModel {
+  final int thietBiId;
+  final String? tenThietBi;
+  final String? loai;
+  final int soLanSua;
+
+  TopThietBiSuaModel({
+    required this.thietBiId,
+    required this.tenThietBi,
+    required this.loai,
+    required this.soLanSua,
+  });
+
+  factory TopThietBiSuaModel.fromMap(Map<String, dynamic> map) {
+    return TopThietBiSuaModel(
+      thietBiId: intOf(map['thietBiId']),
+      tenThietBi: strOf(map['tenThietBi']),
+      loai: strOf(map['loai']),
+      soLanSua: intOf(map['soLanSua']),
+    );
+  }
+
+  Map<String, dynamic> toMap() => {
+    'thietBiId': thietBiId,
+    'tenThietBi': tenThietBi,
+    'loai': loai,
+    'soLanSua': soLanSua,
+  };
+
+  TopThietBiSuaModel copyWith({
+    int? thietBiId,
+    String? tenThietBi,
+    String? loai,
+    int? soLanSua,
+  }) {
+    return TopThietBiSuaModel(
+      thietBiId: thietBiId ?? this.thietBiId,
+      tenThietBi: tenThietBi ?? this.tenThietBi,
+      loai: loai ?? this.loai,
+      soLanSua: soLanSua ?? this.soLanSua,
+    );
+  }
+}
+
+/// ==========================================
+/// PHÒNG (rút gọn, dùng lồng trong HĐ sắp hết hạn)
+/// ==========================================
+class PhongMiniModel {
+  final int phongId;
+  final String? tenPhong;
+
+  PhongMiniModel({required this.phongId, required this.tenPhong});
+
+  factory PhongMiniModel.fromMap(Map<String, dynamic> map) {
+    return PhongMiniModel(
+      phongId: intOf(map['phongId']),
+      tenPhong: strOf(map['tenPhong']),
+    );
+  }
+
+  Map<String, dynamic> toMap() => {'phongId': phongId, 'tenPhong': tenPhong};
+}
+
+/// ==========================================
+/// NGƯỜI THUÊ (rút gọn, dùng lồng trong HĐ sắp hết hạn)
+/// ==========================================
+class NguoiThueMiniModel {
+  final int idnt;
+  final String? hoTen;
+  final String? sdt;
+
+  NguoiThueMiniModel({
+    required this.idnt,
+    required this.hoTen,
+    required this.sdt,
+  });
+
+  factory NguoiThueMiniModel.fromMap(Map<String, dynamic> map) {
+    return NguoiThueMiniModel(
+      idnt: intOf(map['idnt']),
+      hoTen: strOf(map['hoTen']),
+      sdt: strOf(map['sdt']),
+    );
+  }
+
+  Map<String, dynamic> toMap() => {'idnt': idnt, 'hoTen': hoTen, 'sdt': sdt};
+}
+
+/// ==========================================
+/// HỢP ĐỒNG SẮP HẾT HẠN
+/// LƯU Ý: backend trả nguyên record HopDong (include phong, nguoithue)
+/// nên các field gốc của HopDong (idnt, phongId, ngayBatDau, ngayHetHan,
+/// trangThai, ...) có thể nhiều/khác so với schema thật của bạn.
+/// Hãy đối chiếu lại với model Prisma `HopDong` và bổ sung/sửa field
+/// bên dưới cho khớp 100% nếu cần — mình để sẵn `raw` để không mất dữ liệu.
+/// ==========================================
+class HopDongSapHetModel {
+  final int? idnt;
+  final int? phongId;
+  final DateTime? ngayBatDau;
+  final DateTime? ngayHetHan;
+  final int? trangThai;
+  final PhongMiniModel? phong;
+  final NguoiThueMiniModel? nguoithue;
+
+  /// Giữ lại toàn bộ map gốc, phòng khi HopDong có field khác chưa khai báo
+  final Map<String, dynamic> raw;
+
+  HopDongSapHetModel({
+    required this.idnt,
+    required this.phongId,
+    required this.ngayBatDau,
+    required this.ngayHetHan,
+    required this.trangThai,
+    required this.phong,
+    required this.nguoithue,
+    required this.raw,
+  });
+
+  factory HopDongSapHetModel.fromMap(Map<String, dynamic> map) {
+    return HopDongSapHetModel(
+      idnt: map['idnt'] == null ? null : intOf(map['idnt']),
+      phongId: map['phongId'] == null ? null : intOf(map['phongId']),
+      ngayBatDau: dateOf(map['ngayBatDau']),
+      ngayHetHan: dateOf(map['ngayHetHan']),
+      trangThai: map['trangThai'] == null ? null : intOf(map['trangThai']),
+      phong: map['phong'] == null
+          ? null
+          : PhongMiniModel.fromMap(map['phong'] as Map<String, dynamic>),
+      nguoithue: map['nguoithue'] == null
+          ? null
+          : NguoiThueMiniModel.fromMap(
+              map['nguoithue'] as Map<String, dynamic>,
+            ),
+      raw: map,
+    );
+  }
+
+  Map<String, dynamic> toMap() => raw;
 }

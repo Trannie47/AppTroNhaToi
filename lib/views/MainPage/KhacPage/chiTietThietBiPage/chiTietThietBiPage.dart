@@ -1,13 +1,18 @@
+import 'package:AppTroNhaToi/Provider/lich_su_Them_thiet_bi_provider.dart';
 import 'package:AppTroNhaToi/Provider/sua_chua_provider.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/models/DTO/SuaChuaDTO.dart';
+import 'package:AppTroNhaToi/models/lich_su_mua_thiet_bi.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/chiTietThietBiPage/chiTietThietBiPageViewModel.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/LichSuMuaThietBiPage/LichSuMuaThietBiPage.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/LichSuSuaChuaPage/LichSuSuaChuaPage.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/LichSuSuaChuaPage/LichSuSuaChuaPageModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/PhieuSuaChuaForm/PhieuSuaChuaForm.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThietBiForm/thietBiForm.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietLichSuMuaThietBiPage/chiTietLichSuMuaThietBiPage.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietLichSuSuaChuaPage/chiTietLichSuSuaChuaPage.dart';
+import 'package:AppTroNhaToi/widgets/itemLichSuMuaThietBi.dart';
 import 'package:AppTroNhaToi/widgets/itemLichSuSuaChua.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -32,6 +37,7 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
     vm = ChiTietThietBiPageViewModel(
       thietBi: widget.thietBi,
       suaChuaProvider: context.read<SuaChuaProvider>(),
+      lichSuMuaThietBiProvider: context.read<LichSuMuaThietBiProvider>(),
     );
 
     vm.addListener(() {
@@ -79,6 +85,41 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
 
     // Nếu muốn load lại khi quay về
     await vm.reloadLichSuSuaChua();
+  }
+
+  Future<void> _moLichSuMuaThietBi() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (_) => LichSuMuaThietBiProvider()),
+          ],
+          child: LichSuMuaThietBiPage(thietBi: widget.thietBi),
+        ),
+      ),
+    );
+
+    vm.reloadLichSuMuaThietBi();
+  }
+
+  Future<void> moChiTietLichSuMuaThietBi(LichSuMuaThietBi item) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (_) => LichSuMuaThietBiProvider()),
+          ],
+          child: ChiTietLichSuMuaThietBiPage(
+            lichSuMua: item,
+            thietBi: widget.thietBi,
+          ),
+        ),
+      ),
+    );
+
+    vm.reloadLichSuMuaThietBi();
   }
 
   @override
@@ -270,16 +311,6 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
                         _rowThongTin("Loại", vm.thietBi.loai ?? ""),
 
                         _rowThongTin(
-                          "Ngày mua",
-                          DateFormat("dd/MM/yyyy").format(vm.thietBi.ngayMua!),
-                        ),
-
-                        _rowThongTin(
-                          "Giá trị",
-                          "${NumberFormat("#,###").format(vm.thietBi.giaTri)}đ",
-                        ),
-
-                        _rowThongTin(
                           "Trạng thái",
                           vm.trangThai,
                           mau: dangSua ? Colors.red : const Color(0xff2D7A3A),
@@ -289,6 +320,72 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
                   ),
 
                   const SizedBox(height: 16),
+
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 0,
+                      vertical: 16,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Row(
+                            children: [
+                              const Text(
+                                "Lịch sử mua thiết bị",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xff2D7A3A),
+                                ),
+                              ),
+                              const Spacer(),
+                              TextButton(
+                                onPressed: _moLichSuMuaThietBi,
+                                child: const Text(
+                                  "Xem thêm",
+                                  style: TextStyle(
+                                    color: Color(0xff2D7A3A),
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(height: 16),
+
+                        Column(
+                          children: List.generate(vm.lichSuMuaThietBi.length, (
+                            index,
+                          ) {
+                            final item = vm.lichSuMuaThietBi[index];
+
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 10),
+                              child: ItemLichSuMuaThietBi(
+                                lichSu: item,
+
+                                // Xem chi tiết
+                                onClick: () => moChiTietLichSuMuaThietBi(item),
+                              ),
+                            );
+                          }),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 30),
 
                   Container(
                     width: double.infinity,

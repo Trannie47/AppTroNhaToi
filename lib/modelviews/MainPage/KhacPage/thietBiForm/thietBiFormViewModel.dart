@@ -13,10 +13,7 @@ class ThietBiFormViewModel extends ChangeNotifier {
 
   bool get isEditMode => _thietBiDangSua != null;
 
-
   final TextEditingController txtTenThietBi = TextEditingController();
-  final TextEditingController txtGiaTri = TextEditingController();
-  final TextEditingController txtNgayMua = TextEditingController();
 
   String? loaiThietBi;
   int? phongID;
@@ -29,7 +26,6 @@ class ThietBiFormViewModel extends ChangeNotifier {
   String? errGiaTri;
   String? errTrangThai;
 
-
   final List<String> dsLoaiThietBi = [
     "Điều hòa",
     "Tủ lạnh",
@@ -40,15 +36,9 @@ class ThietBiFormViewModel extends ChangeNotifier {
     "Bình nóng lạnh",
     "Bếp điện",
   ];
-  final List<String> dsTrangThai = [
-    "Tốt",
-    "Đang sửa",
-  ];
+  final List<String> dsTrangThai = ["Tốt", "Đang sửa"];
 
-  ThietBiFormViewModel(
-      this._service, {
-        ThietBi? thietBiInput,
-      }) {
+  ThietBiFormViewModel(this._service, {ThietBi? thietBiInput}) {
     if (thietBiInput != null) {
       loadDeSua(thietBiInput);
     }
@@ -58,15 +48,6 @@ class ThietBiFormViewModel extends ChangeNotifier {
     _thietBiDangSua = tb;
 
     txtTenThietBi.text = tb.tenThietBi ?? "";
-    txtGiaTri.text = tb.giaTri?.toString() ?? "";
-
-    if (tb.ngayMua != null) {
-      txtNgayMua.text =
-      "${tb.ngayMua!.day.toString().padLeft(2, '0')}/"
-          "${tb.ngayMua!.month.toString().padLeft(2, '0')}/"
-          "${tb.ngayMua!.year}";
-    }
-
 
     loaiThietBi = tb.loai;
     trangThai = tb.trangThaiText;
@@ -109,35 +90,35 @@ class ThietBiFormViewModel extends ChangeNotifier {
     }
 
     // Ngày mua
-    if (txtNgayMua.text.trim().isEmpty) {
-      errNgayMua = "Vui lòng nhập ngày mua";
-      hopLe = false;
-    } else {
-      errNgayMua = kiemTraNgay(
-        txtNgayMua.text,
-        minYear: 2000,
-        khongLonHonHienTai: true,
-      );
+    // if (txtNgayMua.text.trim().isEmpty) {
+    //   errNgayMua = "Vui lòng nhập ngày mua";
+    //   hopLe = false;
+    // } else {
+    //   errNgayMua = kiemTraNgay(
+    //     txtNgayMua.text,
+    //     minYear: 2000,
+    //     khongLonHonHienTai: true,
+    //   );
 
-      if (errNgayMua != null) {
-        hopLe = false;
-      }
-    }
+    //   if (errNgayMua != null) {
+    //     hopLe = false;
+    //   }
+    // }
 
-    // Giá trị
-    if (txtGiaTri.text.trim().isEmpty) {
-      errGiaTri = "Vui lòng nhập giá trị";
+    // // Giá trị
+    // if (txtGiaTri.text.trim().isEmpty) {
+    //   errGiaTri = "Vui lòng nhập giá trị";
 
-      hopLe = false;
-    } else {
-      double? giaTri = double.tryParse(txtGiaTri.text);
+    //   hopLe = false;
+    // } else {
+    //   double? giaTri = double.tryParse(txtGiaTri.text);
 
-      if (giaTri == null || giaTri < 0) {
-        errGiaTri = "Giá trị không được âm";
+    //   if (giaTri == null || giaTri < 0) {
+    //     errGiaTri = "Giá trị không được âm";
 
-        hopLe = false;
-      }
-    }
+    //     hopLe = false;
+    //   }
+    // }
 
     // Trạng thái
     if (trangThai == null) {
@@ -159,19 +140,10 @@ class ThietBiFormViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final parts = txtNgayMua.text.split('/');
-
       final tb = ThietBi(
         thietBiID: _thietBiDangSua?.thietBiID,
         tenThietBi: txtTenThietBi.text.trim(),
         loai: loaiThietBi,
-        giaTri: double.parse(txtGiaTri.text),
-
-        ngayMua: DateTime(
-          int.parse(parts[2]),
-          int.parse(parts[1]),
-          int.parse(parts[0]),
-        ),
 
         trangThai: trangThai == "Tốt" ? 0 : 1,
       );
@@ -181,19 +153,12 @@ class ThietBiFormViewModel extends ChangeNotifier {
 
         return ok ? tb : null;
       } else {
-        // return await _service.them(tb);
-
-        print(tb.toMap());
-
         final result = await _service.them(tb);
-
-        print(result);
 
         return result;
       }
     } catch (e) {
       return null;
-
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -204,8 +169,6 @@ class ThietBiFormViewModel extends ChangeNotifier {
     _thietBiDangSua = null;
 
     txtTenThietBi.clear();
-    txtGiaTri.clear();
-    txtNgayMua.clear();
 
     loaiThietBi = null;
     phongID = null;
@@ -239,13 +202,9 @@ class ThietBiFormViewModel extends ChangeNotifier {
     }
   }
 
-
-
   @override
   void dispose() {
     txtTenThietBi.dispose();
-    txtGiaTri.dispose();
-    txtNgayMua.dispose();
 
     super.dispose();
   }

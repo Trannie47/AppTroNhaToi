@@ -11,7 +11,6 @@ class ThongKeProvider extends ChangeNotifier {
   Future<ThongKeDTO?> getThongKe({int? thang, int? nam}) async {
     try {
       _thongKe = await _thongKeRepository.getThongKe(thang: thang, nam: nam);
-      print(_thongKe?.toMap());
       notifyListeners();
       return _thongKe;
     } catch (e) {

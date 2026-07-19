@@ -287,7 +287,6 @@ class _HangHoaFormState extends State<HangHoaForm> {
                     ? null
                     : () async {
                         final ok = await vm.luu();
-                        print("Kết quả luu(): $ok");
                         if (ok != null && mounted) {
                           Navigator.pop(context, ok);
                         }

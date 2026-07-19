@@ -267,12 +267,7 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
     if (maSuaChua == null) {
       return await _suaChuaProvider.them(dto);
     } else {
-      bool success = await _suaChuaProvider.capNhat(dto);
-      if (success) {
-        return dto;
-      } else {
-        return null;
-      }
+      return await _suaChuaProvider.capNhat(dto);
     }
   }
 
