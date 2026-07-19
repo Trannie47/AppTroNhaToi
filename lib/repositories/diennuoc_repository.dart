@@ -51,6 +51,23 @@ class DienNuocRepository {
       throw Exception("Lỗi DienNuocRepository.createDienNuoc: $e");
     }
   }
+  Future<DienNuoc?> updateDienNuoc(
+      DienNuoc dienNuoc, {
+        String? anhDienCuPath,
+        String? anhDienMoiPath,
+        String? anhNuocCuPath,
+        String? anhNuocMoiPath,
+      }) async {
+    final response = await _apiClient.updateDienNuoc(
+      dienNuoc,
+      anhDienCuPath: anhDienCuPath,
+      anhDienMoiPath: anhDienMoiPath,
+      anhNuocCuPath: anhNuocCuPath,
+      anhNuocMoiPath: anhNuocMoiPath,
+    );
+
+    return DienNuoc.fromMap(response);
+  }
 }
 
 

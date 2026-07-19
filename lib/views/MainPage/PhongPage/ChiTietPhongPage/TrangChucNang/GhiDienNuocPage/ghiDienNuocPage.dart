@@ -102,7 +102,7 @@ class _GhiDienNuocView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text('Ghi điện nước', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                Text('Phòng $tenPhong · Kỳ $thangNamHienThi', style: TextStyle(fontSize: 13, color: Colors.grey.shade500)),
+                Text('Phòng $tenPhong '),
               ],
             ),
           ),

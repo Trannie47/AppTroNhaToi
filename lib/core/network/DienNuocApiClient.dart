@@ -92,6 +92,49 @@ class DienNuocApiClient {
       throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
     }
   }
+  Future<Map<String, dynamic>> updateDienNuoc(
+      DienNuoc dienNuoc, {
+        String? anhDienCuPath,
+        String? anhDienMoiPath,
+        String? anhNuocCuPath,
+        String? anhNuocMoiPath,
+      }) async {
+    try {
+      final Map<String, dynamic> dataMap = {
+        "chiSoDienCu": dienNuoc.chiSoDienCu,
+        "chiSoDienMoi": dienNuoc.chiSoDienMoi,
+        "chiSoNuocCu": dienNuoc.chiSoNuocCu,
+        "chiSoNuocMoi": dienNuoc.chiSoNuocMoi,
+        "ngayGhi": dienNuoc.ngayGhi,
+      };
+
+      if (anhDienCuPath != null) dataMap["anhDienCu"] = await MultipartFile.fromFile(anhDienCuPath);
+      if (anhDienMoiPath != null) dataMap["anhDienMoi"] = await MultipartFile.fromFile(anhDienMoiPath);
+      if (anhNuocCuPath != null) dataMap["anhNuocCu"] = await MultipartFile.fromFile(anhNuocCuPath);
+      if (anhNuocMoiPath != null) dataMap["anhNuocMoi"] = await MultipartFile.fromFile(anhNuocMoiPath);
+
+      final formData = FormData.fromMap(dataMap);
+
+      final response = await _dio.put(
+        "dien-nuoc/update",
+        data: formData,
+        queryParameters: {
+          "phongId": dienNuoc.phongId,
+          "thangNam": dienNuoc.thangNam,
+          "lanGhi": dienNuoc.lanGhi,
+        },
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response.data as Map<String, dynamic>;
+      }
+      throw Exception("Lỗi khi cập nhật dữ liệu.");
+    } on DioException catch (e) {
+      throw Exception(_mapErrorToMessage(e));
+    } catch (e) {
+      throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
+    }
+  }
 
 
   String _mapErrorToMessage(DioException e) {

@@ -72,7 +72,7 @@ class GhiDienNuocPageViewModel extends ChangeNotifier {
               : data.chiSoNuocMoi.toString();
           //Load ngày lên khi mở màn lần đầu, ko đè ngày khi chủ trọ tự chọn ngày
           if (updateDateFromRecord && data.ngayGhi != null) {
-            selectedDate = DateTime.parse(data.ngayGhi!);
+            selectedDate = DateTime.parse(data.ngayGhi!).toLocal(); //để chuyển múi giờ Server về múi giờ điện thoại
           }
         } else {
           dienMoiController.clear();
@@ -164,25 +164,34 @@ class GhiDienNuocPageViewModel extends ChangeNotifier {
       final dienNuoc = DienNuoc(
         phongId: phongId,
         thangNam: thangNam,
+        lanGhi: mode == "UPDATE" ? (_provider.currentDienNuoc?.lanGhi ?? 1) : null,
         chiSoDienCu: int.tryParse(dienCuController.text.trim()) ?? 0,
         chiSoDienMoi: dienMoi,
         chiSoNuocCu: int.tryParse(nuocCuController.text.trim()) ?? 0,
         chiSoNuocMoi: nuocMoi,
-        ngayGhi: selectedDate.toIso8601String(),
+        ngayGhi: DateTime.utc(selectedDate.year, selectedDate.month, selectedDate.day).toIso8601String(),
       );
-
-      await _provider.createDienNuoc(
-        dienNuoc,
-        anhDienCuPath: anhDienCuPath,
-        anhDienMoiPath: anhDienMoiPath,
-        anhNuocCuPath: anhNuocCuPath,
-        anhNuocMoiPath: anhNuocMoiPath,
-      );
+      if (mode == "UPDATE"){
+        await _provider.updateDienNuoc(
+          dienNuoc,
+          anhDienCuPath: anhDienCuPath,
+          anhDienMoiPath: anhDienMoiPath,
+          anhNuocCuPath: anhNuocCuPath,
+          anhNuocMoiPath: anhNuocMoiPath,
+        );
+      }else{
+        await _provider.createDienNuoc(
+          dienNuoc,
+          anhDienCuPath: anhDienCuPath,
+          anhDienMoiPath: anhDienMoiPath,
+          anhNuocCuPath: anhNuocCuPath,
+          anhNuocMoiPath: anhNuocMoiPath,
+        );
+      }
 
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Lưu thông tin chỉ số thành công!"), backgroundColor: Color(0xff4B7A47)),
-      );
+        SnackBar(content: Text(mode == "UPDATE" ? "Cập nhật thành công!" : "Lưu thành công!"), backgroundColor: const Color(0xff4B7A47)),      );
       Navigator.pop(context, true);
     } catch (e) {
       submitErrorMessage = e.toString().replaceAll('Exception: ', '');

@@ -40,4 +40,21 @@ class DienNuocProvider extends ChangeNotifier {
     _currentDienNuoc = result;
     notifyListeners();
   }
+  Future<void> updateDienNuoc(
+      DienNuoc dienNuoc, {
+        String? anhDienCuPath,
+        String? anhDienMoiPath,
+        String? anhNuocCuPath,
+        String? anhNuocMoiPath,
+      }) async {
+    final result = await _repository.updateDienNuoc(
+      dienNuoc,
+      anhDienCuPath: anhDienCuPath,
+      anhDienMoiPath: anhDienMoiPath,
+      anhNuocCuPath: anhNuocCuPath,
+      anhNuocMoiPath: anhNuocMoiPath,
+    );
+    _currentDienNuoc = result;
+    notifyListeners();
+  }
 }
