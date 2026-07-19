@@ -12,6 +12,7 @@ import '../../../../states/phong_save_state.dart';
 import '../../../../widgets/app_confirm_dialog.dart';
 import '../../../../widgets/app_error.dart';
 import 'TrangChucNang/GhiDienNuocPage/ghiDienNuocPage.dart';
+import 'TrangChucNang/LichSuThuePage/lichSuThuePage.dart';
 
 class PhongChiTiet extends StatefulWidget {
   final ItemPhong room;
@@ -265,7 +266,17 @@ class PhongChiTiet extends StatefulWidget {
             _actionChip(title: "Lịch sử thuê",
                 icon: Icons.history,
                 isActive: false,
-                onTap: () {}),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => LichSuThuePage(
+                        phongId: room.phongId,
+                        tenPhong: room.tenPhong,
+                      ),
+                    ),
+                  );
+                }),
           ],
         ),
       );

@@ -27,4 +27,11 @@ class HopdongRepository {
     final result= hopDongApiClient.getRoomByNguoithue(idnt);
     return result;
   }
+  Future<List<HopDongDTO>> getLichSuThuePhong(int phongId) async {
+    try {
+      return await hopDongApiClient.getLichSuThuePhong(phongId);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

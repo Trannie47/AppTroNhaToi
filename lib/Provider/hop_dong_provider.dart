@@ -48,4 +48,13 @@ class HopDongProvider extends ChangeNotifier {
       rethrow;
     }
   }
+
+  Future<List<HopDongDTO>> getLichSuThuePhong(int phongId) async {
+    try {
+      final list = await hopdongRepository.getLichSuThuePhong(phongId);
+      return list;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
