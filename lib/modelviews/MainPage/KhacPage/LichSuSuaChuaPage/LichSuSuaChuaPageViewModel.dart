@@ -51,6 +51,15 @@ class LichSuSuaChuaPageViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> reload() async {
+    await _suaChuaProvider.fetchByThietBi(thietBi.thietBiID!);
+
+    dsGoc = List.from(_suaChuaProvider.list);
+    lichSuSuaChua = List.from(dsGoc);
+
+    notifyListeners();
+  }
+
   @override
   void dispose() {
     txtSearch.removeListener(timKiem);

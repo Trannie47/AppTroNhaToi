@@ -1,3 +1,4 @@
+import 'package:AppTroNhaToi/Provider/sua_chua_provider.dart';
 import 'package:AppTroNhaToi/models/hoa_don_sua_chua.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/sua_chua.dart';
@@ -7,24 +8,21 @@ import 'package:flutter/material.dart';
 class ChiTietLichSuSuaChuaPageViewModel extends ChangeNotifier {
   late SuaChua suaChua;
   HoaDonSuaChua? hoaDonSuaChua;
+  late SuaChuaProvider _provider;
 
   late ThietBi thietBi;
-  late Phong phong;
 
   void init(
     SuaChua suaChuaData,
     HoaDonSuaChua? hoaDonSuaChuaData,
     ThietBi thietBiData,
+    SuaChuaProvider provider,
   ) {
     suaChua = suaChuaData;
     hoaDonSuaChua = hoaDonSuaChuaData;
+    print(hoaDonSuaChua);
     thietBi = thietBiData;
-    phong = Phong(
-      phongID: 101,
-      tenPhong: "Phòng 101",
-      trangThai: 1,
-      maLoaiPhong: 1,
-    );
+    _provider = provider;
   }
 
   String get tenThietBi {
@@ -81,14 +79,18 @@ class ChiTietLichSuSuaChuaPageViewModel extends ChangeNotifier {
     }
   }
 
-  void xoaChiTiet() {
-    // TODO: xử lý xóa
-    notifyListeners();
-  }
+  Future<bool> xoaChiTiet() async {
+    try {
+      final result = await _provider.xoa(suaChua.id!, suaChua.phongID!);
 
-  void capNhatThongTin() {
-    // TODO: xử lý cập nhật
-    notifyListeners();
+      if (result) {
+        notifyListeners();
+      }
+
+      return result;
+    } catch (e) {
+      return false;
+    }
   }
 
   @override

@@ -21,9 +21,6 @@ class ThietBiFormViewModel extends ChangeNotifier {
 
   String? errTenThietBi;
   String? errLoaiThietBi;
-  String? errPhong;
-  String? errNgayMua;
-  String? errGiaTri;
   String? errTrangThai;
 
   final List<String> dsLoaiThietBi = [
@@ -64,9 +61,7 @@ class ThietBiFormViewModel extends ChangeNotifier {
   bool kiemTraDuLieu() {
     errTenThietBi = null;
     errLoaiThietBi = null;
-    errPhong = null;
-    errNgayMua = null;
-    errGiaTri = null;
+
     errTrangThai = null;
 
     bool hopLe = true;
@@ -82,43 +77,6 @@ class ThietBiFormViewModel extends ChangeNotifier {
       errLoaiThietBi = "Vui lòng chọn loại thiết bị";
       hopLe = false;
     }
-
-    // Phòng
-    if (phongID == null) {
-      errPhong = "Vui lòng chọn phòng";
-      hopLe = false;
-    }
-
-    // Ngày mua
-    // if (txtNgayMua.text.trim().isEmpty) {
-    //   errNgayMua = "Vui lòng nhập ngày mua";
-    //   hopLe = false;
-    // } else {
-    //   errNgayMua = kiemTraNgay(
-    //     txtNgayMua.text,
-    //     minYear: 2000,
-    //     khongLonHonHienTai: true,
-    //   );
-
-    //   if (errNgayMua != null) {
-    //     hopLe = false;
-    //   }
-    // }
-
-    // // Giá trị
-    // if (txtGiaTri.text.trim().isEmpty) {
-    //   errGiaTri = "Vui lòng nhập giá trị";
-
-    //   hopLe = false;
-    // } else {
-    //   double? giaTri = double.tryParse(txtGiaTri.text);
-
-    //   if (giaTri == null || giaTri < 0) {
-    //     errGiaTri = "Giá trị không được âm";
-
-    //     hopLe = false;
-    //   }
-    // }
 
     // Trạng thái
     if (trangThai == null) {
@@ -144,7 +102,6 @@ class ThietBiFormViewModel extends ChangeNotifier {
         thietBiID: _thietBiDangSua?.thietBiID,
         tenThietBi: txtTenThietBi.text.trim(),
         loai: loaiThietBi,
-
         trangThai: trangThai == "Tốt" ? 0 : 1,
       );
 
@@ -176,9 +133,7 @@ class ThietBiFormViewModel extends ChangeNotifier {
 
     errTenThietBi = null;
     errLoaiThietBi = null;
-    errPhong = null;
-    errNgayMua = null;
-    errGiaTri = null;
+
     errTrangThai = null;
 
     notifyListeners();

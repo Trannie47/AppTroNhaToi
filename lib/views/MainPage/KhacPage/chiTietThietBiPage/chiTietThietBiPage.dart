@@ -646,7 +646,9 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
                 );
 
                 if (result is ThietBi) {
-                  setState(() {});
+                  setState(() {
+                    vm.thietBi = result;
+                  });
                 }
               },
             ),

@@ -4,6 +4,7 @@ import 'package:AppTroNhaToi/Provider/sua_chua_provider.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/LichSuSuaChuaPage/LichSuSuaChuaPageViewModel.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/LichSuSuaChuaPage/LichSuSuaChuaPageModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/PhieuSuaChuaForm/PhieuSuaChuaForm.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietLichSuSuaChuaPage/chiTietLichSuSuaChuaPage.dart';
 import 'package:AppTroNhaToi/widgets/itemLichSuSuaChua.dart';
@@ -55,6 +56,30 @@ class _LichSuSuaChuaPageState extends State<LichSuSuaChuaPage> {
         ),
       ),
     );
+  }
+
+  //Chuyển đến trang chi tiết
+  Future<void> moChiTietLichSuSuaChua(LichSuSuaChuaPageModel item) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ChangeNotifierProvider.value(
+          value: context.read<SuaChuaProvider>(),
+          child: ChiTietLichSuSuaChuaPage(
+            suaChua: item.suaChua!,
+            hoaDonSuaChua: item.hoaDonSuaChua,
+            thietBi: widget.thietBi,
+            tenPhong: item.tenPhong,
+          ),
+        ),
+      ),
+    );
+
+    if (!mounted) return;
+
+    if (result == true) {
+      vm.reload();
+    }
   }
 
   @override
@@ -187,20 +212,7 @@ class _LichSuSuaChuaPageState extends State<LichSuSuaChuaPage> {
                     suaChua: item.suaChua!,
                     hoaDonSuaChua: item.hoaDonSuaChua,
                     onClick: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => ChangeNotifierProvider.value(
-                            value: context.read<SuaChuaProvider>(),
-                            child: ChiTietLichSuSuaChuaPage(
-                              suaChua: item.suaChua!,
-                              hoaDonSuaChua: item.hoaDonSuaChua,
-                              thietBi: widget.thietBi,
-                              tenPhong: item.tenPhong,
-                            ),
-                          ),
-                        ),
-                      );
+                      moChiTietLichSuSuaChua(item);
                     },
                   );
                 },

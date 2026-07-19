@@ -32,6 +32,14 @@ class ChiTietLichSuMuaThietBiPageViewModel extends ChangeNotifier {
     return lichSuMua.ghiChu ?? "";
   }
 
+  bool get duocCapNhat {
+    if (ngayMua == null) return false;
+
+    final now = DateTime.now();
+
+    return ngayMua!.year == now.year && ngayMua!.month == now.month;
+  }
+
   @override
   void dispose() {
     super.dispose();

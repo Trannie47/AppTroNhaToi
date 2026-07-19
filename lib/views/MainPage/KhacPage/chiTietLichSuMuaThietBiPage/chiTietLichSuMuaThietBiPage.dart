@@ -1,9 +1,12 @@
+import 'package:AppTroNhaToi/Provider/lich_su_Them_thiet_bi_provider.dart';
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/models/lich_su_mua_thiet_bi.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/chiTietLichSuMuaThietBiPage/chiTietLichSuMuaThietBiPageViewModel.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/LichSuMuaThietBiForm/LichSuMuaThietBiForm.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ChiTietLichSuMuaThietBiPage extends StatefulWidget {
   final LichSuMuaThietBi lichSuMua;
@@ -45,7 +48,24 @@ class _ChiTietLichSuMuaThietBiPageState
   }
 
   Future<void> capNhatThongTin() async {
-    //vm.capNhatThongTin(); // TODO: nối vào Provider khi có form sửa
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ChangeNotifierProvider.value(
+          value: context.read<LichSuMuaThietBiProvider>(),
+          child: LichSuMuaThietBiForm(
+            lichSuMua: vm.lichSuMua,
+            thietBi: widget.thietBi,
+          ),
+        ),
+      ),
+    );
+
+    if (result is LichSuMuaThietBi) {
+      setState(() {
+        vm.lichSuMua = result;
+      });
+    }
   }
 
   Future<void> xoaChiTiet() async {
@@ -182,34 +202,38 @@ class _ChiTietLichSuMuaThietBiPageState
             icon: const Icon(Icons.more_vert),
 
             itemBuilder: (context) => [
-              PopupMenuItem<String>(
-                value: "update",
-                child: ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: const Icon(
-                    Icons.edit_outlined,
-                    color: Color(0xff2D7A3A),
-                  ),
-                  title: const Text("Cập nhật thông tin"),
-                  subtitle: const Text("Số lượng, đơn giá, ngày mua"),
-                ),
-              ),
-
-              PopupMenuItem<String>(
-                value: "delete",
-                child: ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: const Icon(Icons.delete_outline, color: Colors.red),
-                  title: const Text(
-                    "Ẩn chi tiết",
-                    style: TextStyle(color: Colors.red),
-                  ),
-                  subtitle: const Text(
-                    "Không thể hoàn tác",
-                    style: TextStyle(color: Colors.red),
+              if (vm.duocCapNhat)
+                PopupMenuItem<String>(
+                  value: "update",
+                  child: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(
+                      Icons.edit_outlined,
+                      color: Color(0xff2D7A3A),
+                    ),
+                    title: const Text("Cập nhật thông tin"),
+                    subtitle: const Text("Số lượng, đơn giá, ngày mua"),
                   ),
                 ),
-              ),
+              if (vm.duocCapNhat)
+                PopupMenuItem<String>(
+                  value: "delete",
+                  child: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(
+                      Icons.delete_outline,
+                      color: Colors.red,
+                    ),
+                    title: const Text(
+                      "Ẩn chi tiết",
+                      style: TextStyle(color: Colors.red),
+                    ),
+                    subtitle: const Text(
+                      "Không thể hoàn tác",
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
+                ),
             ],
           ),
         ],

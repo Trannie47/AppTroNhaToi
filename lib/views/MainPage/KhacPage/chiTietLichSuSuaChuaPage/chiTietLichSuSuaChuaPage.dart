@@ -6,7 +6,6 @@ import 'package:AppTroNhaToi/models/hoa_don_sua_chua.dart';
 import 'package:AppTroNhaToi/models/sua_chua.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/chiTietLichSuSuaChuaPage/chiTietLichSuSuaChuaPageViewModel.dart';
-import 'package:AppTroNhaToi/views/MainPage/KhacPage/LichSuSuaChuaPage/LichSuSuaChuaPageModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/PhieuSuaChuaForm/PhieuSuaChuaForm.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -39,7 +38,12 @@ class _ChiTietLichSuSuaChuaPageState extends State<ChiTietLichSuSuaChuaPage> {
 
     vm = ChiTietLichSuSuaChuaPageViewModel();
 
-    vm.init(widget.suaChua, widget.hoaDonSuaChua, widget.thietBi);
+    vm.init(
+      widget.suaChua,
+      widget.hoaDonSuaChua,
+      widget.thietBi,
+      context.read<SuaChuaProvider>(),
+    );
 
     vm.addListener(() {
       if (mounted) setState(() {});
@@ -79,6 +83,13 @@ class _ChiTietLichSuSuaChuaPageState extends State<ChiTietLichSuSuaChuaPage> {
         );
         vm.hoaDonSuaChua = result.hoaDonSuaChua;
       });
+    }
+  }
+
+  Future<void> xoaChiTiet() async {
+    final bool kt = await vm.xoaChiTiet();
+    if (kt == true) {
+      Navigator.pop(context, true);
     }
   }
 
@@ -204,7 +215,7 @@ class _ChiTietLichSuSuaChuaPageState extends State<ChiTietLichSuSuaChuaPage> {
                   break;
 
                 case "delete":
-                  // xoaChiTiet(); // gọi hàm xóa
+                  xoaChiTiet(); // gọi hàm xóa
                   break;
               }
             },
@@ -212,8 +223,7 @@ class _ChiTietLichSuSuaChuaPageState extends State<ChiTietLichSuSuaChuaPage> {
             icon: const Icon(Icons.more_vert),
 
             itemBuilder: (context) => [
-              if (!(vm.hoaDonSuaChua?.trangThai == 2 ||
-                  vm.hoaDonSuaChua?.trangThai == 3))
+              if ((vm.hoaDonSuaChua?.trangThai ?? 0) < 2)
                 PopupMenuItem<String>(
                   value: "update",
                   child: ListTile(
@@ -226,22 +236,25 @@ class _ChiTietLichSuSuaChuaPageState extends State<ChiTietLichSuSuaChuaPage> {
                     subtitle: const Text("Sửa lỗi, loại sửa"),
                   ),
                 ),
-
-              PopupMenuItem<String>(
-                value: "delete",
-                child: ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: const Icon(Icons.delete_outline, color: Colors.red),
-                  title: const Text(
-                    "Ẩn chi tiết",
-                    style: TextStyle(color: Colors.red),
-                  ),
-                  subtitle: const Text(
-                    "Không thể hoàn tác",
-                    style: TextStyle(color: Colors.red),
+              if ((vm.hoaDonSuaChua?.trangThai ?? 0) < 2)
+                PopupMenuItem<String>(
+                  value: "delete",
+                  child: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(
+                      Icons.delete_outline,
+                      color: Colors.red,
+                    ),
+                    title: const Text(
+                      "Ẩn chi tiết",
+                      style: TextStyle(color: Colors.red),
+                    ),
+                    subtitle: const Text(
+                      "Không thể hoàn tác",
+                      style: TextStyle(color: Colors.red),
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
         ],

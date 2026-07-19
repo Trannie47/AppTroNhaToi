@@ -167,11 +167,16 @@ class LichSuMuaThietBiFormViewModel extends ChangeNotifier {
   }
 
   Future<void> chonNgayMua(BuildContext context) async {
+    final now = DateTime.now();
+
+    final firstDay = DateTime(now.year, now.month, 1);
+    final lastDay = DateTime(now.year, now.month + 1, 0);
+
     DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialDate: ngayMuaChon ?? DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2090),
+      initialDate: ngayMuaChon ?? now,
+      firstDate: firstDay,
+      lastDate: lastDay,
     );
 
     if (pickedDate != null) {
