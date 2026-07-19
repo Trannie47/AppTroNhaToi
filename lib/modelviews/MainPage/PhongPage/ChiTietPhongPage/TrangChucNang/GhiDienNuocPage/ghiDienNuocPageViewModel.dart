@@ -148,6 +148,8 @@ class GhiDienNuocPageViewModel extends ChangeNotifier {
   Future<void> createDienNuoc(BuildContext context) async {
     final dienMoi = int.tryParse(dienMoiController.text.trim());
     final nuocMoi = int.tryParse(nuocMoiController.text.trim());
+    final dienCu = int.tryParse(dienCuController.text.trim()) ?? 0;
+    final nuocCu = int.tryParse(nuocCuController.text.trim()) ?? 0;
 
     if (dienMoi == null || nuocMoi == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -156,6 +158,18 @@ class GhiDienNuocPageViewModel extends ChangeNotifier {
       return;
     }
 
+    if (dienMoi < dienCu) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Chỉ số điện mới không được nhỏ hơn chỉ số cũ!"), backgroundColor: Colors.redAccent),
+      );
+      return;
+    }
+    if (nuocMoi < nuocCu) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Chỉ số nước mới không được nhỏ hơn chỉ số cũ!"), backgroundColor: Colors.redAccent),
+      );
+      return;
+    }
     isSubmitting = true;
     submitErrorMessage = null;
     notifyListeners();
