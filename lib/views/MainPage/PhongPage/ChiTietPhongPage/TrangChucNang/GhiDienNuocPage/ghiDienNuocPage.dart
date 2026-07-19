@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:AppTroNhaToi/Provider/dien_nuoc_provider.dart';
@@ -286,6 +287,9 @@ class _GhiDienNuocView extends StatelessWidget {
                 child: TextFormField(
                   controller: controller,
                   keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly, // lọc ko cho nhập những kí tự ngoài kí tự số
+                  ],
                   decoration: const InputDecoration(hintText: '0', border: InputBorder.none, isDense: true),
                   style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black),
                 ),
