@@ -20,13 +20,19 @@ class ThongKePageViewModel extends ChangeNotifier {
 
   ///================ FILTER ==================
 
-  int selectedFilter = 2;
+  int thangChon = DateTime.now().month;
 
-  final List<String> filters = ['Hôm nay', 'Tuần', 'Tháng', 'Năm', 'Tùy chọn'];
+  int namChon = DateTime.now().year;
 
-  void changeFilter(int index) {
-    selectedFilter = index;
+  String get thangNamText => "${thangChon.toString().padLeft(2, '0')}/$namChon";
+
+  void chonThangNam(int thang, int nam) {
+    thangChon = thang;
+    namChon = nam;
+
     notifyListeners();
+
+    loadThongKe(thang: thangChon, nam: namChon);
   }
 
   ///================ SCROLL ==================
@@ -63,6 +69,14 @@ class ThongKePageViewModel extends ChangeNotifier {
   double get chuaThu => data?.congNo.tongCongNo ?? 0;
 
   double get tongChiPhi => data?.chiPhi.tongChiPhi ?? 0;
+
+  double get chiPhiSuaChua => data?.chiPhi.tongTienSuaChua ?? 0;
+
+  double get chiPhiMuaThietBi => data?.chiPhi.tongTienMuaThietBi ?? 0;
+
+  double get phanTramSuaChua => data?.chiPhi.tyLeSuaChua ?? 0;
+
+  double get phanTramMuaThietBi => data?.chiPhi.tyLeMuaThietBi ?? 0;
 
   ///================ ROOM ==================
 

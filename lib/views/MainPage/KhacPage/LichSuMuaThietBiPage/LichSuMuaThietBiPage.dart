@@ -1,8 +1,9 @@
-import 'package:AppTroNhaToi/Provider/lich_su_Them_thiet_bi_provider.dart';
+import 'package:AppTroNhaToi/Provider/lich_su_mua_thiet_bi_provider.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/LichSuMuaThietBiPage/LichSuMuaThietBiPageViewModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/LichSuMuaThietBiForm/LichSuMuaThietBiForm.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietLichSuMuaThietBiPage/chiTietLichSuMuaThietBiPage.dart';
+import 'package:AppTroNhaToi/widgets/chon_thang_nam_picker.dart';
 import 'package:AppTroNhaToi/widgets/itemLichSuMuaThietBi.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -48,9 +49,7 @@ class _LichSuMuaThietBiPageState extends State<LichSuMuaThietBiPage> {
       MaterialPageRoute(
         builder: (_) => ChangeNotifierProvider.value(
           value: context.read<LichSuMuaThietBiProvider>(),
-          child: LichSuMuaThietBiForm(
-            thietBi: vm.thietBi,
-          ),
+          child: LichSuMuaThietBiForm(thietBi: vm.thietBi),
         ),
       ),
     );
@@ -127,24 +126,44 @@ class _LichSuMuaThietBiPageState extends State<LichSuMuaThietBiPage> {
           Container(
             padding: const EdgeInsets.all(16),
             color: Colors.white,
-            child: Container(
-              height: 40,
-              decoration: BoxDecoration(
-                color: const Color(0xffF5F5F5),
-                borderRadius: BorderRadius.circular(14),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(14),
+              onTap: () => chonThangNam(
+                context,
+                thangHienTai: vm.thangChon,
+                namHienTai: vm.namChon,
+                onApply: (thang, nam) => vm.chonThangNam(thang, nam),
               ),
-              child: TextField(
-                controller: vm.txtSearch,
-                textAlignVertical: TextAlignVertical.center,
-                decoration: const InputDecoration(
-                  hintText: "Ghi chú",
-                  prefixIcon: Icon(Icons.search, color: Colors.grey, size: 18),
-                  border: InputBorder.none,
-                  enabledBorder: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  disabledBorder: InputBorder.none,
-                  isDense: true,
-                  contentPadding: EdgeInsets.symmetric(vertical: 10),
+              child: Container(
+                height: 40,
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                decoration: BoxDecoration(
+                  color: const Color(0xffF5F5F5),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.calendar_today,
+                      color: Colors.grey,
+                      size: 18,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        "Tháng ${vm.thangNamText}",
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                    const Icon(
+                      Icons.keyboard_arrow_down,
+                      color: Colors.grey,
+                      size: 20,
+                    ),
+                  ],
                 ),
               ),
             ),

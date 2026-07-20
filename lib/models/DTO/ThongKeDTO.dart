@@ -182,14 +182,51 @@ class CongNoThongKe {
 
 class ChiPhiThongKe {
   final double tongChiPhi;
+  final double tongTienSuaChua;
+  final double tongTienMuaThietBi;
 
-  ChiPhiThongKe({required this.tongChiPhi});
+  const ChiPhiThongKe({
+    required this.tongChiPhi,
+    required this.tongTienSuaChua,
+    required this.tongTienMuaThietBi,
+  });
 
   factory ChiPhiThongKe.fromMap(Map<String, dynamic> map) {
-    return ChiPhiThongKe(tongChiPhi: numOf(map['tongChiPhi']));
+    return ChiPhiThongKe(
+      tongChiPhi: numOf(map['tongChiPhi']),
+      tongTienSuaChua: numOf(map['tongTienSuaChua']),
+      tongTienMuaThietBi: numOf(map['tongTienMuaThietBi']),
+    );
   }
 
-  Map<String, dynamic> toMap() => {'tongChiPhi': tongChiPhi};
+  Map<String, dynamic> toMap() => {
+    'tongChiPhi': tongChiPhi,
+    'tongTienSuaChua': tongTienSuaChua,
+    'tongTienMuaThietBi': tongTienMuaThietBi,
+  };
+
+  ChiPhiThongKe copyWith({
+    double? tongChiPhi,
+    double? tongTienSuaChua,
+    double? tongTienMuaThietBi,
+  }) {
+    return ChiPhiThongKe(
+      tongChiPhi: tongChiPhi ?? this.tongChiPhi,
+      tongTienSuaChua: tongTienSuaChua ?? this.tongTienSuaChua,
+      tongTienMuaThietBi: tongTienMuaThietBi ?? this.tongTienMuaThietBi,
+    );
+  }
+
+  /// Tỷ lệ (0 -> 1)
+  double get tyLeSuaChua => tongChiPhi == 0 ? 0 : tongTienSuaChua / tongChiPhi;
+
+  double get tyLeMuaThietBi =>
+      tongChiPhi == 0 ? 0 : tongTienMuaThietBi / tongChiPhi;
+
+  /// Phần trăm (0 -> 100)
+  double get phanTramSuaChua => tyLeSuaChua * 100;
+
+  double get phanTramMuaThietBi => tyLeMuaThietBi * 100;
 }
 
 class PhongThongKe {

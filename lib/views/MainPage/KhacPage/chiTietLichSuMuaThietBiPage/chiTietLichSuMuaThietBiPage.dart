@@ -1,4 +1,4 @@
-import 'package:AppTroNhaToi/Provider/lich_su_Them_thiet_bi_provider.dart';
+import 'package:AppTroNhaToi/Provider/lich_su_mua_thiet_bi_provider.dart';
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/models/lich_su_mua_thiet_bi.dart';

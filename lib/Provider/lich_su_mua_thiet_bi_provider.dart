@@ -37,38 +37,23 @@ class LichSuMuaThietBiProvider extends ChangeNotifier {
   }
 
   Future<LichSuMuaThietBi?> them(LichSuMuaThietBi lichSu) async {
-    try {
-      final result = await _repo.them(lichSu);
-
-      if (result != null) {
-        await fetchByThietBi(result.thietBiID!);
-      }
-
-      return result;
-    } catch (e) {
-      if (kDebugMode) {
-        print("Lỗi thêm lịch sử mua: $e");
-      }
-      return null;
+    final result = await _repo.them(lichSu);
+    if (result != null) {
+      await fetchByThietBi(result.thietBiID!);
     }
+
+    return result;
   }
 
   Future<bool> capNhat(LichSuMuaThietBi lichSu) async {
-    try {
-      final result = await _repo.capNhat(lichSu);
+    final result = await _repo.capNhat(lichSu);
 
-      if (result != null) {
-        await fetchByThietBi(result.thietBiID!);
-        return true;
-      }
-
-      return false;
-    } catch (e) {
-      if (kDebugMode) {
-        print("Lỗi cập nhật lịch sử mua: $e");
-      }
-      return false;
+    if (result != null) {
+      await fetchByThietBi(result.thietBiID!);
+      return true;
     }
+
+    return false;
   }
 
   Future<bool> xoa(int id, int thietBiID) async {

@@ -1,4 +1,4 @@
-import 'package:AppTroNhaToi/Provider/lich_su_Them_thiet_bi_provider.dart';
+import 'package:AppTroNhaToi/Provider/lich_su_mua_thiet_bi_provider.dart';
 import 'package:AppTroNhaToi/Provider/sua_chua_provider.dart';
 import 'package:AppTroNhaToi/Provider/thiet_bi_provider.dart';
 import 'package:AppTroNhaToi/models/DTO/SuaChuaDTO.dart';
@@ -32,7 +32,7 @@ class ChiTietThietBiPageViewModel extends ChangeNotifier {
     required SuaChuaProvider suaChuaProvider,
     required LichSuMuaThietBiProvider lichSuMuaThietBiProvider,
   }) : _thietBiProvider = thietBiProvider,
-        _suaChuaProvider = suaChuaProvider,
+       _suaChuaProvider = suaChuaProvider,
        _lichSuMuaThietBiProvider = lichSuMuaThietBiProvider {
     _suaChuaProvider.addListener(_onProviderUpdate);
     _lichSuMuaThietBiProvider.addListener(_onProviderUpdate);

@@ -1,4 +1,4 @@
-import 'package:AppTroNhaToi/Provider/lich_su_Them_thiet_bi_provider.dart';
+import 'package:AppTroNhaToi/Provider/lich_su_mua_thiet_bi_provider.dart';
 import 'package:AppTroNhaToi/Provider/sua_chua_provider.dart';
 import 'package:AppTroNhaToi/Provider/thiet_bi_provider.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
@@ -16,7 +16,6 @@ import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietLichSuSuaChuaPage/ch
 import 'package:AppTroNhaToi/widgets/itemLichSuMuaThietBi.dart';
 import 'package:AppTroNhaToi/widgets/itemLichSuSuaChua.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class ChiTietThietBiPage extends StatefulWidget {

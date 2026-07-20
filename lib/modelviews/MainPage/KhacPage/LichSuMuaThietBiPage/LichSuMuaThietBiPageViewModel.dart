@@ -1,4 +1,4 @@
-import 'package:AppTroNhaToi/Provider/lich_su_Them_thiet_bi_provider.dart';
+import 'package:AppTroNhaToi/Provider/lich_su_mua_thiet_bi_provider.dart';
 import 'package:AppTroNhaToi/models/lich_su_mua_thiet_bi.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:flutter/material.dart';
@@ -7,12 +7,15 @@ class LichSuMuaThietBiPageViewModel extends ChangeNotifier {
   final ThietBi thietBi;
   final LichSuMuaThietBiProvider _lichSuMuaThietBiProvider;
 
-  final txtSearch = TextEditingController();
-
   List<LichSuMuaThietBi> dsGoc = [];
   List<LichSuMuaThietBi> lichSuMuaThietBi = [];
 
   bool get isLoading => _lichSuMuaThietBiProvider.isLoading;
+
+  int thangChon = DateTime.now().month;
+  int namChon = DateTime.now().year;
+
+  String get thangNamText => "${thangChon.toString().padLeft(2, '0')}/$namChon";
 
   LichSuMuaThietBiPageViewModel({
     required this.thietBi,
@@ -20,45 +23,41 @@ class LichSuMuaThietBiPageViewModel extends ChangeNotifier {
   }) : _lichSuMuaThietBiProvider = lichSuMuaThietBiProvider {
     _lichSuMuaThietBiProvider.addListener(_onProviderUpdate);
 
-    txtSearch.addListener(timKiem);
-
     Future.microtask(refresh);
   }
 
   void _onProviderUpdate() {
     dsGoc = List.from(_lichSuMuaThietBiProvider.list);
-    timKiem();
+    locTheoThangNam();
   }
 
-  void timKiem() {
-    final keyword = txtSearch.text.trim().toLowerCase();
+  void chonThangNam(int thang, int nam) {
+    thangChon = thang;
+    namChon = nam;
+    locTheoThangNam();
+  }
 
-    if (keyword.isEmpty) {
-      lichSuMuaThietBi = List.from(dsGoc);
-    } else {
-      lichSuMuaThietBi = dsGoc.where((e) {
-        return (e.ghiChu ?? '').toLowerCase().contains(keyword);
-      }).toList();
-    }
+  void locTheoThangNam() {
+    lichSuMuaThietBi = dsGoc.where((e) {
+      final ngay = e.ngayMua;
+
+      if (ngay == null) return false;
+
+      return ngay.month == thangChon && ngay.year == namChon;
+    }).toList();
 
     notifyListeners();
   }
 
   Future<void> refresh() async {
-    await _lichSuMuaThietBiProvider.fetchByThietBi(
-      thietBi.thietBiID!,
-    );
+    await _lichSuMuaThietBiProvider.fetchByThietBi(thietBi.thietBiID!);
 
     dsGoc = List.from(_lichSuMuaThietBiProvider.list);
-    lichSuMuaThietBi = List.from(dsGoc);
-
-    notifyListeners();
+    locTheoThangNam();
   }
 
   @override
   void dispose() {
-    txtSearch.removeListener(timKiem);
-    txtSearch.dispose();
     _lichSuMuaThietBiProvider.removeListener(_onProviderUpdate);
     super.dispose();
   }

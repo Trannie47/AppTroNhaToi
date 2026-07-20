@@ -1,4 +1,4 @@
-import 'package:AppTroNhaToi/Provider/lich_su_Them_thiet_bi_provider.dart';
+import 'package:AppTroNhaToi/Provider/lich_su_mua_thiet_bi_provider.dart';
 import 'package:AppTroNhaToi/Provider/sua_chua_provider.dart';
 import 'package:AppTroNhaToi/Provider/thiet_bi_provider.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
@@ -36,7 +36,6 @@ class _ThietBiPageState extends State<ThietBiPage> {
 
   @override
   Widget build(BuildContext context) {
-
     final thietBiProvider = context.watch<ThietBiProvider>();
 
     return Scaffold(

@@ -2,6 +2,7 @@ import 'package:AppTroNhaToi/Provider/thong_ke_provider.dart';
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/models/DTO/ThongKeDTO.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/ThongKePage/ThongKePageViewModel.dart';
+import 'package:AppTroNhaToi/widgets/chon_thang_nam_picker.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -309,73 +310,124 @@ class _ThongKePageState extends State<ThongKePage> {
 
   // FILTER
 
+  // Widget _buildFilter(ThongKePageViewModel vm) {
+  //   return Container(
+  //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+  //     color: Colors.white,
+  //     child: Row(
+  //       children: [
+  //         Expanded(
+  //           child: SizedBox(
+  //             height: 46,
+  //             child: ListView.separated(
+  //               scrollDirection: Axis.horizontal,
+  //               itemCount: vm.filters.length,
+  //               separatorBuilder: (_, __) => const SizedBox(width: 10),
+  //               itemBuilder: (_, index) {
+  //                 final selected = vm.selectedFilter == index;
+  //                 return InkWell(
+  //                   borderRadius: BorderRadius.circular(14),
+  //                   onTap: () {
+  //                     vm.changeFilter(index);
+  //                   },
+  //                   child: AnimatedContainer(
+  //                     duration: const Duration(milliseconds: 250),
+  //                     padding: const EdgeInsets.symmetric(horizontal: 22),
+  //                     decoration: BoxDecoration(
+  //                       color: selected
+  //                           ? const Color(0xFF7C4DFF)
+  //                           : Colors.white,
+  //                       borderRadius: BorderRadius.circular(14),
+  //                       border: Border.all(
+  //                         color: selected
+  //                             ? const Color(0xFF7C4DFF)
+  //                             : const Color(0xFFE3E6ED),
+  //                       ),
+  //                     ),
+  //                     child: Center(
+  //                       child: Row(
+  //                         children: [
+  //                           if (index == 4) ...[
+  //                             const Icon(
+  //                               Icons.calendar_today,
+  //                               size: 18,
+  //                               color: Colors.black87,
+  //                             ),
+  //                             const SizedBox(width: 8),
+  //                           ],
+  //                           Text(
+  //                             vm.filters[index],
+  //                             style: TextStyle(
+  //                               fontWeight: FontWeight.w600,
+  //                               color: selected ? Colors.white : Colors.black87,
+  //                             ),
+  //                           ),
+  //                           if (index == 4) ...[
+  //                             const SizedBox(width: 6),
+  //                             const Icon(
+  //                               Icons.keyboard_arrow_down,
+  //                               size: 18,
+  //                               color: Colors.black87,
+  //                             ),
+  //                           ],
+  //                         ],
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 );
+  //               },
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
   Widget _buildFilter(ThongKePageViewModel vm) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       color: Colors.white,
       child: Row(
         children: [
-          Expanded(
-            child: SizedBox(
+          InkWell(
+            borderRadius: BorderRadius.circular(14),
+            onTap: () => chonThangNam(
+              context,
+              thangHienTai: vm.thangChon,
+              namHienTai: vm.namChon,
+              onApply: (thang, nam) => vm.chonThangNam(thang, nam),
+            ),
+            child: Container(
               height: 46,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemCount: vm.filters.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 10),
-                itemBuilder: (_, index) {
-                  final selected = vm.selectedFilter == index;
-
-                  return InkWell(
-                    borderRadius: BorderRadius.circular(14),
-                    onTap: () {
-                      vm.changeFilter(index);
-                    },
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 250),
-                      padding: const EdgeInsets.symmetric(horizontal: 22),
-                      decoration: BoxDecoration(
-                        color: selected
-                            ? const Color(0xFF7C4DFF)
-                            : Colors.white,
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(
-                          color: selected
-                              ? const Color(0xFF7C4DFF)
-                              : const Color(0xFFE3E6ED),
-                        ),
-                      ),
-                      child: Center(
-                        child: Row(
-                          children: [
-                            if (index == 4) ...[
-                              const Icon(
-                                Icons.calendar_today,
-                                size: 18,
-                                color: Colors.black87,
-                              ),
-                              const SizedBox(width: 8),
-                            ],
-                            Text(
-                              vm.filters[index],
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: selected ? Colors.white : Colors.black87,
-                              ),
-                            ),
-                            if (index == 4) ...[
-                              const SizedBox(width: 6),
-                              const Icon(
-                                Icons.keyboard_arrow_down,
-                                size: 18,
-                                color: Colors.black87,
-                              ),
-                            ],
-                          ],
-                        ),
-                      ),
+              padding: const EdgeInsets.symmetric(horizontal: 22),
+              decoration: BoxDecoration(
+                color: const Color(0xFF7C4DFF),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.calendar_today,
+                    size: 18,
+                    color: Colors.white,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    "Tháng ${vm.thangNamText}",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
                     ),
-                  );
-                },
+                  ),
+                  const SizedBox(width: 6),
+                  const Icon(
+                    Icons.keyboard_arrow_down,
+                    size: 18,
+                    color: Colors.white,
+                  ),
+                ],
               ),
             ),
           ),
@@ -1050,27 +1102,17 @@ class _ThongKePageState extends State<ThongKePage> {
 
               _buildExpenseItem(
                 title: "Sửa chữa",
-                value: "12.000.000đ",
-                percent: .48,
+                value: formatMoney(vm.data!.chiPhi.tongTienSuaChua),
+                percent: vm.data!.chiPhi.tyLeSuaChua,
                 color: Colors.red,
               ),
-
               const SizedBox(height: 16),
 
               _buildExpenseItem(
                 title: "Mua thiết bị",
-                value: "8.000.000đ",
-                percent: .32,
+                value: formatMoney(vm.data!.chiPhi.tongTienMuaThietBi),
+                percent: vm.data!.chiPhi.tyLeMuaThietBi,
                 color: Colors.orange,
-              ),
-
-              const SizedBox(height: 16),
-
-              _buildExpenseItem(
-                title: "Chi phí khác",
-                value: "5.000.000đ",
-                percent: .20,
-                color: Colors.blue,
               ),
 
               const Divider(height: 36),
@@ -1118,9 +1160,16 @@ class _ThongKePageState extends State<ThongKePage> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildExpenseBar("Sửa", .95, Colors.red),
-                    _buildExpenseBar("TB", .70, Colors.orange),
-                    _buildExpenseBar("Khác", .45, Colors.blue),
+                    _buildExpenseBar(
+                      "Sửa",
+                      vm.data!.chiPhi.tyLeSuaChua,
+                      Colors.red,
+                    ),
+                    _buildExpenseBar(
+                      "Mua TB",
+                      vm.data!.chiPhi.tyLeMuaThietBi,
+                      Colors.orange,
+                    ),
                     _buildExpenseBar("Tổng", 1, const Color(0xFF7C4DFF)),
                   ],
                 ),
