@@ -36,6 +36,9 @@ class _ThietBiPageState extends State<ThietBiPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    final thietBiProvider = context.watch<ThietBiProvider>();
+
     return Scaffold(
       backgroundColor: const Color(0xffF7F9F7),
 
@@ -171,7 +174,7 @@ class _ThietBiPageState extends State<ThietBiPage> {
                       );
 
                       if (result == true) {
-                        setState(() {});
+                        await vm.refresh();
                       }
                     },
 
