@@ -44,6 +44,31 @@ class LoaiPhongApiClient{
       throw Exception("Đã có lỗi xảy ra khi tạo loại phòng");
     }
   }
+  Future<LoaiPhong?> updateLoaiPhong(LoaiPhong loaiPhong) async {
+    try {
+      //Lấy map dữ liệu từ model ra
+      Map<String, dynamic> mapData = loaiPhong.toMap();
+
+      //Ép buộc giá trị gửi đi phải là bool để tránh lỗi chuỗi "true"/"false"
+      mapData['isMayLanh'] = loaiPhong.isMayLanh;
+
+      final response = await _dio.put("loai-phong/updateLoaiPhong", data: mapData);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        if (response.data != null && response.data['success'] == true) {
+          final Map<String, dynamic> loaiPhongJson = response.data['data'];
+          return LoaiPhong.fromMap(loaiPhongJson);
+        }
+      }
+      return null;
+    } on DioException catch (e) {
+      if (kDebugMode) print("Lỗi PUT LoaiPhongApiClient: $e");
+      throw Exception(_mapErrorToMessage(e));
+    } catch (e) {
+      if (kDebugMode) print("Lỗi không xác định khi cập nhật: $e");
+      throw Exception("Đã có lỗi xảy ra khi cập nhật loại phòng");
+    }
+  }
   String _mapErrorToMessage(DioException e){
     if (e.response?.data != null && e.response?.data['message'] != null) {
       return e.response!.data['message'].toString();

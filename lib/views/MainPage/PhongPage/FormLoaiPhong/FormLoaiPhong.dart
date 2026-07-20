@@ -1,10 +1,9 @@
 import 'package:AppTroNhaToi/models/loaiphong.dart';
 import 'package:AppTroNhaToi/Provider/loai_phong_provider.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/loaiPhongModelViewsForm/FormLoaiPhong.dart'; // Giữ nguyên import ViewModel của Tài
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-
-import '../../../../modelviews/MainPage/PhongPage/loaiPhongModelViewsForm/FormLoaiPhong.dart';
 
 class FormLoaiPhong extends StatefulWidget {
   final Function(LoaiPhong)? onAdd;
@@ -36,25 +35,7 @@ class _FormLoaiPhongState extends State<FormLoaiPhong> {
     });
   }
 
-  void xuLyLuuVaTiepTuc() async {
-    if (!vm.kiemTraDuLieu()) return;
-    final result = await vm.saveLoaiPhongProcess();
-    if (!mounted) return;
-
-    if (result != null) {
-      widget.onAdd?.call(result);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Thêm mới loại phòng thành công!"),
-          backgroundColor: Colors.green,
-        ),
-      );
-      vm.clear();
-    } else {
-      _showErrorSnackbar(vm.messageError ?? "Đã có lỗi xảy ra!");
-    }
-  }
-
+  // 🔥 ĐÃ CẬP NHẬT: Xử lý lưu dữ liệu (Tự động phân biệt Thêm/Sửa thông báo và đóng màn hình)
   void xuLyLuuLoaiPhong() async {
     if (!vm.kiemTraDuLieu()) return;
     final result = await vm.saveLoaiPhongProcess();
@@ -63,13 +44,15 @@ class _FormLoaiPhongState extends State<FormLoaiPhong> {
     if (result != null) {
       widget.onAdd?.call(result);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Thêm mới loại phòng thành công!"),
+        SnackBar(
+          content: Text(widget.loaiPhong != null
+              ? "Cập nhật loại phòng thành công!"
+              : "Thêm mới loại phòng thành công!"),
           backgroundColor: Colors.green,
-          duration: Duration(seconds: 2),
+          duration: const Duration(seconds: 2),
         ),
       );
-      Navigator.pop(context, result);
+      Navigator.pop(context, result); // Quay lại màn hình danh sách bên ngoài
     } else {
       _showErrorSnackbar(vm.messageError ?? "Đã có lỗi xảy ra!");
     }
@@ -111,54 +94,26 @@ class _FormLoaiPhongState extends State<FormLoaiPhong> {
           ),
           bottomNavigationBar: Padding(
             padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF2D7A3A),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18),
-                      ),
-                    ),
-                    onPressed: isSaving ? null : xuLyLuuLoaiPhong,
-                    child: Text(
-                      isEdit ? "Lưu thay đổi" : "Lưu loại phòng",
-                      style: const TextStyle(
-                        fontSize: 18,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+            child: SizedBox(
+              width: double.infinity,
+              height: 56,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF2D7A3A),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
                   ),
                 ),
-                const SizedBox(height: 12),
-                if (!isEdit)
-                  SizedBox(
-                    width: double.infinity,
-                    height: 56,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18),
-                        ),
-                      ),
-                      onPressed: isSaving ? null : xuLyLuuVaTiepTuc,
-                      child: const Text(
-                        "Lưu & thêm loại phòng khác",
-                        style: TextStyle(
-                          color: Color(0xFF2D7A3A),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
+                onPressed: isSaving ? null : xuLyLuuLoaiPhong,
+                child: Text(
+                  isEdit ? "Lưu thay đổi" : "Lưu loại phòng",
+                  style: const TextStyle(
+                    fontSize: 18,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
                   ),
-              ],
+                ),
+              ),
             ),
           ),
           body: SingleChildScrollView(

@@ -220,8 +220,14 @@ class _LoaiPhongPageState extends State<LoaiPhongPage> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 GestureDetector(
-                  onTap: () {
-                    //Xử lý sửa loại phòng
+                  onTap: () async{
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => FormLoaiPhong(loaiPhong: item),
+                      ),
+                    );
+                    await vm.loadDataInitial();
                   },
                   child: const Text(
                     "Sửa",

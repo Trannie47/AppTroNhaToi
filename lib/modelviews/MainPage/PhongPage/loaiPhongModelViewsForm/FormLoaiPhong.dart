@@ -122,7 +122,14 @@ class FormLoaiPhongViewModel extends ChangeNotifier {
     );
 
     try {
-      final result = await _loaiPhongProvider.createLoaiPhong(lp);
+      LoaiPhong? result;
+      if (loaiPhong != null) {
+        // Nếu có dữ liệu cũ truyền vào -> Gọi API Cập nhật
+        result = await _loaiPhongProvider.updateLoaiPhong(lp);
+      } else {
+        // Nếu không có dữ liệu cũ -> Gọi API Thêm mới
+        result = await _loaiPhongProvider.createLoaiPhong(lp);
+      }
       return result;
     } catch (e) {
       _messageError = e.toString().replaceFirst('Exception: ', '');

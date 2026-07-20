@@ -10,4 +10,7 @@ class LoaiPhongRepository{
   Future<LoaiPhong?> createLoaiPhong(LoaiPhong loaiPhong) async {
     return await loaiPhongApiClient.createLoaiPhong(loaiPhong);
   }
+  Future<LoaiPhong?> updateLoaiPhong(LoaiPhong loaiPhong) async {
+    return await loaiPhongApiClient.updateLoaiPhong(loaiPhong);
+  }
 }

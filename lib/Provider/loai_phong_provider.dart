@@ -33,4 +33,24 @@ class LoaiPhongProvider extends ChangeNotifier {
       rethrow;
     }
   }
+  Future<LoaiPhong?> updateLoaiPhong(LoaiPhong loaiPhong) async {
+    try {
+      final updatedLoai = await _loaiPhongRepository.updateLoaiPhong(loaiPhong);
+      if (updatedLoai != null) {
+        // Tìm vị trí phần tử cũ trong danh sách hiện tại của App
+        int index = _listLoaiPhong.indexWhere((element) => element.maLoaiPhong == updatedLoai.maLoaiPhong);
+
+        if (index != -1) {
+          _listLoaiPhong[index] = updatedLoai; // Cập nhật đè dữ liệu mới vào vị trí cũ
+          notifyListeners();
+        }
+      }
+      return updatedLoai;
+    } catch (e) {
+      if (kDebugMode) {
+        print("Lỗi cập nhật tại LoaiPhongProvider: $e");
+      }
+      rethrow; // Bắn lỗi lên để ViewModel xử lý đưa ra SnackBar
+    }
+  }
 }
