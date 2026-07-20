@@ -20,4 +20,17 @@ class LoaiPhongProvider extends ChangeNotifier {
       rethrow; // Bắn lỗi ra ngoài để ViewModel tự bắt và chuyển State
     }
   }
+  Future<LoaiPhong?> createLoaiPhong(LoaiPhong loaiPhong) async {
+    try {
+      final newLoai = await _loaiPhongRepository.createLoaiPhong(loaiPhong);
+      if (newLoai != null) {
+        _listLoaiPhong.add(newLoai);
+        notifyListeners();
+      }
+      return newLoai;
+    } catch (e) {
+      if (kDebugMode) print("Lỗi tạo mới tại LoaiPhongProvider: $e");
+      rethrow;
+    }
+  }
 }

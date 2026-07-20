@@ -1,19 +1,29 @@
 import 'package:AppTroNhaToi/models/loaiphong.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../Provider/loai_phong_provider.dart';
+
 class FormLoaiPhongViewModel extends ChangeNotifier {
+  final LoaiPhongProvider _loaiPhongProvider;
+  final LoaiPhong? loaiPhong;
   late TextEditingController tenLoaiPhongController;
   late TextEditingController dienTichController;
   late TextEditingController soNguoiController;
   late TextEditingController giaTienController;
 
   bool isMayLanh = false;
+  bool _isSaving = false;
+  String? _messageError;
+
   String? errTenLoaiPhong;
   String? errDienTich;
   String? errSoNguoi;
   String? errGiaTien;
 
-  FormLoaiPhongViewModel(LoaiPhong? loaiPhong) {
+  bool get isSaving => _isSaving;
+  String? get messageError => _messageError;
+
+  FormLoaiPhongViewModel(this._loaiPhongProvider, this.loaiPhong) {
     tenLoaiPhongController = TextEditingController(
       text: loaiPhong?.tenLoaiPhong ?? "",
     );
@@ -51,7 +61,6 @@ class FormLoaiPhongViewModel extends ChangeNotifier {
   }
 
   bool kiemTraDuLieu() {
-
     errTenLoaiPhong = null;
     errDienTich = null;
     errSoNguoi = null;
@@ -60,83 +69,68 @@ class FormLoaiPhongViewModel extends ChangeNotifier {
     bool hopLe = true;
 
     if (tenLoaiPhongController.text.trim().isEmpty) {
-
       errTenLoaiPhong = "Vui lòng nhập tên loại phòng";
-
       hopLe = false;
     }
-
     if (dienTichController.text.trim().isEmpty) {
-
       errDienTich = "Vui lòng nhập diện tích";
-
       hopLe = false;
-    }
-    else {
-
-      double? dienTich =
-      double.tryParse(dienTichController.text);
-
+    } else {
+      double? dienTich = double.tryParse(dienTichController.text);
       if (dienTich == null || dienTich <= 0) {
-
         errDienTich = "Diện tích phải lớn hơn 0";
-
         hopLe = false;
       }
     }
-
     if (soNguoiController.text.trim().isEmpty) {
-
       errSoNguoi = "Vui lòng nhập số người tối đa";
-
       hopLe = false;
-    }
-    else {
-
-      int? soNguoi =
-      int.tryParse(soNguoiController.text);
-
+    } else {
+      int? soNguoi = int.tryParse(soNguoiController.text);
       if (soNguoi == null || soNguoi <= 0) {
-
         errSoNguoi = "Số người phải lớn hơn 0";
-
         hopLe = false;
       }
     }
-
     if (giaTienController.text.trim().isEmpty) {
-
       errGiaTien = "Vui lòng nhập giá thuê";
-
       hopLe = false;
-    }
-    else {
-
-      double? giaTien =
-      double.tryParse(giaTienController.text);
-
+    } else {
+      double? giaTien = double.tryParse(giaTienController.text);
       if (giaTien == null || giaTien <= 0) {
-
         errGiaTien = "Giá thuê phải lớn hơn 0";
-
         hopLe = false;
       }
     }
 
     notifyListeners();
-
     return hopLe;
   }
 
-  LoaiPhong buildLoaiPhong(int maLoaiPhong) {
-    return LoaiPhong(
-      tenLoaiPhong: tenLoaiPhongController.text,
+  Future<LoaiPhong?> saveLoaiPhongProcess() async {
+    _isSaving = true;
+    _messageError = null;
+    notifyListeners();
+
+    LoaiPhong lp = LoaiPhong(
+      maLoaiPhong: loaiPhong?.maLoaiPhong ?? 0, // 0 nếu tạo mới, backend tự sinh ID
+      tenLoaiPhong: tenLoaiPhongController.text.trim(),
       dienTich: double.tryParse(dienTichController.text) ?? 0,
       soNguoiToiDa: int.tryParse(soNguoiController.text) ?? 0,
-      giaTien: double.tryParse(giaTienController.text) ?? 0,
       isMayLanh: isMayLanh,
-      maLoaiPhong: maLoaiPhong,
+      giaTien: double.tryParse(giaTienController.text) ?? 0,
     );
+
+    try {
+      final result = await _loaiPhongProvider.createLoaiPhong(lp);
+      return result;
+    } catch (e) {
+      _messageError = e.toString().replaceFirst('Exception: ', '');
+      return null;
+    } finally {
+      _isSaving = false;
+      notifyListeners();
+    }
   }
 
   @override

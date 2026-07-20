@@ -6,6 +6,7 @@ import 'package:AppTroNhaToi/Provider/loai_phong_provider.dart';
 import 'package:AppTroNhaToi/states/loaiphong_state.dart';
 
 import '../../../../modelviews/MainPage/KhacPage/LoaiPhongPage/loaiPhongPageViewModel.dart';
+import '../../PhongPage/FormLoaiPhong/FormLoaiPhong.dart';
 
 class LoaiPhongPage extends StatefulWidget {
   const LoaiPhongPage({super.key});
@@ -56,7 +57,14 @@ class _LoaiPhongPageState extends State<LoaiPhongPage> {
           Padding(
             padding: const EdgeInsets.only(right: 16, top: 10, bottom: 10),
             child: ElevatedButton.icon(
-              onPressed: () {
+              onPressed: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const FormLoaiPhong(),
+                  ),
+                );
+                await vm.loadDataInitial();
               },
               icon: const Icon(Icons.add, size: 16, color: Colors.white),
               label: const Text(
