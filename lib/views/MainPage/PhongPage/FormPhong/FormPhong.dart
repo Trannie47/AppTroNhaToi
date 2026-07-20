@@ -123,24 +123,19 @@ class _FormPhongState extends State<FormPhong> {
     }
   }
 
-  // void goToFormRoomType() async {
-  //   final result = await Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (context) => FormLoaiPhong(
-  //         onAdd: (loaiPhong) {
-  //           vm.addRoomType(loaiPhong);
-  //         },
-  //       ),
-  //     ),
-  //   );
-  //
-  //   if (result != null && result is List<LoaiPhong>) {
-  //     for (var item in result) {
-  //       vm.addRoomType(item);
-  //     }
-  //   }
-  // }
+  void goToFormRoomType() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const FormLoaiPhong(),
+      ),
+    );
+
+    // Nếu màn hình FormLoaiPhong pop về một object LoaiPhong hợp lệ
+    if (result != null && result is LoaiPhong) {
+      vm.reloadLoaiPhongAfterAddition(result.maLoaiPhong);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -459,7 +454,7 @@ class _FormPhongState extends State<FormPhong> {
                                           ),
                                         ),
                                         child: InkWell(
-                                          onTap: ()=> {},//goToFormRoomType
+                                          onTap: goToFormRoomType,
                                           child: const Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,

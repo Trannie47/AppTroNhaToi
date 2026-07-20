@@ -60,6 +60,11 @@ class FormPhongViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+  void reloadLoaiPhongAfterAddition(int newId) {
+    _loaiphongState = LoaiPhongSuccess(_loaiPhongProvider.listLoaiPhong);
+    _idLoaiPhong = newId;
+    notifyListeners();
+  }
   void setIdLoaiPhong(int idLoaiPhong) {
     if (_idLoaiPhong == idLoaiPhong) return;
     _idLoaiPhong = idLoaiPhong;
