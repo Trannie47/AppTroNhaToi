@@ -1,5 +1,6 @@
 import 'package:AppTroNhaToi/Provider/lich_su_Them_thiet_bi_provider.dart';
 import 'package:AppTroNhaToi/Provider/sua_chua_provider.dart';
+import 'package:AppTroNhaToi/Provider/thiet_bi_provider.dart';
 import 'package:AppTroNhaToi/models/DTO/SuaChuaDTO.dart';
 import 'package:AppTroNhaToi/models/lich_su_mua_thiet_bi.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
@@ -11,6 +12,7 @@ class ChiTietThietBiPageViewModel extends ChangeNotifier {
 
   final SuaChuaProvider _suaChuaProvider;
   final LichSuMuaThietBiProvider _lichSuMuaThietBiProvider;
+  final ThietBiProvider _thietBiProvider;
 
   bool hienMenu = false;
 
@@ -26,9 +28,11 @@ class ChiTietThietBiPageViewModel extends ChangeNotifier {
 
   ChiTietThietBiPageViewModel({
     required this.thietBi,
+    required ThietBiProvider thietBiProvider,
     required SuaChuaProvider suaChuaProvider,
     required LichSuMuaThietBiProvider lichSuMuaThietBiProvider,
-  }) : _suaChuaProvider = suaChuaProvider,
+  }) : _thietBiProvider = thietBiProvider,
+        _suaChuaProvider = suaChuaProvider,
        _lichSuMuaThietBiProvider = lichSuMuaThietBiProvider {
     _suaChuaProvider.addListener(_onProviderUpdate);
     _lichSuMuaThietBiProvider.addListener(_onProviderUpdate);
@@ -67,10 +71,19 @@ class ChiTietThietBiPageViewModel extends ChangeNotifier {
 
   String get trangThai => thietBi.trangThaiText;
 
-  void capNhatTrangThai(String trangThaiMoi) {
-    thietBi = thietBi.copyWith(trangThai: trangThaiMoi == "Tốt" ? 0 : 1);
+  Future<bool> capNhatTrangThai(String trangThaiMoi) async {
+    final thietBiMoi = thietBi.copyWith(
+      trangThai: trangThaiMoi == "Tốt" ? 0 : 1,
+    );
 
-    notifyListeners();
+    final ok = await _thietBiProvider.capNhat(thietBiMoi);
+
+    if (ok) {
+      thietBi = thietBiMoi;
+      notifyListeners();
+    }
+
+    return ok;
   }
 
   Future<SuaChuaDTO?> themLichSuSuaChua(SuaChuaDTO suaChua) async {

@@ -1,15 +1,21 @@
+import 'package:AppTroNhaToi/Provider/hoa_don_tap_hoa_provider.dart';
+import 'package:AppTroNhaToi/Provider/thiet_bi_provider.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/LoaiPhongPage/loaiPhongPage.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/TapHoaPage/TapHoaPage.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThietBiPage/thietBiPage.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThongKePage/thongKePage.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/hopDongPage/hopDongPage.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class KhacPage extends StatelessWidget {
   const KhacPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final thietBiProvider = context.watch<ThietBiProvider>();
+    final hoaDonTapHoaProvider = context.watch<HoaDonTapHoaProvider>();
     return Scaffold(
       backgroundColor: const Color(0xFFF4F4F4),
       body: Column(
@@ -92,7 +98,7 @@ class KhacPage extends StatelessWidget {
                     title: "Thiết bị",
                     subtitle:
                     "Quản lý thiết bị, theo dõi sửa\nchữa, nhập kho",
-                    status: "1 đang hỏng",
+                    status: "${thietBiProvider.soLuongDangSua} đang sửa",
                     statusColor: Colors.red,
 
                     onTap: () {
@@ -115,7 +121,10 @@ class KhacPage extends StatelessWidget {
                     title: "Tạp hóa",
                     subtitle:
                     "Quản lý hàng hóa, lập hóa đơn,\ntheo dõi công nợ",
-                    status: "470,000đ công nợ",
+
+                    status:
+                    "${NumberFormat('#,##0').format(hoaDonTapHoaProvider.tongCongNo)}đ công nợ",
+
                     statusColor: Colors.red,
 
                     onTap: () {
@@ -124,9 +133,7 @@ class KhacPage extends StatelessWidget {
                         MaterialPageRoute(
                           builder: (_) => const TapHoaPage(),
                         ),
-
                       );
-
                     },
                   ),
 

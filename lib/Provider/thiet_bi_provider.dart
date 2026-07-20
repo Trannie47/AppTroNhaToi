@@ -9,6 +9,10 @@ class ThietBiProvider extends ChangeNotifier {
   List<ThietBi> _list = [];
   List<ThietBi> get list => List.unmodifiable(_list);
 
+  int get soLuongDangSua {
+    return _list.where((e) => e.dangSua).length;
+  }
+
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 

@@ -43,15 +43,21 @@ class _LichSuMuaThietBiPageState extends State<LichSuMuaThietBiPage> {
 
   /// Thêm lịch sử mua
   Future<void> taoMoi(BuildContext context) async {
-    await Navigator.push(
+    final result = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => ChangeNotifierProvider.value(
           value: context.read<LichSuMuaThietBiProvider>(),
-          child: LichSuMuaThietBiForm(thietBi: vm.thietBi),
+          child: LichSuMuaThietBiForm(
+            thietBi: vm.thietBi,
+          ),
         ),
       ),
     );
+
+    if (result != null) {
+      await vm.refresh();
+    }
   }
 
   @override

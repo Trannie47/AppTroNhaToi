@@ -22,14 +22,7 @@ class LichSuMuaThietBiPageViewModel extends ChangeNotifier {
 
     txtSearch.addListener(timKiem);
 
-    Future.microtask(() async {
-      await _lichSuMuaThietBiProvider.fetchByThietBi(thietBi.thietBiID!);
-
-      dsGoc = List.from(_lichSuMuaThietBiProvider.list);
-      lichSuMuaThietBi = List.from(dsGoc);
-
-      notifyListeners();
-    });
+    Future.microtask(refresh);
   }
 
   void _onProviderUpdate() {
@@ -47,6 +40,17 @@ class LichSuMuaThietBiPageViewModel extends ChangeNotifier {
         return (e.ghiChu ?? '').toLowerCase().contains(keyword);
       }).toList();
     }
+
+    notifyListeners();
+  }
+
+  Future<void> refresh() async {
+    await _lichSuMuaThietBiProvider.fetchByThietBi(
+      thietBi.thietBiID!,
+    );
+
+    dsGoc = List.from(_lichSuMuaThietBiProvider.list);
+    lichSuMuaThietBi = List.from(dsGoc);
 
     notifyListeners();
   }

@@ -1,5 +1,6 @@
 import 'package:AppTroNhaToi/Provider/lich_su_Them_thiet_bi_provider.dart';
 import 'package:AppTroNhaToi/Provider/sua_chua_provider.dart';
+import 'package:AppTroNhaToi/Provider/thiet_bi_provider.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/models/DTO/SuaChuaDTO.dart';
 import 'package:AppTroNhaToi/models/lich_su_mua_thiet_bi.dart';
@@ -36,6 +37,7 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
 
     vm = ChiTietThietBiPageViewModel(
       thietBi: widget.thietBi,
+      thietBiProvider: context.read<ThietBiProvider>(),
       suaChuaProvider: context.read<SuaChuaProvider>(),
       lichSuMuaThietBiProvider: context.read<LichSuMuaThietBiProvider>(),
     );
@@ -983,13 +985,16 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
 
                         Expanded(
                           child: ElevatedButton(
-                            onPressed: () {
-                              vm.capNhatTrangThai(trangThaiTam);
+                            onPressed: () async {
+                              final ok = await vm.capNhatTrangThai(
+                                trangThaiTam,
+                              );
 
-                              Navigator.pop(context); // đóng dialog
-
-                              if (mounted) {
-                                setState(() {});
+                              if (ok) {
+                                Navigator.pop(context);
+                                if (mounted) {
+                                  setState(() {});
+                                }
                               } // quay lại trang thiết bị
                             },
 

@@ -9,6 +9,14 @@ class HoaDonTapHoaProvider extends ChangeNotifier {
   List<HoaDonTapHoaModel> _list = [];
   List<HoaDonTapHoaModel> get list => List.unmodifiable(_list);
 
+  double get tongCongNo {
+    return _list.fold<double>(
+      0,
+          (sum, item) =>
+      sum + ((item.hoaDon.tongTien ?? 0) - item.daThu),
+    );
+  }
+
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 

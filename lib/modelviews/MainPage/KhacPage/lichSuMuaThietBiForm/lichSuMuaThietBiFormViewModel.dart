@@ -86,14 +86,14 @@ class LichSuMuaThietBiFormViewModel extends ChangeNotifier {
       }
     }
 
-    // Ngày mua
     if (ngayMuaChon == null) {
       errNgayMua = "Vui lòng chọn ngày mua";
       hopLe = false;
+    } else if (ngayMuaChon!.isAfter(DateTime.now())) {
+      errNgayMua = "Ngày mua không được lớn hơn ngày hiện tại";
+      hopLe = false;
     }
-
     notifyListeners();
-
     return hopLe;
   }
 
@@ -170,13 +170,12 @@ class LichSuMuaThietBiFormViewModel extends ChangeNotifier {
     final now = DateTime.now();
 
     final firstDay = DateTime(now.year, now.month, 1);
-    final lastDay = DateTime(now.year, now.month + 1, 0);
 
     DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: ngayMuaChon ?? now,
-      firstDate: firstDay,
-      lastDate: lastDay,
+      firstDate: firstDay,// Không được chọn các tháng trước vì dữ liệu đã chốt thống kê
+      lastDate: now, // Chỉ được chọn đến ngày hiện tại
     );
 
     if (pickedDate != null) {
@@ -186,6 +185,7 @@ class LichSuMuaThietBiFormViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
 
   @override
   void dispose() {
