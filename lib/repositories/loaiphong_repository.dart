@@ -13,4 +13,7 @@ class LoaiPhongRepository{
   Future<LoaiPhong?> updateLoaiPhong(LoaiPhong loaiPhong) async {
     return await loaiPhongApiClient.updateLoaiPhong(loaiPhong);
   }
+  Future<bool> deleteLoaiPhong(int maLoaiPhong) async {
+    return await loaiPhongApiClient.deleteLoaiPhong(maLoaiPhong);
+  }
 }

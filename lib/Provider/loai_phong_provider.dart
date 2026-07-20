@@ -53,4 +53,20 @@ class LoaiPhongProvider extends ChangeNotifier {
       rethrow; // Bắn lỗi lên để ViewModel xử lý đưa ra SnackBar
     }
   }
+  Future<bool> deleteLoaiPhong(int maLoaiPhong) async {
+    try {
+      final isSuccess = await _loaiPhongRepository.deleteLoaiPhong(maLoaiPhong);
+      if (isSuccess) {
+        // Xóa phần tử đã ẩn ra khỏi danh sách local của App
+        _listLoaiPhong.removeWhere((element) => element.maLoaiPhong == maLoaiPhong);
+        notifyListeners(); // Thông báo giao diện cập nhật lại
+      }
+      return isSuccess;
+    } catch (e) {
+      if (kDebugMode) {
+        print("Lỗi ẩn tại LoaiPhongProvider: $e");
+      }
+      rethrow; // Bắn lỗi lên giao diện hiển thị SnackBar thông báo chặn
+    }
+  }
 }

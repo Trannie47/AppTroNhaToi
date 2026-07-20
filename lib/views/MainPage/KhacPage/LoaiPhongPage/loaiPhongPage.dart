@@ -6,6 +6,7 @@ import 'package:AppTroNhaToi/Provider/loai_phong_provider.dart';
 import 'package:AppTroNhaToi/states/loaiphong_state.dart';
 
 import '../../../../modelviews/MainPage/KhacPage/LoaiPhongPage/loaiPhongPageViewModel.dart';
+import '../../../../widgets/app_confirm_dialog.dart';
 import '../../PhongPage/FormLoaiPhong/FormLoaiPhong.dart';
 
 class LoaiPhongPage extends StatefulWidget {
@@ -241,10 +242,46 @@ class _LoaiPhongPageState extends State<LoaiPhongPage> {
                 const SizedBox(width: 24),
                 GestureDetector(
                   onTap: () {
-                    //Xử lý xóa loại phòng
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext dialogContext) {
+                        return AppConfirmDialog(
+                          title: "Ẩn loại phòng",
+                          content: "Bạn có chắc chắn muốn ẩn loại phòng '${item.tenLoaiPhong}' này không?",
+                          textConfirm: "Ẩn đi",
+                          textCancel: "Hủy",
+                          isDangerous: true,
+                          onConfirm: () async {
+                            Navigator.pop(dialogContext); // Đóng dialog xác nhận trước
+
+                            final errorMsg = await vm.deleteLoaiPhongProcess(item.maLoaiPhong);
+
+                            if (!mounted) return;
+
+                            if (errorMsg != null) {
+                              // Neus Có phòng liên kết -> Backend trả lỗi -> Hiện SnackBar đỏ báo lỗi ngay lập tức
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(errorMsg),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            } else {
+                              //Neeus Thành công -> Hiện SnackBar xanh thông báo
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Ẩn loại phòng thành công!"),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            }
+                          },
+                        );
+                      },
+                    );
                   },
                   child: const Text(
-                    "Xóa",
+                    "Ẩn",
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,

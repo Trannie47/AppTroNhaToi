@@ -69,6 +69,25 @@ class LoaiPhongApiClient{
       throw Exception("Đã có lỗi xảy ra khi cập nhật loại phòng");
     }
   }
+  //Gọi API để ẩn loại phòng dưới hệ thống
+  Future<bool> deleteLoaiPhong(int maLoaiPhong) async {
+    try {
+      final response = await _dio.delete("loai-phong/deleteLoaiPhong/$maLoaiPhong");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        if (response.data != null && response.data['success'] == true) {
+          return true;
+        }
+      }
+      return false;
+    } on DioException catch (e) {
+      if (kDebugMode) print("Lỗi DELETE LoaiPhongApiClient: $e");
+      throw Exception(_mapErrorToMessage(e));
+    } catch (e) {
+      if (kDebugMode) print("Lỗi không xác định khi ẩn: $e");
+      throw Exception("Đã có lỗi xảy ra khi ẩn loại phòng");
+    }
+  }
   String _mapErrorToMessage(DioException e){
     if (e.response?.data != null && e.response?.data['message'] != null) {
       return e.response!.data['message'].toString();
