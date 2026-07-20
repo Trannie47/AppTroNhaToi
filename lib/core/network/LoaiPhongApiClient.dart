@@ -10,8 +10,7 @@ class LoaiPhongApiClient{
       final response= await _dio.get("loai-phong/getAllLoaiPhong");
       if(response.statusCode==200 || response.statusCode==201){
         final List<dynamic> data= response.data;
-        return data.map((json)=> LoaiPhong.fromMap(json)).toList();
-      }
+        return data.map((json) => LoaiPhong.fromMap(json as Map<String, dynamic>)).toList();      }
       return [];
     }on DioException catch(e){
       print("Lỗi LoaiPhongApiClient");

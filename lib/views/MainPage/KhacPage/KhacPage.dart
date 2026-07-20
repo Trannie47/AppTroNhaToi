@@ -1,3 +1,4 @@
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/LoaiPhongPage/loaiPhongPage.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/TapHoaPage/TapHoaPage.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThietBiPage/thietBiPage.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThongKePage/thongKePage.dart';
@@ -41,6 +42,7 @@ class KhacPage extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: ListView(
+                padding: const EdgeInsets.only(top: 12, bottom: 16),
                 children: [
                   const SizedBox(height: 0),
 
@@ -60,6 +62,23 @@ class KhacPage extends StatelessWidget {
                         MaterialPageRoute(
                           builder: (_) => HopDongPage(),
                         ),
+                      );
+                    },
+                  ),
+
+                  const SizedBox(height: 12),
+                  _buildItem(
+                    icon: Icons.category_outlined,
+                    iconColor: Colors.teal,
+                    iconBg: const Color(0xFFE0F2F1),
+                    title: "Loại phòng",
+                    subtitle:
+                    "Quản lý danh sách loại phòng,\ndiện tích, giá thuê gốc và tiện ích",
+                    status: "Cấu hình danh mục",
+                    statusColor: Colors.teal,
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (_)=> LoaiPhongPage()),
                       );
                     },
                   ),
