@@ -1,18 +1,19 @@
 import 'package:AppTroNhaToi/core/network/retrofit_client.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThietBiPage/thietBiPageModel.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
 class ThietBiApiClient {
   final Dio _dio = RetrofitClient().dio;
 
-  Future<List<ThietBi>> getListThietBi() async {
+  Future<List<ThietBiPageModel>> getListThietBi() async {
     try {
       final response = await _dio.get("thiet-bi/findall");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final List<dynamic> data = response.data;
-        return data.map((json) => ThietBi.fromMap(json)).toList();
+        return data.map((json) => ThietBiPageModel.fromMap(json)).toList();
       }
 
       return [];
@@ -27,9 +28,7 @@ class ThietBiApiClient {
 
   Future<ThietBi?> themThietBi(ThietBi thietBi) async {
     try {
-      print(thietBi.toMap());
       final response = await _dio.post("thiet-bi", data: thietBi.toMap());
-      print(response.data);
       if (response.statusCode == 200 || response.statusCode == 201) {
         return ThietBi.fromMap(response.data);
       }

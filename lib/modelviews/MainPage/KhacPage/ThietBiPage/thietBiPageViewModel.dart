@@ -1,7 +1,7 @@
 import 'package:AppTroNhaToi/Provider/thiet_bi_provider.dart';
 import 'package:AppTroNhaToi/models/lap_rap.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
-import 'package:AppTroNhaToi/models/thiet_bi.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThietBiPage/thietBiPageModel.dart';
 import 'package:flutter/material.dart';
 
 class ThietBiPageViewModel extends ChangeNotifier {
@@ -16,7 +16,7 @@ class ThietBiPageViewModel extends ChangeNotifier {
     Future.microtask(() => _serviceTB.fetchAll());
   }
 
-  List<ThietBi> dsThietBi = [];
+  List<ThietBiPageModel> dsThietBi = [];
 
   void _onThietBiUpdate() {
     dsThietBi = List.from(_serviceTB.list);
@@ -28,6 +28,7 @@ class ThietBiPageViewModel extends ChangeNotifier {
   void search() {
     notifyListeners();
   }
+
   @override
   void dispose() {
     txtSearch.dispose();
@@ -49,8 +50,7 @@ class ThietBiPageViewModel extends ChangeNotifier {
     LapRap(id: 3, phongID: 2, thietBiID: 3),
   ];
 
-
-  List<ThietBi> get dsHienThi {
+  List<ThietBiPageModel> get dsHienThi {
     final keyword = txtSearch.text.trim().toLowerCase();
 
     if (keyword.isEmpty) {
@@ -58,10 +58,7 @@ class ThietBiPageViewModel extends ChangeNotifier {
     }
 
     return dsThietBi.where((e) {
-      return (e.tenThietBi ?? "")
-          .toLowerCase()
-          .contains(keyword);
+      return (e.thietBi.tenThietBi ?? "").toLowerCase().contains(keyword);
     }).toList();
   }
-
 }

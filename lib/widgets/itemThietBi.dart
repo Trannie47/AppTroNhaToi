@@ -5,8 +5,9 @@ import 'package:intl/intl.dart';
 
 class ItemThietBi extends StatelessWidget {
   final ThietBi thietBi;
+  final int? SoluongConLai;
 
-  const ItemThietBi({super.key, required this.thietBi});
+  const ItemThietBi({super.key, required this.thietBi, this.SoluongConLai = 0});
   @override
   Widget build(BuildContext context) {
     final bool dangSua = thietBi.trangThaiText.toLowerCase() == "đang sửa";
@@ -96,13 +97,13 @@ class ItemThietBi extends StatelessWidget {
 
                       const SizedBox(width: 8),
 
-                      // Text(
-                      //   "${NumberFormat("#,###").format(thietBi.giaTri)}đ",
-                      //   style: const TextStyle(
-                      //     fontSize: 13,
-                      //     color: Color(0xff4F4F4F),
-                      //   ),
-                      // ),
+                      Text(
+                        "Số lượng còn lại: ${SoluongConLai}",
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: Color(0xff4F4F4F),
+                        ),
+                      ),
                     ],
                   ),
                 ],

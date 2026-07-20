@@ -1,16 +1,17 @@
 // services/thiet_bi_service.dart
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:AppTroNhaToi/repositories/thietbi_repository.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThietBiPage/thietBiPageModel.dart';
 import 'package:flutter/foundation.dart';
 
 class ThietBiProvider extends ChangeNotifier {
   final ThietBiRepository _repo = ThietBiRepository();
 
-  List<ThietBi> _list = [];
-  List<ThietBi> get list => List.unmodifiable(_list);
+  List<ThietBiPageModel> _list = [];
+  List<ThietBiPageModel> get list => List.unmodifiable(_list);
 
   int get soLuongDangSua {
-    return _list.where((e) => e.dangSua).length;
+    return _list.where((e) => e.thietBi.dangSua).length;
   }
 
   bool _isLoading = false;
@@ -26,7 +27,10 @@ class ThietBiProvider extends ChangeNotifier {
       _list = await _repo.getListThietBi();
 
       // ID lớn nhất lên đầu
-      _list.sort((a, b) => (b.thietBiID ?? 0).compareTo(a.thietBiID ?? 0));
+      _list.sort(
+        (a, b) =>
+            (b.thietBi.thietBiID ?? 0).compareTo(a.thietBi.thietBiID ?? 0),
+      );
     } catch (e) {
       _list = [];
     } finally {
@@ -60,7 +64,7 @@ class ThietBiProvider extends ChangeNotifier {
     final ok = await _repo.xoaThietBi(thietBiID);
 
     if (ok) {
-      _list.removeWhere((e) => e.thietBiID == thietBiID);
+      _list.removeWhere((e) => e.thietBi.thietBiID == thietBiID);
       notifyListeners();
     }
 

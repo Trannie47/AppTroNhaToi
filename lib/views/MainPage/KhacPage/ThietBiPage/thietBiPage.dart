@@ -36,8 +36,6 @@ class _ThietBiPageState extends State<ThietBiPage> {
 
   @override
   Widget build(BuildContext context) {
-    final thietBiProvider = context.watch<ThietBiProvider>();
-
     return Scaffold(
       backgroundColor: const Color(0xffF7F9F7),
 
@@ -166,7 +164,9 @@ class _ThietBiPageState extends State<ThietBiPage> {
                               ),
                             ],
                             child: ChiTietThietBiPage(
-                              thietBi: vm.dsHienThi[index],
+                              thietBi: vm.dsHienThi[index].thietBi,
+                              SoLuongMua: vm.dsHienThi[index].soLuongMua,
+                              SoLuongLapDat: vm.dsHienThi[index].soLuongLapDat,
                             ),
                           ),
                         ),
@@ -177,7 +177,10 @@ class _ThietBiPageState extends State<ThietBiPage> {
                       }
                     },
 
-                    child: ItemThietBi(thietBi: vm.dsHienThi[index]),
+                    child: ItemThietBi(
+                      thietBi: vm.dsHienThi[index].thietBi,
+                      SoluongConLai: vm.dsHienThi[index].soLuongConLai,
+                    ),
                   );
                 },
               ),

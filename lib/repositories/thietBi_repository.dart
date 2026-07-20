@@ -1,10 +1,11 @@
 import 'package:AppTroNhaToi/core/network/ThietBiApiClient.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThietBiPage/thietBiPageModel.dart';
 
 class ThietBiRepository {
   final ThietBiApiClient thietBiApiClient = ThietBiApiClient();
 
-  Future<List<ThietBi>> getListThietBi() async {
+  Future<List<ThietBiPageModel>> getListThietBi() async {
     final result = await thietBiApiClient.getListThietBi();
     return result;
   }

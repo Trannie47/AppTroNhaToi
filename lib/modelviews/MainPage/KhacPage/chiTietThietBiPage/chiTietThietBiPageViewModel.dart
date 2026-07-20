@@ -13,6 +13,7 @@ class ChiTietThietBiPageViewModel extends ChangeNotifier {
   final SuaChuaProvider _suaChuaProvider;
   final LichSuMuaThietBiProvider _lichSuMuaThietBiProvider;
   final ThietBiProvider _thietBiProvider;
+  final int soLuongLapDat;
 
   bool hienMenu = false;
 
@@ -24,6 +25,15 @@ class ChiTietThietBiPageViewModel extends ChangeNotifier {
   List<LichSuSuaChuaPageModel> get lichSuSuaChua =>
       _suaChuaProvider.list.take(3).toList();
 
+  int get soLuongMua {
+    return _lichSuMuaThietBiProvider.list.fold<int>(
+      0,
+      (tong, item) => tong + (item.soLuong ?? 0),
+    );
+  }
+
+  int get soLuongConLai => soLuongMua - soLuongLapDat;
+
   bool get isLoading => _suaChuaProvider.isLoading;
 
   ChiTietThietBiPageViewModel({
@@ -31,6 +41,7 @@ class ChiTietThietBiPageViewModel extends ChangeNotifier {
     required ThietBiProvider thietBiProvider,
     required SuaChuaProvider suaChuaProvider,
     required LichSuMuaThietBiProvider lichSuMuaThietBiProvider,
+    required this.soLuongLapDat,
   }) : _thietBiProvider = thietBiProvider,
        _suaChuaProvider = suaChuaProvider,
        _lichSuMuaThietBiProvider = lichSuMuaThietBiProvider {
@@ -60,6 +71,8 @@ class ChiTietThietBiPageViewModel extends ChangeNotifier {
   Future<void> reloadLichSuMuaThietBi() async {
     if (thietBi.thietBiID != null) {
       await _lichSuMuaThietBiProvider.fetchByThietBi(thietBi.thietBiID!);
+
+      notifyListeners();
     }
   }
 
@@ -93,6 +106,7 @@ class ChiTietThietBiPageViewModel extends ChangeNotifier {
   @override
   void dispose() {
     _suaChuaProvider.removeListener(_onProviderUpdate);
+    _lichSuMuaThietBiProvider.removeListener(_onProviderUpdate);
     super.dispose();
   }
 }

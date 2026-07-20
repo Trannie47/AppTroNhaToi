@@ -20,8 +20,14 @@ import 'package:provider/provider.dart';
 
 class ChiTietThietBiPage extends StatefulWidget {
   final ThietBi thietBi;
-
-  const ChiTietThietBiPage({super.key, required this.thietBi});
+  final int SoLuongMua;
+  final int SoLuongLapDat;
+  const ChiTietThietBiPage({
+    super.key,
+    required this.thietBi,
+    required this.SoLuongMua,
+    required this.SoLuongLapDat,
+  });
 
   @override
   State<ChiTietThietBiPage> createState() => _ChiTietThietBiPageState();
@@ -39,6 +45,7 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
       thietBiProvider: context.read<ThietBiProvider>(),
       suaChuaProvider: context.read<SuaChuaProvider>(),
       lichSuMuaThietBiProvider: context.read<LichSuMuaThietBiProvider>(),
+      soLuongLapDat: widget.SoLuongLapDat,
     );
 
     vm.addListener(() {
@@ -316,6 +323,7 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
                           vm.trangThai,
                           mau: dangSua ? Colors.red : const Color(0xff2D7A3A),
                         ),
+                        _rowThongTin("Số lượng còn lại", "${vm.soLuongConLai}"),
                       ],
                     ),
                   ),
