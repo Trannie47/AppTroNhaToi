@@ -182,7 +182,7 @@ class _LichSuMuaThietBiFormState extends State<LichSuMuaThietBiForm> {
                   Text(
                     formatMoney(
                       (int.tryParse(vm.txtSoLuong.text.trim()) ?? 0) *
-                          (double.tryParse(vm.txtDonGia.text.trim()) ?? 0),
+                         (double.tryParse( vm.txtDonGia.text.replaceAll(".", ""),) ?? 0)
                     ),
                     style: const TextStyle(
                       fontSize: 16,
@@ -303,10 +303,14 @@ class _LichSuMuaThietBiFormState extends State<LichSuMuaThietBiForm> {
                 controller: vm.txtDonGia,
                 focusNode: _donGiaFocus,
                 keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  DinhDangGiaVN(),
+                ],
                 errorText: vm.errDonGia,
                 onChanged: (_) => setState(() {}),
               ),
+
 
               _input(
                 title: "Ngày mua",
