@@ -53,6 +53,26 @@ class NguoiThueProvider extends ChangeNotifier {
 
     return result;
   }
+  Future<NguoiThue?> update(int idnt, NguoiThue nguoiThue) async {
+    try {
+      final updatedData = await _repo.updateNguoiThue(idnt, nguoiThue);
+
+      if (updatedData != null) {
+        // Thay thế dữ liệu người thuê cũ bằng dữ liệu mới cập nhật
+        int index = _list.indexWhere((element) => element.idnt == idnt);
+        if (index != -1) {
+          _list[index] = updatedData;
+          notifyListeners();
+        }
+      }
+      return updatedData;
+    } catch (e) {
+      if (kDebugMode) {
+        print("Lỗi cập nhật tại NguoiThueProvider: $e");
+      }
+      rethrow;
+    }
+  }
 
   Future<List<NguoiThue>> getListNguoiThueAvailableForContract()async{
     final result= await _repo.getListNguoiThueAvailableForContract();

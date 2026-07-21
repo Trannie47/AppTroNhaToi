@@ -33,10 +33,12 @@ class ChiTietNguoiThuePage extends StatefulWidget {
 
 class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
   late ChiTietNguoiThuePageViewModel vm;
+  late NguoiThue _currentNguoiThue; //Tạo biến thay đổi dữ liệu nội bộ màn hình khi upadte nguoi thue
 
   @override
   void initState() {
     super.initState();
+    _currentNguoiThue = widget.nguoiThue;
     vm = ChiTietNguoiThuePageViewModel(context.read<NguoiThueProvider>());
     vm.addListener(() {
       if (mounted) {
@@ -69,10 +71,24 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
   //     ),
   //   );
   // }
+  Future<void> _diChuyenDenFormCapNhat() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => NguoiThueForm(nguoiThue: _currentNguoiThue),
+      ),
+    );
 
+    // Nếu màn hình Form trả về dữ liệu Người thuê mới đã sửa thành công
+    if (result != null && result is NguoiThue && mounted) {
+      setState(() {
+        _currentNguoiThue = result; // Cập nhật đè dữ liệu mới lên UI chi tiết
+      });
+    }
+  }
   @override
   Widget build(BuildContext context) {
-    final detail = widget.nguoiThue; // lấy dữ liệu người thuê được gửi từ mà trước qua
+    final detail =_currentNguoiThue; // lấy dữ liệu người thuê được gửi từ mà trước qua
     return Scaffold(
       backgroundColor: const Color(0xffF7F8FC),
 
@@ -161,13 +177,7 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                 onSelected: (value) {
                   switch (value) {
                     case 'update':
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) =>
-                              NguoiThueForm(nguoiThue: widget.nguoiThue),
-                        ),
-                      );
+                      _diChuyenDenFormCapNhat();
                       break;
 
                     case 'room':
@@ -412,16 +422,7 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                     title: "Thông tin cá nhân",
                     action: "Sửa",
                     // thêm sữa thông tin cá nhân
-                    onTap: () {
-                      Navigator.push(
-                        context,
-
-                        MaterialPageRoute(
-                          builder: (_) =>
-                              NguoiThueForm(nguoiThue: widget.nguoiThue),
-                        ),
-                      );
-                    },
+                    onTap: _diChuyenDenFormCapNhat,
 
                     child: Column(
                       children: [

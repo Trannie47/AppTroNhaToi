@@ -1,5 +1,6 @@
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/views/MainPage/NguoiThuePage/qr_cccd_scanner_page/qr_cccd_scanner_page.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../Provider/nguoi_thue_provider.dart';
@@ -21,6 +22,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
   @override
   void initState() {
     vm = NguoiThueFormViewModel(context.read<NguoiThueProvider>());
+    vm.initData(widget.nguoiThue);
     vm.addListener(() {
       if (mounted) {
         setState(() {});
@@ -97,9 +99,8 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
           ),
         ),
 
-        title: const Text(
-          "Thêm người thuê",
-
+        title: Text(
+          vm.isEdit ? "Cập nhật người thuê" : "Thêm người thuê",
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w700,
@@ -118,16 +119,39 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                 ? null
                 : () async {
               if (vm.formKey.currentState!.validate()) {
-                bool isSuccess = await vm.luuNguoiThue();
+                try {
+                  final resultTenant = await vm.luuNguoiThue();
 
-                if (isSuccess && context.mounted) {
+                  if (resultTenant != null && context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(vm.isEdit
+                            ? 'Cập nhật thông tin thành công!'
+                            : 'Thêm người thuê thành công!'),
+                      ),
+                    );
+                    Navigator.pop(context, resultTenant); // Trả đối tượng mới về màn chi tiết để cập nhật UI ngay lập tức
+                  } else if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Thao tác thất bại, vui lòng kiểm tra dữ liệu!')),
+                    );
+                  }
+                } catch (e) {
+                  String errorMessage = "Đã có lỗi xảy ra từ hệ thống!";
+                  if (e is DioException && e.response?.data != null) {
+                    final data = e.response?.data;
+                    if (data is Map && data.containsKey('message')) {
+                      errorMessage = data['message'].toString();
+                    }
+                  } else if (e.toString().contains('Exception:')) {
+                    errorMessage = e.toString().replaceFirst('Exception: ', '');
+                  }
+
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Thêm người thuê thành công!')),
-                  );
-                  Navigator.pop(context, true);
-                } else if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Thêm thất bại, có lỗi từ hệ thống!')),
+                    SnackBar(
+                      content: Text(errorMessage),
+                      backgroundColor: Colors.red.shade700,
+                    ),
                   );
                 }
               }
@@ -148,8 +172,8 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                 strokeWidth: 2,
               ),
             )
-                : const Text(
-              "Lưu người thuê",
+                : Text(
+              vm.isEdit ? "Cập nhật thông tin" : "Lưu người thuê",
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w700,

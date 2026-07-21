@@ -48,13 +48,13 @@ class MoreOptionsSheet extends StatelessWidget {
             },
           ),
 
-          ListTile(
-            leading: const Icon(Icons.build_outlined, color: Colors.orange),
-            title: const Text('Báo cáo sửa chữa/Sự cố', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
+          // ListTile(
+          //   leading: const Icon(Icons.build_outlined, color: Colors.orange),
+          //   title: const Text('Báo cáo sửa chữa/Sự cố', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
+          //   onTap: () {
+          //     Navigator.pop(context);
+          //   },
+          // ),
 
           const Divider(height: 0.5),
 

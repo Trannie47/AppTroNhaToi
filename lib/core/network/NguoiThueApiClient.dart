@@ -55,6 +55,28 @@ class NguoiThueApiClient {
       rethrow;
     }
   }
+  Future<NguoiThue?> updateNguoiThue(int idnt, NguoiThue nguoiThue) async {
+    try {
+      final response = await _dio.patch(
+        "nguoi-thue/$idnt",
+        data: nguoiThue.toMap(),
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return NguoiThue.fromMap(response.data);
+      }
+      return null;
+    } on DioException catch (e) {
+      if (kDebugMode) {
+        print("Lỗi tầng NguoiThueApiClient khi cập nhật: $e");
+      }
+      throw Exception(_mapErrorToMessage(e));
+    } catch (e) {
+      if (kDebugMode) {
+        print("Lỗi không xác định tại NguoiThueApiClient: $e");
+      }
+      throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
+    }
+  }
   // lấy ds người thuê có trạng thái 0 or 1 lên màn tạo hợp đồng
   Future<List<NguoiThue>> getNguoiThueAvailableForContract() async{
     try{
@@ -95,12 +117,16 @@ class NguoiThueApiClient {
 
   String _mapErrorToMessage(DioException e) {
     if (e.type == DioExceptionType.connectionTimeout ||
-        e.type == DioExceptionType.receiveTimeout ||
-        e.type == DioExceptionType.sendTimeout) {
-      return "Kết nối quá chậm, vui lòng thử lại";
+        e.type == DioExceptionType.connectionError) {
+      return "Không thể kết nối đến máy chủ, vui lòng thử lại sau!";
     }
-    if (e.type == DioExceptionType.connectionError) {
-      return "Không thể kết nối đến máy chủ, vui lòng thử lại sau";
+
+    if (e.type == DioExceptionType.receiveTimeout ||
+        e.type == DioExceptionType.sendTimeout) {
+      return "Kết nối mạng quá chậm, vui lòng kiểm tra lại đường truyền!";
+    }
+    if (e.response?.data != null && e.response?.data['message'] != null) {
+      return e.response!.data['message'].toString();
     }
     final statusCode = e.response?.statusCode;
     switch (statusCode) {

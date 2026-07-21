@@ -83,7 +83,7 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
                       /// ADD
                       GestureDetector(
                         onTap: () async {
-                         final check= await Navigator.push<bool>(
+                          final check = await Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) {
@@ -91,9 +91,9 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
                               },
                             ),
                           );
-                         if (check == true && mounted) {
-                           vm.refresh();
-                         }
+                          if (check != null && mounted) {
+                            vm.refresh();
+                          }
                         },
 
                         child: Image.asset(

@@ -22,9 +22,12 @@ class NguoiThueFormViewModel extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
+  NguoiThue? _initialTenant;
+  bool get isEdit => _initialTenant != null;
+
   NguoiThueFormViewModel(this._service);
-  Future<bool> luuNguoiThue() async {
-    if (_isLoading) return false;
+  Future<NguoiThue?> luuNguoiThue() async {
+    if (_isLoading) return null;
     _isLoading = true;
     notifyListeners();
 
@@ -41,7 +44,8 @@ class NguoiThueFormViewModel extends ChangeNotifier {
         }
       }
 
-      NguoiThue nguoiThue = NguoiThue(
+      NguoiThue ntData = NguoiThue(
+        idnt: isEdit ? _initialTenant!.idnt : null,
         hoTen: txtHoTen.text.trim(),
         cccd: txtCCCD.text.trim(),
         sdt: txtSDT.text.trim(),
@@ -49,34 +53,57 @@ class NguoiThueFormViewModel extends ChangeNotifier {
         gioiTinh: gioiTinh ?? true,
         ghiChu: txtGhiChu.text.trim(),
         queQuan: txtQueQuan.text.trim(),
+        trangThai: isEdit ? _initialTenant!.trangThai : 0,
       );
-      bool result = await _service.them(nguoiThue);
-      if (result) {
-        clearAllFileds();
-        return true;
+      if (isEdit) {
+        // Luồng 1: Cập nhật thông tin
+        final updatedResult = await _service.update(_initialTenant!.idnt!, ntData);
+        return updatedResult;
+      } else {
+        // Luồng 2: Thêm mới người thuê
+        bool result = await _service.them(ntData);
+        if (result) {
+          clearAllFileds();
+          return ntData;
+        }
       }
-      return false;
+      return null;
     } catch (e) {
-      print("Lỗi người thuê $e");
-      return false;
+      print("Lỗi lưu người thuê: $e");
+      rethrow;
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+  //Đổ dữ liệu cũ lên form nếu là trạng thái chỉnh sửa
+  void initData(NguoiThue? tenant) {
+    _initialTenant = tenant;
+    if (tenant != null) {
+      txtHoTen.text = tenant.hoTen ?? '';
+      txtSDT.text = tenant.sdt ?? '';
+      txtCCCD.text = tenant.cccd ?? '';
+      gioiTinh = tenant.gioiTinh;
+      txtQueQuan.text = tenant.queQuan ?? '';
+      txtGhiChu.text = tenant.ghiChu ?? '';
+      if (tenant.ngaySinh != null) {
+        txtNgaySinh.text = "${tenant.ngaySinh!.day.toString().padLeft(2, '0')}/"
+            "${tenant.ngaySinh!.month.toString().padLeft(2, '0')}/"
+            "${tenant.ngaySinh!.year}";
+      }
     }
   }
   bool checkTrungCCCD(){
     String cccd= txtCCCD.text.trim();
     if (cccd.isEmpty) return false;
     List<NguoiThue> ds= _service.list;
-    return ds.any((nt) => nt.cccd == cccd);
-  }
+    return ds.any((nt) => nt.cccd == cccd && (!isEdit || nt.idnt != _initialTenant?.idnt));  }
   bool checkTrungSDT() {
     String sdt = txtSDT.text.trim();
     if (sdt.isEmpty) return false;
 
     List<NguoiThue> ds = _service.list;
-    return ds.any((nt) => nt.sdt == sdt);
-  }
+    return ds.any((nt) => nt.sdt == sdt && (!isEdit || nt.idnt != _initialTenant?.idnt));  }
 
   void parseCCCDQR(String raw) {
     final parts = raw.split('|');

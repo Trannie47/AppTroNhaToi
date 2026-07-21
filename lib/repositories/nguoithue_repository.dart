@@ -19,6 +19,9 @@ class NguoithueRepository {
   Future<bool> xoaNguoiThue(int idnt) async{
     return await nguoiThueApiClient.xoaNguoiThue(idnt);
   }
+  Future<NguoiThue?> updateNguoiThue(int idnt, NguoiThue nguoiThue) async {
+    return await nguoiThueApiClient.updateNguoiThue(idnt, nguoiThue);
+  }
 
   Future<List<NguoiThue>> getListNguoiThueFromIdPhong(int idPhong) async{
     return await nguoiThueApiClient.getListNguoiThueFromIdPhong(idPhong);
