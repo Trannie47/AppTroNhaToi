@@ -116,16 +116,31 @@ class LichSuMuaThietBiApiClient {
     }
   }
 
-  /// Xóa
   Future<bool> xoa(int id) async {
     try {
       final response = await _dio.delete("lich-su-mua-thiet-bi/$id");
 
-      return response.statusCode == 200 || response.statusCode == 201;
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true;
+      }
+
+      return false;
     } on DioException catch (e) {
+      if (kDebugMode) {
+        print("Lỗi ẩn lịch sử mua thiết bị $e");
+      }
+
       throw Exception(_mapErrorToMessage(e));
+    } catch (e) {
+      if (kDebugMode) {
+        print("Lỗi không xác định LichSuMuaThietBiApiClient $e");
+      }
+
+      throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
     }
   }
+
+
 
   String _mapErrorToMessage(DioException e) {
     if (e.type == DioExceptionType.connectionError ||

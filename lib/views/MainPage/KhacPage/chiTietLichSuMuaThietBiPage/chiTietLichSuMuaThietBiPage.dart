@@ -51,7 +51,7 @@ class _ChiTietLichSuMuaThietBiPageState
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => ChangeNotifierProvider.value(
+        builder: (dialogContext) => ChangeNotifierProvider.value(
           value: context.read<LichSuMuaThietBiProvider>(),
           child: LichSuMuaThietBiForm(
             lichSuMua: vm.lichSuMua,
@@ -61,6 +61,8 @@ class _ChiTietLichSuMuaThietBiPageState
       ),
     );
 
+    if (!mounted) return;
+
     if (result is LichSuMuaThietBi) {
       setState(() {
         vm.lichSuMua = result;
@@ -69,7 +71,67 @@ class _ChiTietLichSuMuaThietBiPageState
   }
 
   Future<void> xoaChiTiet() async {
-    //vm.xoaChiTiet(); // TODO: nối vào Provider khi có xử lý xóa
+    if (!mounted) return;
+
+    final xacNhan = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text("Ẩn lịch sử mua"),
+          content: const Text(
+            "Bạn có chắc muốn ẩn lịch sử mua này không?",
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop(false);
+              },
+              child: const Text("Hủy"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop(true);
+              },
+              child: const Text("Ẩn"),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (!mounted) return;
+
+    if (xacNhan != true) return;
+
+    try {
+      final provider = context.read<LichSuMuaThietBiProvider>();
+
+      final ok = await provider.xoa(
+        vm.lichSuMua.id!,
+        vm.lichSuMua.thietBiID!,
+      );
+
+      if (!mounted) return;
+
+      if (ok) {
+        Navigator.of(context).pop(true);
+        return;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Ẩn lịch sử mua thất bại"),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+        ),
+      );
+    }
   }
 
   Widget _infoRow(
@@ -125,6 +187,14 @@ class _ChiTietLichSuMuaThietBiPageState
 
   @override
   Widget build(BuildContext context) {
+    final ngayMua = vm.ngayMua;
+    final now = DateTime.now();
+
+    final hienBaCham =
+        ngayMua != null &&
+            ngayMua.year == now.year &&
+            ngayMua.month == now.month;
+
     return Scaffold(
       backgroundColor: const Color(0xffF5F5F5),
 
@@ -179,63 +249,65 @@ class _ChiTietLichSuMuaThietBiPageState
         ),
 
         actions: [
-          PopupMenuButton<String>(
-            color: Colors.white,
-            elevation: 8,
-            offset: const Offset(0, 64),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+          if (hienBaCham)
+            PopupMenuButton<String>(
+              color: Colors.white,
+              elevation: 8,
+              offset: const Offset(0, 64),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+
+              onSelected: (value) {
+                switch (value) {
+                  case "update":
+                    capNhatThongTin();
+                    break;
+
+                  case "delete":
+                    xoaChiTiet();
+                    break;
+                }
+              },
+
+              icon: const Icon(Icons.more_vert),
+
+              itemBuilder: (context) => [
+                if (vm.duocCapNhat)
+                  PopupMenuItem<String>(
+                    value: "update",
+                    child: ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: const Icon(
+                        Icons.edit_outlined,
+                        color: Color(0xff2D7A3A),
+                      ),
+                      title: const Text("Cập nhật thông tin"),
+                      subtitle: const Text("Số lượng, đơn giá, ngày mua"),
+                    ),
+                  ),
+
+                if (vm.duocCapNhat)
+                  PopupMenuItem<String>(
+                    value: "delete",
+                    child: ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: const Icon(
+                        Icons.delete_outline,
+                        color: Colors.red,
+                      ),
+                      title: const Text(
+                        "Ẩn chi tiết",
+                        style: TextStyle(color: Colors.red),
+                      ),
+                      subtitle: const Text(
+                        "Không thể hoàn tác",
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ),
+                  ),
+              ],
             ),
-
-            onSelected: (value) {
-              switch (value) {
-                case "update":
-                  capNhatThongTin();
-                  break;
-
-                case "delete":
-                  xoaChiTiet();
-                  break;
-              }
-            },
-
-            icon: const Icon(Icons.more_vert),
-
-            itemBuilder: (context) => [
-              if (vm.duocCapNhat)
-                PopupMenuItem<String>(
-                  value: "update",
-                  child: ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: const Icon(
-                      Icons.edit_outlined,
-                      color: Color(0xff2D7A3A),
-                    ),
-                    title: const Text("Cập nhật thông tin"),
-                    subtitle: const Text("Số lượng, đơn giá, ngày mua"),
-                  ),
-                ),
-              if (vm.duocCapNhat)
-                PopupMenuItem<String>(
-                  value: "delete",
-                  child: ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: const Icon(
-                      Icons.delete_outline,
-                      color: Colors.red,
-                    ),
-                    title: const Text(
-                      "Ẩn chi tiết",
-                      style: TextStyle(color: Colors.red),
-                    ),
-                    subtitle: const Text(
-                      "Không thể hoàn tác",
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  ),
-                ),
-            ],
-          ),
         ],
       ),
 
