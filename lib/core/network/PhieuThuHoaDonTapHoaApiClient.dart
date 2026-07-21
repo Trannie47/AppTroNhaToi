@@ -1,4 +1,5 @@
 import 'package:AppTroNhaToi/core/network/retrofit_client.dart';
+import 'package:AppTroNhaToi/models/DTO/ThuCongNoDTO.dart';
 import 'package:AppTroNhaToi/models/phieu_thu_hd_th.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -12,7 +13,6 @@ class PhieuThuHdThApiClient {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final List<dynamic> data = response.data;
-        print(data);
         return data.map((json) => PhieuThuHdTh.fromMap(json)).toList();
       }
 
@@ -91,6 +91,27 @@ class PhieuThuHdThApiClient {
         return "Hệ thống đang gặp sự cố, vui lòng thử lại sau";
       default:
         return "Đã có lỗi xảy ra, vui lòng thử lại";
+    }
+  }
+
+  Future<bool> thuCongNo(ThuCongNoDTO dto) async {
+    try {
+      final result = await _dio.post(
+        "phieu-thu-hdth/nguoi-thue",
+        data: dto.toMap(),
+      );
+
+      if (result.statusCode == 200 || result.statusCode == 201) {
+        return true;
+      }
+
+      return false;
+    } catch (e) {
+      if (kDebugMode) {
+        print("Lỗi thu công nợ $e");
+      }
+
+      return false;
     }
   }
 }

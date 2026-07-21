@@ -1,5 +1,5 @@
 import 'package:AppTroNhaToi/Provider/chi_tiet_hoa_don_tap_hoa_provider.dart';
-import 'package:AppTroNhaToi/Provider/phieu-thu-hoa_don_tap_hoa_provider.dart';
+import 'package:AppTroNhaToi/Provider/phieu_thu_hoa_don_tap_hoa_provider.dart';
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/chiTietHoaDonTapHoaPage/chiTietHoaDonTapHoaPageViewModel.dart';

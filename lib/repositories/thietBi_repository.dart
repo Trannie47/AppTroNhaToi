@@ -23,6 +23,7 @@ class ThietBiRepository {
   Future<ThietBi?> capNhatThietBi(ThietBi thietBi) async {
     return await thietBiApiClient.capNhatThietBi(thietBi);
   }
+
   Future<List<LapRap>> getThietBiByPhongId(int phongId) async {
     return await thietBiApiClient.getThietBiByPhongId(phongId);
   }

@@ -1,3 +1,4 @@
+import 'package:AppTroNhaToi/models/DTO/ThuCongNoDTO.dart';
 import 'package:AppTroNhaToi/models/phieu_thu_hd_th.dart';
 import 'package:AppTroNhaToi/repositories/PhieuThuHoaDonTapHoa_reponsitory.dart';
 import 'package:flutter/foundation.dart';
@@ -60,6 +61,20 @@ class PhieuThuHdThProvider extends ChangeNotifier {
     }
 
     return ok;
+  }
+
+  Future<bool> thuCongNo(ThuCongNoDTO dto) async {
+    if (_isLoading) return false;
+
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      return await _repo.thuCongNo(dto);
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   void clear() {

@@ -1,6 +1,6 @@
 import 'package:AppTroNhaToi/Provider/chi_tiet_hoa_don_tap_hoa_provider.dart';
 import 'package:AppTroNhaToi/Provider/hoa_don_tap_hoa_provider.dart';
-import 'package:AppTroNhaToi/Provider/phieu-thu-hoa_don_tap_hoa_provider.dart';
+import 'package:AppTroNhaToi/Provider/phieu_thu_hoa_don_tap_hoa_provider.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/models/DTO/HoaDonTapHoaDTO.dart';
 import 'package:AppTroNhaToi/models/chi_tiet_tap_hoa.dart';
@@ -349,9 +349,9 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
   }
 
   Future<void> chonNgay(
-      BuildContext context,
-      TextEditingController controller,
-      ) async {
+    BuildContext context,
+    TextEditingController controller,
+  ) async {
     DateTime? ngay = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),

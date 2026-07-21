@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 class TapHoaPageViewModel extends ChangeNotifier {
   final HangHoaProvider _service_hh;
   final HoaDonTapHoaProvider _service_hdth;
+  bool hienMenu = false;
   int currentTab = 0;
   int sttHoaDon = 1;
 

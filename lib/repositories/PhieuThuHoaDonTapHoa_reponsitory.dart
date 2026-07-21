@@ -1,4 +1,5 @@
 import 'package:AppTroNhaToi/core/network/PhieuThuHoaDonTapHoaApiClient.dart';
+import 'package:AppTroNhaToi/models/DTO/ThuCongNoDTO.dart';
 import 'package:AppTroNhaToi/models/phieu_thu_hd_th.dart';
 
 class PhieuThuHdThRepository {
@@ -18,5 +19,9 @@ class PhieuThuHdThRepository {
 
   Future<PhieuThuHdTh?> capNhatPhieuThuHdTh(PhieuThuHdTh phieuThu) async {
     return await phieuThuHdThApiClient.capNhatPhieuThuHdTh(phieuThu);
+  }
+
+  Future<bool> thuCongNo(ThuCongNoDTO dto) async {
+    return await phieuThuHdThApiClient.thuCongNo(dto);
   }
 }

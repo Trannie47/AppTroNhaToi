@@ -1,7 +1,7 @@
 import 'package:AppTroNhaToi/Provider/chi_tiet_hoa_don_tap_hoa_provider.dart';
 import 'package:AppTroNhaToi/Provider/hoa_don_tap_hoa_provider.dart';
 import 'package:AppTroNhaToi/Provider/nguoi_thue_provider.dart';
-import 'package:AppTroNhaToi/Provider/phieu-thu-hoa_don_tap_hoa_provider.dart';
+import 'package:AppTroNhaToi/Provider/phieu_thu_hoa_don_tap_hoa_provider.dart';
 import 'package:AppTroNhaToi/models/hang_hoa.dart';
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/HoaDonTapHoaForm/hoaDonTapHoaFormViewModel.dart';
