@@ -8,6 +8,14 @@ class ThongKeProvider extends ChangeNotifier {
   ThongKeDTO? _thongKe;
   ThongKeDTO? get thongKe => _thongKe;
 
+  double get tongDoanhThuThang =>
+      _thongKe?.doanhThu.tongDoanhThu.toDouble() ?? 0;
+
+  String get thangHienTai {
+    final now = DateTime.now();
+    return "${now.month}/${now.year}";
+  }
+
   Future<ThongKeDTO?> getThongKe({int? thang, int? nam}) async {
     try {
       _thongKe = await _thongKeRepository.getThongKe(thang: thang, nam: nam);

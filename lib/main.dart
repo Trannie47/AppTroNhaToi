@@ -33,7 +33,15 @@ void main() {
         // ChangeNotifierProvider(create: (_) => HoaDonTapHoaProvider()),
         ChangeNotifierProvider(create: (_) => NguoiThueProvider()),
         // ChangeNotifierProvider(create: (_) => ThietBiProvider()),
-        ChangeNotifierProvider(create: (_) => ThongKeProvider()),
+        //ChangeNotifierProvider(create: (_) => ThongKeProvider()),
+        ChangeNotifierProvider(
+          create: (_) =>
+          ThongKeProvider()
+            ..getThongKe(
+              thang: DateTime.now().month,
+              nam: DateTime.now().year,
+            ),
+        ),
         ChangeNotifierProvider(create: (_) => ThietBiProvider()..fetchAll()),
         ChangeNotifierProvider(create: (_) => HoaDonTapHoaProvider()..fetchAll(),),
       ],

@@ -1,5 +1,6 @@
 import 'package:AppTroNhaToi/Provider/hoa_don_tap_hoa_provider.dart';
 import 'package:AppTroNhaToi/Provider/thiet_bi_provider.dart';
+import 'package:AppTroNhaToi/Provider/thong_ke_provider.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/LoaiPhongPage/loaiPhongPage.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/TapHoaPage/TapHoaPage.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThietBiPage/thietBiPage.dart';
@@ -16,6 +17,9 @@ class KhacPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final thietBiProvider = context.watch<ThietBiProvider>();
     final hoaDonTapHoaProvider = context.watch<HoaDonTapHoaProvider>();
+    final thongKeProvider = context.watch<ThongKeProvider>();
+
+
     return Scaffold(
       backgroundColor: const Color(0xFFF4F4F4),
       body: Column(
@@ -146,7 +150,9 @@ class KhacPage extends StatelessWidget {
                     title: "Thống kê",
                     subtitle:
                     "Báo cáo doanh thu, chi phí,\nlợi nhuận theo tháng",
-                    status: "Tháng 4: 27.5 tr",
+                    status:
+                    "Tháng ${thongKeProvider.thangHienTai}: "
+                        "${NumberFormat('#,##0').format(thongKeProvider.tongDoanhThuThang)}đ",
                     statusColor: Colors.deepPurple,
 
                     onTap: () {

@@ -1,12 +1,15 @@
+import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/models/phieu_thu_hd_th.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 
 class ItemPhieuThuTapHoa extends StatefulWidget {
   final PhieuThuHdTh? phieuThu;
 
   final ValueChanged<PhieuThuHdTh>? onXacNhan;
   final double soTienConThieu;
+
 
   const ItemPhieuThuTapHoa({
     super.key,
@@ -22,9 +25,9 @@ class ItemPhieuThuTapHoa extends StatefulWidget {
 class _ItemPhieuThuTapHoaState extends State<ItemPhieuThuTapHoa> {
   late TextEditingController txtNguoiDong;
   late TextEditingController txtSoTien;
-
   late bool daXacNhan;
 
+  final _formatter = NumberFormat("#,##0", "vi_VN");
   @override
   void initState() {
     super.initState();
@@ -36,7 +39,7 @@ class _ItemPhieuThuTapHoaState extends State<ItemPhieuThuTapHoa> {
     txtSoTien = TextEditingController(
       text: widget.phieuThu?.soTien == null
           ? ""
-          : widget.phieuThu!.soTien!.toStringAsFixed(0),
+          : _formatter.format(widget.phieuThu!.soTien),
     );
 
     daXacNhan = widget.phieuThu?.maPhieuThu != null;
@@ -90,7 +93,10 @@ class _ItemPhieuThuTapHoaState extends State<ItemPhieuThuTapHoa> {
       maHoaDon: widget.phieuThu?.maHoaDon,
       ngayThu: DateTime.now(),
       nguoiDong: txtNguoiDong.text.trim(),
-      soTien: double.tryParse(txtSoTien.text) ?? 0,
+      soTien: double.tryParse(
+        txtSoTien.text.replaceAll(".", "").replaceAll(",", ""),
+      ) ??
+          0,
     );
 
     widget.onXacNhan?.call(phieuThu);
@@ -151,7 +157,10 @@ class _ItemPhieuThuTapHoaState extends State<ItemPhieuThuTapHoa> {
             controller: txtSoTien,
             keyboardType: TextInputType.number,
             suffixIcon: Icon(Icons.attach_money, color: Colors.grey),
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              DinhDangGiaVN(),
+            ],
             enabled: !daXacNhan,
           ),
 
@@ -185,7 +194,10 @@ class _ItemPhieuThuTapHoaState extends State<ItemPhieuThuTapHoa> {
                 : ElevatedButton.icon(
                     onPressed: () {
                       //Kiểm tra nếu nhập số tiền lớn hơn số tiền còn thiếu thì hiển thị thông báo lỗi
-                      if ((double.tryParse(txtSoTien.text) ?? 0) >
+                      if ((double.tryParse(
+                        txtSoTien.text.replaceAll(".", "").replaceAll(",", ""),
+                      ) ??
+                          0) >
                           widget.soTienConThieu) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
@@ -205,7 +217,10 @@ class _ItemPhieuThuTapHoaState extends State<ItemPhieuThuTapHoa> {
                         return;
                       }
 
-                      if ((double.tryParse(txtSoTien.text) ?? 0) <= 0) {
+                      if ((double.tryParse(
+                        txtSoTien.text.replaceAll(".", "").replaceAll(",", ""),
+                      ) ??
+                          0) <= 0) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text("Số tiền phải lớn hơn 0."),
