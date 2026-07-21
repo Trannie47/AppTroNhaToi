@@ -1,9 +1,7 @@
 import 'package:AppTroNhaToi/core/utils/string_formatter.dart';
 import 'package:AppTroNhaToi/models/item_phong.dart';
-import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/widgets/more_options_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../Provider/phong_provider.dart';
 import '../../../../Provider/nguoi_thue_provider.dart';
 import '../../../../modelviews/MainPage/PhongPage/ChiTietPhongPage/chiTietPhongViewModel.dart';
@@ -11,6 +9,7 @@ import '../../../../states/NguoiThueState.dart';
 import '../../../../states/phong_save_state.dart';
 import '../../../../widgets/app_confirm_dialog.dart';
 import '../../../../widgets/app_error.dart';
+import '../FormPhong/FormPhong.dart';
 import 'TrangChucNang/GhiDienNuocPage/ghiDienNuocPage.dart';
 import 'TrangChucNang/LichSuThuePage/lichSuThuePage.dart';
 
@@ -45,6 +44,71 @@ class PhongChiTiet extends StatefulWidget {
       vm.getListNguoiThueFromIdPhong(widget.room.phongId);
     });
   }
+    void _chinhSuaPhong(ItemPhong room) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => FormPhong(room: room)),
+      );
+    }
+    void _xemThietBiInPhong(ItemPhong room) {
+      // Chuyển sang màn hình Thiết Bị
+    }
+    void _xuaLyXoaPhong(ItemPhong room) async {
+      //Nếu phòng đang có hợp đồng liên kết -> Chặn lại không cho ẩn
+      if (room.dsHopDong.isNotEmpty) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              "Không thể ẩn! Phòng đang có dữ liệu Hợp đồng liên kết. Vui lòng thanh lý hoặc xử lý hợp đồng trước!",
+            ),
+            backgroundColor: Color(0xFF1E293B),
+          ),
+        );
+        return;
+      }
+
+      //Bật Dialog xác nhận ẩn phòng
+      final dialogResult = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AppConfirmDialog(
+          title: "Ẩn phòng trọ",
+          content: "Bạn có chắc chắn muốn ẩn phòng ${room.tenPhong} không?",
+          textConfirm: "Ẩn ngay",
+          isDangerous: true,
+          onConfirm: () {
+            Navigator.pop(dialogContext, true);
+          },
+        ),
+      );
+
+      if (dialogResult == true && mounted) {
+        final navigator = Navigator.of(context);
+        final scaffoldMessenger = ScaffoldMessenger.of(context);
+
+        await vm.removePhong(room.phongId);
+
+        if (vm.phongSaveState is PhongSaveSuccess) {
+          scaffoldMessenger.showSnackBar(
+            const SnackBar(
+              content: Text("Ẩn phòng trọ thành công!"),
+              backgroundColor: Colors.green,
+            ),
+          );
+          // Pop màn hình Chi tiết để quay lại danh sách phòng chính
+          navigator.pop();
+        } else if (vm.phongSaveState is PhongSaveError) {
+          scaffoldMessenger.showSnackBar(
+            SnackBar(
+              content: Text(
+                "Ẩn thất bại: ${(vm.phongSaveState as PhongSaveError).messageError}",
+              ),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    }
     @override
     Widget build(BuildContext context) {
       final room = context.watch<PhongProvider>().listPhong.firstWhere(
@@ -75,11 +139,67 @@ class PhongChiTiet extends StatefulWidget {
           ),
           centerTitle: false,
           actions: [
-            IconButton(
-              icon: const Icon(Icons.more_vert, color: Colors.black),
-              onPressed: () {
-                _showMoreOption(context, room);
-              },
+            Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: PopupMenuButton<String>(
+                offset: const Offset(0, 48),
+                padding: EdgeInsets.zero,
+                icon: const Icon(
+                  Icons.more_vert,
+                  size: 20,
+                  color: Color(0xff1C1C1E),
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                color: Colors.white,
+                elevation: 8,
+                onSelected: (value) {
+                  switch (value) {
+                    case 'edit':
+                      _chinhSuaPhong(room);
+                      break;
+
+                    case 'device':
+                      _xemThietBiInPhong(room);
+                      break;
+
+                    case 'delete':
+                      _xuaLyXoaPhong(room);
+                      break;
+                  }
+                },
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: 'edit',
+                    child: _menuItem(
+                      Icons.edit_outlined,
+                      const Color(0xFF2D7A3A),
+                      "Chỉnh sửa thông tin phòng",
+                      "Sửa tên, trạng thái, mô tả",
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 'device',
+                    child: _menuItem(
+                      Icons.devices_other_rounded,
+                      const Color(0xFF2D7A3A),
+                      "Xem thiết bị trong phòng",
+                      "Danh sách máy lạnh, tủ lạnh...",
+                    ),
+                  ),
+                  const PopupMenuDivider(),
+                  PopupMenuItem(
+                    value: 'delete',
+                    child: _menuItem(
+                      Icons.delete_outline_rounded,
+                      Colors.red,
+                      "Ẩn phòng trọ này",
+                      "Chỉ ẩn khi chưa có hợp đồng",
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -230,6 +350,53 @@ class PhongChiTiet extends StatefulWidget {
               ),
             ],
           ),
+        ),
+      );
+    }
+
+    Widget _menuItem(
+        IconData icon,
+        Color color,
+        String title,
+        String subtitle,
+        ) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, color: color, size: 18),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      color: color == Colors.red ? Colors.red : const Color(0xff1C1C1E),
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: const TextStyle(fontSize: 11, color: Colors.grey),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       );
     }
@@ -425,55 +592,4 @@ class PhongChiTiet extends StatefulWidget {
       ],
     );
   }
-    void _showMoreOption(BuildContext context, ItemPhong room) async {
-      final action = await showModalBottomSheet<String>(
-        context: context,
-        backgroundColor: Colors.white,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        builder: (_) => MoreOptionsSheet(room: room),
-      );
-
-      if (action == "DELETE" && mounted) {
-        final dialogResult = await showDialog<bool>(
-          context: context,
-          builder: (dialogContext) => AppConfirmDialog(
-            title: "Ẩn phòng trọ",
-            content: "Bạn có chắc chắn muốn ẩn phòng ${room.tenPhong} không?",
-            textConfirm: "Ẩn ngay",
-            isDangerous: true,
-            onConfirm: () {
-              Navigator.pop(dialogContext, true);
-            },
-          ),
-        );
-
-        if (dialogResult == true && mounted) {
-          final navigator = Navigator.of(context);
-          final scaffoldMessenger = ScaffoldMessenger.of(context);
-
-
-          await vm.removePhong(room.phongId);
-
-          if (vm.phongSaveState is PhongSaveSuccess) {
-            scaffoldMessenger.showSnackBar(
-              const SnackBar(
-                content: Text("Ẩn phòng trọ thành công!"),
-                backgroundColor: Colors.green,
-              ),
-            );
-            // Thoát khỏi màn hình Chi tiết phòng để quay về danh sách tổng
-            navigator.pop();
-          } else if (vm.phongSaveState is PhongSaveError) {
-            scaffoldMessenger.showSnackBar(
-              SnackBar(
-                content: Text("Ẩn thất bại: ${(vm.phongSaveState as PhongSaveError).messageError}"),
-                backgroundColor: Colors.red,
-              ),
-            );
-          }
-        }
-      }
-    }
 }
