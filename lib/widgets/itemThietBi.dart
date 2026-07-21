@@ -170,6 +170,8 @@ class ItemThietBi extends StatelessWidget {
       case "khóa cửa điện tử":
         return Icons.lock_outline;
 
+      case "khác":
+        return Icons.category_outlined;
       default:
         return Icons.devices_other_outlined;
     }

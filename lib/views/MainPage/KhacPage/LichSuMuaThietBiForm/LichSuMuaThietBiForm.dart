@@ -23,6 +23,9 @@ class LichSuMuaThietBiForm extends StatefulWidget {
 
 class _LichSuMuaThietBiFormState extends State<LichSuMuaThietBiForm> {
   late LichSuMuaThietBiFormViewModel vm;
+  final FocusNode _soLuongFocus = FocusNode();
+  final FocusNode _donGiaFocus = FocusNode();
+  final FocusNode _ghiChuFocus = FocusNode();
 
   @override
   void initState() {
@@ -33,12 +36,26 @@ class _LichSuMuaThietBiFormState extends State<LichSuMuaThietBiForm> {
       thietBi: widget.thietBi,
       lichSuInput: widget.lichSuMua,
     );
+
+    for (final node in [_soLuongFocus, _donGiaFocus, _ghiChuFocus]) {
+      node.addListener(() {
+        setState(() {});
+      });
+    }
+  }
+  @override
+  void dispose() {
+    _soLuongFocus.dispose();
+    _donGiaFocus.dispose();
+    _ghiChuFocus.dispose();
+    super.dispose();
   }
 
   Widget _input({
     required String title,
     required String hint,
     required TextEditingController controller,
+    FocusNode? focusNode,
     String? errorText,
     Widget? suffixIcon,
     bool readOnly = false,
@@ -63,6 +80,7 @@ class _LichSuMuaThietBiFormState extends State<LichSuMuaThietBiForm> {
 
           TextField(
             controller: controller,
+            focusNode: focusNode,
             keyboardType: keyboardType,
             inputFormatters: inputFormatters,
             readOnly: readOnly,
@@ -70,7 +88,7 @@ class _LichSuMuaThietBiFormState extends State<LichSuMuaThietBiForm> {
             onChanged: onChanged,
 
             decoration: InputDecoration(
-              hintText: hint,
+              hintText: (focusNode?.hasFocus ?? false) ? null : hint,
               suffixIcon: suffixIcon,
               errorText: errorText,
 
@@ -272,6 +290,7 @@ class _LichSuMuaThietBiFormState extends State<LichSuMuaThietBiForm> {
                 title: "Số lượng",
                 hint: "VD: 5",
                 controller: vm.txtSoLuong,
+                focusNode: _soLuongFocus,
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 errorText: vm.errSoLuong,
@@ -282,6 +301,7 @@ class _LichSuMuaThietBiFormState extends State<LichSuMuaThietBiForm> {
                 title: "Đơn giá (đ)",
                 hint: "0",
                 controller: vm.txtDonGia,
+                focusNode: _donGiaFocus,
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 errorText: vm.errDonGia,
@@ -305,6 +325,7 @@ class _LichSuMuaThietBiFormState extends State<LichSuMuaThietBiForm> {
                 title: "Ghi chú",
                 hint: "VD: Mua tại cửa hàng ABC",
                 controller: vm.txtGhiChu,
+                focusNode: _ghiChuFocus,
               ),
             ],
           ),

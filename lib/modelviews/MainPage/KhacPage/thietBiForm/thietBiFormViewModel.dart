@@ -32,6 +32,7 @@ class ThietBiFormViewModel extends ChangeNotifier {
     "Lò vi sóng",
     "Bình nóng lạnh",
     "Bếp điện",
+    "Khác",
   ];
   final List<String> dsTrangThai = ["Tốt", "Đang sửa"];
 
