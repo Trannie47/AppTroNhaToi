@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 
 import 'Provider/hop_dong_provider.dart';
 import 'Provider/loai_phong_provider.dart';
+import 'Provider/phuong_tien_provider.dart';
 import 'views/page.dart';
 
 void main() {
@@ -26,6 +27,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => LoaiPhongProvider()),
         ChangeNotifierProvider(create: (_) => HopDongProvider()),
         ChangeNotifierProvider(create: (_) => DienNuocProvider()),
+        ChangeNotifierProvider(create: (_)=> PhuongTienProvider()),
         //File Service được khởi tạo ở đây
         ChangeNotifierProvider(create: (_) => HangHoaProvider()),
         // ChangeNotifierProvider(create: (_) => HoaDonTapHoaProvider()),

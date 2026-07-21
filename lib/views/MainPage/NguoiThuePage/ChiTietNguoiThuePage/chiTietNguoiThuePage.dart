@@ -11,14 +11,16 @@ import 'package:provider/provider.dart';
 
 import '../../../../Provider/nguoi_thue_provider.dart';
 import '../../../../core/utils/launcher_utils.dart';
+import '../../../../models/hop_dong.dart';
+import '../../../../models/phuong_tien.dart';
 import '../../../../modelviews/MainPage/NguoiThuePage/ChiTietNguoiThuePage/chiTietNguoiThuePageViewModel.dart';
 import '../../../../states/chi_tiet_nguoi_thue_state.dart';
 import '../../../../widgets/app_confirm_dialog.dart';
 import '../../../../widgets/app_error.dart';
+import '../PhuongTienNguoiThuePage/PhuongTienNguoiThuePage.dart';
 
 class ChiTietNguoiThuePage extends StatefulWidget {
   final NguoiThue nguoiThue;
-
   //final List<Phong> dsPhong;
 
   const ChiTietNguoiThuePage({
@@ -58,19 +60,23 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
     super.dispose();
   }
 
-  // void openPhuongTienPage() {
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (context) {
-  //         return PhuongTienNguoiThuePage(
-  //           nguoiThue: vm.nguoiThue,
-  //           dsPhuongTien: vm.dsXe,
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
+  void openPhuongTienPage() {
+    List<HopDong> dsHD = [];
+    if (vm.chiTietNguoiThueState is ChiTietNguoiThueSuccess) {
+      dsHD = (vm.chiTietNguoiThueState as ChiTietNguoiThueSuccess).listHD;
+    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return PhuongTienNguoiThuePage(
+            nguoiThue: _currentNguoiThue,
+            dsHopDong: dsHD,
+          );
+        },
+      ),
+    );
+  }
   Future<void> _diChuyenDenFormCapNhat() async {
     final result = await Navigator.push(
       context,
@@ -179,12 +185,8 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                     case 'update':
                       _diChuyenDenFormCapNhat();
                       break;
-
-                    case 'room':
-                      break;
-
                     case 'vehicle':
-                      //  openPhuongTienPage();
+                        openPhuongTienPage();
                       break;
 
                     case 'parking_bill':
@@ -200,10 +202,6 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
 
                     case 'guest':
                       break;
-
-                    case 'delete':
-                      // vm.showDeleteDialog(context);
-                      break;
                   }
                 },
                 itemBuilder: (context) => [
@@ -214,16 +212,6 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                       const Color(0xff2D7A3A),
                       "Cập nhật thông tin",
                       "Sửa tên, SĐT, CCCD, quê quán",
-                    ),
-                  ),
-
-                  PopupMenuItem(
-                    value: 'room',
-                    child: _menuItem(
-                      Icons.work_outline,
-                      const Color(0xff2D7A3A),
-                      "Phòng đang thuê",
-                      "Xem lịch sử thuê phòng",
                     ),
                   ),
 
@@ -254,16 +242,6 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                       const Color(0xff8B5CF6),
                       "Người lưu trú tạm thời",
                       "Ba mẹ, anh chị, bạn bè ở ngắn ngày",
-                    ),
-                  ),
-
-                  PopupMenuItem(
-                    value: 'delete',
-                    child: _menuItem(
-                      Icons.delete_outline,
-                      Colors.red,
-                      "Xóa người thuê",
-                      "Chỉ xóa nếu chưa phát sinh dữ liệu",
                     ),
                   ),
                 ],
