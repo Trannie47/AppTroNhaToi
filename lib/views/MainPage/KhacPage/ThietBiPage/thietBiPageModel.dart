@@ -40,8 +40,20 @@ class ThietBiPageModel {
     );
   }
 
-  /// Số lượng chưa lắp đặt
-  int get soLuongConLai => soLuongMua - soLuongLapDat;
+  // Số lượng chưa lắp đặt
+  //int get soLuongConLai => soLuongMua - soLuongLapDat;
+  int get soLuongConLai => (soLuongMua - soLuongLapDat) < 0 ? 0 : (soLuongMua - soLuongLapDat);
+
+  // Bổ sung thêm 2 hàm này để DropdownButtonFormField trong chỗ thêm thiết bị vào phòng để nó so sánh Object chuẩn xác
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is ThietBiPageModel &&
+        other.thietBi.thietBiID == thietBi.thietBiID;
+  }
+
+  @override
+  int get hashCode => thietBi.thietBiID.hashCode;
 
   @override
   String toString() {

@@ -1,5 +1,6 @@
 import 'package:AppTroNhaToi/Provider/lap_rap_thietbi_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../Provider/thiet_bi_provider.dart';
@@ -24,6 +25,7 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
 
   // Biến trạng thái đang gửi API
   bool _isSubmitting = false;
+  String? _errorMessage; //Biến hiển thị dòng báo lỗi trên Dialog
 
   @override
   void initState() {
@@ -75,7 +77,10 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<ThietBiProvider>();
-    final dsThietBi = provider.list;
+    // chỉ lấy và hiển thị những thiết bị còn số lượng >0
+    final dsThietBiConHang = provider.list
+        .where((item) => item.soLuongConLai > 0)
+        .toList();
 
     return Dialog(
       shape: RoundedRectangleBorder(
@@ -123,7 +128,7 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
                   borderSide: const BorderSide(color: Color(0xff2D7A3A)),
                 ),
               ),
-              items: dsThietBi.map((item) {
+              items: dsThietBiConHang.map((item) {
                 return DropdownMenuItem<ThietBiPageModel>(
                   value: item,
                   child: Text(
@@ -157,6 +162,16 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
               controller: _soLuongController,
               enabled: !_isSubmitting,
               keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+              ],
+              onChanged: (_) {
+                if (_errorMessage != null) {
+                  setState(() {
+                    _errorMessage = null;
+                  });
+                }
+              },
               style: const TextStyle(fontSize: 14, color: Color(0xff1C1C1E)),
               decoration: InputDecoration(
                 filled: true,
@@ -220,6 +235,35 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
                 ),
               ),
             ),
+            //Hiển thị thông báo lỗi khi thêm thiết bằng bằng dialog có lỗi
+            if (_errorMessage != null) ...[
+              const SizedBox(height: 14),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: const Color(0xffFDF2F2),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: const Color(0xffFADBD8)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.error_outline_rounded, color: Color(0xffD9534F), size: 18),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        _errorMessage!,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Color(0xffD9534F),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
 
             const SizedBox(height: 24),
 
@@ -258,6 +302,9 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
                           : () async {
                         // Validate chọn thiết bị
                         if (_selectedThietBi == null) {
+                          setState(() {
+                            _errorMessage = "Vui lòng chọn thiết bị!";
+                          });
                           return;
                         }
 
@@ -265,8 +312,30 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
                         if (thietBiId == null) {
                           return;
                         }
-
-                        final soLuong = int.tryParse(_soLuongController.text) ?? 1;
+                        //Validate số lượng nhập vào
+                        final textSoLuong = _soLuongController.text.trim();
+                        if (textSoLuong.isEmpty) {
+                          setState(() {
+                            _errorMessage = "Vui lòng nhập số lượng!";
+                          });
+                          return;
+                        }
+                        //Nếu vượt quá số lượng còn lại -> Báo lỗi đỏ trực tiếp trên Dialog!
+                        final soLuong = int.tryParse(textSoLuong);
+                        if (soLuong == null || soLuong <= 0) {
+                          setState(() {
+                            _errorMessage = "Số lượng lắp đặt phải lớn hơn 0!";
+                          });
+                          return;
+                        }
+                        //Check số lượng thiết bị trc khi gọi api
+                        if (soLuong > _selectedThietBi!.soLuongConLai) {
+                          setState(() {
+                            _errorMessage =
+                            "Không đủ số lượng! Thiết bị này trong kho chỉ còn ${_selectedThietBi!.soLuongConLai} cái.";
+                          });
+                          return;
+                        }
 
                         // Bật trạng thái Loading
                         setState(() {
@@ -283,13 +352,14 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
                           );
 
                           if (result != null && mounted) {
-                            // 🔥 Đóng Dialog và trả về true để màn hình chính xử lý UI
+                            //Đóng Dialog và trả về true để màn hình chính xử lý UI
                             Navigator.pop(context, true);
                           }
                         } catch (e) {
-                          if (mounted) {
-                            // Nếu có lỗi, đóng dialog và trả về null/false
-                            Navigator.pop(context, false);
+                            if (mounted) {
+                              setState(() {
+                                _errorMessage = e.toString().replaceFirst('Exception: ', '');
+                              });
                           }
                         } finally {
                           if (mounted) {
