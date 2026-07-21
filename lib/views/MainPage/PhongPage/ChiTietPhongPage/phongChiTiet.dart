@@ -10,6 +10,7 @@ import '../../../../states/phong_save_state.dart';
 import '../../../../widgets/app_confirm_dialog.dart';
 import '../../../../widgets/app_error.dart';
 import '../FormPhong/FormPhong.dart';
+import 'ChiTietThietBiPhongPage/chiTietThietBiPhongPage.dart';
 import 'TrangChucNang/GhiDienNuocPage/ghiDienNuocPage.dart';
 import 'TrangChucNang/LichSuThuePage/lichSuThuePage.dart';
 
@@ -51,7 +52,10 @@ class PhongChiTiet extends StatefulWidget {
       );
     }
     void _xemThietBiInPhong(ItemPhong room) {
-      // Chuyển sang màn hình Thiết Bị
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => ChiTietThietBiPhongPage(room: room)),
+      );
     }
     void _xuaLyXoaPhong(ItemPhong room) async {
       //Nếu phòng đang có hợp đồng liên kết -> Chặn lại không cho ẩn
