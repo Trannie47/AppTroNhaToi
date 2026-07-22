@@ -1,5 +1,6 @@
 import 'package:AppTroNhaToi/Provider/nguoi_thue_provider.dart';
 import 'package:AppTroNhaToi/Provider/phieu_thu_hoa_don_tap_hoa_provider.dart';
+import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/ThuCongNoForm/thuCongNoFormViewModel.dart';
 import 'package:AppTroNhaToi/widgets/CustomDropdownSearch.dart';
@@ -181,6 +182,10 @@ class _ThuCongNoFormState extends State<ThuCongNoForm> {
                       controller: vm.txtSoTien,
                       hint: "Nhập số tiền",
                       keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        DinhDangGiaVN(),
+                      ],
                     ),
 
                     const SizedBox(height: 20),
