@@ -3,7 +3,7 @@ import 'package:AppTroNhaToi/Provider/phieu_thu_hoa_don_tap_hoa_provider.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/model_formatter.dart';
 import 'package:AppTroNhaToi/models/DTO/ThuCongNoDTO.dart';
-import 'package:AppTroNhaToi/models/nguoi_thue.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThuCongNoForm/thuCongNoFormModel.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -22,43 +22,40 @@ class ThuCongNoFormViewModel extends ChangeNotifier {
 
   final formKey = GlobalKey<FormState>();
 
-  List<NguoiThue> listNguoiThue = [];
+  List<ThuCongNoFormModel> listNguoiThue = [];
 
-  NguoiThue? nguoiThue;
+  ThuCongNoFormModel? nguoiThue;
 
   double tongCongNo = 0;
 
   bool get isLoading => _provider.isLoading;
 
   Future<void> init() async {
-    await _nguoiThueProvider.fetchAll();
+    await _nguoiThueProvider.fetchNguoiThueCongNoTapHoa();
 
-    listNguoiThue = _nguoiThueProvider.list;
+    listNguoiThue = _nguoiThueProvider.listCongNoTapHoa;
 
     notifyListeners();
   }
 
-  Future<void> chonNguoiThue(NguoiThue? value) async {
+  Future<void> chonNguoiThue(
+      ThuCongNoFormModel? value,
+      ) async {
     nguoiThue = value;
 
-    if (value != null) {
-      /// TODO:
-      /// Gọi API lấy tổng công nợ
-      ///
-      /// tongCongNo = await ...
-    } else {
-      tongCongNo = 0;
-    }
+    tongCongNo = value?.tongCongNoTapHoa ?? 0;
 
     notifyListeners();
   }
 
   Future<void> chonNgayThu(BuildContext context) async {
+    final now = DateTime.now();
+
     final DateTime? ngay = await showDatePicker(
       context: context,
-      initialDate: dateOf(txtNgayThu.text) ?? DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime(2100),
+      initialDate: dateOf(txtNgayThu.text) ?? now,
+      firstDate: DateTime(2020, 1, 1), // hoặc DateTime(1900, 1, 1)
+      lastDate: now,
     );
 
     if (ngay == null) return;
@@ -101,7 +98,7 @@ class ThuCongNoFormViewModel extends ChangeNotifier {
     );
 
     final dto = ThuCongNoDTO(
-      idnt: nguoiThue!.idnt,
+     idnt: nguoiThue!.nguoiThue.idnt,
       soTien: soTien,
       ngayThu: dateOf(txtNgayThu.text),
     );

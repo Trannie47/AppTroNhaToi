@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:AppTroNhaToi/core/network/NguoiThueApiClient.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThuCongNoForm/thuCongNoFormModel.dart';
 import 'package:retrofit/http.dart';
 
 import '../models/nguoi_thue.dart';
@@ -29,5 +30,8 @@ class NguoithueRepository {
 
   Future<List<NguoiThue>> getListNguoiThueAvailableForContract(){
     return nguoiThueApiClient.getNguoiThueAvailableForContract();
+  }
+  Future<List<ThuCongNoFormModel>> getNguoiThueCongNoTapHoa() async {
+    return await nguoiThueApiClient.getNguoiThueCongNoTapHoa();
   }
 }

@@ -1,5 +1,6 @@
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/repositories/nguoithue_repository.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThuCongNoForm/thuCongNoFormModel.dart';
 import 'package:flutter/foundation.dart';
 
 class NguoiThueProvider extends ChangeNotifier {
@@ -7,6 +8,11 @@ class NguoiThueProvider extends ChangeNotifier {
 
   List<NguoiThue> _list = [];
   List<NguoiThue> get list => List.unmodifiable(_list);
+
+  List<ThuCongNoFormModel> _listCongNoTapHoa = [];
+
+  List<ThuCongNoFormModel> get listCongNoTapHoa =>
+      List.unmodifiable(_listCongNoTapHoa);
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -41,6 +47,32 @@ class NguoiThueProvider extends ChangeNotifier {
     }
 
     return result;
+  }
+
+  Future<void> fetchNguoiThueCongNoTapHoa() async {
+    if (_isLoading) return;
+
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      _listCongNoTapHoa =
+      await _repo.getNguoiThueCongNoTapHoa();
+
+      _listCongNoTapHoa.sort(
+            (a, b) =>
+            b.tongCongNoTapHoa.compareTo(a.tongCongNoTapHoa),
+      );
+    } catch (e) {
+      _listCongNoTapHoa = [];
+
+      if (kDebugMode) {
+        print("Lỗi fetchNguoiThueCongNoTapHoa: $e");
+      }
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   Future<bool> xoa(int idnt) async {

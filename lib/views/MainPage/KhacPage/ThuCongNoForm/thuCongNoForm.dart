@@ -1,8 +1,8 @@
 import 'package:AppTroNhaToi/Provider/nguoi_thue_provider.dart';
 import 'package:AppTroNhaToi/Provider/phieu_thu_hoa_don_tap_hoa_provider.dart';
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
-import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/ThuCongNoForm/thuCongNoFormViewModel.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThuCongNoForm/thuCongNoFormModel.dart';
 import 'package:AppTroNhaToi/widgets/CustomDropdownSearch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -161,15 +161,12 @@ class _ThuCongNoFormState extends State<ThuCongNoForm> {
 
                     const SizedBox(height: 10),
 
-                    CustomDropdownSearch<NguoiThue>(
+                    CustomDropdownSearch<ThuCongNoFormModel>(
                       label: "Người thuê",
                       hintText: "-- Chọn người thuê --",
                       items: vm.listNguoiThue,
-                      selectedItem: vm.listNguoiThue
-                          .where((e) => e.idnt == vm.nguoiThue?.idnt)
-                          .cast<NguoiThue?>()
-                          .firstOrNull,
-                      itemAsString: (item) => item.hoTen ?? "",
+                      selectedItem: vm.nguoiThue,
+                      itemAsString: (item) => item.nguoiThue.hoTen ?? "",
                       onChanged: (value) {
                         vm.chonNguoiThue(value);
                       },

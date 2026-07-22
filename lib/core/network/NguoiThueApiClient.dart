@@ -1,5 +1,6 @@
 import 'package:AppTroNhaToi/core/network/retrofit_client.dart';
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThuCongNoForm/thuCongNoFormModel.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
@@ -93,6 +94,31 @@ class NguoiThueApiClient {
       rethrow;
     }
   }
+  // Gọi API backend để lấy danh sách người thuê còn công nợ tạp hóa.
+  Future<List<ThuCongNoFormModel>> getNguoiThueCongNoTapHoa() async {
+    try {
+      final response = await _dio.get(
+        "nguoi-thue/cong-no-tap-hoa",
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final List<dynamic> data = response.data;
+
+        return data
+            .map((json) => ThuCongNoFormModel.fromMap(json))
+            .toList();
+      }
+
+      return [];
+    } catch (e) {
+      if (kDebugMode) {
+        print("Lỗi getNguoiThueCongNoTapHoa: $e");
+      }
+      return [];
+    }
+  }
+
+
 
   Future<List<NguoiThue>> getListNguoiThueFromIdPhong(int idPhong) async {
     try {

@@ -25,10 +25,22 @@ class TapHoaPageViewModel extends ChangeNotifier {
     Future.microtask(() => _service_hh.fetchAll());
     Future.microtask(() => _service_hdth.fetchAll());
   }
+
   Future<void> refresh() async {
     await _service_hh.fetchAll();
     await _service_hdth.fetchAll();
     loadData();
+  }
+
+  // công nợ tạo lại
+  Future<void> refreshCongNo() async {
+    await _service_hdth.fetchAll();
+
+    dsHoaDonTapHoa = List.from(_service_hdth.list);
+
+    loadData();
+
+    notifyListeners();
   }
 
   void loadData() {

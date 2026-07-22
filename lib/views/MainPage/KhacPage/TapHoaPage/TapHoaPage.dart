@@ -73,15 +73,19 @@ class _TapHoaPageState extends State<TapHoaPage> {
       vm.hienMenu = false;
     });
 
-    await Navigator.push(
+    final result = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => ChangeNotifierProvider(
           create: (_) => PhieuThuHdThProvider(),
-          child: ThuCongNoForm(),
+          child: const ThuCongNoForm(),
         ),
       ),
     );
+
+    if (result == true) {
+      await vm.refreshCongNo();
+    }
   }
 
   @override
