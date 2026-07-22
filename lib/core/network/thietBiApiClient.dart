@@ -90,31 +90,6 @@ class ThietBiApiClient {
     }
   }
 
-  Future<List<LapRap>> getThietBiByPhongId(int phongId) async {
-    try {
-      final response = await _dio.get("thiet-bi/phong/$phongId");
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final List<dynamic> data = response.data;
-        return data
-            .map((json) => LapRap.fromMap(json as Map<String, dynamic>))
-            .toList();
-      }
-      throw Exception("Không thể lấy danh sách thiết bị trong phòng");
-    } on DioException catch (e) {
-      if (kDebugMode) {
-        print("Lỗi Dio getThietBiByPhongId: $e");
-      }
-      throw Exception(_mapErrorToMessage(e));
-    } catch (e) {
-      if (kDebugMode) {
-        print("Lỗi không xác định getThietBiByPhongId: $e");
-      }
-      if (e is Exception) rethrow;
-      throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
-    }
-  }
-
   String _mapErrorToMessage(DioException e) {
     if (e.type == DioExceptionType.connectionTimeout ||
         e.type == DioExceptionType.receiveTimeout ||

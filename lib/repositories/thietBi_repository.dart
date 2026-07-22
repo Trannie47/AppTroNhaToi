@@ -2,8 +2,6 @@ import 'package:AppTroNhaToi/core/network/ThietBiApiClient.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThietBiPage/thietBiPageModel.dart';
 
-import '../models/lap_rap.dart';
-
 class ThietBiRepository {
   final ThietBiApiClient thietBiApiClient = ThietBiApiClient();
 
@@ -24,7 +22,4 @@ class ThietBiRepository {
     return await thietBiApiClient.capNhatThietBi(thietBi);
   }
 
-  Future<List<LapRap>> getThietBiByPhongId(int phongId) async {
-    return await thietBiApiClient.getThietBiByPhongId(phongId);
-  }
 }

@@ -1,32 +1,26 @@
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
-import 'package:AppTroNhaToi/view_models/hopdong_view_model.dart';
-import 'package:AppTroNhaToi/view_models/nguoithue_view_model.dart';
 import 'package:AppTroNhaToi/views/MainPage/NguoiThuePage/NguoiThueForm/NguoiThueForm.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/string_formatter.dart';
 import 'package:dio/dio.dart';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../Provider/nguoi_thue_provider.dart';
 import '../../../../core/utils/launcher_utils.dart';
 import '../../../../models/hop_dong.dart';
-import '../../../../models/phuong_tien.dart';
 import '../../../../modelviews/MainPage/NguoiThuePage/ChiTietNguoiThuePage/chiTietNguoiThuePageViewModel.dart';
 import '../../../../states/chi_tiet_nguoi_thue_state.dart';
 import '../../../../widgets/app_confirm_dialog.dart';
 import '../../../../widgets/app_error.dart';
+import '../NguoiLuuTruTamThoiPage/NguoiLuuTruTamThoiPage.dart';
 import '../PhuongTienNguoiThuePage/PhuongTienNguoiThuePage.dart';
 
 class ChiTietNguoiThuePage extends StatefulWidget {
   final NguoiThue nguoiThue;
-  //final List<Phong> dsPhong;
 
   const ChiTietNguoiThuePage({
     super.key,
     required this.nguoiThue,
-    //required this.dsPhong,
   });
 
   @override
@@ -71,6 +65,24 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
         builder: (context) {
           return PhuongTienNguoiThuePage(
             nguoiThue: _currentNguoiThue,
+            dsHopDong: dsHD,
+          );
+        },
+      ),
+    );
+  }
+  void openNguoiLuuTruTamThoi(){
+    List<HopDong> dsHD = [];
+    if (vm.chiTietNguoiThueState is ChiTietNguoiThueSuccess) {
+      dsHD = (vm.chiTietNguoiThueState as ChiTietNguoiThueSuccess).listHD;
+    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return LuuTruTamThoiPage(
+            idnt: widget.nguoiThue.idnt!,
+            tenNguoiThue: widget.nguoiThue.hoTen,
             dsHopDong: dsHD,
           );
         },
@@ -201,6 +213,7 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                       break;
 
                     case 'guest':
+                      openNguoiLuuTruTamThoi();
                       break;
                   }
                 },

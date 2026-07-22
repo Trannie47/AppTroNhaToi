@@ -72,7 +72,4 @@ class ThietBiProvider extends ChangeNotifier {
     return ok;
   }
 
-  Future<List<LapRap>> getThietBiByPhongId(int phongId) async {
-    return await _repo.getThietBiByPhongId(phongId);
-  }
 }

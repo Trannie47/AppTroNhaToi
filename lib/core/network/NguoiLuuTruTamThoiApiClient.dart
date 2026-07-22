@@ -1,89 +1,75 @@
 import 'package:AppTroNhaToi/core/network/retrofit_client.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import '../../models/nguoi_luu_tru_tam_thoi.dart';
 
-import '../../models/lap_rap.dart';
+class NguoiLuuTruTamThoiApiClient {
+  final Dio _dio= RetrofitClient().dio;
 
-class LapRapThietBiApiClient{
-  final Dio _dio = RetrofitClient().dio;
-
-  Future<List<LapRap>> getThietBiByPhongId(int phongId) async {
+  Future<List<NguoiLuuTruTamThoi>> getDanhSachLuuTru({int? idnt}) async {
     try {
-      final response = await _dio.get("thiet-bi/phong/$phongId");
+      final response = await _dio.get(
+        "nguoi-luu-tru-tam-thoi",
+        queryParameters: {
+          if (idnt != null) "idnt": idnt,
+        },
+      );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final List<dynamic> data = response.data;
+        final List data = response.data as List;
         return data
-            .map((json) => LapRap.fromMap(json as Map<String, dynamic>))
+            .map((e) => NguoiLuuTruTamThoi.fromMap(e as Map<String, dynamic>))
             .toList();
       }
-      throw Exception("Không thể lấy danh sách thiết bị trong phòng");
+      return [];
     } on DioException catch (e) {
-      if (kDebugMode) {
-        print("Lỗi Dio getThietBiByPhongId: $e");
-      }
+      if (kDebugMode) print("Lỗi fetchDanhSachLuuTru: $e");
       throw Exception(_mapErrorToMessage(e));
     } catch (e) {
-      if (kDebugMode) {
-        print("Lỗi không xác định getThietBiByPhongId: $e");
-      }
       if (e is Exception) rethrow;
       throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
     }
   }
 
-  Future<LapRap?> taoLapRap({
-    required int phongId,
-    required int thietBiId,
-    required int soLuong,
-    required DateTime ngayLap,
-  }) async {
+  Future<NguoiLuuTruTamThoi?> createNguoiLuuTru(NguoiLuuTruTamThoi item) async {
     try {
       final response = await _dio.post(
-        "lap-rap",
-        data: {
-          "phongId": phongId,
-          "thietBiId": thietBiId,
-          "soLuong": soLuong,
-          "ngayLap": ngayLap.toIso8601String(),
-        },
+        "nguoi-luu-tru-tam-thoi",
+        data: item.toMap(),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return LapRap.fromMap(response.data as Map<String, dynamic>);
+        return NguoiLuuTruTamThoi.fromMap(
+            response.data as Map<String, dynamic>);
       }
-      throw Exception("Không thể thêm thiết bị vào phòng");
+      return null;
     } on DioException catch (e) {
-      if (kDebugMode) {
-        print("Lỗi taoLapRap Dio: $e");
-      }
+      if (kDebugMode) print("Lỗi taoNguoiLuuTru: $e");
       throw Exception(_mapErrorToMessage(e));
     } catch (e) {
-      if (kDebugMode) {
-        print("Lỗi taoLapRap: $e");
-      }
       if (e is Exception) rethrow;
       throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
     }
   }
-  Future<LapRap?> capNhatLapRap({
-    required int id,
-    required int soLuong,
-  }) async {
+
+  Future<NguoiLuuTruTamThoi?> updateLuuTru(NguoiLuuTruTamThoi item) async {
+    if (item.idtt == null) {
+      throw Exception("Mã IDTT không hợp lệ");
+    }
+
     try {
       final response = await _dio.patch(
-        "lap-rap/$id",
-        data: {
-          "soLuong": soLuong,
-        },
+        "nguoi-luu-tru-tam-thoi/${item.idtt}",
+        data: item.toMap(),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return LapRap.fromMap(response.data as Map<String, dynamic>);
+        return NguoiLuuTruTamThoi.fromMap(
+            response.data as Map<String, dynamic>);
       }
-      throw Exception("Không thể cập nhật thiết bị");
+      return null;
     } on DioException catch (e) {
-      if (kDebugMode) print("Lỗi capNhatLapRap Dio: $e");
+      if (kDebugMode) print("Lỗi capNhatLuuTru: $e");
       throw Exception(_mapErrorToMessage(e));
     } catch (e) {
       if (e is Exception) rethrow;
@@ -91,6 +77,18 @@ class LapRapThietBiApiClient{
     }
   }
 
+  Future<bool> deleteLuuTru(int idtt) async {
+    try {
+      final response = await _dio.delete("nguoi-luu-tru-tam-thoi/$idtt");
+      return response.statusCode == 200 || response.statusCode == 201;
+    } on DioException catch (e) {
+      if (kDebugMode) print("Lỗi xoaLuuTru: $e");
+      throw Exception(_mapErrorToMessage(e));
+    } catch (e) {
+      if (e is Exception) rethrow;
+      throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
+    }
+  }
   String _mapErrorToMessage(DioException e) {
     if (e.type == DioExceptionType.connectionTimeout ||
         e.type == DioExceptionType.connectionError) {
