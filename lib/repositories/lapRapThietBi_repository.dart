@@ -23,4 +23,10 @@ class LapRapThietBiRepository {
       ngayLap: ngayLap,
     );
   }
+  Future<LapRap?> capNhatLapRap({
+    required int id,
+    required int soLuong,
+  }) async {
+    return await _lapRapApiClient.capNhatLapRap(id: id, soLuong: soLuong);
+  }
 }

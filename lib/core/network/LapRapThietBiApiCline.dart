@@ -41,6 +41,31 @@ class LapRapThietBiApiClient{
       throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
     }
   }
+  Future<LapRap?> capNhatLapRap({
+    required int id,
+    required int soLuong,
+  }) async {
+    try {
+      final response = await _dio.patch(
+        "lap-rap/$id",
+        data: {
+          "soLuong": soLuong,
+        },
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return LapRap.fromMap(response.data as Map<String, dynamic>);
+      }
+      throw Exception("Không thể cập nhật thiết bị");
+    } on DioException catch (e) {
+      if (kDebugMode) print("Lỗi capNhatLapRap Dio: $e");
+      throw Exception(_mapErrorToMessage(e));
+    } catch (e) {
+      if (e is Exception) rethrow;
+      throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
+    }
+  }
+
   String _mapErrorToMessage(DioException e) {
     if (e.type == DioExceptionType.connectionTimeout ||
         e.type == DioExceptionType.connectionError) {

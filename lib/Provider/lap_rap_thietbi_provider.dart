@@ -22,4 +22,10 @@ class LapRapThietbiProvider extends ChangeNotifier {
       ngayLap: ngayLap,
     );
   }
+  Future<LapRap?> capNhatLapRap({
+    required int id,
+    required int soLuong,
+  }) async {
+    return await _lapRapRepo.capNhatLapRap(id: id, soLuong: soLuong);
+  }
 }

@@ -1,17 +1,21 @@
-import 'package:AppTroNhaToi/Provider/lap_rap_thietbi_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../Provider/thiet_bi_provider.dart';
+import '../../../../../models/lap_rap.dart';
+import '../../../../../modelviews/MainPage/PhongPage/ChiTietPhongPage/ChiTietThietBiPhongPage/chiTietThietBiPhongViewModel.dart';
 import '../../../KhacPage/ThietBiPage/thietBiPageModel.dart';
 
 class ThemThietBiPhongDialog extends StatefulWidget {
   final int phongId;
+  final LapRap? lapRap; // Nếu truyền lapRap -> Chế độ Sửa/Xóa. Nếu null -> Thêm mới
+  final ChiTietThietBiPhongViewModel viewModel; // Nhận ViewModel từ UI
 
   const ThemThietBiPhongDialog({
     super.key,
     required this.phongId,
+    this.lapRap,
+    required this.viewModel,
   });
 
   @override
@@ -20,29 +24,24 @@ class ThemThietBiPhongDialog extends StatefulWidget {
 
 class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
   ThietBiPageModel? _selectedThietBi;
-  final TextEditingController _soLuongController = TextEditingController(text: "1");
-  DateTime _selectedDate = DateTime.now();
+  late int _soLuong;
+  late DateTime _selectedDate;
 
-  // Biến trạng thái đang gửi API
   bool _isSubmitting = false;
-  String? _errorMessage; //Biến hiển thị dòng báo lỗi trên Dialog
+  String? _errorMessage;
+
+  bool get _isEditMode => widget.lapRap != null;
 
   @override
   void initState() {
     super.initState();
-    // Tải danh sách thiết bị tổng từ Provider nếu chưa load
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider = context.read<ThietBiProvider>();
-      if (provider.list.isEmpty) {
-        provider.fetchAll();
-      }
-    });
-  }
 
-  @override
-  void dispose() {
-    _soLuongController.dispose();
-    super.dispose();
+    _soLuong = widget.lapRap?.soLuong ?? 1;
+    _selectedDate = widget.lapRap?.ngayLap ?? DateTime.now();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ThietBiProvider>().fetchAll();
+    });
   }
 
   // Bật lịch chọn ngày
@@ -77,7 +76,24 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<ThietBiProvider>();
-    // chỉ lấy và hiển thị những thiết bị còn số lượng >0
+
+    // Tìm thiết bị tương ứng trong kho tổng
+    ThietBiPageModel? matchingModel;
+    if (_isEditMode && widget.lapRap?.thietBi?.thietBiID != null) {
+      try {
+        matchingModel = provider.list.firstWhere(
+              (e) => e.thietBi.thietBiID == widget.lapRap!.thietBi!.thietBiID,
+        );
+      } catch (_) {}
+    }
+
+    // Tính số lượng tối đa có thể chọn
+    final initialSoLuong = widget.lapRap?.soLuong ?? 0;
+    final int maxSoLuong = _isEditMode
+        ? ((matchingModel?.soLuongConLai ?? 0) + initialSoLuong)
+        : (_selectedThietBi?.soLuongConLai ?? 999);
+
+    // Danh sách thiết bị còn hàng cho Dropdown
     final dsThietBiConHang = provider.list
         .where((item) => item.soLuongConLai > 0)
         .toList();
@@ -94,7 +110,18 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            /// 1. CHỌN THIẾT BỊ
+            // TIÊU ĐỀ DIALOG
+            Text(
+              _isEditMode ? "Chỉnh sửa thiết bị" : "Thêm thiết bị vào phòng",
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Color(0xff1C1C1E),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // CHỌN THIẾT BỊ
             const Text(
               "Thiết bị",
               style: TextStyle(
@@ -104,97 +131,154 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
               ),
             ),
             const SizedBox(height: 6),
-            DropdownButtonFormField<ThietBiPageModel>(
-              value: _selectedThietBi,
-              hint: const Text(
-                "--Thiết bị--",
-                style: TextStyle(color: Color(0xff8E8E93), fontSize: 14),
-              ),
-              icon: const Icon(Icons.arrow_drop_down, color: Color(0xff8E8E93)),
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: const Color(0xffF8F9FA),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                border: OutlineInputBorder(
+
+            // Ở CHẾ ĐỘ SỬA: KHÓA TÊN THIẾT BỊ (CHỈ ĐỌC)
+            if (_isEditMode)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  color: const Color(0xffF2F2F7),
                   borderRadius: BorderRadius.circular(14),
-                  borderSide: const BorderSide(color: Color(0xffEFEFEF)),
+                  border: Border.all(color: const Color(0xffEFEFEF)),
                 ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: const BorderSide(color: Color(0xffEFEFEF)),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: const BorderSide(color: Color(0xff2D7A3A)),
-                ),
-              ),
-              items: dsThietBiConHang.map((item) {
-                return DropdownMenuItem<ThietBiPageModel>(
-                  value: item,
-                  child: Text(
-                    item.thietBi.tenThietBi ?? 'Chưa rõ tên',
-                    style: const TextStyle(fontSize: 14, color: Color(0xff1C1C1E)),
+                child: Text(
+                  widget.lapRap?.thietBi?.tenThietBi ?? 'Chưa rõ tên',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xff1C1C1E),
                   ),
-                );
-              }).toList(),
-              onChanged: _isSubmitting
-                  ? null
-                  : (val) {
-                setState(() {
-                  _selectedThietBi = val;
-                });
-              },
-            ),
-
-            const SizedBox(height: 16),
-
-            /// 2. NHẬP SỐ LƯỢNG
-            const Text(
-              "Số lượng",
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-                color: Color(0xff1C1C1E),
-              ),
-            ),
-            const SizedBox(height: 6),
-            TextField(
-              controller: _soLuongController,
-              enabled: !_isSubmitting,
-              keyboardType: TextInputType.number,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-              ],
-              onChanged: (_) {
-                if (_errorMessage != null) {
+                ),
+              )
+            else
+              DropdownButtonFormField<ThietBiPageModel>(
+                value: _selectedThietBi,
+                hint: const Text(
+                  "--Chọn thiết bị--",
+                  style: TextStyle(color: Color(0xff8E8E93), fontSize: 14),
+                ),
+                icon: const Icon(Icons.arrow_drop_down, color: Color(0xff8E8E93)),
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: const Color(0xffF8F9FA),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: const BorderSide(color: Color(0xffEFEFEF)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: const BorderSide(color: Color(0xffEFEFEF)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: const BorderSide(color: Color(0xff2D7A3A)),
+                  ),
+                ),
+                items: dsThietBiConHang.map((item) {
+                  return DropdownMenuItem<ThietBiPageModel>(
+                    value: item,
+                    child: Text(
+                      item.thietBi.tenThietBi ?? 'Chưa rõ tên',
+                      style: const TextStyle(fontSize: 14, color: Color(0xff1C1C1E)),
+                    ),
+                  );
+                }).toList(),
+                onChanged: _isSubmitting
+                    ? null
+                    : (val) {
                   setState(() {
+                    _selectedThietBi = val;
                     _errorMessage = null;
                   });
-                }
-              },
-              style: const TextStyle(fontSize: 14, color: Color(0xff1C1C1E)),
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: const Color(0xffF8F9FA),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: const BorderSide(color: Color(0xffEFEFEF)),
+                },
+              ),
+
+            const SizedBox(height: 16),
+
+            // BỘ TĂNG GIẢM SỐ LƯỢNG
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  "Số lượng",
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xff1C1C1E),
+                  ),
                 ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: const BorderSide(color: Color(0xffEFEFEF)),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: const BorderSide(color: Color(0xff2D7A3A)),
-                ),
+                if (_isEditMode && matchingModel != null)
+                  Text(
+                    "(Kho còn: ${matchingModel.soLuongConLai})",
+                    style: const TextStyle(fontSize: 12, color: Color(0xff8E8E93)),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            Container(
+              height: 48,
+              decoration: BoxDecoration(
+                color: const Color(0xffF8F9FA),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: const Color(0xffEFEFEF)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Nút Giảm (-)
+                  IconButton(
+                    onPressed: (_soLuong <= (_isEditMode ? 0 : 1) || _isSubmitting)
+                        ? null
+                        : () {
+                      setState(() {
+                        _soLuong--;
+                        _errorMessage = null;
+                      });
+                    },
+                    icon: Icon(
+                      Icons.remove_circle_outline_rounded,
+                      color: _soLuong <= (_isEditMode ? 0 : 1)
+                          ? Colors.grey.shade400
+                          : Colors.red.shade600,
+                    ),
+                  ),
+
+                  // Con số hiển thị
+                  Text(
+                    "$_soLuong",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: _soLuong == 0 ? Colors.red : const Color(0xff1C1C1E),
+                    ),
+                  ),
+
+                  // Nút Tăng (+)
+                  IconButton(
+                    onPressed: (_soLuong >= maxSoLuong || _isSubmitting)
+                        ? null
+                        : () {
+                      setState(() {
+                        _soLuong++;
+                        _errorMessage = null;
+                      });
+                    },
+                    icon: Icon(
+                      Icons.add_circle_outline_rounded,
+                      color: _soLuong >= maxSoLuong
+                          ? Colors.grey.shade400
+                          : const Color(0xff2D7A3A),
+                    ),
+                  ),
+                ],
               ),
             ),
 
             const SizedBox(height: 16),
 
-            /// 3. CHỌN NGÀY LẮP
+            // CHỌN NGÀY LẮP
             const Text(
               "Ngày lắp",
               style: TextStyle(
@@ -235,7 +319,8 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
                 ),
               ),
             ),
-            //Hiển thị thông báo lỗi khi thêm thiết bằng bằng dialog có lỗi
+
+            // Thông báo lỗi
             if (_errorMessage != null) ...[
               const SizedBox(height: 14),
               Container(
@@ -267,7 +352,6 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
 
             const SizedBox(height: 24),
 
-            /// 4. HÀNG NÚT [ HỦY ] VÀ [ THÊM ]
             Row(
               children: [
                 Expanded(
@@ -297,80 +381,11 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
                   child: SizedBox(
                     height: 46,
                     child: ElevatedButton(
-                      onPressed: _isSubmitting
-                          ? null
-                          : () async {
-                        // Validate chọn thiết bị
-                        if (_selectedThietBi == null) {
-                          setState(() {
-                            _errorMessage = "Vui lòng chọn thiết bị!";
-                          });
-                          return;
-                        }
-
-                        final thietBiId = _selectedThietBi!.thietBi.thietBiID;
-                        if (thietBiId == null) {
-                          return;
-                        }
-                        //Validate số lượng nhập vào
-                        final textSoLuong = _soLuongController.text.trim();
-                        if (textSoLuong.isEmpty) {
-                          setState(() {
-                            _errorMessage = "Vui lòng nhập số lượng!";
-                          });
-                          return;
-                        }
-                        //Nếu vượt quá số lượng còn lại -> Báo lỗi đỏ trực tiếp trên Dialog!
-                        final soLuong = int.tryParse(textSoLuong);
-                        if (soLuong == null || soLuong <= 0) {
-                          setState(() {
-                            _errorMessage = "Số lượng lắp đặt phải lớn hơn 0!";
-                          });
-                          return;
-                        }
-                        //Check số lượng thiết bị trc khi gọi api
-                        if (soLuong > _selectedThietBi!.soLuongConLai) {
-                          setState(() {
-                            _errorMessage =
-                            "Không đủ số lượng! Thiết bị này trong kho chỉ còn ${_selectedThietBi!.soLuongConLai} cái.";
-                          });
-                          return;
-                        }
-
-                        // Bật trạng thái Loading
-                        setState(() {
-                          _isSubmitting = true;
-                        });
-
-                        try {
-                          final lapRapProvider = context.read<LapRapThietbiProvider>();
-                          final result = await lapRapProvider.taoLapRap(
-                            phongId: widget.phongId,
-                            thietBiId: thietBiId,
-                            soLuong: soLuong,
-                            ngayLap: _selectedDate,
-                          );
-
-                          if (result != null && mounted) {
-                            //Đóng Dialog và trả về true để màn hình chính xử lý UI
-                            Navigator.pop(context, true);
-                          }
-                        } catch (e) {
-                            if (mounted) {
-                              setState(() {
-                                _errorMessage = e.toString().replaceFirst('Exception: ', '');
-                              });
-                          }
-                        } finally {
-                          if (mounted) {
-                            setState(() {
-                              _isSubmitting = false;
-                            });
-                          }
-                        }
-                      },
+                      onPressed: _isSubmitting ? null : _handleAction,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xff437648),
+                        backgroundColor: (_isEditMode && _soLuong == 0)
+                            ? Colors.red.shade700
+                            : const Color(0xff437648),
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
@@ -385,9 +400,11 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
                           strokeWidth: 2,
                         ),
                       )
-                          : const Text(
-                        "Thêm",
-                        style: TextStyle(
+                          : Text(
+                        _isEditMode
+                            ? (_soLuong == 0 ? "Xóa khỏi phòng" : "Cập nhật")
+                            : "Thêm",
+                        style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
@@ -402,5 +419,95 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
         ),
       ),
     );
+  }
+
+  Future<void> _handleAction() async {
+    //TRƯỜNG HỢP CHỈNH SỬA / XÓA (Khi nhấn vào item trong phòng)
+    if (_isEditMode) {
+      final lapRapId = widget.lapRap?.id;
+      if (lapRapId == null) {
+        setState(() {
+          _errorMessage = "Không tìm thấy mã lắp đặt!";
+        });
+        return;
+      }
+
+      setState(() {
+        _isSubmitting = true;
+        _errorMessage = null;
+      });
+
+      try {
+        await widget.viewModel.capNhatLapRap(
+          id: lapRapId,
+          soLuong: _soLuong,
+        );
+
+        if (mounted) {
+          Navigator.pop(context, true);
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() {
+            _errorMessage = e.toString().replaceFirst('Exception: ', '');
+          });
+        }
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isSubmitting = false;
+          });
+        }
+      }
+      return;
+    }
+
+    // TRƯỜNG HỢP THÊM MỚI (Khi nhấn nút + Thêm ở góc trên)
+    if (_selectedThietBi == null) {
+      setState(() {
+        _errorMessage = "Vui lòng chọn thiết bị!";
+      });
+      return;
+    }
+
+    final thietBiId = _selectedThietBi!.thietBi.thietBiID;
+    if (thietBiId == null) return;
+
+    if (_soLuong > _selectedThietBi!.soLuongConLai) {
+      setState(() {
+        _errorMessage =
+        "Không đủ số lượng! Trong kho chỉ còn ${_selectedThietBi!.soLuongConLai} cái.";
+      });
+      return;
+    }
+
+    setState(() {
+      _isSubmitting = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final success = await widget.viewModel.taoLapRap(
+        thietBiId: thietBiId,
+        soLuong: _soLuong,
+        ngayLap: _selectedDate,
+      );
+
+      if (success && mounted) {
+        Navigator.pop(context, true);
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = e.toString().replaceFirst('Exception: ', '');
+        });
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
+    }
   }
 }

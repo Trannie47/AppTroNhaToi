@@ -2,6 +2,7 @@ import 'package:AppTroNhaToi/Provider/lap_rap_thietbi_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../../Provider/thiet_bi_provider.dart';
 import '../../../../../models/item_phong.dart';
 import '../../../../../models/lap_rap.dart';
 import '../../../../../modelviews/MainPage/PhongPage/ChiTietPhongPage/ChiTietThietBiPhongPage/chiTietThietBiPhongViewModel.dart';
@@ -124,6 +125,7 @@ class _ChiTietThietBiPhongPageState extends State<ChiTietThietBiPhongPage> {
                       context: context,
                       builder: (dialogContext) => ThemThietBiPhongDialog(
                         phongId: widget.room.phongId,
+                        viewModel: vm,
                       ),
                     );
 
@@ -137,7 +139,7 @@ class _ChiTietThietBiPhongPageState extends State<ChiTietThietBiPhongPage> {
                           backgroundColor: Color(0xff2D7A3A),
                         ),
                       );
-                      vm.fetchThietBiByPhongId();
+                      await vm.reloadAll(context);
                     } else if (result == false) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -217,7 +219,34 @@ class _ChiTietThietBiPhongPageState extends State<ChiTietThietBiPhongPage> {
             itemCount: vm.dsLapRap.length,
             itemBuilder: (context, index) {
               final item = vm.dsLapRap[index];
-              return _buildItemThietBi(item);
+              return InkWell(
+                borderRadius: BorderRadius.circular(20),
+                // SỰ KIỆN NHẤN VÀO ITEM ĐỂ SỬA / XÓA
+                onTap: () async {
+                  final result = await showDialog<bool>(
+                    context: context,
+                    builder: (dialogContext) => ThemThietBiPhongDialog(
+                      phongId: widget.room.phongId,
+                      viewModel: vm,
+                      lapRap: item, // Truyền item để mở Form Sửa / Xóa
+                    ),
+                  );
+
+                  if (!mounted) return;
+
+                  if (result == true) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Cập nhật thiết bị phòng thành công!"),
+                        backgroundColor: Color(0xff2D7A3A),
+                      ),
+                    );
+                    // Reload dữ liệu
+                    await vm.reloadAll(context);
+                  }
+                },
+                child: _buildItemThietBi(item),
+              );
             },
           );
         },

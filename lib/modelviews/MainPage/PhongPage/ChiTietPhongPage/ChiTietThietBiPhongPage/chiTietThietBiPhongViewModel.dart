@@ -1,6 +1,10 @@
 import 'package:AppTroNhaToi/Provider/lap_rap_thietbi_provider.dart';
 import 'package:AppTroNhaToi/models/lap_rap.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:provider/provider.dart';
+
+import '../../../../../Provider/thiet_bi_provider.dart';
 
 class ChiTietThietBiPhongViewModel extends ChangeNotifier {
   final LapRapThietbiProvider _lapRapProvider;
@@ -70,6 +74,44 @@ class ChiTietThietBiPhongViewModel extends ChangeNotifier {
     } finally {
       _isSubmitting = false;
       notifyListeners();
+    }
+  }
+
+  Future<bool> capNhatLapRap({
+    required int id,
+    required int soLuong,
+  }) async {
+    _isSubmitting = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final result = await _lapRapProvider.capNhatLapRap(
+        id: id,
+        soLuong: soLuong,
+      );
+
+      if (result != null) {
+        await fetchThietBiByPhongId();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      if (kDebugMode) {
+        print("Lỗi ChiTietThietBiPhongViewModel.capNhatLapRap: $e");
+      }
+      _errorMessage = e.toString().replaceFirst('Exception: ', '');
+      rethrow;
+    } finally {
+      _isSubmitting = false;
+      notifyListeners();
+    }
+  }
+  //dùng để gọi api load lại dữ liệu mới trong quá trình thêm số lượng của thiết bị vào phòng
+  Future<void> reloadAll(BuildContext context) async {
+    await fetchThietBiByPhongId();
+    if (context.mounted) {
+      context.read<ThietBiProvider>().fetchAll();
     }
   }
 }
