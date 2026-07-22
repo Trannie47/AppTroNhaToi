@@ -34,13 +34,10 @@ class ThuCongNoFormViewModel extends ChangeNotifier {
     await _nguoiThueProvider.fetchNguoiThueCongNoTapHoa();
 
     listNguoiThue = _nguoiThueProvider.listCongNoTapHoa;
-
     notifyListeners();
   }
 
-  Future<void> chonNguoiThue(
-      ThuCongNoFormModel? value,
-      ) async {
+  Future<void> chonNguoiThue(ThuCongNoFormModel? value) async {
     nguoiThue = value;
 
     tongCongNo = value?.tongCongNoTapHoa ?? 0;
@@ -98,7 +95,7 @@ class ThuCongNoFormViewModel extends ChangeNotifier {
     );
 
     final dto = ThuCongNoDTO(
-     idnt: nguoiThue!.nguoiThue.idnt,
+      idnt: nguoiThue!.nguoiThue.idnt,
       soTien: soTien,
       ngayThu: dateOf(txtNgayThu.text),
     );

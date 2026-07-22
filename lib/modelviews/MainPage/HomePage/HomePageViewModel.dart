@@ -1,65 +1,91 @@
-import 'package:AppTroNhaToi/models/cong_no.dart';
+import 'package:AppTroNhaToi/Provider/nguoi_thue_provider.dart';
+import 'package:AppTroNhaToi/Provider/phong_provider.dart';
+import 'package:AppTroNhaToi/Provider/thong_ke_provider.dart';
+import 'package:AppTroNhaToi/models/DTO/ThongKeDTO.dart';
+
 import 'package:AppTroNhaToi/models/thong_bao.dart';
-import 'package:AppTroNhaToi/views/MainPage/PhongPage/FormPhong/FormPhong.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThuCongNoForm/thuCongNoFormModel.dart';
 import 'package:flutter/material.dart';
 
 class HomePageViewModel extends ChangeNotifier {
-  double roomCount = 0;
-  double emptyRoomCount = 0;
-  double occupiedRoomCount = 0;
+  final PhongProvider _phongProvider;
+  final ThongKeProvider _thongKeProvider;
+  final NguoiThueProvider _nguoiThueProvider;
 
-  bool isLoading = true;
+  HomePageViewModel(
+    this._phongProvider,
+    this._thongKeProvider,
+    this._nguoiThueProvider,
+  ) {
+    _phongProvider.addListener(_onPhongUpdate);
+    _thongKeProvider.addListener(_onThongKeUpdate);
+    _nguoiThueProvider.addListener(_onNguoiThueUpdate);
 
-  List<ThongBao> issues = [];
+    Future.microtask(() async {
+      await Future.wait([
+        _phongProvider.getListPhong(),
+        _thongKeProvider.getThongKe(),
+        _nguoiThueProvider.fetchNguoiThueCongNoTapHoa(),
+      ]);
 
-  List<CongNo> debts = [];
+      debugPrint(_nguoiThueProvider.hashCode.toString());
+    });
+  }
 
-  Future<void> loadData() async {
-    await Future.delayed(const Duration(seconds: 2));
-
-    roomCount = 0;
-    emptyRoomCount = 0;
-    occupiedRoomCount = roomCount - emptyRoomCount;
-
-    issues = [
-      ThongBao(
-        title: "3 hóa đơn chưa thu tiền",
-        subtitle: "P101 · P104 · P202",
-        date: DateTime.now(),
-      ),
-      ThongBao(
-        title: "2 phòng chưa ghi điện nước",
-        subtitle: "P101 · P203",
-        date: DateTime.parse("2026-05-13 18:00:00"),
-      ),
-      ThongBao(
-        title: "HĐ phòng 203 Hết Hạn",
-        subtitle: "Hoàng Văn Bình ",
-        date: DateTime.parse("2026-04-03 18:00:00"),
-      ),
-    ];
-
-    debts = [
-      CongNo(
-        name: "Nguyễn Văn A",
-        room: "Phòng 102 · 3 lần mua",
-        amount: 350000,
-      ),
-      CongNo(
-        name: "Trần Thị Lan",
-        room: "Phòng 201 · 2 lần mua",
-        amount: 120000,
-      ),
-    ];
-
-    isLoading = false;
+  void _onThongKeUpdate() {
     notifyListeners();
   }
 
-  void navigateToFormRoom(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const FormPhong()),
-    );
+  void _onPhongUpdate() {
+    notifyListeners();
+  }
+
+  void _onNguoiThueUpdate() {
+    notifyListeners();
+  }
+
+  double get roomCount => _phongProvider.listPhong.length.toDouble();
+
+  double get emptyRoomCount => _phongProvider.listPhongTrong.length.toDouble();
+
+  double get occupiedRoomCount =>
+      _phongProvider.listPhongDangThue.length.toDouble();
+
+  ThongKeDTO? get data => _thongKeProvider.thongKe;
+
+  bool get isLoading =>
+      _phongProvider.isLoading ||
+      _thongKeProvider.isLoading ||
+      _nguoiThueProvider.isLoading;
+  double get doanhThuThang => data?.doanhThu.tongDoanhThu ?? 0;
+
+  double get congNoThang => data?.congNo.tongCongNo ?? 0;
+
+  List<ThongBao> issues = [
+    ThongBao(
+      title: "3 hóa đơn chưa thu tiền",
+      subtitle: "P101 · P104 · P202",
+      date: DateTime.now(),
+    ),
+    ThongBao(
+      title: "2 phòng chưa ghi điện nước",
+      subtitle: "P101 · P203",
+      date: DateTime.parse("2026-05-13 18:00:00"),
+    ),
+    ThongBao(
+      title: "HĐ phòng 203 Hết Hạn",
+      subtitle: "Hoàng Văn Bình ",
+      date: DateTime.parse("2026-04-03 18:00:00"),
+    ),
+  ];
+
+  List<ThuCongNoFormModel> get debts => _nguoiThueProvider.listCongNoTapHoa;
+
+  @override
+  void dispose() {
+    _thongKeProvider.removeListener(_onThongKeUpdate);
+    _phongProvider.removeListener(_onPhongUpdate);
+    _nguoiThueProvider.removeListener(_onNguoiThueUpdate);
+    super.dispose();
   }
 }

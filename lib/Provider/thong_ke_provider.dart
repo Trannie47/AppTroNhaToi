@@ -8,6 +8,9 @@ class ThongKeProvider extends ChangeNotifier {
   ThongKeDTO? _thongKe;
   ThongKeDTO? get thongKe => _thongKe;
 
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
   double get tongDoanhThuThang =>
       _thongKe?.doanhThu.tongDoanhThu.toDouble() ?? 0;
 
@@ -17,15 +20,21 @@ class ThongKeProvider extends ChangeNotifier {
   }
 
   Future<ThongKeDTO?> getThongKe({int? thang, int? nam}) async {
+    _isLoading = true;
+    notifyListeners();
+
     try {
       _thongKe = await _thongKeRepository.getThongKe(thang: thang, nam: nam);
-      notifyListeners();
+
       return _thongKe;
     } catch (e) {
       if (kDebugMode) {
         print("Lỗi ThongKeProvider: $e");
       }
       rethrow;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 }

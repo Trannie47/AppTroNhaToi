@@ -1,16 +1,17 @@
-import 'package:AppTroNhaToi/models/cong_no.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThuCongNoForm/thuCongNoFormModel.dart';
 import 'package:flutter/material.dart';
 
 import '../core/utils/currency_formatter.dart';
 
-
 class ItemCongNo extends StatelessWidget {
-  final CongNo congNo;
+  final ThuCongNoFormModel congNo;
 
   const ItemCongNo({super.key, required this.congNo});
 
   @override
   Widget build(BuildContext context) {
+    final ten = congNo.nguoiThue.hoTen ?? "";
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
@@ -18,7 +19,7 @@ class ItemCongNo extends StatelessWidget {
           CircleAvatar(
             backgroundColor: Colors.green[100],
             child: Text(
-              congNo.name.substring(0, 2),
+              ten.isNotEmpty ? ten.substring(0, ten.length >= 2 ? 2 : 1) : "?",
               style: const TextStyle(color: Colors.green),
             ),
           ),
@@ -28,18 +29,16 @@ class ItemCongNo extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  congNo.name.substring(0, 10),
+                  ten.isEmpty ? "Chưa có tên" : ten,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  congNo.room.substring(0, 20),
-                  style: const TextStyle(fontSize: 12),
                 ),
               ],
             ),
           ),
           Text(
-            formatMoneyShort(congNo.amount),
+            formatMoneyShort(congNo.tongCongNoTapHoa),
             style: const TextStyle(
               color: Colors.red,
               fontWeight: FontWeight.bold,

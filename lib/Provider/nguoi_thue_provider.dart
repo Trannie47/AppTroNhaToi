@@ -24,7 +24,9 @@ class NguoiThueProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      _list = await _repo.getListNguoiThue();
+      final result = await _repo.getNguoiThueCongNoTapHoa();
+
+      _listCongNoTapHoa = result;
 
       // Người thuê mới nhất lên đầu
       _list.sort((a, b) => (b.idnt ?? 0).compareTo(a.idnt ?? 0));
@@ -56,12 +58,10 @@ class NguoiThueProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      _listCongNoTapHoa =
-      await _repo.getNguoiThueCongNoTapHoa();
+      _listCongNoTapHoa = await _repo.getNguoiThueCongNoTapHoa();
 
       _listCongNoTapHoa.sort(
-            (a, b) =>
-            b.tongCongNoTapHoa.compareTo(a.tongCongNoTapHoa),
+        (a, b) => b.tongCongNoTapHoa.compareTo(a.tongCongNoTapHoa),
       );
     } catch (e) {
       _listCongNoTapHoa = [];
@@ -85,6 +85,7 @@ class NguoiThueProvider extends ChangeNotifier {
 
     return result;
   }
+
   Future<NguoiThue?> update(int idnt, NguoiThue nguoiThue) async {
     try {
       final updatedData = await _repo.updateNguoiThue(idnt, nguoiThue);
@@ -106,10 +107,11 @@ class NguoiThueProvider extends ChangeNotifier {
     }
   }
 
-  Future<List<NguoiThue>> getListNguoiThueAvailableForContract()async{
-    final result= await _repo.getListNguoiThueAvailableForContract();
+  Future<List<NguoiThue>> getListNguoiThueAvailableForContract() async {
+    final result = await _repo.getListNguoiThueAvailableForContract();
     return result;
   }
+
   Future<List<NguoiThue>> getListNguoiThueFromIdPhong(int idPhong) async {
     return await _repo.getListNguoiThueFromIdPhong(idPhong);
   }

@@ -1,10 +1,13 @@
-import 'package:AppTroNhaToi/models/cong_no.dart';
-import 'package:AppTroNhaToi/models/thong_bao.dart';
+import 'package:AppTroNhaToi/Provider/nguoi_thue_provider.dart';
+import 'package:AppTroNhaToi/Provider/phong_provider.dart';
+import 'package:AppTroNhaToi/Provider/thong_ke_provider.dart';
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/HomePage/homePageViewModel.dart';
 import 'package:AppTroNhaToi/widgets/itemCongNo.dart';
 import 'package:AppTroNhaToi/widgets/itemThongBao.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../PhongPage/FormPhong/FormPhong.dart';
 
@@ -16,53 +19,29 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late double roomCount = 0;
-  late double emptyRoomCount = 0;
-  late double occupiedRoomCount = 0;
-  bool isLoading = true;
+  late HomePageViewModel vm;
 
   @override
   void initState() {
     super.initState();
-    loadData();
-  }
 
-  Future<void> loadData() async {
-    // giả lập loading
-    await Future.delayed(const Duration(seconds: 2));
-    if (!mounted) return;
-    setState(() {
-      isLoading = false;
+    vm = HomePageViewModel(
+      context.read<PhongProvider>(),
+      context.read<ThongKeProvider>(),
+      context.read<NguoiThueProvider>(),
+    );
 
-      // test dữ liệu
-      roomCount = 0;
-      emptyRoomCount = 0;
-      occupiedRoomCount = roomCount - emptyRoomCount;
+    vm.addListener(() {
+      if (mounted) setState(() {});
     });
   }
 
-  List<ThongBao> issues = [
-    ThongBao(
-      title: "3 hóa đơn chưa thu tiền",
-      subtitle: "P101 · P104 · P202",
-      date: DateTime.now(),
-    ),
-    ThongBao(
-      title: "2 phòng chưa ghi điện nước",
-      subtitle: "P101 · P203",
-      date: DateTime.parse("2026-05-13 18:00:00"),
-    ),
-    ThongBao(
-      title: "HĐ phòng 203 Hết Hạn",
-      subtitle: "Hoàng Văn Bình ",
-      date: DateTime.parse("2026-04-03 18:00:00"),
-    ),
-  ];
+  @override
+  void dispose() {
+    vm.dispose();
 
-  List<CongNo> debts = [
-    CongNo(name: "Nguyễn Văn A", room: "Phòng 102 · 3 lần mua", amount: 350000),
-    CongNo(name: "Trần Thị Lan", room: "Phòng 201 · 2 lần mua", amount: 120000),
-  ];
+    super.dispose();
+  }
 
   //Nút chuyển sang trang Form Room
   void navigateToFormRoom() {
@@ -86,8 +65,7 @@ class _HomePageState extends State<HomePage> {
 
               const SizedBox(height: 16),
 
-              /// LOADING TOÀN BỘ TỪ QUICK ACTION
-              if (isLoading)
+              if (vm.isLoading)
                 _loadingHome()
               /// DỮ LIỆU THẬT
               else ...[
@@ -99,8 +77,8 @@ class _HomePageState extends State<HomePage> {
 
                 const SizedBox(height: 16),
 
-                if (roomCount > 0) ...[
-                  _revenue(27900000, 320000),
+                if (vm.roomCount > 0) ...[
+                  _revenue(vm.doanhThuThang, vm.congNoThang),
 
                   const SizedBox(height: 16),
 
@@ -291,19 +269,19 @@ class _HomePageState extends State<HomePage> {
     return Row(
       children: [
         _box(
-          roomCount,
+          vm.roomCount,
           "Tổng phòng",
-          badge: (roomCount > 0)
-              ? "${(occupiedRoomCount / roomCount * 100).toInt()}% lấp đầy"
+          badge: (vm.roomCount > 0)
+              ? "${(vm.occupiedRoomCount / vm.roomCount * 100).toInt()}% lấp đầy"
               : null,
         ),
         _box(
-          emptyRoomCount,
+          vm.emptyRoomCount,
           "Phòng trống",
           color: Colors.green,
           badge: "Sẵn thuê",
         ),
-        _box(occupiedRoomCount, "Đang thuê", badge: "người thuê"),
+        _box(vm.occupiedRoomCount, "Đang thuê", badge: "người thuê"),
       ],
     );
   }
@@ -377,7 +355,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   // REVENUE
-  Widget _revenue(double Revenue, double Debt) {
+  Widget _revenue(double revenue, double debt) {
     return Row(
       children: [
         Expanded(
@@ -391,7 +369,7 @@ class _HomePageState extends State<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  formatMoneyShort(Revenue),
+                  formatMoneyShort(revenue),
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 20,
@@ -412,18 +390,18 @@ class _HomePageState extends State<HomePage> {
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Color(0xFFF1F3F2),
+              color: const Color(0xFFF1F3F2),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  formatMoneyShort(Debt),
+                  formatMoneyShort(debt),
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Debt > 0 ? Colors.red : Colors.green,
+                    color: debt > 0 ? Colors.red : Colors.green,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -448,7 +426,7 @@ class _HomePageState extends State<HomePage> {
         ),
         const SizedBox(height: 10),
 
-        issues.isEmpty ? _statusOk() : _needHandle(),
+        vm.issues.isEmpty ? _statusOk() : _needHandle(),
 
         const SizedBox(height: 16),
 
@@ -460,7 +438,7 @@ class _HomePageState extends State<HomePage> {
               "Công nợ tạp hóa",
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            if (debts.isNotEmpty)
+            if (vm.debts.isNotEmpty)
               const Text(
                 "Xem tất cả",
                 style: TextStyle(color: Color(0xFF2D7A3A)),
@@ -470,7 +448,7 @@ class _HomePageState extends State<HomePage> {
 
         const SizedBox(height: 10),
 
-        debts.isEmpty ? _debtEmpty() : _debtList(),
+        vm.debts.isEmpty ? _debtEmpty() : _debtList(),
       ],
     );
   }
@@ -525,7 +503,7 @@ class _HomePageState extends State<HomePage> {
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
-        children: issues.map((e) {
+        children: vm.issues.map((e) {
           return ItemThongBao(thongBao: e);
         }).toList(),
       ),
@@ -579,7 +557,7 @@ class _HomePageState extends State<HomePage> {
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
-        children: debts.map((e) {
+        children: vm.debts.map((e) {
           return ItemCongNo(congNo: e);
         }).toList(),
       ),
