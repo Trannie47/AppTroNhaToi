@@ -26,7 +26,6 @@ class _ChiTietHopDongPageState extends State<ChiTietHopDongPage> {
   void initState() {
 
      super.initState();
-     //final phongProvider = Provider.of<PhongProvider>(context, listen: false);
      vm = ChiTietHopDongViewModel(context.read<PhongProvider>());
      vm.init(widget.hopDong);
     vm.addListener(() {
@@ -38,6 +37,8 @@ class _ChiTietHopDongPageState extends State<ChiTietHopDongPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Kiểm tra xem hợp đồng đã kết thúc chưa
+    final bool isDaKetThuc = vm.hopDong.trangThai == 2;
     return
       Scaffold(
       backgroundColor: const Color(0xffF3F3F3),
@@ -93,10 +94,11 @@ class _ChiTietHopDongPageState extends State<ChiTietHopDongPage> {
         ),
       //Menu
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: _menu(context, vm)
-          ),
+          if (!isDaKetThuc)
+            Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: _menu(context, vm),
+            ),
         ],
       ),
 
@@ -120,18 +122,34 @@ class _ChiTietHopDongPageState extends State<ChiTietHopDongPage> {
           ],
         ),
       ),
-      bottomNavigationBar: Container(
-        color: const Color(0xffF3F3F3),
-        padding: const EdgeInsets.fromLTRB(16, 10, 16, 20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _chiTietPhongButton(context,vm),
-            const SizedBox(height: 16),
-            _ketThucHopDongButton(),
-          ],
+        //Nếu hợp đồng đã kết thúc thì ẩn luôn cả 2 nút
+        bottomNavigationBar: isDaKetThuc
+            ? null
+            : Container(
+          color: const Color(0xffF3F3F3),
+          padding: const EdgeInsets.fromLTRB(16, 10, 16, 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _chiTietPhongButton(context, vm),
+              const SizedBox(height: 16),
+              _actionHopDongButton(
+                title: vm.hopDong.trangThai == 0
+                    ? "Hủy hợp đồng"
+                    : "Kết thúc hợp đồng",
+                onPressed: () {
+                  if (vm.hopDong.trangThai == 0) {
+                    // Xử lý Hủy hợp đồng chờ hiệu lực
+                    //_xoaOrHuyHopDong(context, vm);
+                  } else {
+                    // Xử lý Kết thúc hợp đồng đang hoạt động
+                   // _ketThucHopDong(context, vm);
+                  }
+                },
+              ),
+            ],
+          ),
         ),
-      ),
     );
   }
 }
@@ -486,7 +504,10 @@ Widget _chiTietPhongButton(BuildContext context, ChiTietHopDongViewModel vm) {
   );
 }
 
-Widget _ketThucHopDongButton() {
+Widget _actionHopDongButton({
+  required String title,
+  required VoidCallback onPressed,
+}) {
   return SizedBox(
     width: double.infinity,
     height: 52,
@@ -494,11 +515,12 @@ Widget _ketThucHopDongButton() {
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0xffE53E3E),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        elevation: 0,
       ),
-      onPressed: () {},
-      child: const Text(
-        "Kết thúc hợp đồng",
-        style: TextStyle(
+      onPressed: onPressed,
+      child: Text(
+        title,
+        style: const TextStyle(
           fontSize: 15,
           color: Colors.white,
           fontWeight: FontWeight.bold,
