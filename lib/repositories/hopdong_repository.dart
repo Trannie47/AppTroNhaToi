@@ -18,6 +18,19 @@ class HopdongRepository {
   Future<HopDong> updateContract(HopDong hopDong, List<File> imageHopDong){
     return hopDongApiClient.updateContract(hopDong, imageHopDong);
   }
+  Future<HopDong> renewContract({
+    required String hopDongId,
+    required DateTime ngayHetHanMoi,
+    String? ghiChu,
+    List<File>? files,
+  }) {
+    return hopDongApiClient.renewContract(
+      hopDongId: hopDongId,
+      ngayHetHanMoi: ngayHetHanMoi,
+      ghiChu: ghiChu,
+      files: files,
+    );
+  }
 
   Future<List<RoomAvailableDTO>> getRoomsAvailableForContract(){
     return hopDongApiClient.getRoomsAvailableForContract();

@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import '../../../../models/hop_dong.dart';
 import '../../PhongPage/ChiTietPhongPage/phongChiTiet.dart';
 import '../HopDongForm/hopDongForm.dart';
+import '../giaHanHopDongPage/giaHanHopDongPage.dart';
 
 class ChiTietHopDongPage extends StatefulWidget {
   final HopDongDTO hopDong;
@@ -574,7 +575,34 @@ Widget _menu(BuildContext context, ChiTietHopDongViewModel vm) {
             }
           }
         } else if (item == 2) {
-          // Gia hạn hợp đồng
+          if (vm.hopDong.trangThai == 0) {
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(
+                    "Hợp đồng chưa có hiệu lực, không thể gia hạn. Vui lòng chọn 'Cập nhật hợp đồng'!",
+                  ),
+                  backgroundColor: Colors.orange,
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            }
+            return;
+          }
+
+          // 2. Chuyển sang trang GiaHanHopDongPage và truyền HopDongDTO sang
+          final result = await Navigator.push<bool>(
+            context,
+            MaterialPageRoute(
+              builder: (_) => GiaHanHopDongPage(hopDong: vm.hopDong),
+            ),
+          );
+
+          // 3. Nếu gia hạn thành công (GiaHanHopDongPage trả về true),
+          // đóng màn chi tiết để quay về danh sách làm mới dữ liệu
+          if (result == true && context.mounted) {
+            Navigator.pop(context, true);
+          }
         }
       },
       itemBuilder: (context) => [

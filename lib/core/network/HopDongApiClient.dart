@@ -88,6 +88,39 @@ class HopDongApiClient {
       rethrow;
     }
   }
+  Future<HopDong> renewContract({
+    required String hopDongId,
+    required DateTime ngayHetHanMoi,
+    String? ghiChu,
+    List<File>? files,
+  }) async {
+    final formData = FormData.fromMap({
+      'ngayHetHanMoi': ngayHetHanMoi.toIso8601String().split('T').first,
+      if (ghiChu != null && ghiChu.trim().isNotEmpty) 'ghiChu': ghiChu.trim(),
+      if (files != null && files.isNotEmpty)
+        'files': [
+          for (var file in files)
+            await MultipartFile.fromFile(file.path,
+                filename: file.path.split('/').last),
+        ],
+    });
+
+    try {
+      final request =
+      await _dio.post("hop-dong/$hopDongId/giaHan", data: formData);
+      if (request.statusCode == 200 || request.statusCode == 201) {
+        final responseData = request.data['data'] ?? request.data;
+        return HopDong.fromMap(responseData as Map<String, dynamic>);
+      }
+      throw Exception(
+          "Gia hạn hợp đồng thất bại! (Mã lỗi: ${request.statusCode})");
+    } catch (e) {
+      if (kDebugMode) {
+        print("Lỗi renewContract HopDongApiClient: $e");
+      }
+      rethrow;
+    }
+  }
 
   Future<List<RoomAvailableDTO>> getRoomsAvailableForContract() async{
     try{

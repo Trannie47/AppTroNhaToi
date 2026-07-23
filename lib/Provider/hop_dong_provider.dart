@@ -53,6 +53,24 @@ class HopDongProvider extends ChangeNotifier {
       rethrow;
     }
   }
+  Future<HopDong> renewHopDong({
+    required String hopDongId,
+    required DateTime ngayHetHanMoi,
+    String? ghiChu,
+    List<File>? files,
+  }) async {
+    try {
+      final result = await hopdongRepository.renewContract(
+        hopDongId: hopDongId,
+        ngayHetHanMoi: ngayHetHanMoi,
+        ghiChu: ghiChu,
+        files: files,
+      );
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
 
   Future<List<RoomAvailableDTO>> getRoomsAvailable() async {
     try {
