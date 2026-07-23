@@ -270,11 +270,21 @@ class HopDongFormViewModel extends ChangeNotifier {
   Future<void> chonNgay(
       BuildContext context,
       TextEditingController controller,
+  {DateTime? firstDate,}
       ) async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    DateTime initDate = chuyenNgay(controller.text) ?? today;
+    DateTime minDate = firstDate ?? DateTime(2020);
+
+    if (initDate.isBefore(minDate)) {
+      initDate = minDate;
+    }
+
     DateTime? ngay = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2020),
+      initialDate: initDate,
+      firstDate: minDate,
       lastDate: DateTime(2100),
     );
 
@@ -307,11 +317,29 @@ class HopDongFormViewModel extends ChangeNotifier {
 
     bool hopLe = true;
 
-
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final dauThangHienTai = DateTime(now.year, now.month, 1);
     DateTime? ngayKy = chuyenNgay(txtNgayKy.text);
     if (txtNgayKy.text.isEmpty || ngayKy == null) {
       errNgayKy = "Ngày ký không đúng định dạng";
       hopLe = false;
+    }else{
+      if (!isEdit) {
+        // TH TẠO MỚI HỢP ĐỒNG
+        // Cho phép lùi ngày dọn vào, nhưng tối đa chỉ lùi tới ngày 01 tháng này
+        if (ngayKy.isBefore(dauThangHienTai)) {
+          errNgayKy = "Chỉ được chọn lùi tối đa về ngày 01 tháng này";
+          hopLe = false;
+        }
+      } else if (hdDTO?.trangThai == 0) {
+        // TH2 CẬP NHẬT HỢP ĐỒNG CHỜ HIỆU LỰC
+        // Giữ nguyên ràng buộc cũ: Không cho chọn lùi về quá khứ (phải từ hôm nay trở đi)
+        if (ngayKy.isBefore(today)) {
+          errNgayKy = "Phải từ ngày hiện tại trở đi";
+          hopLe = false;
+        }
+      }
     }
 
     DateTime? ngayHetHan = chuyenNgay(txtNgayHetHan.text);

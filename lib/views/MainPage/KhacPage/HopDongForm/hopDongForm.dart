@@ -51,6 +51,9 @@ class _TaoHopDongPageState extends State<HopDongForm> {
   @override
   Widget build(BuildContext context) {
     final isLoading = vm.createContractState is CreateContractLoading|| vm.updateContractState is HopDongUpdateLoading;
+    final bool isEditMode = vm.isEdit; // Khóa Phòng & Người thuê khi Edit
+    final bool isActiveContract = vm.isEdit && vm.hdDTO?.trangThai == 1; // Khóa Ngày bắt đầu khi HĐ Đang hoạt động
+    final bool isPendingContract = vm.isEdit && vm.hdDTO?.trangThai == 0; // HĐ Chờ hiệu lực
     return Stack(
       children: [
         Scaffold(
@@ -96,130 +99,143 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                     children: [
                       _label("Phòng thuê"),
                       const SizedBox(height: 6),
-                      Builder(
-                        builder: (context) {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CustomDropdownSearch<RoomAvailableDTO>(
-                                hintText: "Chọn phòng thuê",
-                                asyncItems: (filter) async {
-                                  if (vm.roomsAvailable is! HopDongSuccess<RoomAvailableDTO>) {
-                                    await vm.getRoomsAvailableForContract();
-                                  }
+                      AbsorbPointer(
+                        absorbing: isEditMode,
+                        child: Opacity(
+                            opacity: isEditMode ? 0.6 : 1.0,
+                            child: Builder(
+                              builder: (context) {
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    CustomDropdownSearch<RoomAvailableDTO>(
+                                      hintText: "Chọn phòng thuê",
+                                      asyncItems: (filter) async {
+                                        if (vm.roomsAvailable is! HopDongSuccess<RoomAvailableDTO>) {
+                                          await vm.getRoomsAvailableForContract();
+                                        }
 
-                                  //Nếu gọi xong mà dính lỗi, bắn SnackBar thông báo và trả về mảng rỗng để không bung menu lỗi
-                                  if (vm.roomsAvailable is HopDongError) {
-                                    final errorState = vm.roomsAvailable as HopDongError;
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(errorState.errorMessage),
-                                        backgroundColor: Colors.red.shade700,
-                                        behavior: SnackBarBehavior.floating,
+                                        //Nếu gọi xong mà dính lỗi, bắn SnackBar thông báo và trả về mảng rỗng để không bung menu lỗi
+                                        if (vm.roomsAvailable is HopDongError) {
+                                          final errorState = vm.roomsAvailable as HopDongError;
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text(errorState.errorMessage),
+                                              backgroundColor: Colors.red.shade700,
+                                              behavior: SnackBarBehavior.floating,
+                                            ),
+                                          );
+                                          return [];
+                                        }
+
+                                        // Nếu thành công, trả về list data từ Server để Dropdown tự động vẽ lên màn hình
+                                        if (vm.roomsAvailable is HopDongSuccess<RoomAvailableDTO>) {
+                                          final data = (vm.roomsAvailable as HopDongSuccess<RoomAvailableDTO>).data;
+
+                                          // lọc chữ tìm kiếm theo tên phòng
+                                          final f = filter.toLowerCase();
+                                          if (f.isEmpty) return data;
+                                          return data.where((e) => e.tenPhong.toLowerCase().contains(f)).toList();
+                                        }
+
+                                        return [];
+                                      },
+
+                                      selectedItem: vm.selectedPhong,
+                                      itemAsString: (item) => item.tenPhong,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          vm.selectedPhong = value;
+                                          vm.onSelectedPhong(value);
+                                        });
+                                      },
+                                    ),
+                                    if (vm.errPhong != null) ...[
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        vm.errPhong!,
+                                        style: const TextStyle(color: Colors.red, fontSize: 12),
                                       ),
-                                    );
-                                    return [];
-                                  }
-
-                                  // Nếu thành công, trả về list data từ Server để Dropdown tự động vẽ lên màn hình
-                                  if (vm.roomsAvailable is HopDongSuccess<RoomAvailableDTO>) {
-                                    final data = (vm.roomsAvailable as HopDongSuccess<RoomAvailableDTO>).data;
-
-                                    // lọc chữ tìm kiếm theo tên phòng
-                                    final f = filter.toLowerCase();
-                                    if (f.isEmpty) return data;
-                                    return data.where((e) => e.tenPhong.toLowerCase().contains(f)).toList();
-                                  }
-
-                                  return [];
-                                },
-
-                                selectedItem: vm.selectedPhong,
-                                itemAsString: (item) => item.tenPhong,
-                                onChanged: (value) {
-                                  setState(() {
-                                    vm.selectedPhong = value;
-                                    vm.onSelectedPhong(value);
-                                  });
-                                },
-                              ),
-                              if (vm.errPhong != null) ...[
-                                const SizedBox(height: 4),
-                                Text(
-                                  vm.errPhong!,
-                                  style: const TextStyle(color: Colors.red, fontSize: 12),
-                                ),
-                              ],
-                            ],
-                          );
+                                    ],
+                                  ],
+                                );
 
 
-                        },
+                              },
+                            ),
+                        ),
+
                       ),
 
                       const SizedBox(height: 16),
 
                       _label("Người thuê"),
                       const SizedBox(height: 6),
-                      Builder(
-                        builder: (context) {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CustomDropdownSearch<NguoiThue>(
-                                hintText: "Chọn người thuê",
-                                asyncItems: (filter) async {
-                                  if (vm.tenantsAvailable is! HopDongSuccess<NguoiThue>) {
-                                    await vm.getNguoiThueAvailableForContract();
-                                  }
+                      AbsorbPointer(
+                       absorbing: isEditMode,
+                        child: Opacity(
+                            opacity: isEditMode ? 0.6:1.0,
+                          child: Builder(
+                            builder: (context) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  CustomDropdownSearch<NguoiThue>(
+                                    hintText: "Chọn người thuê",
+                                    asyncItems: (filter) async {
+                                      if (vm.tenantsAvailable is! HopDongSuccess<NguoiThue>) {
+                                        await vm.getNguoiThueAvailableForContract();
+                                      }
 
-                                  //Nếu gọi xong mà dính lỗi, bắn SnackBar thông báo và trả về mảng rỗng để không bung menu lỗi
-                                  if (vm.tenantsAvailable is HopDongError) {
-                                    final errorState = vm.tenantsAvailable as HopDongError;
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(errorState.errorMessage),
-                                        backgroundColor: Colors.red.shade700,
-                                        behavior: SnackBarBehavior.floating,
-                                      ),
-                                    );
-                                    return [];
-                                  }
+                                      //Nếu gọi xong mà dính lỗi, bắn SnackBar thông báo và trả về mảng rỗng để không bung menu lỗi
+                                      if (vm.tenantsAvailable is HopDongError) {
+                                        final errorState = vm.tenantsAvailable as HopDongError;
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text(errorState.errorMessage),
+                                            backgroundColor: Colors.red.shade700,
+                                            behavior: SnackBarBehavior.floating,
+                                          ),
+                                        );
+                                        return [];
+                                      }
 
-                                  // Nếu thành công, trả về list data từ Server để Dropdown tự động vẽ lên màn hình
-                                  if (vm.tenantsAvailable is HopDongSuccess<NguoiThue>) {
-                                    final data = (vm.tenantsAvailable as HopDongSuccess<NguoiThue>).data;
+                                      // Nếu thành công, trả về list data từ Server để Dropdown tự động vẽ lên màn hình
+                                      if (vm.tenantsAvailable is HopDongSuccess<NguoiThue>) {
+                                        final data = (vm.tenantsAvailable as HopDongSuccess<NguoiThue>).data;
 
-                                    //lọc chữ tìm kiếm theo tên phòng
-                                    final f = filter.toLowerCase();
-                                    if (f.isEmpty) return data;
-                                    return data.where((e) => e.hoTen!.toLowerCase().contains(f)).toList();
-                                  }
+                                        //lọc chữ tìm kiếm theo tên phòng
+                                        final f = filter.toLowerCase();
+                                        if (f.isEmpty) return data;
+                                        return data.where((e) => e.hoTen!.toLowerCase().contains(f)).toList();
+                                      }
 
-                                  return [];
-                                },
+                                      return [];
+                                    },
 
-                                selectedItem: vm.selectedNguoiThue,
-                                itemAsString: (item) => item.hoTen!,
-                                onChanged: (value) {
-                                  setState(() {
-                                    vm.selectedNguoiThue = value;
-                                  });
-                                },
+                                    selectedItem: vm.selectedNguoiThue,
+                                    itemAsString: (item) => item.hoTen!,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        vm.selectedNguoiThue = value;
+                                      });
+                                    },
 
-                              ),
-                              if (vm.errNguoiThue != null) ...[
-                                const SizedBox(height: 4),
-                                Text(
-                                  vm.errNguoiThue!,
-                                  style: const TextStyle(color: Colors.red, fontSize: 12),
-                                ),
-                              ],
-                            ],
-                          );
+                                  ),
+                                  if (vm.errNguoiThue != null) ...[
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      vm.errNguoiThue!,
+                                      style: const TextStyle(color: Colors.red, fontSize: 12),
+                                    ),
+                                  ],
+                                ],
+                              );
 
 
-                        },
+                            },
+                          ),
+                        ),
                       ),
 
                       const SizedBox(height: 16),
@@ -231,7 +247,24 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 _label("Ngày bắt đầu"),
-                                _dateField(vm.txtNgayKy, vm.errNgayKy),
+                                _dateField(
+                                    vm.txtNgayKy,
+                                    vm.errNgayKy,
+                                  disabled: isActiveContract,// khóa lại nếu hợp đồng đang hoạt động
+                                  onTapCalendar: isActiveContract
+                                      ? null
+                                      : () {
+                                    final now = DateTime.now();
+                                    final today = DateTime(now.year, now.month, now.day);
+                                    final dauThang = DateTime(now.year, now.month, 1);
+                                    final minDate = isPendingContract ? today : dauThang;
+                                    vm.chonNgay(
+                                      context,
+                                      vm.txtNgayKy,
+                                      firstDate: minDate,
+                                    );
+                                  },
+                                ),
                               ],
                             ),
                           ),
@@ -241,7 +274,13 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 _label("Ngày hết hạn"),
-                                _dateField(vm.txtNgayHetHan, vm.errNgayHetHan),
+                                _dateField(
+                                  vm.txtNgayHetHan,
+                                  vm.errNgayHetHan,
+                                  onTapCalendar: () {
+                                    vm.chonNgay(context, vm.txtNgayHetHan);
+                                  },
+                                ),
                               ],
                             ),
                           ),
@@ -707,26 +746,35 @@ class _TaoHopDongPageState extends State<HopDongForm> {
     }
   }
 
-  Widget _dateField(TextEditingController controller, String? errorText) {
+  Widget _dateField(
+      TextEditingController controller,
+      String? errorText, {
+        bool disabled = false,
+        VoidCallback? onTapCalendar,
+      }) {
     return TextFormField(
       controller: controller,
+      readOnly: true ,
       keyboardType: TextInputType.number,
       inputFormatters: [MaskedInputFormatter('##/##/####')],
-      style: const TextStyle(fontSize: 14),
+      style: TextStyle(
+        fontSize: 14,
+        color: disabled ? Colors.black54 : Colors.black87,
+      ),
       decoration: InputDecoration(
         errorText: errorText,
-        errorMaxLines: 2,
+        errorMaxLines: 3,
         filled: true,
-        fillColor: const Color(0xffF8F8F8),
+        fillColor: disabled ? const Color(0xffEEEEEE) : const Color(0xffF8F8F8),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 16,
         ),
-        suffixIcon: IconButton(
+        suffixIcon: disabled
+            ? null
+            : IconButton(
           icon: const Icon(Icons.calendar_month),
-          onPressed: () {
-            vm.chonNgay(context, controller);
-          },
+          onPressed: onTapCalendar,
         ),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
         enabledBorder: OutlineInputBorder(
@@ -739,5 +787,4 @@ class _TaoHopDongPageState extends State<HopDongForm> {
         ),
       ),
     );
-  }
-}
+  }}
