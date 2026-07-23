@@ -7,7 +7,8 @@ class AppConfirmDialog extends StatelessWidget{
   final String textCancel;
   final VoidCallback onConfirm;
   final bool isDangerous; // check xem hành động cần xác nhận này có nguy hiểm không, nếu true thì hiện màu đỏ còn false thì hiện màu xanh
-
+  final IconData? customIcon; // Icon tùy chỉnh (nếu không truyền sẽ dùng mặc định)
+  final Color? confirmColor;
   AppConfirmDialog({
     super.key,
     required this.title,
@@ -16,14 +17,16 @@ class AppConfirmDialog extends StatelessWidget{
     this.textCancel="Hủy",
     required this.onConfirm,
     this.isDangerous =true,
+    this.customIcon,
+    this.confirmColor,
 });
   @override
   Widget build(BuildContext context) {
     // Tự động đổi màu chủ đạo dựa theo tính chất nguy hiểm của hành động
-    final mainColor = isDangerous ? const Color(0xFFEF4444) : const Color(0xFF2D7A3A);
-    final iconBgColor = isDangerous ? const Color(0xFFFEE2E2) : const Color(0xFFDCFCE7);
-    final iconData = isDangerous ? Icons.delete_forever_rounded : Icons.check_circle_outline_rounded;
-
+    final mainColor = confirmColor ??
+        (isDangerous ? const Color(0xFFEF4444) : const Color(0xFF2D7A3A));
+    final iconBgColor = mainColor.withOpacity(0.12);
+    final iconData = customIcon ?? (isDangerous ? Icons.delete_forever_rounded : Icons.check_circle_outline_rounded);
     return Dialog(
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(

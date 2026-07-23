@@ -4,12 +4,13 @@ import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/string_formatter.dart';
 import 'package:AppTroNhaToi/models/DTO/HopDongDTO.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/chiTietHopDongPage/chiTietHopDongViewModel.dart';
-import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietHopDongPage/widget/hopDongFormMenu.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietHopDongPage/xemAnhHopDong.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../models/hop_dong.dart';
 import '../../PhongPage/ChiTietPhongPage/phongChiTiet.dart';
+import '../HopDongForm/hopDongForm.dart';
 
 class ChiTietHopDongPage extends StatefulWidget {
   final HopDongDTO hopDong;
@@ -530,24 +531,89 @@ Widget _actionHopDongButton({
   );
 }
 
+// Menu Pop-up góc trên bên phải
 Widget _menu(BuildContext context, ChiTietHopDongViewModel vm) {
-  return GestureDetector(
-    onTap: () {
-      showModalBottomSheet(
-        context: context,
-        backgroundColor: Colors.transparent,
-        isScrollControlled: true,
-        builder: (_) => HopDongFormMenu(vm: vm),
-      );
-    },
-    child: Container(
-      width: 36,
-      height: 36,
-      decoration: BoxDecoration(
-        color: const Color(0xffF3F3F3),
-        borderRadius: BorderRadius.circular(36),
+  return Theme(
+    data: Theme.of(context).copyWith(
+      popupMenuTheme: PopupMenuThemeData(
+        color: Colors.white,
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
       ),
-      child: const Icon(Icons.more_vert, color: Colors.black, size: 18),
+    ),
+    child: PopupMenuButton<int>(
+      offset: const Offset(0, 42), // Đẩy menu xuống ngay bên dưới icon 3 chấm
+      icon: Container(
+        width: 36,
+        height: 36,
+        decoration: BoxDecoration(
+          color: const Color(0xffF3F3F3),
+          borderRadius: BorderRadius.circular(36),
+        ),
+        child: const Icon(Icons.more_vert, color: Colors.black, size: 18),
+      ),
+      onSelected: (item) async {
+        if (item == 1) {
+          // Cập nhật hợp đồng
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => HopDongForm(hopDong: vm.hopDong),
+            ),
+          );
+
+          if (result != null) {
+            if (result is HopDong) {
+              vm.updateHopDongData(result);
+            } else if (result == true) {
+              if (context.mounted) {
+                Navigator.pop(context, true);
+              }
+            }
+          }
+        } else if (item == 2) {
+          // Gia hạn hợp đồng
+        }
+      },
+      itemBuilder: (context) => [
+        const PopupMenuItem<int>(
+          value: 1,
+          child: Row(
+            children: [
+              Icon(Icons.edit_document, color: Color(0xff4F46E5), size: 20),
+              SizedBox(width: 12),
+              Text(
+                'Cập nhật hợp đồng',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xff1D2433),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const PopupMenuDivider(height: 1),
+        const PopupMenuItem<int>(
+          value: 2,
+          child: Row(
+            children: [
+              Icon(Icons.update, color: Color(0xff2E7D32), size: 20),
+              SizedBox(width: 12),
+              Text(
+                'Gia hạn hợp đồng',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xff1D2433),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     ),
   );
 }

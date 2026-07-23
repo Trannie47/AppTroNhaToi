@@ -440,10 +440,12 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                               content: "Lưu ý trước khi cập nhật hợp đồng\n\n"
                                   "- Hợp đồng hiện tại sẽ bị kết thúc và một hợp đồng mới sẽ được tạo để thay thế.\n"
                                   "\n"
-                                  "- Nếu ngày bắt đầu hợp đồng mới không liền kề với hợp đồng cũ, khoảng thời gian trống đó sẽ không được hệ thống tính hóa đơn tự động",
+                                  "-Tiền phòng kỳ này sẽ được hệ thống tự động chia theo số ngày ở thực tế của từng hợp đồng.",
                               textConfirm: "Đồng ý",
                               textCancel: "Hủy",
-                              isDangerous: true,
+                              isDangerous: false,
+                              customIcon: Icons.warning_amber_rounded,
+                              confirmColor: const Color(0xFFE65100),
                               onConfirm: () {
                                 Navigator.pop(context, true);
                               },
