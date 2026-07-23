@@ -24,6 +24,7 @@ class NguoiThueProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
+      _list = await _repo.getListNguoiThue();
       final result = await _repo.getNguoiThueCongNoTapHoa();
 
       _listCongNoTapHoa = result;

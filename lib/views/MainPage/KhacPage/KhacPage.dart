@@ -1,6 +1,7 @@
 import 'package:AppTroNhaToi/Provider/hoa_don_tap_hoa_provider.dart';
 import 'package:AppTroNhaToi/Provider/thiet_bi_provider.dart';
 import 'package:AppTroNhaToi/Provider/thong_ke_provider.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/CauHinhGiaPage/cauHinhGiaPage.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/LoaiPhongPage/loaiPhongPage.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/TapHoaPage/TapHoaPage.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThietBiPage/thietBiPage.dart';
@@ -10,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../../../Provider/cau_hinh_gia_provider.dart';
+
 class KhacPage extends StatelessWidget {
   const KhacPage({super.key});
 
@@ -18,6 +21,13 @@ class KhacPage extends StatelessWidget {
     final thietBiProvider = context.watch<ThietBiProvider>();
     final hoaDonTapHoaProvider = context.watch<HoaDonTapHoaProvider>();
     final thongKeProvider = context.watch<ThongKeProvider>();
+    final cauHinhGiaProvider = context.watch<CauHinhGiaProvider>();
+    final giaDien = cauHinhGiaProvider.cauHinhGia?.giaDien;
+    final giaNuoc = cauHinhGiaProvider.cauHinhGia?.giaNuoc;
+
+    final statusCauHinhGia = (giaDien != null && giaNuoc != null)
+        ? "Điện: ${NumberFormat('#,##0').format(giaDien)}đ | Nước: ${NumberFormat('#,##0').format(giaNuoc)}đ"
+        : "Chưa cấu hình đơn giá";
 
 
     return Scaffold(
@@ -89,6 +99,25 @@ class KhacPage extends StatelessWidget {
                     onTap: () {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (_)=> LoaiPhongPage()),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  _buildItem(
+                    icon: Icons.tune_outlined,
+                    iconColor: Colors.blue.shade700,
+                    iconBg: const Color(0xFFE3F2FD),
+                    title: "Cấu hình giá",
+                    subtitle:
+                    "Thiết lập đơn giá điện, nước\nmặc định cho toàn bộ hệ thống",
+                    status: statusCauHinhGia,
+                    statusColor: Colors.blue.shade700,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) =>CauHinhGiaPage(),
+                        ),
                       );
                     },
                   ),

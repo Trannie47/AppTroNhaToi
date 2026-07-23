@@ -1,3 +1,4 @@
+import 'package:AppTroNhaToi/Provider/cau_hinh_gia_provider.dart';
 import 'package:AppTroNhaToi/Provider/dien_nuoc_provider.dart';
 import 'package:AppTroNhaToi/Provider/lap_rap_thietbi_provider.dart';
 import 'package:AppTroNhaToi/Provider/nguoi_luu_tru_tam_thoi_provider.dart';
@@ -32,6 +33,7 @@ void main() {
         ChangeNotifierProvider(create: (_)=> PhuongTienProvider()),
         ChangeNotifierProvider(create: (_) => LapRapThietbiProvider()),
         ChangeNotifierProvider(create: (_) => NguoiLuuTruTamThoiProvider()),
+        ChangeNotifierProvider(create: (_)=> CauHinhGiaProvider()),
         //File Service được khởi tạo ở đây
         ChangeNotifierProvider(create: (_) => HangHoaProvider()),
         // ChangeNotifierProvider(create: (_) => HoaDonTapHoaProvider()),
