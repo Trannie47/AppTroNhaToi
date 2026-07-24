@@ -1,5 +1,6 @@
 import 'package:AppTroNhaToi/Provider/nguoi_thue_provider.dart';
 import 'package:AppTroNhaToi/Provider/phong_provider.dart';
+import 'package:AppTroNhaToi/Provider/thong_bao_provider.dart';
 import 'package:AppTroNhaToi/Provider/thong_ke_provider.dart';
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
@@ -29,6 +30,7 @@ class _HomePageState extends State<HomePage> {
       context.read<PhongProvider>(),
       context.read<ThongKeProvider>(),
       context.read<NguoiThueProvider>(),
+      context.read<ThongBaoProvider>(),
     );
 
     vm.addListener(() {

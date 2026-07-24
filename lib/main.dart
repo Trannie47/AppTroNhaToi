@@ -16,6 +16,7 @@ import 'package:provider/provider.dart';
 import 'Provider/hop_dong_provider.dart';
 import 'Provider/loai_phong_provider.dart';
 import 'Provider/phuong_tien_provider.dart';
+import 'Provider/thong_bao_provider.dart';
 import 'views/page.dart';
 
 void main() {
@@ -50,6 +51,7 @@ void main() {
         ),
         ChangeNotifierProvider(create: (_) => ThietBiProvider()..fetchAll()),
         ChangeNotifierProvider(create: (_) => HoaDonTapHoaProvider()..fetchAll(),),
+        ChangeNotifierProvider(create: (_) => ThongBaoProvider()..startPolling()),
       ],
       child: const MyApp(),
     ),

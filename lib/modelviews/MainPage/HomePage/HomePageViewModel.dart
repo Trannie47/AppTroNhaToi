@@ -1,6 +1,7 @@
 import 'package:AppTroNhaToi/Provider/nguoi_thue_provider.dart';
 import 'package:AppTroNhaToi/Provider/phong_provider.dart';
 import 'package:AppTroNhaToi/Provider/thong_ke_provider.dart';
+import 'package:AppTroNhaToi/Provider/thong_bao_provider.dart';
 import 'package:AppTroNhaToi/models/DTO/ThongKeDTO.dart';
 
 import 'package:AppTroNhaToi/models/thong_bao.dart';
@@ -11,21 +12,25 @@ class HomePageViewModel extends ChangeNotifier {
   final PhongProvider _phongProvider;
   final ThongKeProvider _thongKeProvider;
   final NguoiThueProvider _nguoiThueProvider;
+  final ThongBaoProvider _thongBaoProvider;
 
   HomePageViewModel(
-    this._phongProvider,
-    this._thongKeProvider,
-    this._nguoiThueProvider,
-  ) {
+      this._phongProvider,
+      this._thongKeProvider,
+      this._nguoiThueProvider,
+      this._thongBaoProvider,
+      ) {
     _phongProvider.addListener(_onPhongUpdate);
     _thongKeProvider.addListener(_onThongKeUpdate);
     _nguoiThueProvider.addListener(_onNguoiThueUpdate);
+    _thongBaoProvider.addListener(_onThongBaoUpdate);
 
     Future.microtask(() async {
       await Future.wait([
         _phongProvider.getListPhong(),
         _thongKeProvider.getThongKe(),
         _nguoiThueProvider.fetchNguoiThueCongNoTapHoa(),
+        _thongBaoProvider.fetchAll(),
       ]);
 
       debugPrint(_nguoiThueProvider.hashCode.toString());
@@ -44,6 +49,10 @@ class HomePageViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void _onThongBaoUpdate() {
+    notifyListeners();
+  }
+
   double get roomCount => _phongProvider.listPhong.length.toDouble();
 
   double get emptyRoomCount => _phongProvider.listPhongTrong.length.toDouble();
@@ -55,29 +64,16 @@ class HomePageViewModel extends ChangeNotifier {
 
   bool get isLoading =>
       _phongProvider.isLoading ||
-      _thongKeProvider.isLoading ||
-      _nguoiThueProvider.isLoading;
+          _thongKeProvider.isLoading ||
+          _nguoiThueProvider.isLoading;
+
   double get doanhThuThang => data?.doanhThu.tongDoanhThu ?? 0;
 
   double get congNoThang => data?.congNo.tongCongNo ?? 0;
 
-  List<ThongBao> issues = [
-    ThongBao(
-      tieuDe: "3 hóa đơn tieuDethu tiền",
-      noiDung: "P101 · noiDung202",
-      taoLuc: DateTime.now(),
-    ),
-    ThongBao(
-      tieuDe: "2 phòng chưa ghi điện nước",
-      noiDung: "P101 · P203",
-      taoLuc: DateTime.parse("2026-05-13 18:00:00"),
-    ),
-    ThongBao(
-      tieuDe: "HĐ phòng 203 Hết Hạn",
-      noiDung: "Hoàng Văn Bình ",
-      taoLuc: DateTime.parse("2026-04-03 18:00:00"),
-    ),
-  ];
+  List<ThongBao> get issues => _thongBaoProvider.list;
+
+  int get soLuongThongBaoChuaDoc => _thongBaoProvider.soLuongChuaDoc;
 
   List<ThuCongNoFormModel> get debts => _nguoiThueProvider.listCongNoTapHoa;
 
@@ -86,6 +82,7 @@ class HomePageViewModel extends ChangeNotifier {
     _thongKeProvider.removeListener(_onThongKeUpdate);
     _phongProvider.removeListener(_onPhongUpdate);
     _nguoiThueProvider.removeListener(_onNguoiThueUpdate);
+    _thongBaoProvider.removeListener(_onThongBaoUpdate);
     super.dispose();
   }
 }
