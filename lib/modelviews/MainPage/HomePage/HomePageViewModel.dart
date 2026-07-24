@@ -63,19 +63,19 @@ class HomePageViewModel extends ChangeNotifier {
 
   List<ThongBao> issues = [
     ThongBao(
-      title: "3 hóa đơn chưa thu tiền",
-      subtitle: "P101 · P104 · P202",
-      date: DateTime.now(),
+      tieuDe: "3 hóa đơn tieuDethu tiền",
+      noiDung: "P101 · noiDung202",
+      taoLuc: DateTime.now(),
     ),
     ThongBao(
-      title: "2 phòng chưa ghi điện nước",
-      subtitle: "P101 · P203",
-      date: DateTime.parse("2026-05-13 18:00:00"),
+      tieuDe: "2 phòng chưa ghi điện nước",
+      noiDung: "P101 · P203",
+      taoLuc: DateTime.parse("2026-05-13 18:00:00"),
     ),
     ThongBao(
-      title: "HĐ phòng 203 Hết Hạn",
-      subtitle: "Hoàng Văn Bình ",
-      date: DateTime.parse("2026-04-03 18:00:00"),
+      tieuDe: "HĐ phòng 203 Hết Hạn",
+      noiDung: "Hoàng Văn Bình ",
+      taoLuc: DateTime.parse("2026-04-03 18:00:00"),
     ),
   ];
 

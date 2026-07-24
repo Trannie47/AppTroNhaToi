@@ -10,9 +10,9 @@ class ItemThongBao extends StatelessWidget {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final thongBaoDate = DateTime(
-      thongBao.date.year,
-      thongBao.date.month,
-      thongBao.date.day,
+      thongBao.taoLuc!.year,
+      thongBao.taoLuc!.month,
+      thongBao.taoLuc!.day,
     );
 
     if (thongBaoDate.isAfter(today)) {
@@ -28,9 +28,9 @@ class ItemThongBao extends StatelessWidget {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final thongBaoDate = DateTime(
-      thongBao.date.year,
-      thongBao.date.month,
-      thongBao.date.day,
+      thongBao.taoLuc!.year,
+      thongBao.taoLuc!.month,
+      thongBao.taoLuc!.day,
     );
 
     if (thongBaoDate.isAfter(today)) {
@@ -68,10 +68,10 @@ class ItemThongBao extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  thongBao.title,
+                  thongBao.tieuDe,
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
-                Text(thongBao.subtitle, style: const TextStyle(fontSize: 12)),
+                Text(thongBao.noiDung, style: const TextStyle(fontSize: 12)),
               ],
             ),
           ),

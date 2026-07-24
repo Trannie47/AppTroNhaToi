@@ -1,36 +1,85 @@
-class ThongBao {
-  final String title;
-  final String subtitle;
-  final DateTime date;
+import 'package:AppTroNhaToi/core/utils/model_formatter.dart';
 
-  ThongBao({required this.title, required this.subtitle, required this.date});
+class ThongBao {
+  final int? id;
+  final String tieuDe;
+  final String noiDung;
+  final String? loai;
+  final String? hopDongId;
+  final int? soNgayCon;
+  final bool? daDoc;
+  final DateTime? taoLuc;
+
+  ThongBao({
+    this.id,
+    required this.tieuDe,
+    required this.noiDung,
+    this.loai,
+    this.hopDongId,
+    this.soNgayCon,
+    this.daDoc,
+    this.taoLuc,
+  });
 
   factory ThongBao.fromMap(Map<String, dynamic> map) {
     return ThongBao(
-      title: map['title'] as String,
-      subtitle: map['subtitle'] as String,
-      date: DateTime.tryParse(map['Date'] as String) ?? DateTime.now(),
+      id: map['id'] != null ? intOf(map['id']) : null,
+      tieuDe: strOf(map['tieuDe']) ?? '',
+      noiDung: strOf(map['noiDung']) ?? '',
+      loai: strOf(map['loai']),
+      hopDongId: strOf(map['hopDongId']),
+      soNgayCon: map['soNgayCon'] != null ? intOf(map['soNgayCon']) : null,
+      daDoc: map['daDoc'] as bool?,
+      taoLuc: dateOf(map['taoLuc']),
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'title': title,
-      'subtitle': subtitle,
-      'Date': date.toIso8601String().split('T').first,
+      if (id != null) 'id': id,
+      'tieuDe': tieuDe,
+      'noiDung': noiDung,
+      'loai': loai,
+      'hopDongId': hopDongId,
+      'soNgayCon': soNgayCon,
+      'daDoc': daDoc,
+      'taoLuc': taoLuc?.toIso8601String(),
     };
   }
 
-  ThongBao copyWith({String? title, String? subtitle, DateTime? date}) {
+  ThongBao copyWith({
+    int? id,
+    String? tieuDe,
+    String? noiDung,
+    String? loai,
+    String? hopDongId,
+    int? soNgayCon,
+    bool? daDoc,
+    DateTime? taoLuc,
+  }) {
     return ThongBao(
-      title: title ?? this.title,
-      subtitle: subtitle ?? this.subtitle,
-      date: date ?? this.date,
+      id: id ?? this.id,
+      tieuDe: tieuDe ?? this.tieuDe,
+      noiDung: noiDung ?? this.noiDung,
+      loai: loai ?? this.loai,
+      hopDongId: hopDongId ?? this.hopDongId,
+      soNgayCon: soNgayCon ?? this.soNgayCon,
+      daDoc: daDoc ?? this.daDoc,
+      taoLuc: taoLuc ?? this.taoLuc,
     );
   }
 
   @override
   String toString() {
-    return 'ThongBao(title: $title, subtitle: $subtitle, date: $date)';
+    return 'ThongBao('
+        'id: $id, '
+        'tieuDe: $tieuDe, '
+        'noiDung: $noiDung, '
+        'loai: $loai, '
+        'hopDongId: $hopDongId, '
+        'soNgayCon: $soNgayCon, '
+        'daDoc: $daDoc, '
+        'taoLuc: $taoLuc'
+        ')';
   }
 }
