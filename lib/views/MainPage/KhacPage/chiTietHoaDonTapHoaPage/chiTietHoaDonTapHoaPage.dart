@@ -78,7 +78,7 @@ class _ChiTietHoaDonTapHoaState extends State<ChiTietHoaDonTapHoa> {
 
                   _infoRow("Ngày mua", formatDate(vm.hoaDon.ngayBan)),
 
-                  _infoRow("Tên người mua", vm.tenNguoiMua!),
+                  _infoRow("Tên người mua", vm.tenNguoiMua ?? "Khách Vãng Lai"),
 
                   _infoRow(
                     "Tổng tiền",

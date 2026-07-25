@@ -1,6 +1,4 @@
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
-import 'package:AppTroNhaToi/models/hoa_don_tap_hoa.dart';
-import 'package:AppTroNhaToi/models/phieu_thu_hd_th.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/TapHoaPage/HoaDonTapHoaModel.dart';
 import 'package:flutter/material.dart';
 
@@ -23,6 +21,9 @@ class ItemHoaDonTapHoa extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool laKhachVangLai =
+        tenNguoiThue == null || tenNguoiThue!.trim().isEmpty;
+
     return InkWell(
       borderRadius: BorderRadius.circular(20),
       onTap: onChiTiet,
@@ -33,7 +34,6 @@ class ItemHoaDonTapHoa extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
         ),
-
         child: Row(
           children: [
             /// Nội dung bên trái
@@ -76,7 +76,8 @@ class ItemHoaDonTapHoa extends StatelessWidget {
 
                   Text(
                     (hoaDonTapHoaModel.daThu ==
-                            hoaDonTapHoaModel.hoaDon.tongTien)
+                                hoaDonTapHoaModel.hoaDon.tongTien) ||
+                            laKhachVangLai
                         ? "Đã thu"
                         : "Chưa thu",
                     style: const TextStyle(
@@ -89,28 +90,11 @@ class ItemHoaDonTapHoa extends StatelessWidget {
               ),
             ),
 
-            if (hoaDonTapHoaModel.daThu == hoaDonTapHoaModel.hoaDon.tongTien)
+            if (hoaDonTapHoaModel.daThu == hoaDonTapHoaModel.hoaDon.tongTien ||
+                laKhachVangLai)
               const Icon(Icons.chevron_right, color: Colors.grey, size: 24)
             else ...[
-              /// Sửa
-              // if (onSua != null)
-              //   Container(
-              //     width: 42,
-              //     height: 42,
-              //     decoration: BoxDecoration(
-              //       color: const Color(0xffEAF5EC),
-              //       borderRadius: BorderRadius.circular(12),
-              //     ),
-              //     child: IconButton(
-              //       onPressed: onSua,
-              //       icon: const Icon(
-              //         Icons.edit_outlined,
-              //         color: Color(0xff2D7A3A),
-              //         size: 20,
-              //       ),
-              //     ),
-              //   ),
-              if (onSua != null && onXoa != null) const SizedBox(width: 10),
+              if (onSua != null) const SizedBox(width: 10),
 
               if (onSua != null)
                 Container(
