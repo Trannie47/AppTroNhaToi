@@ -3,7 +3,7 @@ class PhieuThuHangThang {
   final DateTime? ngayThu;
   final double? soTien;
   final String? ghiChu;
-  final int? maHoaDon; // FK -> hoadonphong.maHoaDon
+  final String? maHoaDon;
 
   PhieuThuHangThang({
     this.maPhieuThu,
@@ -14,24 +14,38 @@ class PhieuThuHangThang {
   });
 
   factory PhieuThuHangThang.fromMap(Map<String, dynamic> map) {
+    double? parseDouble(dynamic value) {
+      if (value == null) return null;
+      if (value is num) return value.toDouble();
+      if (value is String) return double.tryParse(value);
+      return null;
+    }
+
+    int? parseInt(dynamic value) {
+      if (value == null) return null;
+      if (value is num) return value.toInt();
+      if (value is String) return int.tryParse(value);
+      return null;
+    }
+
     return PhieuThuHangThang(
-      maPhieuThu: map['maPhieuThu'] as int?,
+      maPhieuThu: parseInt(map['maPhieuThu']),
       ngayThu: map['ngayThu'] != null
-          ? DateTime.tryParse(map['ngayThu'] as String)
+          ? DateTime.tryParse(map['ngayThu'].toString())
           : null,
-      soTien: (map['soTien'] as num?)?.toDouble(),
+      soTien: parseDouble(map['soTien']), // Parse an toànDecimal/String từ Prisma
       ghiChu: map['ghiChu'] as String?,
-      maHoaDon: map['maHoaDon'] as int?,
+      maHoaDon: map['maHoaDon']?.toString(),
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
       if (maPhieuThu != null) 'maPhieuThu': maPhieuThu,
-      'ngayThu': ngayThu?.toIso8601String().split('T').first,
+      if (ngayThu != null) 'ngayThu': ngayThu?.toIso8601String(),
       'soTien': soTien,
       'ghiChu': ghiChu,
-      'maHoaDon': maHoaDon,
+      if (maHoaDon != null) 'maHoaDon': maHoaDon,
     };
   }
 
@@ -40,7 +54,7 @@ class PhieuThuHangThang {
     DateTime? ngayThu,
     double? soTien,
     String? ghiChu,
-    int? maHoaDon,
+    String? maHoaDon,
   }) {
     return PhieuThuHangThang(
       maPhieuThu: maPhieuThu ?? this.maPhieuThu,

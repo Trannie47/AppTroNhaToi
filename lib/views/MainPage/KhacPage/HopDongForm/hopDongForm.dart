@@ -248,21 +248,38 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                               children: [
                                 _label("Ngày bắt đầu"),
                                 _dateField(
-                                    vm.txtNgayKy,
-                                    vm.errNgayKy,
-                                  disabled: isActiveContract,// khóa lại nếu hợp đồng đang hoạt động
-                                  onTapCalendar: isActiveContract
-                                      ? null
-                                      : () {
+                                  vm.txtNgayKy,
+                                  vm.errNgayKy,
+                                  disabled: false,
+                                  onTapCalendar: () {
                                     final now = DateTime.now();
                                     final today = DateTime(now.year, now.month, now.day);
                                     final dauThang = DateTime(now.year, now.month, 1);
-                                    final minDate = isPendingContract ? today : dauThang;
-                                    vm.chonNgay(
-                                      context,
-                                      vm.txtNgayKy,
-                                      firstDate: minDate,
-                                    );
+                                    final cuoiThang = DateTime(now.year, now.month + 1, 0);
+
+                                    if (isPendingContract) {
+                                      // HĐ Chờ hiệu lực (trangThai == 0) -> Bắt đầu từ hôm nay trở đi
+                                      vm.chonNgay(
+                                        context,
+                                        vm.txtNgayKy,
+                                        firstDate: today,
+                                      );
+                                    } else if (isActiveContract) {
+                                      // HĐ Đang hoạt động (trangThai == 1) -> CHỈ CHO CHỌN NGÀY TRONG THÁNG HIỆN TẠI
+                                      vm.chonNgay(
+                                        context,
+                                        vm.txtNgayKy,
+                                        firstDate: dauThang,
+                                        lastDate: cuoiThang,
+                                      );
+                                    } else {
+                                      // Tạo mới HĐ -> Cho phép lùi về ngày 01 tháng này
+                                      vm.chonNgay(
+                                        context,
+                                        vm.txtNgayKy,
+                                        firstDate: dauThang,
+                                      );
+                                    }
                                   },
                                 ),
                               ],

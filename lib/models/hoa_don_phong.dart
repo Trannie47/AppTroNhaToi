@@ -1,46 +1,67 @@
 class HoaDonPhong {
-  final int? maHoaDon;
+  final String? maHoaDon;
+  final String? hopDongId;
   final String? thangNam;
+  final DateTime? ngayLap;
   final double? soTien;
-  final int? hopDongID;
+  final String? chiTietJson;
+  final int? trangThai;
+  final String? ghiChu;
 
-  HoaDonPhong({this.maHoaDon, this.thangNam, this.soTien, this.hopDongID});
+  HoaDonPhong({
+    this.maHoaDon,
+    this.hopDongId,
+    this.thangNam,
+    this.ngayLap,
+    this.soTien,
+    this.chiTietJson,
+    this.trangThai,
+    this.ghiChu,
+  });
+
+  double get tongTien => soTien ?? 0;
+
+  // Hỗ trợ ép kiểu double an toàn (chấp nhận cả String, int, double)
+  static double? _toDouble(dynamic val) {
+    if (val == null) return null;
+    if (val is num) return val.toDouble();
+    if (val is String) return double.tryParse(val);
+    return null;
+  }
+
+  // Hỗ trợ ép kiểu int an toàn
+  static int? _toInt(dynamic val) {
+    if (val == null) return null;
+    if (val is num) return val.toInt();
+    if (val is String) return int.tryParse(val);
+    return null;
+  }
 
   factory HoaDonPhong.fromMap(Map<String, dynamic> map) {
     return HoaDonPhong(
-      maHoaDon: map['maHoaDon'] as int?,
-      thangNam: map['thangNam'] as String?,
-      soTien: (map['soTien'] as num?)?.toDouble(),
-      hopDongID: map['HopDongID'] as int?,
+      maHoaDon: map['maHoaDon']?.toString(),
+      hopDongId: map['hopDongId']?.toString() ?? map['HopDongID']?.toString(),
+      thangNam: map['thangNam']?.toString(),
+      ngayLap: map['ngayLap'] != null
+          ? DateTime.tryParse(map['ngayLap'].toString())
+          : null,
+      soTien: _toDouble(map['soTien']) ?? _toDouble(map['tongTien']),
+      chiTietJson: map['chiTietJson']?.toString(),
+      trangThai: _toInt(map['trangThai']),
+      ghiChu: map['ghiChu']?.toString(),
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
       if (maHoaDon != null) 'maHoaDon': maHoaDon,
+      if (hopDongId != null) 'hopDongId': hopDongId,
       'thangNam': thangNam,
-      'soTien': soTien,
-      'HopDongID': hopDongID,
+      if (soTien != null) 'soTien': soTien,
+      if (chiTietJson != null) 'chiTietJson': chiTietJson,
+      if (trangThai != null) 'trangThai': trangThai,
+      if (ghiChu != null) 'ghiChu': ghiChu,
+      if (ngayLap != null) 'ngayLap': ngayLap?.toIso8601String(),
     };
-  }
-
-  HoaDonPhong copyWith({
-    int? maHoaDon,
-    String? thangNam,
-    double? soTien,
-    int? hopDongID,
-  }) {
-    return HoaDonPhong(
-      maHoaDon: maHoaDon ?? this.maHoaDon,
-      thangNam: thangNam ?? this.thangNam,
-      soTien: soTien ?? this.soTien,
-      hopDongID: hopDongID ?? this.hopDongID,
-    );
-  }
-
-  @override
-  String toString() {
-    return 'HoaDonPhong(maHoaDon: $maHoaDon, thangNam: $thangNam, '
-        'soTien: $soTien, hopDongID: $hopDongID)';
   }
 }

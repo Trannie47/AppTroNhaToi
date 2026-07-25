@@ -204,7 +204,16 @@ class HopDongFormViewModel extends ChangeNotifier {
     hdDTO = hopDong;
 
     if (hopDong != null) {
-      txtNgayKy.text = formatDate(hopDong.ngayKy);
+      final now = DateTime.now();
+
+      // Khi Cập nhật hợp đồng đang hoạt động (trangThai == 1),
+      // Mặc định hiển thị Ngày bắt đầu là HÔM NAY (DateTime.now())
+      if (hopDong.trangThai == 1) {
+        txtNgayKy.text = formatDate(now);
+      } else {
+        txtNgayKy.text = formatDate(hopDong.ngayKy);
+      }
+
       txtNgayHetHan.text = formatDate(hopDong.ngayHetHan);
       txtGiaHopDong.text = formatMoney(hopDong.giaPhongThucTe.toInt()).toString();
       txtTienCoc.text = formatMoney(hopDong.tienCoc.toInt()).toString();
@@ -221,8 +230,7 @@ class HopDongFormViewModel extends ChangeNotifier {
         idnt: hopDong.idnt,
         hoTen: hopDong.nguoithue.hoTen,
       );
-    }
-    else{
+    } else {
       txtNgayKy.text = formatDate(DateTime.now());
     }
 
@@ -269,28 +277,31 @@ class HopDongFormViewModel extends ChangeNotifier {
 
   Future<void> chonNgay(
       BuildContext context,
-      TextEditingController controller,
-  {DateTime? firstDate,}
-      ) async {
+      TextEditingController controller, {
+        DateTime? firstDate,
+        DateTime? lastDate,
+      }) async {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     DateTime initDate = chuyenNgay(controller.text) ?? today;
     DateTime minDate = firstDate ?? DateTime(2020);
+    DateTime maxDate = lastDate ?? DateTime(2100);
 
     if (initDate.isBefore(minDate)) {
       initDate = minDate;
+    } else if (initDate.isAfter(maxDate)) {
+      initDate = maxDate;
     }
 
     DateTime? ngay = await showDatePicker(
       context: context,
       initialDate: initDate,
       firstDate: minDate,
-      lastDate: DateTime(2100),
+      lastDate: maxDate,
     );
 
     if (ngay != null) {
       controller.text = formatDate(ngay);
-
       notifyListeners();
     }
   }
@@ -320,13 +331,14 @@ class HopDongFormViewModel extends ChangeNotifier {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final dauThangHienTai = DateTime(now.year, now.month, 1);
+    final cuoiThangHienTai = DateTime(now.year, now.month + 1, 0);
     DateTime? ngayKy = chuyenNgay(txtNgayKy.text);
     if (txtNgayKy.text.isEmpty || ngayKy == null) {
       errNgayKy = "Ngày ký không đúng định dạng";
       hopLe = false;
     }else{
       if (!isEdit) {
-        // TH TẠO MỚI HỢP ĐỒNG
+        // TH1 TẠO MỚI HỢP ĐỒNG
         // Cho phép lùi ngày dọn vào, nhưng tối đa chỉ lùi tới ngày 01 tháng này
         if (ngayKy.isBefore(dauThangHienTai)) {
           errNgayKy = "Chỉ được chọn lùi tối đa về ngày 01 tháng này";
@@ -337,6 +349,17 @@ class HopDongFormViewModel extends ChangeNotifier {
         // Giữ nguyên ràng buộc cũ: Không cho chọn lùi về quá khứ (phải từ hôm nay trở đi)
         if (ngayKy.isBefore(today)) {
           errNgayKy = "Phải từ ngày hiện tại trở đi";
+          hopLe = false;
+        }
+      }
+      else if (hdDTO?.trangThai == 1) {
+        //TH3: CẬP NHẬT HỢP ĐỒNG ĐANG HOẠT ĐỘNG
+        // Bắt buộc Ngày bắt đầu phải nằm trong THÁNG HIỆN TẠI
+        if (ngayKy.isBefore(dauThangHienTai) ||
+            ngayKy.isAfter(cuoiThangHienTai)) {
+          errNgayKy =
+          "Ngày bắt đầu phải nằm trong tháng hiện tại (${now.month}/${now
+              .year})";
           hopLe = false;
         }
       }

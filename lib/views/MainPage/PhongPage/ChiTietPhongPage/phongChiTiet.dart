@@ -13,6 +13,7 @@ import '../FormPhong/FormPhong.dart';
 import 'ChiTietThietBiPhongPage/chiTietThietBiPhongPage.dart';
 import 'TrangChucNang/GhiDienNuocPage/ghiDienNuocPage.dart';
 import 'TrangChucNang/LichSuThuePage/lichSuThuePage.dart';
+import 'TrangChucNang/TaoHoaDonPhongPage/taoHoaDonPhong.dart';
 
 class PhongChiTiet extends StatefulWidget {
   final ItemPhong room;
@@ -427,7 +428,17 @@ class PhongChiTiet extends StatefulWidget {
             _actionChip(title: "Tạo hóa đơn",
                 icon: Icons.receipt_long,
                 isActive: false,
-                onTap: () {}),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      // Truyền tên phòng sang TaoHoaDonPage luôn
+                      builder: (context) => TaoHoaDonPage(
+                       phongId: room.phongId,
+                      ),
+                    ),
+                  );
+                }),
             // const SizedBox(width: 8),
             // _actionChip(title: "Hợp đồng",
             //     icon: Icons.assignment,

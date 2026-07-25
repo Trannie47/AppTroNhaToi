@@ -1,13 +1,16 @@
 import 'package:AppTroNhaToi/Provider/cau_hinh_gia_provider.dart';
 import 'package:AppTroNhaToi/Provider/dien_nuoc_provider.dart';
+import 'package:AppTroNhaToi/Provider/hoa_don_phong_provider.dart';
 import 'package:AppTroNhaToi/Provider/lap_rap_thietbi_provider.dart';
 import 'package:AppTroNhaToi/Provider/nguoi_luu_tru_tam_thoi_provider.dart';
+import 'package:AppTroNhaToi/Provider/phieu_thu_hang_thang_provider.dart';
 import 'package:AppTroNhaToi/Provider/phong_provider.dart';
 import 'package:AppTroNhaToi/Provider/hang_hoa_provider.dart';
 import 'package:AppTroNhaToi/Provider/hoa_don_tap_hoa_provider.dart';
 import 'package:AppTroNhaToi/Provider/nguoi_thue_provider.dart';
 import 'package:AppTroNhaToi/Provider/thiet_bi_provider.dart';
 import 'package:AppTroNhaToi/Provider/thong_ke_provider.dart';
+import 'package:AppTroNhaToi/models/phieu_thu_hang_thang.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -15,6 +18,7 @@ import 'package:provider/provider.dart';
 
 import 'Provider/hop_dong_provider.dart';
 import 'Provider/loai_phong_provider.dart';
+import 'Provider/phieu_thu_dien_nuoc_provider.dart';
 import 'Provider/phuong_tien_provider.dart';
 import 'Provider/thong_bao_provider.dart';
 import 'views/page.dart';
@@ -35,6 +39,9 @@ void main() {
         ChangeNotifierProvider(create: (_) => LapRapThietbiProvider()),
         ChangeNotifierProvider(create: (_) => NguoiLuuTruTamThoiProvider()),
         ChangeNotifierProvider(create: (_)=> CauHinhGiaProvider()),
+        ChangeNotifierProvider(create: (_)=> HoadonPhongProvider()),
+        ChangeNotifierProvider(create: (_)=> PhieuThuHangThangProvider()),
+        ChangeNotifierProvider(create: (_)=> PhieuThuDienNuocProvider()),
         //File Service được khởi tạo ở đây
         ChangeNotifierProvider(create: (_) => HangHoaProvider()),
         // ChangeNotifierProvider(create: (_) => HoaDonTapHoaProvider()),
