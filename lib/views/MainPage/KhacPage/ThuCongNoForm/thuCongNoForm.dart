@@ -50,13 +50,18 @@ class _ThuCongNoFormState extends State<ThuCongNoForm> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text("Thu công nợ thành công")));
-
       Navigator.pop(context, true);
-    } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Thu công nợ thất bại")));
+      return;
     }
+
+    if (vm.errNguoiThue != null ||
+        (vm.formKey.currentState?.validate() == false)) {
+      return;
+    }
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text("Thu công nợ thất bại")));
   }
 
   @override
@@ -167,9 +172,11 @@ class _ThuCongNoFormState extends State<ThuCongNoForm> {
                       items: vm.listNguoiThue,
                       selectedItem: vm.nguoiThue,
                       itemAsString: (item) => item.nguoiThue.hoTen ?? "",
+
                       onChanged: (value) {
                         vm.chonNguoiThue(value);
                       },
+                      errorText: vm.errNguoiThue,
                     ),
 
                     const SizedBox(height: 20),

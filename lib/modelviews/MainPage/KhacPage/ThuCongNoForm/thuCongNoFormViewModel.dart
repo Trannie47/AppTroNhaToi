@@ -25,6 +25,7 @@ class ThuCongNoFormViewModel extends ChangeNotifier {
   List<ThuCongNoFormModel> listNguoiThue = [];
 
   ThuCongNoFormModel? nguoiThue;
+  String? errNguoiThue;
 
   double tongCongNo = 0;
 
@@ -82,11 +83,13 @@ class ThuCongNoFormViewModel extends ChangeNotifier {
   }
 
   Future<bool> thuCongNo() async {
-    if (nguoiThue == null) {
-      return false;
-    }
+    // validate người thuê trước, hiện lỗi rõ ràng
+    errNguoiThue = nguoiThue == null ? "Vui lòng chọn người thuê" : null;
+    notifyListeners();
 
-    if (!formKey.currentState!.validate()) {
+    final hopLeForm = formKey.currentState?.validate() ?? false;
+
+    if (errNguoiThue != null || !hopLeForm) {
       return false;
     }
 

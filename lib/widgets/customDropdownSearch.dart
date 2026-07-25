@@ -11,6 +11,7 @@ class CustomDropdownSearch<T> extends StatelessWidget {
   final bool enabled;
   final double popupHeight;
   final Future<List<T>> Function(String filter)? asyncItems;
+  final String? errorText;
 
   const CustomDropdownSearch({
     super.key,
@@ -23,6 +24,7 @@ class CustomDropdownSearch<T> extends StatelessWidget {
     this.enabled = true,
     this.popupHeight = 300,
     this.asyncItems,
+    this.errorText,
   });
 
   @override
@@ -44,11 +46,7 @@ class CustomDropdownSearch<T> extends StatelessWidget {
         }
 
         return (items ?? <T>[])
-            .where(
-              (e) => itemAsString(e)
-              .toLowerCase()
-              .contains(keyword),
-        )
+            .where((e) => itemAsString(e).toLowerCase().contains(keyword))
             .toList();
       },
 
@@ -69,44 +67,31 @@ class CustomDropdownSearch<T> extends StatelessWidget {
             vertical: 14,
           ),
 
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
 
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(
-              color: Colors.grey.shade300,
-            ),
+            borderSide: BorderSide(color: Colors.grey.shade300),
           ),
 
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(
-              color: primary,
-              width: 2,
-            ),
+            borderSide: BorderSide(color: primary, width: 2),
           ),
 
           disabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(
-              color: Colors.grey.shade300,
-            ),
+            borderSide: BorderSide(color: Colors.grey.shade300),
           ),
 
-          suffixIcon: const Icon(
-            Icons.keyboard_arrow_down_rounded,
-          ),
+          suffixIcon: const Icon(Icons.keyboard_arrow_down_rounded),
         ),
       ),
 
       popupProps: PopupProps.menu(
         showSearchBox: true,
         fit: FlexFit.loose,
-        constraints: BoxConstraints(
-          maxHeight: popupHeight,
-        ),
+        constraints: BoxConstraints(maxHeight: popupHeight),
 
         searchFieldProps: TextFieldProps(
           decoration: InputDecoration(
@@ -120,79 +105,63 @@ class CustomDropdownSearch<T> extends StatelessWidget {
               vertical: 10,
             ),
 
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
 
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(
-                color: Colors.grey.shade300,
-              ),
+              borderSide: BorderSide(color: Colors.grey.shade300),
             ),
 
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(
-                color: primary,
-                width: 1.5,
-              ),
+              borderSide: BorderSide(color: primary, width: 1.5),
             ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Colors.red),
+            ),
+            errorText: errorText,
           ),
         ),
 
-        itemBuilder: (
-            BuildContext context,
-            T item,
-            bool isDisabled,
-            bool isSelected,
-            ) {
-          return Container(
-            height: 48,
+        itemBuilder:
+            (BuildContext context, T item, bool isDisabled, bool isSelected) {
+              return Container(
+                height: 48,
 
-            padding: const EdgeInsets.symmetric(
-              horizontal: 12,
-            ),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
 
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? primary.withValues(alpha: 0.08)
-                  : Colors.transparent,
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? primary.withValues(alpha: 0.08)
+                      : Colors.transparent,
 
-              border: Border(
-                bottom: BorderSide(
-                  color: Colors.grey.shade300,
-                  width: 0.8,
+                  border: Border(
+                    bottom: BorderSide(color: Colors.grey.shade300, width: 0.8),
+                  ),
                 ),
-              ),
-            ),
 
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    itemAsString(item),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: isSelected
-                          ? FontWeight.w600
-                          : FontWeight.w500,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        itemAsString(item),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.w500,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
 
-                if (isSelected)
-                  Icon(
-                    Icons.check,
-                    color: primary,
-                    size: 18,
-                  ),
-              ],
-            ),
-          );
-        },
+                    if (isSelected) Icon(Icons.check, color: primary, size: 18),
+                  ],
+                ),
+              );
+            },
       ),
     );
   }
