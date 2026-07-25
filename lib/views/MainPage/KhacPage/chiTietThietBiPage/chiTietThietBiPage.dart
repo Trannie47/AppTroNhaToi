@@ -981,7 +981,7 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
                             child: const Text(
                               "Hủy bỏ",
                               style: TextStyle(
-                                fontSize: 18,
+                                fontSize: 16,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -1019,7 +1019,7 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
                               "Xác nhận",
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 18,
+                                fontSize: 16,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),

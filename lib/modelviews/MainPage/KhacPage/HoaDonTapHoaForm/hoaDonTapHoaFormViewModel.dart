@@ -330,9 +330,22 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
 
     SoTienConThieu = tongTien - daThu;
 
+    if (SoTienConThieu.abs() < 0.01) {
+      SoTienConThieu = 0;
+    }
+
     if (SoTienConThieu < 0) {
       SoTienConThieu = 0;
     }
+
+    notifyListeners();
+  }
+
+  bool get hienNutThemPhieuThu {
+    return nguoiThueTro &&
+        !isXacNhanPhieuThu &&
+        dsHangHoaChon.isNotEmpty &&
+        SoTienConThieu > 0;
   }
 
   void themPhieuThu() {

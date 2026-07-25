@@ -9,9 +9,7 @@ class HoaDonTapHoa {
   factory HoaDonTapHoa.fromMap(Map<String, dynamic> map) {
     return HoaDonTapHoa(
       maHoaDon: map['maHoaDon'] as String?,
-      idnt: map['tongTien'] != null
-          ? .tryParse(map['tongTien'].toString())
-          : null,
+      idnt: map['idnt'] != null ? .tryParse(map['idnt'].toString()) : null,
 
       ngayBan: map['ngayBan'] != null
           ? DateTime.tryParse(map['ngayBan'] as String)

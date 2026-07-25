@@ -8,27 +8,33 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
 class HopDongApiClient {
-  final Dio _dio= RetrofitClient().dio;
+  final Dio _dio = RetrofitClient().dio;
 
-
-  Future<List<HopDongDTO>> getListHopDong() async{
-    try{
-      final request= await _dio.get("hop-dong/findAll");
-      if(request.statusCode==200 || request.statusCode==201) {
+  Future<List<HopDongDTO>> getListHopDong() async {
+    try {
+      final request = await _dio.get("hop-dong/findAll");
+      if (request.statusCode == 200 || request.statusCode == 201) {
         final List<dynamic> data = request.data;
-        return data.map((json) =>
-            HopDongDTO.fromMap(json as Map<String, dynamic>)).toList();
+        return data
+            .map((json) => HopDongDTO.fromMap(json as Map<String, dynamic>))
+            .toList();
       }
-      throw Exception("Tải danh sách hợp đồng thất bại! (Mã lỗi: ${request.statusCode})");
-      } catch (e) {
+      throw Exception(
+        "Tải danh sách hợp đồng thất bại! (Mã lỗi: ${request.statusCode})",
+      );
+    } catch (e) {
       if (kDebugMode) {
         print("Loi HopDongApiClient $e");
       }
       rethrow;
     }
   }
-  Future<HopDong> createContract(HopDong hopDong, List<File> imageHopDong)async{
-    final formData= FormData.fromMap({
+
+  Future<HopDong> createContract(
+    HopDong hopDong,
+    List<File> imageHopDong,
+  ) async {
+    final formData = FormData.fromMap({
       'idnt': hopDong.idnt,
       'phongId': hopDong.phongID,
       'ngayKy': hopDong.ngayKy?.toIso8601String().split('T').first,
@@ -40,25 +46,34 @@ class HopDongApiClient {
       // Danh sách file ảnh thật (binary)
       'files': [
         for (var file in imageHopDong)
-          await MultipartFile.fromFile(file.path, filename: file.path.split('/').last),
+          await MultipartFile.fromFile(
+            file.path,
+            filename: file.path.split('/').last,
+          ),
       ],
     });
-    try{
-      final request= await _dio.post("hop-dong/createContract",data: formData);
-      if(request.statusCode==200|| request.statusCode ==201){
+    try {
+      final request = await _dio.post(
+        "hop-dong/createContract",
+        data: formData,
+      );
+      if (request.statusCode == 200 || request.statusCode == 201) {
         final responseData = request.data['data'] ?? request.data;
         return HopDong.fromMap(responseData as Map<String, dynamic>);
       }
       throw Exception("Lưu hợp đồng thất bại, (Mã lỗi: ${request.statusCode})");
-    }catch(e){
+    } catch (e) {
       if (kDebugMode) {
         print("Loi HopDongApiClient $e");
       }
       rethrow;
     }
-
   }
-  Future<HopDong> updateContract(HopDong hopDong, List<File> imageHopDong) async{
+
+  Future<HopDong> updateContract(
+    HopDong hopDong,
+    List<File> imageHopDong,
+  ) async {
     final formData = FormData.fromMap({
       'idnt': hopDong.idnt,
       'phongId': hopDong.phongID,
@@ -71,23 +86,32 @@ class HopDongApiClient {
       // Danh sách file ảnh thật (binary)
       'files': [
         for (var file in imageHopDong)
-          await MultipartFile.fromFile(file.path, filename: file.path.split('/').last),
+          await MultipartFile.fromFile(
+            file.path,
+            filename: file.path.split('/').last,
+          ),
       ],
     });
-    try{
-      final request = await _dio.post("hop-dong/${hopDong.hopDongID}/updateContract", data: formData);
-      if(request.statusCode == 200 || request.statusCode == 201){
+    try {
+      final request = await _dio.post(
+        "hop-dong/${hopDong.hopDongID}/updateContract",
+        data: formData,
+      );
+      if (request.statusCode == 200 || request.statusCode == 201) {
         final responseData = request.data['data'] ?? request.data;
         return HopDong.fromMap(responseData as Map<String, dynamic>);
       }
-      throw Exception("Cập nhật hợp đồng thất bại, (Mã lỗi: ${request.statusCode})");
-    }catch(e){
+      throw Exception(
+        "Cập nhật hợp đồng thất bại, (Mã lỗi: ${request.statusCode})",
+      );
+    } catch (e) {
       if (kDebugMode) {
         print("Loi updateContract HopDongApiClient $e");
       }
       rethrow;
     }
   }
+
   Future<HopDong> renewContract({
     required String hopDongId,
     required DateTime ngayHetHanMoi,
@@ -100,20 +124,25 @@ class HopDongApiClient {
       if (files != null && files.isNotEmpty)
         'files': [
           for (var file in files)
-            await MultipartFile.fromFile(file.path,
-                filename: file.path.split('/').last),
+            await MultipartFile.fromFile(
+              file.path,
+              filename: file.path.split('/').last,
+            ),
         ],
     });
 
     try {
-      final request =
-      await _dio.post("hop-dong/$hopDongId/giaHan", data: formData);
+      final request = await _dio.post(
+        "hop-dong/$hopDongId/giaHan",
+        data: formData,
+      );
       if (request.statusCode == 200 || request.statusCode == 201) {
         final responseData = request.data['data'] ?? request.data;
         return HopDong.fromMap(responseData as Map<String, dynamic>);
       }
       throw Exception(
-          "Gia hạn hợp đồng thất bại! (Mã lỗi: ${request.statusCode})");
+        "Gia hạn hợp đồng thất bại! (Mã lỗi: ${request.statusCode})",
+      );
     } catch (e) {
       if (kDebugMode) {
         print("Lỗi renewContract HopDongApiClient: $e");
@@ -122,15 +151,21 @@ class HopDongApiClient {
     }
   }
 
-  Future<List<RoomAvailableDTO>> getRoomsAvailableForContract() async{
-    try{
-      final response=  await _dio.get("hop-dong/roomsAvailable");
-      if(response.statusCode==200 || response.statusCode==201){
-        List<dynamic> data= response.data;
-        return data.map((json)=> RoomAvailableDTO.fromJson(json as Map<String,dynamic>)).toList();
+  Future<List<RoomAvailableDTO>> getRoomsAvailableForContract() async {
+    try {
+      final response = await _dio.get("hop-dong/roomsAvailable");
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        List<dynamic> data = response.data;
+        return data
+            .map(
+              (json) => RoomAvailableDTO.fromJson(json as Map<String, dynamic>),
+            )
+            .toList();
       }
-      throw Exception("Lấy ds phòng available thất bại (Mã lỗi: ${response.statusCode})");
-    }catch(e){
+      throw Exception(
+        "Lấy ds phòng available thất bại (Mã lỗi: ${response.statusCode})",
+      );
+    } catch (e) {
       if (kDebugMode) {
         print("Loi getRoomsAvailableForContract trong HopDongApiClient $e");
       }
@@ -143,9 +178,13 @@ class HopDongApiClient {
       final request = await _dio.get("hop-dong/$phongId/lich-su");
       if (request.statusCode == 200 || request.statusCode == 201) {
         final List<dynamic> data = request.data;
-        return data.map((json) => HopDongDTO.fromMap(json as Map<String, dynamic>)).toList();
+        return data
+            .map((json) => HopDongDTO.fromMap(json as Map<String, dynamic>))
+            .toList();
       }
-      throw Exception("Tải danh sách lịch sử thuê phòng thất bại! (Mã lỗi: ${request.statusCode})");
+      throw Exception(
+        "Tải danh sách lịch sử thuê phòng thất bại! (Mã lỗi: ${request.statusCode})",
+      );
     } catch (e) {
       if (kDebugMode) {
         print("Lỗi getLichSuThuePhong trong HopDongApiClient: $e");
@@ -154,21 +193,21 @@ class HopDongApiClient {
     }
   }
 
-
-
-  Future<List<HopDong>> getRoomByNguoithue(int idnt) async{
-    try{
-      final resquest= await _dio.get("nguoi-thue/$idnt/listRoomNguoiThue");
-      if(resquest.statusCode==200 || resquest.statusCode==201){
-        final List<dynamic> data= resquest.data;
-        return data.map((json)=> HopDong.fromMap(json as Map<String, dynamic>)).toList();
+  Future<List<HopDong>> getRoomByNguoithue(int idnt) async {
+    try {
+      final resquest = await _dio.get("nguoi-thue/$idnt/listRoomNguoiThue");
+      if (resquest.statusCode == 200 || resquest.statusCode == 201) {
+        final List<dynamic> data = resquest.data;
+        return data
+            .map((json) => HopDong.fromMap(json as Map<String, dynamic>))
+            .toList();
       }
       throw DioException(
-          requestOptions: resquest.requestOptions,
+        requestOptions: resquest.requestOptions,
         response: resquest,
-        type: DioExceptionType.badResponse
+        type: DioExceptionType.badResponse,
       );
-    }catch(e){
+    } catch (e) {
       print("Loi HopDongApiCline $e");
       rethrow;
     }

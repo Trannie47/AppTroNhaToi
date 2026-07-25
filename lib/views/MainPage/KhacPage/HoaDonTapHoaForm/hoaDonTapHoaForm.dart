@@ -53,7 +53,6 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
         vm.dsNguoiThue.isNotEmpty &&
         vm.maHoaDon.isEmpty) {
       vm.maHoaDon = widget.hoaDonModel!.hoaDon.maHoaDon!;
-
       vm.selectedNguoiThue = vm.dsNguoiThue.firstWhere(
         (e) => e.idnt == widget.hoaDonModel!.hoaDon.idnt,
         orElse: () => vm.dsNguoiThue.first,
@@ -475,6 +474,7 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
                               setState(() {
                                 vm.dsPhieuThu[entry.key] = value;
                                 vm.isXacNhanPhieuThu = false;
+                                vm.tinhSoTienConThieu();
                               });
                             },
                           ),
@@ -483,10 +483,7 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
 
                       const SizedBox(height: 16),
 
-                      if (vm.nguoiThueTro &&
-                          !vm.isXacNhanPhieuThu &&
-                          vm.dsHangHoaChon.length > 0 &&
-                          vm.SoTienConThieu > 0)
+                      if (vm.hienNutThemPhieuThu)
                         SizedBox(
                           width: double.infinity,
                           child: OutlinedButton.icon(
