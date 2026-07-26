@@ -43,7 +43,6 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
     );
   }
 
-  // 🟢 Đã loại bỏ _formatMoney và _formatDateStr thủ công, sử dụng util bên ngoài
 
   @override
   Widget build(BuildContext context) {
@@ -136,7 +135,6 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
       statusColor = Colors.orange.shade800;
     }
 
-    // 🟢 Xử lý định dạng ngày lập an toàn bằng hàm util sẵn có
     String ngayLapFormatted = "";
     if (item['ngayLap'] != null) {
       DateTime? parsedDate = DateTime.tryParse(item['ngayLap'].toString());
@@ -357,7 +355,7 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
                     children: [
                       _buildDetailRow("Tổng hóa đơn:", formatMoney(tongTien)),
                       const SizedBox(height: 4),
-                      _buildDetailRow("Đã thu trước đó:", formatMoney(tongDaThu)),
+                      _buildDetailRow("Đã thu:", formatMoney(tongDaThu)),
                       const Divider(height: 12),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
