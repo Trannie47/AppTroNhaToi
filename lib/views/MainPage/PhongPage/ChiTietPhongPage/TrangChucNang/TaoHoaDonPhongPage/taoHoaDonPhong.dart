@@ -199,14 +199,31 @@ class _TaoHoaDonPageState extends State<TaoHoaDonPage> {
                         _buildCardSection(
                           title: "1. Chốt chỉ số Điện Nước (Cả Phòng)",
                           trailing: Switch(
-                            value: vm.isChotDienNuoc,
+                            value: vm.canCreateDienNuoc ? vm.isChotDienNuoc : false,
                             activeColor: const Color(0xff2E7D32),
-                            onChanged: (val) => vm.toggleChotDienNuoc(val),
+                            onChanged: vm.canCreateDienNuoc
+                                ? (val) => vm.toggleChotDienNuoc(val)
+                                : null, // Khóa tương tác nếu chưa thanh toán
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              if (vm.isChotDienNuoc) ...[
+                              if (!vm.canCreateDienNuoc) ...[
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  margin: const EdgeInsets.only(bottom: 10),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xffFFF8E1),
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(color: const Color(0xffFFE082)),
+                                  ),
+                                  child: const Text(
+                                    "Hóa đơn điện nước kỳ này chưa được thanh toán. Vui lòng vào thanh toán trước khi tạo bản ghi điện nước mới.",
+                                    style: TextStyle(fontSize: 12, color: Color(0xff8D6E63), fontWeight: FontWeight.w500),
+                                  ),
+                                ),
+                              ],
+                              if (vm.isChotDienNuoc && vm.canCreateDienNuoc) ...[
                                 _buildMeterInput(
                                   label: "Chỉ số Điện (kWh)",
                                   cuCtrl: vm.txtDienChiSoCu,
@@ -250,8 +267,10 @@ class _TaoHoaDonPageState extends State<TaoHoaDonPage> {
                                     color: Colors.grey.shade100,
                                     borderRadius: BorderRadius.circular(8),
                                   ),
-                                  child: const Text(
-                                    "Đã TẮT chốt điện nước đợt này. Hệ thống không tính tiền điện nước cho kỳ này.",
+                                  child: Text(
+                                    vm.canCreateDienNuoc
+                                        ? "Đã tắt chốt điện nước. Hệ thống không tính tiền điện nước cho lần tạo này."
+                                        : "Chức năng chốt điện nước đang tạm khóa do chưa thanh toán hóa đơn cũ.",
                                     style: TextStyle(fontSize: 12, color: Colors.black54),
                                   ),
                                 ),
@@ -552,9 +571,20 @@ class _TaoHoaDonPageState extends State<TaoHoaDonPage> {
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                vm.isTinhTienHopDong
-                                    ? "$countPending Hóa đơn sẽ tạo"
-                                    : "1 Hóa đơn Điện Nước",
+                                    () {
+                                  int hopDongCount = vm.isTinhTienHopDong ? countPending : 0;
+                                  bool dienNuocActive = vm.isChotDienNuoc && vm.canCreateDienNuoc;
+
+                                  if (hopDongCount > 0 && dienNuocActive) {
+                                    return "${hopDongCount + 1} Hóa đơn sẽ tạo"; // Gồm hợp đồng + 1 điện nước
+                                  } else if (hopDongCount > 0) {
+                                    return "$hopDongCount Hóa đơn Hợp đồng";
+                                  } else if (dienNuocActive) {
+                                    return "1 Hóa đơn Điện Nước";
+                                  } else {
+                                    return "0 Hóa đơn";
+                                  }
+                                }(),
                                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
                               ),
                             ],
@@ -598,14 +628,31 @@ class _TaoHoaDonPageState extends State<TaoHoaDonPage> {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xff2E7D32),
+                            backgroundColor: (vm.isLoading ||
+                                (!vm.isChotDienNuoc && !vm.isTinhTienHopDong) ||
+                                (vm.isTinhTienHopDong && countPending == 0 && (!vm.isChotDienNuoc || !vm.canCreateDienNuoc)))
+                                ? Colors.grey.shade400
+                                : const Color(0xff2E7D32),
                             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                           ),
                           child: vm.isLoading
                               ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
                               : Text(
-                            vm.isTinhTienHopDong ? "TẠO $countPending HÓA ĐƠN" : "CHỐT ĐIỆN NƯỚC",
+                                () {
+                              int hopDongCount = vm.isTinhTienHopDong ? countPending : 0;
+                              bool dienNuocActive = vm.isChotDienNuoc && vm.canCreateDienNuoc;
+
+                              if (hopDongCount > 0 && dienNuocActive) {
+                                return "TẠO ${hopDongCount + 1} HÓA ĐƠN";
+                              } else if (hopDongCount > 0) {
+                                return "TẠO $hopDongCount HÓA ĐƠN";
+                              } else if (dienNuocActive) {
+                                return "CHỐT ĐIỆN NƯỚC";
+                              } else {
+                                return "HẾT HÓA ĐƠN ĐỂ TẠO";
+                              }
+                            }(),
                             style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                           ),
                         ),

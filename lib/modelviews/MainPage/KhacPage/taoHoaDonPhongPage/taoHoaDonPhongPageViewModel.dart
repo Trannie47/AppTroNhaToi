@@ -28,6 +28,9 @@ class TaoHoaDonPhongPageViewModel extends ChangeNotifier {
   bool isChotDienNuoc = true;     // Mục 1: Điện Nước
   bool isTinhTienHopDong = true;  // Mục 2: Tiền Nhà & Xe Hợp đồng
 
+  bool _canCreateDienNuoc = true;
+  bool get canCreateDienNuoc => _canCreateDienNuoc;
+
 
   final txtDienChiSoCu = TextEditingController(text: "0");
   final txtDienChiSoMoi = TextEditingController(text: "0");
@@ -71,6 +74,20 @@ class TaoHoaDonPhongPageViewModel extends ChangeNotifier {
   bool get isAllContractsBilled {
     if (listContracts.isEmpty) return false;
     return listContracts.every((hd) => hd.isAlreadyBilled);
+  }
+
+  // Tính tổng số hóa đơn thực tế sẽ được tạo ra dựa trên các toggle đang bật
+  int get totalInvoicesToCreate {
+    int count = 0;
+    // Nếu bật tính tiền hợp đồng, cộng thêm số lượng hợp đồng chưa có hóa đơn
+    if (isTinhTienHopDong) {
+      count += listContracts.where((hd) => !hd.isAlreadyBilled).length;
+    }
+    // Nếu bật chốt điện nước VÀ được phép tạo (không bị khóa do nợ cũ), cộng thêm 1 hóa đơn Điện Nước
+    if (isChotDienNuoc && canCreateDienNuoc) {
+      count += 1;
+    }
+    return count;
   }
 
   void notifyUI() {
@@ -123,6 +140,10 @@ class TaoHoaDonPhongPageViewModel extends ChangeNotifier {
         txtDienChiSoMoi.text = (dn['chiSoDienMoi'] ?? 0).toString();
         txtNuocChiSoCu.text = (dn['chiSoNuocCu'] ?? 0).toString();
         txtNuocChiSoMoi.text = (dn['chiSoNuocMoi'] ?? 0).toString();
+      }
+      _canCreateDienNuoc = data['canCreateDienNuoc'] ?? true;
+      if (!_canCreateDienNuoc) {
+        isChotDienNuoc = false; // Tự động tắt toggle nếu chưa thanh toán tiền điện nước cũ
       }
 
       if (data['danhSachHopDong'] != null) {
