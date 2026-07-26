@@ -79,6 +79,7 @@ class _PhuongTienNguoiThuePageState extends State<PhuongTienNguoiThuePage> {
       MaterialPageRoute(
         builder: (_) => HoaDonGuiXePage(
           dsPhuongTien: vm.dsPhuongTien,
+          tenKhachThue: widget.nguoiThue.hoTen ?? "Khách thuê",
         ),
       ),
     );

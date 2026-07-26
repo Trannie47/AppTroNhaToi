@@ -1,4 +1,5 @@
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/NguoiThuePage/PhuongTienNguoiThuePage/PhuongTienNguoiThuePage.dart';
 import 'package:AppTroNhaToi/views/MainPage/NguoiThuePage/NguoiThueForm/NguoiThueForm.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/string_formatter.dart';
@@ -6,6 +7,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../Provider/nguoi_thue_provider.dart';
+import '../../../../Provider/phuong_tien_provider.dart';
 import '../../../../core/utils/launcher_utils.dart';
 import '../../../../models/hop_dong.dart';
 import '../../../../modelviews/MainPage/NguoiThuePage/ChiTietNguoiThuePage/chiTietNguoiThuePageViewModel.dart';
@@ -14,6 +16,7 @@ import '../../../../widgets/app_confirm_dialog.dart';
 import '../../../../widgets/app_error.dart';
 import '../NguoiLuuTruTamThoiPage/NguoiLuuTruTamThoiPage.dart';
 import '../PhuongTienNguoiThuePage/PhuongTienNguoiThuePage.dart';
+import '../hoaDonGuiXePage/hoaDonGuiXePage.dart';
 
 class ChiTietNguoiThuePage extends StatefulWidget {
   final NguoiThue nguoiThue;
@@ -29,6 +32,7 @@ class ChiTietNguoiThuePage extends StatefulWidget {
 
 class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
   late ChiTietNguoiThuePageViewModel vm;
+  late PhuongTienNguoiThuePageViewModel viewmodel;
   late NguoiThue _currentNguoiThue; //Tạo biến thay đổi dữ liệu nội bộ màn hình khi upadte nguoi thue
 
   @override
@@ -36,6 +40,7 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
     super.initState();
     _currentNguoiThue = widget.nguoiThue;
     vm = ChiTietNguoiThuePageViewModel(context.read<NguoiThueProvider>());
+    viewmodel= PhuongTienNguoiThuePageViewModel(nguoiThue: _currentNguoiThue, provider: context.read<PhuongTienProvider>());
     vm.addListener(() {
       if (mounted) {
         setState(() {});
@@ -44,6 +49,7 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       vm.fetchRoomByNguoiThue(widget.nguoiThue.idnt!);
+      viewmodel.fetchDsPhuongTien();// gọi api lấy ds phương tiên để gửi vào màn hóa dơn phươn tiện
     }); //Kích hoạt gọi api lấy ds phòng theo id ngthue
 
   }
@@ -103,6 +109,17 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
         _currentNguoiThue = result; // Cập nhật đè dữ liệu mới lên UI chi tiết
       });
     }
+  }
+  void openHoaDonGuiXePage() async {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => HoaDonGuiXePage(
+            dsPhuongTien: viewmodel.dsPhuongTien, // Truyền thẳng danh sách xe đã fetch sẵn
+            tenKhachThue: widget.nguoiThue.hoTen ?? "Khách thuê",
+          ),
+        ),
+      );
   }
   @override
   Widget build(BuildContext context) {
@@ -202,14 +219,7 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                       break;
 
                     case 'parking_bill':
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (_) {
-                      //       return HoaDonGuiXePage(dsPhuongTien: [...vm.dsXe]);
-                      //     },
-                      //   ),
-                      // );
+                     openHoaDonGuiXePage();
                       break;
 
                     case 'guest':

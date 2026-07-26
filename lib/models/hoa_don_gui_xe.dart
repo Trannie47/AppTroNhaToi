@@ -7,10 +7,10 @@ class HoaDonGuiXe {
 
   final DateTime? ngayLap;
 
+  final num? soTien;
+
   /// 0 = chưa thu
   /// 1 = đã thu
-  /// 2 = không còn ở
-  /// 3 = đã hủy
   final int? trangThai;
 
   HoaDonGuiXe({
@@ -18,36 +18,30 @@ class HoaDonGuiXe {
     this.thangNam,
     this.idPhuongTien,
     this.ngayLap,
+    this.soTien,
     this.trangThai,
   });
 
   factory HoaDonGuiXe.fromMap(Map<String, dynamic> map) {
     return HoaDonGuiXe(
       maHoaDon: map['maHoaDon'] as int?,
-
       thangNam: map['thangNam'] as String?,
-
-      idPhuongTien: map['idPhuongTien'] as num?,
-
-      ngayLap:
-      map['ngayLap'] != null
+      idPhuongTien: map['idPT'] ?? map['idPhuongTien'] as num?,
+      ngayLap: map['ngayLap'] != null
           ? DateTime.parse(map['ngayLap'])
           : null,
-
-      trangThai: map['trangThai'] as int?,
+      soTien: map['soTien'] != null ? num.tryParse(map['soTien'].toString()) : null,
+      trangThai: map['TrangThai'] ?? map['trangThai'] as int?,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
       if (maHoaDon != null) 'maHoaDon': maHoaDon,
-
       'thangNam': thangNam,
-
       'idPhuongTien': idPhuongTien,
-
       'ngayLap': ngayLap?.toIso8601String(),
-
+      'soTien': soTien,
       'trangThai': trangThai,
     };
   }
@@ -57,17 +51,15 @@ class HoaDonGuiXe {
     String? thangNam,
     num? idPhuongTien,
     DateTime? ngayLap,
+    num? soTien,
     int? trangThai,
   }) {
     return HoaDonGuiXe(
       maHoaDon: maHoaDon ?? this.maHoaDon,
-
       thangNam: thangNam ?? this.thangNam,
-
       idPhuongTien: idPhuongTien ?? this.idPhuongTien,
-
       ngayLap: ngayLap ?? this.ngayLap,
-
+      soTien: soTien ?? this.soTien,
       trangThai: trangThai ?? this.trangThai,
     );
   }
@@ -79,6 +71,7 @@ class HoaDonGuiXe {
         'thangNam: $thangNam, '
         'idPhuongTien: $idPhuongTien, '
         'ngayLap: $ngayLap, '
+        'soTien: $soTien, '
         'trangThai: $trangThai, '
         ')';
   }
