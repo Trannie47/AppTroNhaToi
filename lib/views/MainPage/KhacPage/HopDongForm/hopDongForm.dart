@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../Provider/hop_dong_provider.dart';
 import '../../../../Provider/nguoi_thue_provider.dart';
+import '../../../../Provider/phong_provider.dart';
 import '../../../../models/DTO/HopDongDTO.dart';
 import '../../../../models/DTO/RoomAvailableDTO.dart';
 import '../../../../states/create_contract_state.dart';
@@ -549,7 +550,9 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                       else{
                         await vm.createHopDong();
                         if (!mounted) return;
-                        if (vm.createContractState is CreateContractSuccess) {
+                        if (vm.createContractState is CreateContractSuccess){
+                          await context.read<PhongProvider>().getListPhong();
+                          await context.read<NguoiThueProvider>().fetchAll();
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text("Tạo hợp đồng thành công!"),

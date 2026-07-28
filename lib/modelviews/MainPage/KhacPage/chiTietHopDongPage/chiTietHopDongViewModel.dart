@@ -3,13 +3,15 @@ import 'package:AppTroNhaToi/Provider/phong_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../Provider/hop_dong_provider.dart';
 import '../../../../models/DTO/HopDongDTO.dart';
 import '../../../../models/hop_dong.dart';
 import '../../../../models/item_phong.dart';
 
 class ChiTietHopDongViewModel extends ChangeNotifier {
   final PhongProvider _phongProvider;
-  ChiTietHopDongViewModel(this._phongProvider);
+  final HopDongProvider _hopDongProvider;
+  ChiTietHopDongViewModel(this._phongProvider, this._hopDongProvider);
 
   late HopDongDTO _hopDong;
   HopDongDTO get hopDong => _hopDong;
@@ -40,6 +42,60 @@ class ChiTietHopDongViewModel extends ChangeNotifier {
     } catch (e) {
       if (kDebugMode) print("Lỗi getInforPhong: $e");
       return null;
+    } finally {
+      _isLoadingPhong = false;
+      notifyListeners();
+    }
+  }
+  Future<bool> deleteHopDong(String hopDongId) async {
+    try {
+      _isLoadingPhong = true;
+      notifyListeners();
+
+      final success = await _hopDongProvider.deleteHopDong(hopDongId);
+      if (success) {
+        isUpdated = true;
+      }
+      return success;
+    } catch (e) {
+      if (kDebugMode) print("Lỗi ẩn hợp đồng trong VM: $e");
+      return false;
+    } finally {
+      _isLoadingPhong = false;
+      notifyListeners();
+    }
+  }
+  Future<bool> cancelHopDong(String hopDongId) async {
+    try {
+      _isLoadingPhong = true;
+      notifyListeners();
+
+      final success = await _hopDongProvider.cancelHopDong(hopDongId);
+      if (success) {
+        isUpdated = true;
+      }
+      return success;
+    } catch (e) {
+      if (kDebugMode) print("Lỗi hủy hợp đồng trong VM: $e");
+      rethrow;
+    } finally {
+      _isLoadingPhong = false;
+      notifyListeners();
+    }
+  }
+  Future<bool> terminateHopDong(String hopDongId) async {
+    try {
+      _isLoadingPhong = true;
+      notifyListeners();
+
+      final success = await _hopDongProvider.terminateHopDong(hopDongId);
+      if (success) {
+        isUpdated = true;
+      }
+      return success;
+    } catch (e) {
+      if (kDebugMode) print("Lỗi kết thúc hợp đồng trong VM: $e");
+      rethrow; // Ném tiếp lỗi ra ngoài để UI bắt được nội dung thông báo
     } finally {
       _isLoadingPhong = false;
       notifyListeners();

@@ -31,6 +31,16 @@ class HopdongRepository {
       files: files,
     );
   }
+  Future<HopDong> deleteContract(String hopDongId) {
+    return hopDongApiClient.deleteContract(hopDongId);
+  }
+  Future<HopDong> cancelContract(String hopDongId) {
+    return hopDongApiClient.cancelContract(hopDongId);
+  }
+  //kết thúc hợp đồng
+  Future<HopDong> terminateContract(String hopDongId) {
+    return hopDongApiClient.terminateContract(hopDongId);
+  }
 
   Future<List<RoomAvailableDTO>> getRoomsAvailableForContract(){
     return hopDongApiClient.getRoomsAvailableForContract();

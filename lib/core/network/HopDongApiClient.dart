@@ -172,6 +172,53 @@ class HopDongApiClient {
       rethrow;
     }
   }
+  Future<HopDong> deleteContract(String hopDongId) async {
+    try {
+      final request = await _dio.delete("hop-dong/$hopDongId");
+      if (request.statusCode == 200 || request.statusCode == 201) {
+        final responseData = request.data['data'] ?? request.data;
+        return HopDong.fromMap(responseData as Map<String, dynamic>);
+      }
+      throw Exception(
+        "Ẩn hợp đồng thất bại! (Mã lỗi: ${request.statusCode})",
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        print("Lỗi deleteContract HopDongApiClient: $e");
+      }
+      rethrow;
+    }
+  }
+  Future<HopDong> cancelContract(String hopDongId) async {
+    try {
+      final request = await _dio.post("hop-dong/$hopDongId/cancel");
+      if (request.statusCode == 200 || request.statusCode == 201) {
+        final responseData = request.data['data'] ?? request.data;
+        return HopDong.fromMap(responseData as Map<String, dynamic>);
+      }
+      throw Exception(
+        "Hủy hợp đồng thất bại! (Mã lỗi: ${request.statusCode})",
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        print("Lỗi cancelContract HopDongApiClient: $e");
+      }
+      rethrow;
+    }
+  }
+  Future<HopDong> terminateContract(String hopDongId) async {
+    try {
+      final request = await _dio.post("hop-dong/$hopDongId/terminate");
+      if (request.statusCode == 200 || request.statusCode == 201) {
+        final responseData = request.data['data'] ?? request.data;
+        return HopDong.fromMap(responseData as Map<String, dynamic>);
+      }
+      throw Exception("Kết thúc hợp đồng thất bại! (Mã lỗi: ${request.statusCode})");
+    } catch (e) {
+      if (kDebugMode) print("Lỗi terminateContract HopDongApiClient: $e");
+      rethrow;
+    }
+  }
 
   Future<List<HopDongDTO>> getLichSuThuePhong(int phongId) async {
     try {

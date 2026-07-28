@@ -1,3 +1,5 @@
+import 'package:AppTroNhaToi/Provider/hop_dong_provider.dart';
+import 'package:AppTroNhaToi/Provider/nguoi_thue_provider.dart';
 import 'package:AppTroNhaToi/Provider/phong_provider.dart';
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
@@ -9,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../models/hop_dong.dart';
+import '../../../../widgets/app_confirm_dialog.dart';
 import '../../PhongPage/ChiTietPhongPage/phongChiTiet.dart';
 import '../HopDongForm/hopDongForm.dart';
 import '../giaHanHopDongPage/giaHanHopDongPage.dart';
@@ -24,11 +27,12 @@ class ChiTietHopDongPage extends StatefulWidget {
 class _ChiTietHopDongPageState extends State<ChiTietHopDongPage> {
   late ChiTietHopDongViewModel vm;
 
+
   @override
   void initState() {
 
      super.initState();
-     vm = ChiTietHopDongViewModel(context.read<PhongProvider>());
+     vm = ChiTietHopDongViewModel(context.read<PhongProvider>(), context.read<HopDongProvider>());
      vm.init(widget.hopDong);
     vm.addListener(() {
       if (mounted) {
@@ -124,28 +128,30 @@ class _ChiTietHopDongPageState extends State<ChiTietHopDongPage> {
           ],
         ),
       ),
-        //Nếu hợp đồng đã kết thúc thì ẩn luôn cả 2 nút
-        bottomNavigationBar: isDaKetThuc
-            ? null
-            : Container(
+
+        bottomNavigationBar:Container(
           color: const Color(0xffF3F3F3),
           padding: const EdgeInsets.fromLTRB(16, 10, 16, 20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _chiTietPhongButton(context, vm),
-              const SizedBox(height: 16),
+              if (vm.hopDong.trangThai != 2) ...[
+                _chiTietPhongButton(context, vm),
+                const SizedBox(height: 16),
+              ],
               _actionHopDongButton(
                 title: vm.hopDong.trangThai == 0
                     ? "Hủy hợp đồng"
-                    : "Kết thúc hợp đồng",
+                    : vm.hopDong.trangThai == 1
+                    ? "Kết thúc hợp đồng"
+                    : "Ẩn hợp đồng",
                 onPressed: () {
                   if (vm.hopDong.trangThai == 0) {
-                    // Xử lý Hủy hợp đồng chờ hiệu lực
-                    //_xoaOrHuyHopDong(context, vm);
-                  } else {
-                    // Xử lý Kết thúc hợp đồng đang hoạt động
-                   // _ketThucHopDong(context, vm);
+                    _handleCancelContract();
+                  } else if (vm.hopDong.trangThai == 1) {
+                    _handleTerminateContract();
+                  }else{
+                    _handleDeleteContract();
                   }
                 },
               ),
@@ -154,7 +160,167 @@ class _ChiTietHopDongPageState extends State<ChiTietHopDongPage> {
         ),
     );
   }
+  void _handleCancelContract() {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AppConfirmDialog(
+        title: "Xác nhận hủy hợp đồng",
+        content: "Bạn có chắc chắn muốn hủy hợp đồng chờ hiệu lực này không?",
+        textConfirm: "Xác nhận",
+        isDangerous: true,
+        onConfirm: () async {
+          Navigator.pop(dialogContext);
+
+          try {
+            bool success = await vm.cancelHopDong(vm.hopDong.hopDongID);
+
+            if (success && mounted) {
+              await context.read<PhongProvider>().getListPhong();
+              await context.read<NguoiThueProvider>().fetchAll();
+
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Hủy hợp đồng thành công!"),
+                    backgroundColor: Colors.green,
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+                Navigator.pop(context, true);
+              }
+            }
+          } catch (e) {
+            if (mounted) {
+              String errorMsg = "Không thể hủy hợp đồng do còn vướng công nợ!";
+
+              final err = e as dynamic;
+              if (err.response != null && err.response?.data != null) {
+                final responseData = err.response?.data;
+                if (responseData is Map && responseData['message'] != null) {
+                  final message = responseData['message'];
+                  if (message is List) {
+                    errorMsg = message.join('\n');
+                  } else {
+                    errorMsg = message.toString();
+                  }
+                }
+              } else {
+                errorMsg = e.toString().replaceAll("Exception: ", "");
+              }
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    errorMsg,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  backgroundColor: Colors.red.shade700,
+                  behavior: SnackBarBehavior.floating,
+                  duration: const Duration(seconds: 5),
+                ),
+              );
+            }
+          }
+        },
+      ),
+    );
+  }
+
+  void _handleDeleteContract() {
+    showDialog(
+      context: context,
+      builder: (context) => AppConfirmDialog(
+        title: "Xác nhận ẩn hợp đồng",
+        content: "Bạn có chắc chắn muốn ẩn hợp đồng này không?",
+        textConfirm: "Ẩn hợp đồng",
+        isDangerous: true,
+        onConfirm: () async {
+          bool success = await vm.deleteHopDong(vm.hopDong.hopDongID);
+          if (context.mounted) {
+            Navigator.pop(context, success ? true : false);
+          }
+        },
+      ),
+    ).then((result) async {
+      if (result == true && context.mounted) {
+        await context.read<PhongProvider>().getListPhong();
+        await context.read<NguoiThueProvider>().fetchAll();
+        if (context.mounted) {
+          Navigator.pop(context, true);
+        }
+      }
+    });
+  }
+  void _handleTerminateContract() {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AppConfirmDialog(
+        title: "Xác nhận kết thúc hợp đồng",
+        content: "Bạn có chắc chắn muốn kết thúc hợp đồng này không? Hệ thống sẽ kiểm tra công nợ và chốt ngày trả phòng thực tế.",
+        textConfirm: "Kết thúc",
+        isDangerous: true,
+        onConfirm: () async {
+          // 1. Đóng dialog xác nhận trước
+          Navigator.pop(dialogContext);
+
+          try {
+            // 2. Gọi ViewModel thực hiện kết thúc hợp đồng
+            bool success = await vm.terminateHopDong(vm.hopDong.hopDongID);
+
+            if (success && mounted) {
+              // Fetch lại dữ liệu các Provider liên quan
+              await context.read<PhongProvider>().getListPhong();
+              await context.read<NguoiThueProvider>().fetchAll();
+
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Kết thúc hợp đồng thành công!"),
+                    backgroundColor: Colors.green,
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+                Navigator.pop(context, true); // Quay về danh sách
+              }
+            }
+          } catch (e) {
+            if (mounted) {
+              String errorMsg = "Không thể kết thúc hợp đồng do còn vướng công nợ!";
+
+              final err = e as dynamic;
+              if (err.response != null && err.response?.data != null) {
+                final responseData = err.response?.data;
+                if (responseData is Map && responseData['message'] != null) {
+                  final message = responseData['message'];
+                  if (message is List) {
+                    errorMsg = message.join('\n');
+                  } else {
+                    errorMsg = message.toString();
+                  }
+                }
+              } else {
+                errorMsg = e.toString().replaceAll("Exception: ", "");
+              }
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    errorMsg,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  backgroundColor: Colors.red.shade700,
+                  behavior: SnackBarBehavior.floating,
+                  duration: const Duration(seconds: 5),
+                ),
+              );
+            }
+          }
+        },
+      ),
+    );
+  }
 }
+
 
 Widget _tenantInfo(HopDongDTO hopDong) {
   // Mặc định màu sắc và chữ dựa theo trạng thái hợp đồng
