@@ -5,6 +5,8 @@ import 'package:AppTroNhaToi/Provider/thong_ke_provider.dart';
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/HomePage/homePageViewModel.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/hopDongPage/hopDongPage.dart';
+import 'package:AppTroNhaToi/views/MainPage/NguoiThuePage/NguoiThueForm/NguoiThueForm.dart';
 import 'package:AppTroNhaToi/widgets/itemCongNo.dart';
 import 'package:AppTroNhaToi/widgets/itemThongBao.dart';
 import 'package:flutter/material.dart';
@@ -225,8 +227,19 @@ class _HomePageState extends State<HomePage> {
               );
             },),
           _item(Icons.receipt, "Hóa đơn", null),
-          _item(Icons.person_add, "Người thuê", null),
-          _item(Icons.description, "Hợp đồng", null),
+          _item(Icons.person_add, "Người thuê",
+              (){
+                  Navigator.push(context, 
+                    MaterialPageRoute(builder: (context)=> const NguoiThueForm()
+                    ),
+                  );
+              }),
+          _item(Icons.description, "Hợp đồng",
+              (){
+                Navigator.push(context,
+                  MaterialPageRoute(builder: (context)=> HopDongPage()),
+                );
+              }),
         ],
       ),
 
