@@ -129,6 +129,25 @@ class HoaDonPhongApiClient {
       throw Exception(_mapErrorToMessage(e));
     }
   }
+  Future<List<Map<String, dynamic>>> getTatCaHoaDonQuanLy({String? thangNam}) async {
+    try {
+      final response = await _dio.get(
+        '/hoa-don-phong/quan-ly-chung',
+        queryParameters: {
+          if (thangNam != null && thangNam != "Tất cả") 'thangNam': thangNam,
+        },
+      );
+      final resData = response.data;
+      if (resData['success'] == true && resData['data'] != null) {
+        final List rawList = resData['data'] as List;
+        return rawList.map((e) => e as Map<String, dynamic>).toList();
+      }
+      return [];
+    } on DioException catch (e) {
+      throw Exception(_mapErrorToMessage(e));
+    }
+  }
+
 
   String _mapErrorToMessage(DioException e) {
     if (e.type == DioExceptionType.connectionTimeout ||

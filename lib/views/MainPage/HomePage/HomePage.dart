@@ -14,6 +14,7 @@ import 'package:provider/provider.dart';
 
 import '../PhongPage/FormPhong/FormPhong.dart';
 import 'GhiDienNuocHomePage/GhiDienNuocHomePage.dart';
+import 'HoaDonHomePage/HoaDonHomePage.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -226,7 +227,14 @@ class _HomePageState extends State<HomePage> {
                 ),
               );
             },),
-          _item(Icons.receipt, "Hóa đơn", null),
+          _item(Icons.receipt, "Hóa đơn",
+              (){
+                Navigator.push(context,
+                  MaterialPageRoute(builder: (context)=> const HoaDonHomePage()
+                  ),
+                );
+              }),
+
           _item(Icons.person_add, "Người thuê",
               (){
                   Navigator.push(context, 

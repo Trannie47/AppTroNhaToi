@@ -39,6 +39,7 @@ class _GhiDienNuocHomePageState extends State<GhiDienNuocHomePage> {
             icon: const Icon(Icons.arrow_back_ios_new, size: 18, color: Colors.black),
             onPressed: () => Navigator.pop(context),
           ),
+          titleSpacing: 0,
           title: const Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

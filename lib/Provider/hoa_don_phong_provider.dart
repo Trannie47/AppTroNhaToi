@@ -20,6 +20,9 @@
 
     List<HoaDonPhong> _createdHoaDonList = [];
     List<HoaDonPhong> get createdHoaDonList => _createdHoaDonList;
+    // ds hóa đơn ở chức năng hóa đơn ngoài tổng quan
+    List<Map<String, dynamic>> _danhSachTatCaHoaDon = [];
+    List<Map<String, dynamic>> get danhSachTatCaHoaDon => _danhSachTatCaHoaDon;
 
     Future<void> fetchInitData({
       required int phongId,
@@ -108,7 +111,20 @@
         notifyListeners();
       }
     }
+    Future<void> fetchTatCaHoaDonQuanLy({String? thangNam}) async {
+      _isLoading = true;
+      _errorMessage = null;
+      notifyListeners();
 
+      try {
+        _danhSachTatCaHoaDon = await _repository.getTatCaHoaDonQuanLy(thangNam: thangNam);
+      } catch (e) {
+        _errorMessage = e.toString().replaceAll('Exception: ', '');
+      } finally {
+        _isLoading = false;
+        notifyListeners();
+      }
+    }
     Future<bool> deleteHoaDon({required String maHoaDon}) async {
       _isLoading = true;
       _errorMessage = null;
