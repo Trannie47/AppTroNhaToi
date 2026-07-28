@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../PhongPage/FormPhong/FormPhong.dart';
+import 'GhiDienNuocHomePage/GhiDienNuocHomePage.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -207,19 +208,28 @@ class _HomePageState extends State<HomePage> {
   // QUICK ACTION
   Widget _quickActions() {
     return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _item(Icons.flash_on, "Ghi điện", null),
+          _item(Icons.flash_on, "Ghi điện",
+                () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const GhiDienNuocHomePage(),
+                ),
+              );
+            },),
           _item(Icons.receipt, "Hóa đơn", null),
           _item(Icons.person_add, "Người thuê", null),
           _item(Icons.description, "Hợp đồng", null),
         ],
       ),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-      ),
+
     );
   }
 
