@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import '../../../../Provider/hop_dong_provider.dart';
 import '../../../../Provider/nguoi_thue_provider.dart';
 import '../../../../Provider/phong_provider.dart';
+import '../../../../core/utils/currency_formatter.dart';
 import '../../../../models/DTO/HopDongDTO.dart';
 import '../../../../models/DTO/RoomAvailableDTO.dart';
 import '../../../../states/create_contract_state.dart';
@@ -331,6 +332,7 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                         keyboardType: TextInputType.number,
                         inputFormatters: [
                           FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                          DinhDangGiaVN(),
                         ],
                       ),
 
@@ -355,6 +357,7 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                         keyboardType: TextInputType.number,
                         inputFormatters: [
                           FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                          DinhDangGiaVN(),
                         ],
                       ),
 

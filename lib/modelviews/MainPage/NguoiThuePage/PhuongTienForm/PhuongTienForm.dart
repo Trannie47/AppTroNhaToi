@@ -1,6 +1,7 @@
 import 'package:AppTroNhaToi/Provider/phuong_tien_provider.dart';
 import 'package:AppTroNhaToi/models/phuong_tien.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class PhuongTienFormViewModel extends ChangeNotifier {
   final PhuongTien? phuongTienSua;
@@ -35,7 +36,8 @@ class PhuongTienFormViewModel extends ChangeNotifier {
       txtHangXe.text = phuongTienSua!.hangXe ?? "";
       txtBienSo.text = phuongTienSua!.bienSo ?? "";
       txtMauSac.text = phuongTienSua!.mauSac ?? "";
-      txtGiaGui.text = (phuongTienSua!.giaGui ?? 0).toInt().toString();
+      final gia = phuongTienSua!.giaGui ?? 0;
+      txtGiaGui.text = gia > 0 ? NumberFormat('#,###', 'vi_VN').format(gia).replaceAll(',', '.') : "";
       loaiXe = phuongTienSua!.loaiXe;
       selectedPhongId = phuongTienSua!.phongId;
       selectedTenPhong = phuongTienSua!.tenPhong;
@@ -102,7 +104,7 @@ class PhuongTienFormViewModel extends ChangeNotifier {
       }
     }
 
-    final giaGuiStr = txtGiaGui.text.trim();
+    final giaGuiStr = txtGiaGui.text.trim().replaceAll('.', '');
     if (giaGuiStr.isEmpty) {
       errGiaGui = "Vui lòng nhập giá gửi xe";
     } else {
@@ -113,7 +115,6 @@ class PhuongTienFormViewModel extends ChangeNotifier {
         errGiaGui = null;
       }
     }
-
     notifyListeners();
 
     return errHangXe == null &&
@@ -130,7 +131,8 @@ class PhuongTienFormViewModel extends ChangeNotifier {
     _errorMessage = null;
     notifyListeners();
 
-    final giaGuiVal = double.tryParse(txtGiaGui.text.trim()) ?? 0.0;
+    final rawGiaGui = txtGiaGui.text.trim().replaceAll('.', '');
+    final giaGuiVal = double.tryParse(rawGiaGui) ?? 0.0;
 
     final xeData = PhuongTien(
       ID: phuongTienSua?.ID ?? 0,

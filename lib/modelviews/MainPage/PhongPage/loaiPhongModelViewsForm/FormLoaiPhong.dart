@@ -1,5 +1,6 @@
 import 'package:AppTroNhaToi/models/loaiphong.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../Provider/loai_phong_provider.dart';
 
@@ -33,8 +34,9 @@ class FormLoaiPhongViewModel extends ChangeNotifier {
     soNguoiController = TextEditingController(
       text: loaiPhong?.soNguoiToiDa.toString() ?? "",
     );
+    final initialGia = loaiPhong?.giaTien ?? 0;
     giaTienController = TextEditingController(
-      text: loaiPhong?.giaTien.toStringAsFixed(0) ?? "",
+      text: initialGia > 0 ? NumberFormat('#,###', 'vi_VN').format(initialGia).replaceAll(',', '.') : "",
     );
     isMayLanh = loaiPhong?.isMayLanh ?? false;
 
@@ -123,11 +125,12 @@ class FormLoaiPhongViewModel extends ChangeNotifier {
         hopLe = false;
       }
     }
-    if (giaTienController.text.trim().isEmpty) {
+    final rawGiaTien = giaTienController.text.trim().replaceAll('.', '');
+    if (rawGiaTien.isEmpty) {
       errGiaTien = "Vui lòng nhập giá thuê";
       hopLe = false;
     } else {
-      double? giaTien = double.tryParse(giaTienController.text);
+      double? giaTien = double.tryParse(rawGiaTien);
       if (giaTien == null || giaTien <= 0) {
         errGiaTien = "Giá thuê phải lớn hơn 0";
         hopLe = false;
@@ -142,14 +145,14 @@ class FormLoaiPhongViewModel extends ChangeNotifier {
     _isSaving = true;
     _messageError = null;
     notifyListeners();
-
+    final rawGiaTien = giaTienController.text.trim().replaceAll('.', '');
     LoaiPhong lp = LoaiPhong(
       maLoaiPhong: loaiPhong?.maLoaiPhong ?? 0, // 0 nếu tạo mới, backend tự sinh ID
       tenLoaiPhong: tenLoaiPhongController.text.trim(),
       dienTich: double.tryParse(dienTichController.text) ?? 0,
       soNguoiToiDa: int.tryParse(soNguoiController.text) ?? 0,
       isMayLanh: isMayLanh,
-      giaTien: double.tryParse(giaTienController.text) ?? 0,
+      giaTien: double.tryParse(rawGiaTien) ?? 0,
     );
 
     try {

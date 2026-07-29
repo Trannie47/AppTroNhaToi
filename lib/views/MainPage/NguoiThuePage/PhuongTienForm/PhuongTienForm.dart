@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../core/utils/currency_formatter.dart';
 import '../../../../modelviews/MainPage/NguoiThuePage/PhuongTienForm/PhuongTienForm.dart';
 
 class PhuongTienForm extends StatefulWidget {
@@ -507,6 +508,10 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
                         TextField(
                           controller: vm.txtGiaGui,
                           keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            DinhDangGiaVN(),
+                          ],
                           decoration: InputDecoration(
                             hintText: "0",
                             suffixText: "đ/tháng",

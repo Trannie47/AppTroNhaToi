@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../core/utils/currency_formatter.dart';
+
 class FormLoaiPhong extends StatefulWidget {
   final Function(LoaiPhong)? onAdd;
   final LoaiPhong? loaiPhong;
@@ -177,7 +179,7 @@ class _FormLoaiPhongState extends State<FormLoaiPhong> {
                         suffix: "đ/tháng",
                         hintText: "VD : 2000000",
                         errorText: vm.errGiaTien,
-                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        inputFormatters: [FilteringTextInputFormatter.digitsOnly,DinhDangGiaVN()],
                       ),
                       const SizedBox(height: 10),
                       const Text("Giá mặc định khi lập hợp đồng cho phòng thuộc loại này", style: TextStyle(color: Colors.grey, fontSize: 12)),

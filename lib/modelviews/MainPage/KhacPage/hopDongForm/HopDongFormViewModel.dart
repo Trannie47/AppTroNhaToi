@@ -16,6 +16,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/utils/map_dio_error_to_message.dart';
 import '../../../../models/DTO/HopDongDTO.dart';
@@ -214,7 +215,7 @@ class HopDongFormViewModel extends ChangeNotifier {
     selectedPhong = phong;
     errPhong = null;
     if (phong != null) {
-      txtTongGiaPhong.text = formatMoney(phong.giaPhongGoc);
+      txtTongGiaPhong.text = NumberFormat('#,###', 'vi_VN').format(phong.giaPhongGoc).replaceAll(',', '.');
     } else {
       txtTongGiaPhong.text = "0";
     }
@@ -252,8 +253,10 @@ class HopDongFormViewModel extends ChangeNotifier {
       }
 
       txtNgayHetHan.text = formatDate(hopDong.ngayHetHan);
-      txtGiaHopDong.text = formatMoney(hopDong.giaPhongThucTe.toInt()).toString();
-      txtTienCoc.text = formatMoney(hopDong.tienCoc.toInt()).toString();
+      final giaThucTe = hopDong.giaPhongThucTe.toInt();
+      txtGiaHopDong.text = giaThucTe > 0 ? NumberFormat('#,###', 'vi_VN').format(giaThucTe).replaceAll(',', '.') : "";
+      final tienCocVal = hopDong.tienCoc.toInt();
+      txtTienCoc.text = tienCocVal > 0 ? NumberFormat('#,###', 'vi_VN').format(tienCocVal).replaceAll(',', '.') : "";
       txtGhiChu.text = hopDong.ghiChu ?? "";
 
       selectedPhong = RoomAvailableDTO(
@@ -280,8 +283,8 @@ class HopDongFormViewModel extends ChangeNotifier {
     DateTime? ngayHetHanParsed= chuyenNgay(txtNgayHetHan.text);
 
     //Parse số tiền từ text controller và bỏ qua các định dạng
-    double tienCocParsed = double.tryParse(txtTienCoc.text.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0.0;
-    double giaHopDongParsed = double.tryParse(txtGiaHopDong.text.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0.0;
+    double tienCocParsed = double.tryParse(txtTienCoc.text.replaceAll('.', '')) ?? 0.0;
+    double giaHopDongParsed = double.tryParse(txtGiaHopDong.text.replaceAll('.', '')) ?? 0.0;
 
     return HopDong(
       hopDongID: hdDTO?.hopDongID,
@@ -426,14 +429,14 @@ class HopDongFormViewModel extends ChangeNotifier {
       }
     }
 
-    final giaThue = txtGiaHopDong.text.replaceAll(RegExp(r'[^0-9]'), '');
+    final giaThue = txtGiaHopDong.text.replaceAll('.', '');
     double? giaHopDong = double.tryParse(giaThue);
     if (txtGiaHopDong.text.isEmpty || giaHopDong == null || giaHopDong <= 0) {
       errGiaHopDong = "Giá thuê phải lớn hơn 0";
       hopLe = false;
     }
 
-    final tienCocnha = txtTienCoc.text.replaceAll(RegExp(r'[^0-9]'), '');
+    final tienCocnha = txtTienCoc.text.replaceAll('.', '');
     double? tienCoc = double.tryParse(tienCocnha);
     if (txtTienCoc.text.isEmpty || tienCoc == null || tienCoc < 0) {
       errTienCoc = "Tiền cọc phải là số ≥ 0";
