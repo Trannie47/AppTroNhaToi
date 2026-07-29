@@ -10,11 +10,10 @@ class HoaDonTapHoaProvider extends ChangeNotifier {
   List<HoaDonTapHoaModel> get list => List.unmodifiable(_list);
 
   double get tongCongNo {
-    return _list.fold<double>(
-      0,
-          (sum, item) =>
-      sum + ((item.hoaDon.tongTien ?? 0) - item.daThu),
-    );
+    return _list.fold<double>(0, (sum, item) {
+      final conThieu = (item.hoaDon.tongTien ?? 0) - item.daThu;
+      return sum + (conThieu > 0 ? conThieu : 0);
+    });
   }
 
   bool _isLoading = false;
@@ -70,5 +69,33 @@ class HoaDonTapHoaProvider extends ChangeNotifier {
     }
 
     return ok;
+  }
+
+  /// Công nợ của một người thuê cụ thể (theo idnt)
+  double congNoTheoNguoiThue(int idnt) {
+    return _list.where((item) => item.hoaDon.idnt == idnt).fold<double>(0, (
+      sum,
+      item,
+    ) {
+      final conThieu = (item.hoaDon.tongTien ?? 0) - item.daThu;
+      return sum + (conThieu > 0 ? conThieu : 0);
+    });
+  }
+
+  /// Danh sách công nợ nhóm theo từng người thuê (idnt -> tổng còn thiếu)
+  Map<int, double> get congNoTheoTungNguoiThue {
+    final Map<int, double> result = {};
+
+    for (final item in _list) {
+      final idnt = item.hoaDon.idnt;
+      if (idnt == null) continue;
+
+      final conThieu = (item.hoaDon.tongTien ?? 0) - item.daThu;
+      if (conThieu <= 0) continue;
+
+      result[idnt] = (result[idnt] ?? 0) + conThieu;
+    }
+
+    return result;
   }
 }

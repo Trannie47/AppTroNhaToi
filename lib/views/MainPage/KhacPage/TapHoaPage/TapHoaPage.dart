@@ -520,21 +520,21 @@ class _TapHoaPageState extends State<TapHoaPage> {
                                       ),
                                     ],
                                     child: HoaDonTapHoaForm(
-                                      hoaDonModel: vm.dsHoaDonTapHoa[index],
+                                      hoaDonModel: vm.dsCongNoTapHoa[index],
                                     ),
                                   ),
                                 ),
                               );
 
                               if (result != null) {
-                                int viTriHoaDon = vm.dsHoaDonTapHoa.indexWhere(
+                                int viTriHoaDon = vm.dsCongNoTapHoa.indexWhere(
                                   (e) =>
                                       e.hoaDon.maHoaDon ==
                                       result.hoaDon.maHoaDon,
                                 );
 
                                 if (viTriHoaDon != -1) {
-                                  vm.dsHoaDonTapHoa[viTriHoaDon] = result;
+                                  vm.dsCongNoTapHoa[viTriHoaDon] = result;
                                 }
 
                                 int viTriCongNo = vm.dsCongNoTapHoa.indexWhere(

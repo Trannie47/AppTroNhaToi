@@ -253,6 +253,7 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
                         items: vm.dsNguoiThue,
                         selectedItem: vm.selectedNguoiThue,
                         itemAsString: (item) => item.hoTen!,
+                        enabled: vm.dsPhieuThu.isEmpty,
                         onChanged: (value) {
                           setState(() {
                             vm.selectedNguoiThue = value;
@@ -289,7 +290,9 @@ class _HoaDonTapHoaFormState extends State<HoaDonTapHoaForm> {
 
                     suffixIcon: IconButton(
                       onPressed: () async {
-                        await vm.chonNgay(context, vm.txtNgayMua);
+                        if (vm.listPhieuThu.isEmpty) {
+                          await vm.chonNgay(context, vm.txtNgayMua);
+                        }
                       },
 
                       icon: const Icon(Icons.calendar_today_outlined),

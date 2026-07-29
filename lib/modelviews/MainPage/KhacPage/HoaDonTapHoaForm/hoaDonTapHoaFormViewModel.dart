@@ -63,11 +63,29 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
 
     dsNguoiThue = List.from(_nguoiThueProvider.list);
 
+    nguoiThueTro = hoaDonEdit?.idnt != null;
+
     Future.microtask(() async {
       if (_nguoiThueProvider.list.isEmpty) {
         await _nguoiThueProvider.fetchAll();
       } else {
         _onNguoiThueUpdate();
+      }
+
+      for (final nt in dsNguoiThue) {
+        debugPrint("    -> idnt=${nt.idnt}, hoTen=${nt.hoTen}");
+      }
+
+      if (hoaDonEdit?.idnt != null) {
+        final match = dsNguoiThue.where((nt) => nt.idnt == hoaDonEdit!.idnt);
+        debugPrint(
+          "=== [DEBUG] Tìm idnt=${hoaDonEdit!.idnt} -> tìm thấy: ${match.isNotEmpty}",
+        );
+
+        selectedNguoiThue = match.isNotEmpty ? match.first : null;
+        debugPrint(
+          "=== [DEBUG] selectedNguoiThue sau khi gán: ${selectedNguoiThue?.idnt} - ${selectedNguoiThue?.hoTen}",
+        );
       }
 
       if (hoaDonEdit != null &&
@@ -83,6 +101,8 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
         _onChiTietHoaDonTapHoaUpdate();
         _onPhieuThuUpdate();
       }
+
+      notifyListeners();
     });
 
     txtNgayMua.text = hoaDonEdit?.ngayBan != null
@@ -267,6 +287,61 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
         .replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (match) => ',');
   }
 
+  // Future<bool> luu() async {
+  //   if (!kiemTraDuLieu()) return false;
+  //   if (_isLoading) return false;
+
+  //   _isLoading = true;
+  //   notifyListeners();
+
+  //   try {
+  //     final dto = HoaDonTapHoaDTO(
+  //       maHoaDon: maHoaDon,
+  //       idnt: nguoiThueTro ? selectedNguoiThue?.idnt : null,
+  //       ngayBan: DateTime.now(),
+  //       tongTien: tongTien,
+  //       chiTietTapHoa: dsHangHoaChon
+  //           .map(
+  //             (hh) => ChiTietTapHoa(
+  //               maChiTietHoaDon: hh.chiTietTapHoa.maChiTietHoaDon ?? -1,
+  //               maHangHoa: hh.hangHoa.maHangHoa!,
+  //               maHoaDon: maHoaDon,
+  //               soLuong: hh.chiTietTapHoa.soLuong ?? 1,
+  //             ),
+  //           )
+  //           .toList(),
+  //       phieuThuHdTh: dsPhieuThu.isNotEmpty
+  //           ? dsPhieuThu
+  //                 .map(
+  //                   (e) => e.copyWith(
+  //                     ngayThu: e.ngayThu ?? DateTime.now(),
+  //                     soTien: e.soTien ?? 0,
+  //                     nguoiDong: !nguoiThueTro
+  //                         ? (txtNguoiMua.text.trim().isNotEmpty
+  //                               ? txtNguoiMua.text.trim()
+  //                               : (selectedNguoiThue?.hoTen ?? ""))
+  //                         : (selectedNguoiThue?.hoTen ?? ""),
+  //                   ),
+  //                 )
+  //                 .toList()
+  //           : [],
+  //     );
+
+  //     if (dto.maHoaDon != '') {
+  //       return await _hoaDonTapHoaProvider.capNhat(dto);
+  //     } else {
+  //       final result = await _hoaDonTapHoaProvider.them(dto);
+  //       return result != null;
+  //     }
+  //   } catch (e) {
+  //     debugPrint(e.toString());
+  //     return false;
+  //   } finally {
+  //     _isLoading = false;
+  //     notifyListeners();
+  //   }
+  // }
+
   Future<bool> luu() async {
     if (!kiemTraDuLieu()) return false;
     if (_isLoading) return false;
@@ -275,6 +350,31 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
+      final tenNguoiMua = txtNguoiMua.text.trim().isNotEmpty
+          ? txtNguoiMua.text.trim()
+          : (selectedNguoiThue?.hoTen ?? "");
+
+      // Khách vãng lai: luôn tạo đúng 1 phiếu thu = tổng tiền hóa đơn
+      final danhSachPhieuThu = !nguoiThueTro
+          ? [
+              PhieuThuHdTh(
+                ngayThu: DateTime.now(),
+                soTien: tongTien,
+                nguoiDong: tenNguoiMua,
+              ),
+            ]
+          : (dsPhieuThu.isNotEmpty
+                ? dsPhieuThu
+                      .map(
+                        (e) => e.copyWith(
+                          ngayThu: e.ngayThu ?? DateTime.now(),
+                          soTien: e.soTien ?? 0,
+                          nguoiDong: selectedNguoiThue?.hoTen ?? "",
+                        ),
+                      )
+                      .toList()
+                : <PhieuThuHdTh>[]);
+
       final dto = HoaDonTapHoaDTO(
         maHoaDon: maHoaDon,
         idnt: nguoiThueTro ? selectedNguoiThue?.idnt : null,
@@ -290,21 +390,7 @@ class HoaDonTapHoaFormViewModel extends ChangeNotifier {
               ),
             )
             .toList(),
-        phieuThuHdTh: dsPhieuThu.isNotEmpty
-            ? dsPhieuThu
-                  .map(
-                    (e) => e.copyWith(
-                      ngayThu: e.ngayThu ?? DateTime.now(),
-                      soTien: e.soTien ?? 0,
-                      nguoiDong: !nguoiThueTro
-                          ? (txtNguoiMua.text.trim().isNotEmpty
-                                ? txtNguoiMua.text.trim()
-                                : (selectedNguoiThue?.hoTen ?? ""))
-                          : (selectedNguoiThue?.hoTen ?? ""),
-                    ),
-                  )
-                  .toList()
-            : [],
+        phieuThuHdTh: danhSachPhieuThu,
       );
 
       if (dto.maHoaDon != '') {
