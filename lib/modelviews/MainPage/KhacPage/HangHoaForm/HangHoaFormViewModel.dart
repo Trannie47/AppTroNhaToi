@@ -1,6 +1,7 @@
 import 'package:AppTroNhaToi/models/hang_hoa.dart';
 import 'package:AppTroNhaToi/Provider/hang_hoa_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class HangHoaFormViewModel extends ChangeNotifier {
   final HangHoaProvider _service;
@@ -22,14 +23,24 @@ class HangHoaFormViewModel extends ChangeNotifier {
   HangHoa? _hangHoaDangSua;
   bool get isEditMode => _hangHoaDangSua != null;
 
+  // format tiền khi sửa
+  final NumberFormat formatter = NumberFormat('#,###', 'vi_VN');
+
+  String formatGia(num? value) {
+    if (value == null) return '';
+    return formatter.format(value).replaceAll(',', '.');
+  }
+
   HangHoaFormViewModel(this._service);
 
   // Gọi khi mở form ở chế độ sửa
   void loadDeSua(HangHoa hh) {
     _hangHoaDangSua = hh;
     txtTenHangHoa.text = hh.tenHangHoa ?? '';
-    txtGiaBan.text = hh.giaBan?.toString() ?? '';
-    txtGiaNhap.text = hh.giaNhap?.toString() ?? '';
+
+    txtGiaBan.text = formatGia(hh.giaBan);
+    txtGiaNhap.text = formatGia(hh.giaNhap);
+
     txtDonVi.text = hh.donViTinh ?? '';
     notifyListeners();
   }
@@ -47,7 +58,9 @@ class HangHoaFormViewModel extends ChangeNotifier {
       hopLe = false;
     }
 
-    double? giaBan = double.tryParse(txtGiaBan.text);
+
+    double? giaBan =
+    double.tryParse(txtGiaBan.text.replaceAll('.', ''));
     if (txtGiaBan.text.trim().isEmpty) {
       errGiaBan = "Vui lòng nhập giá bán";
       hopLe = false;
@@ -56,7 +69,9 @@ class HangHoaFormViewModel extends ChangeNotifier {
       hopLe = false;
     }
 
-    double? giaNhap = double.tryParse(txtGiaNhap.text);
+
+    double? giaNhap =
+    double.tryParse(txtGiaNhap.text.replaceAll('.', ''));
     if (txtGiaNhap.text.trim().isEmpty) {
       errGiaNhap = "Vui lòng nhập giá nhập";
       hopLe = false;
@@ -92,8 +107,14 @@ class HangHoaFormViewModel extends ChangeNotifier {
       final hh = HangHoa(
         maHangHoa: _hangHoaDangSua?.maHangHoa,
         tenHangHoa: txtTenHangHoa.text.trim(),
-        giaBan: double.tryParse(txtGiaBan.text.trim()),
-        giaNhap: double.tryParse(txtGiaNhap.text.trim()),
+
+        giaBan: double.tryParse(
+          txtGiaBan.text.replaceAll('.', '').trim(),
+        ),
+
+        giaNhap: double.tryParse(
+          txtGiaNhap.text.replaceAll('.', '').trim(),
+        ),
         donViTinh: txtDonVi.text.trim(),
       );
       print(hh);

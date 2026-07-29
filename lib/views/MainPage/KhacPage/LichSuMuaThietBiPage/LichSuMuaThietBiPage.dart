@@ -100,25 +100,26 @@ class _LichSuMuaThietBiPageState extends State<LichSuMuaThietBiPage> {
           ],
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: ElevatedButton.icon(
-              onPressed: () => taoMoi(context),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xff2D7A3A),
-                foregroundColor: Colors.white,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
+          if (!vm.thietBi.dangSua)
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: ElevatedButton.icon(
+                onPressed: () => taoMoi(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xff2D7A3A),
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+                icon: const Icon(Icons.add),
+                label: const Text(
+                  "Thêm",
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
                 ),
               ),
-              icon: const Icon(Icons.add),
-              label: const Text(
-                "Thêm",
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
-              ),
             ),
-          ),
         ],
       ),
       body: Column(

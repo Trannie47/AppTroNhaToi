@@ -294,7 +294,10 @@ class _LichSuMuaThietBiFormState extends State<LichSuMuaThietBiForm> {
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 errorText: vm.errSoLuong,
-                onChanged: (_) => setState(() {}),
+                onChanged: (_) {
+                  vm.errSoLuong = null;
+                  setState(() {});
+                },
               ),
 
               _input(
@@ -308,7 +311,10 @@ class _LichSuMuaThietBiFormState extends State<LichSuMuaThietBiForm> {
                   DinhDangGiaVN(),
                 ],
                 errorText: vm.errDonGia,
-                onChanged: (_) => setState(() {}),
+                onChanged: (_) {
+                  vm.errDonGia = null;
+                  setState(() {});
+                },
               ),
 
 
@@ -319,6 +325,7 @@ class _LichSuMuaThietBiFormState extends State<LichSuMuaThietBiForm> {
                 readOnly: true,
                 errorText: vm.errNgayMua,
                 onTap: () async {
+                  vm.errNgayMua = null;
                   await vm.chonNgayMua(context);
                   setState(() {});
                 },

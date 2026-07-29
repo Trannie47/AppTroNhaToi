@@ -1,7 +1,9 @@
+import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/models/hang_hoa.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/HangHoaForm/HangHoaFormViewModel.dart';
 import 'package:AppTroNhaToi/Provider/hang_hoa_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class HangHoaForm extends StatefulWidget {
@@ -46,6 +48,7 @@ class _HangHoaFormState extends State<HangHoaForm> {
     String? hint,
     TextInputType keyboardType = TextInputType.text,
     VoidCallback? onChanged,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,7 +66,7 @@ class _HangHoaFormState extends State<HangHoaForm> {
         TextField(
           controller: controller,
           keyboardType: keyboardType,
-
+          inputFormatters: inputFormatters,
           style: const TextStyle(
             fontSize: 16, // chữ nhập vào
           ),
@@ -224,6 +227,11 @@ class _HangHoaFormState extends State<HangHoaForm> {
                         controller: vm.txtGiaBan,
                         errorText: vm.errGiaBan,
                         keyboardType: TextInputType.number,
+
+
+                        inputFormatters: [
+                          DinhDangGiaVN(),
+                        ],
                         suffix: "đ",
                         onChanged: () {
                           vm.errGiaBan = null;
@@ -241,6 +249,8 @@ class _HangHoaFormState extends State<HangHoaForm> {
                         errorText: vm.errGiaNhap,
                         keyboardType: TextInputType.number,
                         suffix: "đ",
+                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+
                         onChanged: () {
                           vm.errGiaNhap = null;
                           vm.notifyListeners();
