@@ -33,6 +33,8 @@ class TaoHoaDonPhongPageViewModel extends ChangeNotifier {
   bool _canCreateDienNuoc = true;
   bool get canCreateDienNuoc => _canCreateDienNuoc;
 
+  bool isDienError = false;
+  bool isNuocError = false;
 
   final txtDienChiSoCu = TextEditingController(text: "0");
   final txtDienChiSoMoi = TextEditingController(text: "0");
@@ -200,20 +202,26 @@ class TaoHoaDonPhongPageViewModel extends ChangeNotifier {
     if (!isChotDienNuoc && !isTinhTienHopDong) {
       return false;
     }
+    isDienError = false;
+    isNuocError = false;
+    localErrorMessage = null;
+
     if (isChotDienNuoc) {
       int dienCu = int.tryParse(txtDienChiSoCu.text) ?? 0;
       int dienMoi = int.tryParse(txtDienChiSoMoi.text) ?? 0;
       int nuocCu = int.tryParse(txtNuocChiSoCu.text) ?? 0;
       int nuocMoi = int.tryParse(txtNuocChiSoMoi.text) ?? 0;
 
-      if (dienMoi < dienCu) {
-        localErrorMessage = "Chỉ số điện mới ($dienMoi) không được nhỏ hơn chỉ số cũ ($dienCu)!";
+      if (dienMoi <= dienCu) {
+        isDienError = true;
+        localErrorMessage = "Chỉ số điện mới ($dienMoi) phải lớn hơn chỉ số cũ ($dienCu)!";
         notifyListeners();
         return false;
       }
 
-      if (nuocMoi < nuocCu) {
-        localErrorMessage = "Chỉ số nước mới ($nuocMoi) không được nhỏ hơn chỉ số cũ ($nuocCu)!";
+      if (nuocMoi <= nuocCu) {
+        isNuocError = true;
+        localErrorMessage = "Chỉ số nước mới ($nuocMoi) phải lớn hơn chỉ số cũ ($nuocCu)!";
         notifyListeners();
         return false;
       }
@@ -286,6 +294,12 @@ class TaoHoaDonPhongPageViewModel extends ChangeNotifier {
 
   void setNgayLap(DateTime date) {
     ngayLapSelected = date;
+    notifyListeners();
+  }
+  void clearErrors() {
+    isDienError = false;
+    isNuocError = false;
+    localErrorMessage = null;
     notifyListeners();
   }
 }

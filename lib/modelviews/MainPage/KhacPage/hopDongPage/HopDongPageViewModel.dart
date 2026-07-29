@@ -29,6 +29,9 @@ class HopDongPageViewModel extends ChangeNotifier {
     notifyListeners();
     try{
       final result= await hopDongProvider.getListHD();
+      result.sort((a, b) {
+        return b.hopDongID.compareTo(a.hopDongID);
+      });
       _listHopDong = result;
       _hopDongState= HopDongSuccess(_listHopDong);
     }catch(e){

@@ -4,9 +4,11 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import '../../../../Provider/hoa_don_phong_provider.dart';
+import '../../../../Provider/phong_provider.dart';
 
 class ChiTietHoaDonPhongViewModel extends ChangeNotifier {
   final HoadonPhongProvider provider;
+  final PhongProvider _phongProvider;
 
   bool isLoading = false;
   bool isDeleting = false;
@@ -14,10 +16,14 @@ class ChiTietHoaDonPhongViewModel extends ChangeNotifier {
 
   int phongId = 0;
   String thangNam = "";
+  String tenPhong = "";
 
   List<Map<String, dynamic>> listHoaDon = [];
 
-  ChiTietHoaDonPhongViewModel({required this.provider});
+  ChiTietHoaDonPhongViewModel({
+    required this.provider,
+    required PhongProvider phongProvider,
+  }) : _phongProvider = phongProvider;
 
   double _toDouble(dynamic val) {
     if (val == null) return 0.0;
@@ -45,6 +51,20 @@ class ChiTietHoaDonPhongViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
+      final phongInList = _phongProvider.listPhong
+          .where((p) => p.phongId == phongId)
+          .firstOrNull;
+
+      if (phongInList != null) {
+        tenPhong = phongInList.tenPhong;
+      } else {
+        try {
+          final info = await _phongProvider.getInforPhong(phongId);
+          tenPhong = info.tenPhong;
+        } catch (_) {
+          tenPhong = "Phòng $phongId"; 
+        }
+      }
       await provider.fetchDanhSachByPhong(phongId: phongId, thangNam: thangNam);
 
       listHoaDon = provider.danhSachHoaDonByPhong.map((inv) {

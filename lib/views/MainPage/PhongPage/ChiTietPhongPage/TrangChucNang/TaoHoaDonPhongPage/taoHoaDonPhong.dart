@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../../../../Provider/hoa_don_phong_provider.dart';
 import '../../../../../../core/utils/currency_formatter.dart';
 import '../../../../../../core/utils/date_formatter.dart';
+import '../../../../../../modelviews/MainPage/KhacPage/taoHoaDonPhongPage/ChiTietHoaDonPhongViewModel.dart';
 import '../../../../../../modelviews/MainPage/KhacPage/taoHoaDonPhongPage/taoHoaDonPhongPageViewModel.dart';
 import 'ChiTietHoaDonPage.dart';
 
@@ -215,6 +216,7 @@ class _TaoHoaDonPageState extends State<TaoHoaDonPage> {
                         ),
 
                         // ĐIỆN NƯỚC CẢ PHÒNG
+                        // ĐIỆN NƯỚC CẢ PHÒNG
                         _buildCardSection(
                           title: "1. Chốt chỉ số Điện Nước (Cả Phòng)",
                           trailing: Switch(
@@ -222,27 +224,77 @@ class _TaoHoaDonPageState extends State<TaoHoaDonPage> {
                             activeColor: const Color(0xff2E7D32),
                             onChanged: vm.canCreateDienNuoc
                                 ? (val) => vm.toggleChotDienNuoc(val)
-                                : null, // Khóa tương tác nếu chưa thanh toán
+                                : null,
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              // THƯỜNG HỢP 1: Đã tạo hóa đơn điện nước kỳ này nhưng chưa thanh toán (bị khóa cứng, hiện nút XEM)
                               if (!vm.canCreateDienNuoc) ...[
-                                Container(
-                                  padding: const EdgeInsets.all(10),
-                                  margin: const EdgeInsets.only(bottom: 10),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xffFFF8E1),
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(color: const Color(0xffFFE082)),
-                                  ),
-                                  child: const Text(
-                                    "Hóa đơn điện nước kỳ này chưa được thanh toán. Vui lòng vào thanh toán trước khi tạo bản ghi điện nước mới.",
-                                    style: TextStyle(fontSize: 12, color: Color(0xff8D6E63), fontWeight: FontWeight.w500),
+                                InkWell(
+                                  onTap: () async {
+                                    await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ChiTietHoaDonPage(
+                                          phongId: widget.phongId,
+                                          thangNam: _currentThangNam,
+                                        ),
+                                      ),
+                                    );
+
+                                    if (mounted) {
+                                      vm.fetchInitData(widget.phongId, _currentThangNam);
+                                    }
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xffEBF3FE),
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(color: Colors.blue.shade200),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        const Icon(Icons.bolt, color: Color(0xff1565C0), size: 22),
+                                        const SizedBox(width: 10),
+                                        const Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "Hóa đơn Điện Nước kỳ này đã được tạo.",
+                                                style: TextStyle(color: Color(0xff1565C0), fontSize: 13, fontWeight: FontWeight.bold),
+                                              ),
+                                              SizedBox(height: 2),
+                                              Text(
+                                                "Chưa thanh toán. Nhấn để xem chi tiết.",
+                                                style: TextStyle(color: Colors.black54, fontSize: 11),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                          decoration: BoxDecoration(
+                                            color: Colors.blue.shade100,
+                                            borderRadius: BorderRadius.circular(6),
+                                          ),
+                                          child: const Row(
+                                            children: [
+                                              Text("XEM", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xff1565C0))),
+                                              SizedBox(width: 4),
+                                              Icon(Icons.arrow_forward_ios, size: 10, color: Color(0xff1565C0)),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ],
-                              if (vm.isChotDienNuoc && vm.canCreateDienNuoc) ...[
+                              ]
+                              // Được phép tạo VÀ người dùng đang BẬT công tắc chốt điện nước -> HIỂN THỊ Ô NHẬP CHỈ SỐ
+                              else if (vm.isChotDienNuoc && vm.canCreateDienNuoc) ...[
                                 _buildMeterInput(
                                   label: "Chỉ số Điện (kWh)",
                                   cuCtrl: vm.txtDienChiSoCu,
@@ -250,8 +302,9 @@ class _TaoHoaDonPageState extends State<TaoHoaDonPage> {
                                   giaCtrl: vm.txtDienDonGia,
                                   calculatedMoney: vm.tienDienPhong,
                                   imageFile: vm.imgDien,
+                                  hasError: vm.isDienError,
                                   onPickImage: () => vm.pickMeterImage(true),
-                                  onChanged: () => vm.notifyUI(),
+                                  onChanged: () => vm.clearErrors(),
                                 ),
                                 const Divider(height: 24),
                                 _buildMeterInput(
@@ -261,8 +314,9 @@ class _TaoHoaDonPageState extends State<TaoHoaDonPage> {
                                   giaCtrl: vm.txtNuocDonGia,
                                   calculatedMoney: vm.tienNuocPhong,
                                   imageFile: vm.imgNuoc,
+                                  hasError: vm.isNuocError,
                                   onPickImage: () => vm.pickMeterImage(false),
-                                  onChanged: () => vm.notifyUI(),
+                                  onChanged: () => vm.clearErrors(),
                                 ),
                                 const SizedBox(height: 12),
                                 Container(
@@ -279,21 +333,21 @@ class _TaoHoaDonPageState extends State<TaoHoaDonPage> {
                                     ],
                                   ),
                                 ),
-                              ] else ...[
-                                Container(
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey.shade100,
-                                    borderRadius: BorderRadius.circular(8),
+                              ]
+                              // TRƯỜNG HỢP 3: Người dùng chủ động TẮT công tắc chốt điện nước
+                              else ...[
+                                  Container(
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.shade100,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: const Text(
+                                      "Đã tắt chốt điện nước. Hệ thống không tính tiền điện nước cho lần tạo này.",
+                                      style: TextStyle(fontSize: 12, color: Colors.black54),
+                                    ),
                                   ),
-                                  child: Text(
-                                    vm.canCreateDienNuoc
-                                        ? "Đã tắt chốt điện nước. Hệ thống không tính tiền điện nước cho lần tạo này."
-                                        : "Chức năng chốt điện nước đang tạm khóa do chưa thanh toán hóa đơn cũ.",
-                                    style: TextStyle(fontSize: 12, color: Colors.black54),
-                                  ),
-                                ),
-                              ],
+                                ],
                             ],
                           ),
                         ),
@@ -720,6 +774,7 @@ class _TaoHoaDonPageState extends State<TaoHoaDonPage> {
     required TextEditingController giaCtrl,
     required double calculatedMoney,
     required dynamic imageFile,
+    required bool hasError,
     required VoidCallback onPickImage,
     required VoidCallback onChanged,
   }) {
@@ -734,9 +789,9 @@ class _TaoHoaDonPageState extends State<TaoHoaDonPage> {
         const SizedBox(height: 8),
         Row(
           children: [
-            Expanded(child: _buildSmallInput("Chỉ số cũ", cuCtrl, onChanged)),
+            Expanded(child: _buildSmallInput("Chỉ số cũ", cuCtrl, false, onChanged)),
             const SizedBox(width: 8),
-            Expanded(child: _buildSmallInput("Chỉ số mới", moiCtrl, onChanged)),
+            Expanded(child: _buildSmallInput("Chỉ số mới", moiCtrl, hasError, onChanged)), // Tô đỏ nếu có lỗi
             const SizedBox(width: 8),
             Expanded(child: _buildMoneyInput("Đơn giá", giaCtrl, onChanged)),
           ],
@@ -767,12 +822,11 @@ class _TaoHoaDonPageState extends State<TaoHoaDonPage> {
       ],
     );
   }
-
-  Widget _buildSmallInput(String label, TextEditingController ctrl, VoidCallback onChanged) {
+  Widget _buildSmallInput(String label, TextEditingController ctrl, bool hasError, VoidCallback onChanged) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 11, color: Colors.grey)),
+        Text(label, style: TextStyle(fontSize: 11, color: hasError ? Colors.red : Colors.grey)),
         const SizedBox(height: 2),
         SizedBox(
           height: 36,
@@ -782,10 +836,21 @@ class _TaoHoaDonPageState extends State<TaoHoaDonPage> {
             inputFormatters: [
               FilteringTextInputFormatter.digitsOnly,
             ],
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: hasError ? Colors.red : Colors.black87),
             decoration: InputDecoration(
               contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(6)),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(6),
+                borderSide: BorderSide(color: hasError ? Colors.red : Colors.grey.shade400, width: hasError ? 2.0 : 1.0),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(6),
+                borderSide: BorderSide(color: hasError ? Colors.red : Colors.grey.shade400, width: hasError ? 2.0 : 1.0),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(6),
+                borderSide: BorderSide(color: hasError ? Colors.red : const Color(0xff2E7D32), width: 2.0),
+              ),
             ),
             onChanged: (_) => onChanged(),
           ),

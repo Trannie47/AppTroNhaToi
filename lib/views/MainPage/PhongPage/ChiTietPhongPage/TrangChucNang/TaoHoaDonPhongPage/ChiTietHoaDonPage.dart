@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../../../Provider/hoa_don_phong_provider.dart';
 import '../../../../../../Provider/phieu_thu_dien_nuoc_provider.dart';
+import '../../../../../../Provider/phong_provider.dart';
 import '../../../../../../core/utils/currency_formatter.dart';
 import '../../../../../../core/utils/date_formatter.dart';
 import '../../../../../../modelviews/MainPage/KhacPage/taoHoaDonPhongPage/ChiTietHoaDonPhongViewModel.dart';
@@ -35,7 +36,8 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
   void initState() {
     super.initState();
     final provider = Provider.of<HoadonPhongProvider>(context, listen: false);
-    _viewModel = ChiTietHoaDonPhongViewModel(provider: provider);
+    final phongProvider = Provider.of<PhongProvider>(context, listen: false);
+    _viewModel = ChiTietHoaDonPhongViewModel(provider: provider,phongProvider: phongProvider,);
 
     _viewModel.fetchInvoicesByPhong(
       pId: widget.phongId,
@@ -69,7 +71,7 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Danh sách Hóa đơn - Phòng ${widget.phongId}",
+                      "Danh sách Hóa đơn - Phòng ${_viewModel.tenPhong}",
                       style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
                     ),
                     Text(
@@ -409,62 +411,63 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 10),
+                if (trangThai != 2) ...[
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () async {
+                        if (isDienNuoc) {
+                          final int lanGhi = item['lanGhi'] ?? 1;
 
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () async {
-                      if (isDienNuoc) {
-                        final int lanGhi = item['lanGhi'] ?? 1;
+                          final bool? reloaded = await showDialog<bool>(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (ctx) => CapNhatThanhToanDienNuocDialog(
+                              phongId: widget.phongId,
+                              thangNam: widget.thangNam,
+                              lanGhi: lanGhi,
+                              tenPhong: item['tenPhong'] ?? "Phòng ${widget.phongId}",
+                              tongTienDN: tongTien,
+                              trangThaiHienTai: trangThai,
+                            ),
+                          );
 
-                        final bool? reloaded = await showDialog<bool>(
-                          context: context,
-                          barrierDismissible: false,
-                          builder: (ctx) => CapNhatThanhToanDienNuocDialog(
-                            phongId: widget.phongId,
-                            thangNam: widget.thangNam,
-                            lanGhi: lanGhi,
-                            tenPhong: item['tenPhong'] ?? "Phòng ${widget.phongId}",
-                            tongTienDN: tongTien,
-                            trangThaiHienTai: trangThai,
-                          ),
-                        );
+                          if (reloaded == true && mounted) {
+                            vm.fetchInvoicesByPhong(pId: widget.phongId, tNam: widget.thangNam);
+                          }
+                        } else {
+                          final bool? reloaded = await showDialog<bool>(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (ctx) => CapNhatThanhToanDialog(
+                              maHoaDon: maHoaDon,
+                              hoTenKhach: hoTen,
+                              tenPhong: item['tenPhong'] ?? "Phòng ${widget.phongId}",
+                              tongTienHD: tongTien,
+                              tongDaThu: tongDaThu,
+                              trangThaiHienTai: trangThai,
+                            ),
+                          );
 
-                        if (reloaded == true && mounted) {
-                          vm.fetchInvoicesByPhong(pId: widget.phongId, tNam: widget.thangNam);
+                          if (reloaded == true && mounted) {
+                            vm.fetchInvoicesByPhong(pId: widget.phongId, tNam: widget.thangNam);
+                          }
                         }
-                      } else {
-                        final bool? reloaded = await showDialog<bool>(
-                          context: context,
-                          barrierDismissible: false,
-                          builder: (ctx) => CapNhatThanhToanDialog(
-                            maHoaDon: maHoaDon,
-                            hoTenKhach: hoTen,
-                            tenPhong: item['tenPhong'] ?? "Phòng ${widget.phongId}",
-                            tongTienHD: tongTien,
-                            tongDaThu: tongDaThu,
-                            trangThaiHienTai: trangThai,
-                          ),
-                        );
-
-                        if (reloaded == true && mounted) {
-                          vm.fetchInvoicesByPhong(pId: widget.phongId, tNam: widget.thangNam);
-                        }
-                      }
-                    },
-                    icon: const Icon(Icons.edit_outlined, size: 16, color: Colors.white),
-                    label: const Text(
-                      "Cập nhật",
-                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: isDienNuoc ? const Color(0xff1565C0) : const Color(0xff2E7D32),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                      elevation: 0,
+                      },
+                      icon: const Icon(Icons.edit_outlined, size: 16, color: Colors.white),
+                      label: const Text(
+                        "Cập nhật",
+                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: isDienNuoc ? const Color(0xff1565C0) : const Color(0xff2E7D32),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        elevation: 0,
+                      ),
                     ),
                   ),
-                ),
+                ],
               ],
             ),
           ),
@@ -564,7 +567,7 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
         isDangerous: true,
         onConfirm: () async {
           Navigator.pop(ctx);
-
+          final bool isTheLastOne = vm.listHoaDon.length <= 1;
           if (isDienNuoc) {
             final int lanGhi = item['lanGhi'] ?? 1;
             final dnProvider = Provider.of<PhieuThuDienNuocProvider>(context, listen: false);
@@ -580,8 +583,11 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text("Đã xóa hóa đơn điện nước thành công!"), backgroundColor: Colors.green),
                 );
-                vm.fetchInvoicesByPhong(pId: widget.phongId, tNam: widget.thangNam);
-                Navigator.pop(context, true);
+                if (isTheLastOne) {
+                  Navigator.pop(context, true);
+                } else {
+                  vm.fetchInvoicesByPhong(pId: widget.phongId, tNam: widget.thangNam);
+                }
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text(dnProvider.errorMessage ?? "Xóa thất bại!"), backgroundColor: Colors.red),
@@ -595,7 +601,9 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text("Đã xóa hóa đơn thành công!"), backgroundColor: Colors.green),
                 );
-                Navigator.pop(context, true);
+                if (isTheLastOne) {
+                  Navigator.pop(context, true);
+                }
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text(vm.errorMessage ?? "Xóa thất bại!"), backgroundColor: Colors.red),
