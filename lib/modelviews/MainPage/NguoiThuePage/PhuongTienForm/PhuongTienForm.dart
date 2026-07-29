@@ -10,7 +10,7 @@ class PhuongTienFormViewModel extends ChangeNotifier {
   final txtMauSac = TextEditingController();
   final txtGiaGui = TextEditingController();
 
-  int loaiXe = 0;
+  int loaiXe = 0; // 0: Xe máy, 1: Ô tô, 2: Xe đạp
   int? selectedPhongId;
   String? selectedTenPhong;
 
@@ -21,6 +21,12 @@ class PhuongTienFormViewModel extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
 
   bool get isEditing => phuongTienSua != null;
+
+  // Các biến quản lý lỗi đỏ cho từng trường
+  String? errHangXe;
+  String? errBienSo;
+  String? errMauSac;
+  String? errGiaGui;
 
   PhuongTienFormViewModel({
     this.phuongTienSua,
@@ -34,10 +40,38 @@ class PhuongTienFormViewModel extends ChangeNotifier {
       selectedPhongId = phuongTienSua!.phongId;
       selectedTenPhong = phuongTienSua!.tenPhong;
     }
+
+    txtHangXe.addListener(() {
+      if (errHangXe != null) {
+        errHangXe = null;
+        notifyListeners();
+      }
+    });
+    txtBienSo.addListener(() {
+      if (errBienSo != null) {
+        errBienSo = null;
+        notifyListeners();
+      }
+    });
+    txtMauSac.addListener(() {
+      if (errMauSac != null) {
+        errMauSac = null;
+        notifyListeners();
+      }
+    });
+    txtGiaGui.addListener(() {
+      if (errGiaGui != null) {
+        errGiaGui = null;
+        notifyListeners();
+      }
+    });
   }
 
   void changeLoaiXe(int value) {
     loaiXe = value;
+    if (loaiXe == 2 && errBienSo != null) {
+      errBienSo = null;
+    }
     notifyListeners();
   }
 
@@ -45,6 +79,47 @@ class PhuongTienFormViewModel extends ChangeNotifier {
     selectedPhongId = pId;
     selectedTenPhong = tPhong;
     notifyListeners();
+  }
+
+  bool validateAll() {
+    errHangXe = txtHangXe.text.trim().isEmpty ? "Vui lòng nhập hãng xe" : null;
+    errMauSac = txtMauSac.text.trim().isEmpty ? "Vui lòng nhập màu sắc xe" : null;
+
+    final bienSo = txtBienSo.text.trim();
+    if (loaiXe != 2) {
+      if (bienSo.isEmpty) {
+        errBienSo = "Vui lòng nhập biển số xe";
+      } else if (bienSo.length > 10) {
+        errBienSo = "Biển số không được vượt quá 10 ký tự";
+      } else {
+        errBienSo = null;
+      }
+    } else {
+      if (bienSo.isNotEmpty && bienSo.length > 10) {
+        errBienSo = "Biển số không được vượt quá 15 ký tự";
+      } else {
+        errBienSo = null;
+      }
+    }
+
+    final giaGuiStr = txtGiaGui.text.trim();
+    if (giaGuiStr.isEmpty) {
+      errGiaGui = "Vui lòng nhập giá gửi xe";
+    } else {
+      final val = double.tryParse(giaGuiStr);
+      if (val == null || val < 0) {
+        errGiaGui = "Giá gửi xe phải là số hợp lệ (≥ 0)";
+      } else {
+        errGiaGui = null;
+      }
+    }
+
+    notifyListeners();
+
+    return errHangXe == null &&
+        errBienSo == null &&
+        errMauSac == null &&
+        errGiaGui == null;
   }
 
   Future<bool> savePhuongTien({

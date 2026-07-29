@@ -18,7 +18,30 @@ class NguoiLuuTruTamThoiFormViewModel extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  NguoiLuuTruTamThoiFormViewModel(this._provider);
+  String? errHoTen;
+  String? errMoiQuanHe;
+  String? errCccd;
+  String? errSdt;
+  String? errPhong;
+
+  NguoiLuuTruTamThoiFormViewModel(this._provider) {
+    hoTenController.addListener(() {
+      errHoTen = null;
+      notifyListeners();
+    });
+    moiQuanHeController.addListener(() {
+      errMoiQuanHe = null;
+      notifyListeners();
+    });
+    cccdController.addListener(() {
+      errCccd = null;
+      notifyListeners();
+    });
+    sdtController.addListener(() {
+      errSdt = null;
+      notifyListeners();
+    });
+  }
 
   // Khởi tạo dữ liệu ban đầu cho form
   void initData(NguoiLuuTruTamThoi? itemEdit, List<HopDong> dsHopDong) {
@@ -41,6 +64,7 @@ class NguoiLuuTruTamThoiFormViewModel extends ChangeNotifier {
 
   void setPhongId(int? id) {
     selectedPhongId = id;
+    errPhong = null;
     notifyListeners();
   }
 
@@ -57,47 +81,40 @@ class NguoiLuuTruTamThoiFormViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  String? validateHoTen(String? val) {
-    if (val == null || val.trim().isEmpty) {
-      return "Vui lòng nhập họ và tên";
-    }
-    return null;
-  }
+  bool validateAll() {
+    final hoTen = hoTenController.text.trim();
+    errHoTen = hoTen.isEmpty ? "Vui lòng nhập họ và tên" : null;
 
-  String? validateMoiQuanHe(String? val) {
-    if (val == null || val.trim().isEmpty) {
-      return "Vui lòng nhập mối quan hệ";
-    }
-    return null;
-  }
+    final moiQuanHe = moiQuanHeController.text.trim();
+    errMoiQuanHe = moiQuanHe.isEmpty ? "Vui lòng nhập mối quan hệ" : null;
 
-  String? validateCccd(String? val) {
-    if (val == null || val.trim().isEmpty) {
-      return "Vui lòng nhập số CCCD";
+    final cccd = cccdController.text.trim();
+    if (cccd.isEmpty) {
+      errCccd = "Vui lòng nhập số CCCD";
+    } else if (!RegExp(r'^\d{12}$').hasMatch(cccd)) {
+      errCccd = "Số CCCD phải gồm đúng 12 chữ số";
+    } else {
+      errCccd = null;
     }
-    final cccdRegex = RegExp(r'^\d{12}$');
-    if (!cccdRegex.hasMatch(val.trim())) {
-      return "Số CCCD phải gồm đúng 12 chữ số";
-    }
-    return null;
-  }
 
-  String? validateSdt(String? val) {
-    if (val == null || val.trim().isEmpty) {
-      return "Vui lòng nhập số điện thoại";
+    final sdt = sdtController.text.trim();
+    if (sdt.isEmpty) {
+      errSdt = "Vui lòng nhập số điện thoại";
+    } else if (!RegExp(r'^0\d{9}$').hasMatch(sdt)) {
+      errSdt = "SĐT phải gồm 10 chữ số và bắt đầu bằng số 0";
+    } else {
+      errSdt = null;
     }
-    final phoneRegex = RegExp(r'^0\d{9}$');
-    if (!phoneRegex.hasMatch(val.trim())) {
-      return "SĐT phải gồm 10 chữ số và bắt đầu bằng số 0";
-    }
-    return null;
-  }
 
-  String? validatePhong(int? val) {
-    if (val == null) {
-      return "Vui lòng chọn phòng lưu trú";
-    }
-    return null;
+    errPhong = selectedPhongId == null ? "Vui lòng chọn phòng lưu trú" : null;
+
+    notifyListeners();
+
+    return errHoTen == null &&
+        errMoiQuanHe == null &&
+        errCccd == null &&
+        errSdt == null &&
+        errPhong == null;
   }
 
   String? validateDates() {

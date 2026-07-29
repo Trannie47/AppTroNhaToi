@@ -3,10 +3,11 @@ import 'package:AppTroNhaToi/core/network/retrofit_client.dart';
 import 'package:AppTroNhaToi/models/hop_dong.dart';
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/models/phuong_tien.dart';
-import 'package:AppTroNhaToi/modelviews/MainPage/NguoiThuePage/PhuongTienForm/PhuongTienForm.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+
+import '../../../../modelviews/MainPage/NguoiThuePage/PhuongTienForm/PhuongTienForm.dart';
 
 class PhuongTienForm extends StatefulWidget {
   final NguoiThue nguoiThue;
@@ -29,7 +30,6 @@ class PhuongTienForm extends StatefulWidget {
 class _PhuongTienFormState extends State<PhuongTienForm> {
   late PhuongTienFormViewModel vm;
 
-  //Danh sách hợp đồng/phòng quản lý nội bộ Form
   List<HopDong> _listHopDong = [];
   bool _isLoadingRoom = false;
 
@@ -44,7 +44,6 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
       }
     });
 
-    // Kiểm tra: nếu có data truyền từ ngoài vào thì dùng, không thì tự gọi API
     if (widget.dsHopDong != null && widget.dsHopDong!.isNotEmpty) {
       _listHopDong = widget.dsHopDong!;
     } else {
@@ -88,7 +87,6 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
     super.dispose();
   }
 
-  //Hiển thị BottomSheet chọn phòng
   void _showSelectPhongBottomSheet() {
     showModalBottomSheet(
       context: context,
@@ -121,8 +119,6 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
                 ],
               ),
               const Divider(),
-
-              // Tùy chọn 1: Không gán phòng
               ListTile(
                 leading: const Icon(Icons.do_not_disturb_alt_rounded, color: Colors.orange),
                 title: const Text("Chưa gán phòng", style: TextStyle(fontWeight: FontWeight.w600)),
@@ -134,12 +130,10 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
                   Navigator.pop(context);
                 },
               ),
-
-              // Danh sách tất cả các phòng người thuê đang ở
               if (_listHopDong.isNotEmpty)
                 ..._listHopDong.map((hd) {
                   final phong = hd.phong;
-                  final pId = phong?.phongID ?? phong?.phongID;
+                  final pId = phong?.phongID;
                   final tPhong = phong?.tenPhong ?? "??";
 
                   final isSelected = vm.selectedPhongId == pId;
@@ -168,7 +162,6 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
                     },
                   );
                 }),
-
               const SizedBox(height: 12),
             ],
           ),
@@ -177,8 +170,8 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
     );
   }
 
-  // Gọi API lưu dữ liệu
   void _xuLyLuu() async {
+    if (!vm.validateAll()) return;
     if (widget.nguoiThue.idnt == null) return;
 
     final provider = context.read<PhuongTienProvider>();
@@ -259,7 +252,6 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
                             color: Color(0xff1C1C1E),
                           ),
                         ),
-
                       ],
                     ),
                   ),
@@ -267,12 +259,10 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
               ),
             ),
 
-            /// BODY
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(16, 14, 16, 140),
                 children: [
-                  /// 1. BLOCK CHỦ PHƯƠNG TIỆN
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
@@ -298,7 +288,6 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
                           ),
                         ),
                         const SizedBox(height: 18),
-
                         _title("Người thuê"),
                         Container(
                           width: double.infinity,
@@ -319,9 +308,7 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
                             ),
                           ),
                         ),
-
                         const SizedBox(height: 18),
-
                         _title("Phòng liên quan"),
                         GestureDetector(
                           onTap: () {
@@ -386,13 +373,10 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
                             ),
                           ),
                         ),
-
                         const SizedBox(height: 6),
-                        Text(
-                          hasRoom
-                              ? "Chọn phòng liên quan đến xe này. Quan trọng khi người thuê thuê nhiều phòng."
-                              : "Người thuê chưa có phòng. Bạn vẫn có thể lưu xe và cập nhật gán phòng sau.",
-                          style: const TextStyle(
+                        const Text(
+                          "Chọn phòng liên quan đến xe này. (Không bắt buộc)",
+                          style: TextStyle(
                             fontSize: 11,
                             color: Color(0xffA0A0A0),
                             height: 1.3,
@@ -404,7 +388,6 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
 
                   const SizedBox(height: 20),
 
-                  /// 2. THÔNG TIN XE
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
@@ -430,8 +413,6 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
                           ),
                         ),
                         const SizedBox(height: 20),
-
-                        /// LOẠI XE
                         _title("Loại xe"),
                         const SizedBox(height: 8),
                         Row(
@@ -461,6 +442,7 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
                         _input(
                           controller: vm.txtHangXe,
                           hint: "VD: Honda, Yamaha...",
+                          errorText: vm.errHangXe,
                         ),
 
                         const SizedBox(height: 18),
@@ -468,10 +450,11 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
                         _input(
                           controller: vm.txtBienSo,
                           hint: "VD: 59B1-123.45",
+                          errorText: vm.errBienSo,
                         ),
                         const SizedBox(height: 6),
                         const Text(
-                          "Xe đạp hoặc không có biển số thì để trống",
+                          "Bắt buộc đối với ô tô và xe máy. Xe đạp có thể để trống.",
                           style: TextStyle(
                             fontSize: 11,
                             color: Color(0xffA0A0A0),
@@ -483,6 +466,7 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
                         _input(
                           controller: vm.txtMauSac,
                           hint: "VD: Đen, trắng...",
+                          errorText: vm.errMauSac,
                         ),
                       ],
                     ),
@@ -490,7 +474,6 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
 
                   const SizedBox(height: 20),
 
-                  /// 3. PHÍ GỬI XE
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
@@ -521,34 +504,47 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
                         ),
                         const SizedBox(height: 20),
                         _title("Giá gửi xe mặc định"),
-                        Container(
-                          height: 56,
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          decoration: BoxDecoration(
-                            color: const Color(0xffF8F8F8),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: const Color(0xffEAEAEA)),
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: TextField(
-                                  controller: vm.txtGiaGui,
-                                  keyboardType: TextInputType.number,
-                                  decoration: const InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: "0",
-                                  ),
-                                ),
+                        TextField(
+                          controller: vm.txtGiaGui,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            hintText: "0",
+                            suffixText: "đ/tháng",
+                            suffixStyle: const TextStyle(
+                              fontSize: 13,
+                              color: Color(0xff9E9E9E),
+                            ),
+                            errorText: vm.errGiaGui,
+                            errorStyle: const TextStyle(color: Colors.red, fontSize: 11),
+                            filled: true,
+                            fillColor: const Color(0xffF8F8F8),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 16,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: const BorderSide(color: Color(0xffEAEAEA)),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: const BorderSide(color: Color(0xffEAEAEA)),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: const BorderSide(
+                                color: Color(0xff2D7A3A),
+                                width: 1.2,
                               ),
-                              const Text(
-                                "đ/tháng",
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: Color(0xff9E9E9E),
-                                ),
-                              ),
-                            ],
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: const BorderSide(color: Colors.red),
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: const BorderSide(color: Colors.red, width: 1.2),
+                            ),
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -570,7 +566,6 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
         ),
       ),
 
-      /// BUTTON LƯU PHƯƠNG TIỆN
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 18),
@@ -671,38 +666,48 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
   Widget _input({
     required TextEditingController controller,
     String? hint,
+    String? errorText,
+    TextInputType? keyboardType,
   }) {
-    return SizedBox(
-      height: 56,
-      child: TextField(
-        controller: controller,
-        decoration: InputDecoration(
-          hintText: hint,
-          hintStyle: const TextStyle(
-            fontSize: 14,
-            color: Color(0xff9E9E9E),
+    return TextField(
+      controller: controller,
+      keyboardType: keyboardType,
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: const TextStyle(
+          fontSize: 14,
+          color: Color(0xff9E9E9E),
+        ),
+        errorText: errorText,
+        errorStyle: const TextStyle(color: Colors.red, fontSize: 11),
+        filled: true,
+        fillColor: const Color(0xffF8F8F8),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: Color(0xffEAEAEA)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: Color(0xffEAEAEA)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(
+            color: Color(0xff2D7A3A),
+            width: 1.2,
           ),
-          filled: true,
-          fillColor: const Color(0xffF8F8F8),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 16,
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(color: Color(0xffEAEAEA)),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(color: Color(0xffEAEAEA)),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(
-              color: Color(0xff2D7A3A),
-              width: 1.2,
-            ),
-          ),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: Colors.red),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: Colors.red, width: 1.2),
         ),
       ),
     );

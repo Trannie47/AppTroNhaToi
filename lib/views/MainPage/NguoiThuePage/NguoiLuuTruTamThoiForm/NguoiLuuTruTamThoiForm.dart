@@ -27,7 +27,6 @@ class NguoiLuuTruTamThoiForm extends StatefulWidget {
 }
 
 class _NguoiLuuTruTamThoiFormState extends State<NguoiLuuTruTamThoiForm> {
-  final _formKey = GlobalKey<FormState>();
   late NguoiLuuTruTamThoiFormViewModel vm;
 
   bool get _isEditMode => widget.itemEdit != null;
@@ -71,7 +70,7 @@ class _NguoiLuuTruTamThoiFormState extends State<NguoiLuuTruTamThoiForm> {
   }
 
   Future<void> _handleSave() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!vm.validateAll()) return;
 
     try {
       final success = await vm.saveForm(
@@ -143,129 +142,126 @@ class _NguoiLuuTruTamThoiFormState extends State<NguoiLuuTruTamThoiForm> {
           ),
         ),
       ),
-      body: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              _buildCardSection(
-                title: "Thông tin người lưu trú",
-                children: [
-                  _buildInputField(
-                    label: "Họ và tên",
-                    hintText: "Nhập họ và tên",
-                    controller: vm.hoTenController,
-                    validator: vm.validateHoTen,
-                  ),
-                  const SizedBox(height: 14),
-                  _buildInputField(
-                    label: "Mối quan hệ",
-                    hintText: "VD: ba, mẹ, anh, chị, bạn...",
-                    controller: vm.moiQuanHeController,
-                    validator: vm.validateMoiQuanHe,
-                  ),
-                  const SizedBox(height: 14),
-                  _buildInputField(
-                    label: "CCCD",
-                    hintText: "Nhập số CCCD (12 số)",
-                    controller: vm.cccdController,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(12),
-                    ],
-                    validator: vm.validateCccd,
-                  ),
-                  const SizedBox(height: 14),
-                  _buildInputField(
-                    label: "Số điện thoại",
-                    hintText: "VD: 0901 234 567",
-                    controller: vm.sdtController,
-                    keyboardType: TextInputType.phone,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(10),
-                    ],
-                    validator: vm.validateSdt,
-                  ),
-                ],
-              ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            _buildCardSection(
+              title: "Thông tin người lưu trú",
+              children: [
+                _buildInputField(
+                  label: "Họ và tên",
+                  hintText: "Nhập họ và tên",
+                  controller: vm.hoTenController,
+                  errorText: vm.errHoTen,
+                ),
+                const SizedBox(height: 14),
+                _buildInputField(
+                  label: "Mối quan hệ",
+                  hintText: "VD: ba, mẹ, anh, chị, bạn...",
+                  controller: vm.moiQuanHeController,
+                  errorText: vm.errMoiQuanHe,
+                ),
+                const SizedBox(height: 14),
+                _buildInputField(
+                  label: "CCCD",
+                  hintText: "Nhập số CCCD (12 số)",
+                  controller: vm.cccdController,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(12),
+                  ],
+                  errorText: vm.errCccd,
+                ),
+                const SizedBox(height: 14),
+                _buildInputField(
+                  label: "Số điện thoại",
+                  hintText: "VD: 0901 234 567",
+                  controller: vm.sdtController,
+                  keyboardType: TextInputType.phone,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(10),
+                  ],
+                  errorText: vm.errSdt,
+                ),
+              ],
+            ),
 
-              const SizedBox(height: 16),
+            const SizedBox(height: 16),
 
-              _buildCardSection(
-                title: "Thông tin lưu trú",
-                children: [
-                  _buildPhongDropdown(),
-                  const SizedBox(height: 14),
+            _buildCardSection(
+              title: "Thông tin lưu trú",
+              children: [
+                _buildPhongDropdown(),
+                const SizedBox(height: 14),
 
-                  _buildInputField(
-                    label: "Người thuê bảo lãnh",
-                    hintText: "",
-                    readOnlyValue: tenNguoiThueText,
-                  ),
-                  const SizedBox(height: 14),
+                _buildInputField(
+                  label: "Người thuê bảo lãnh",
+                  hintText: "",
+                  readOnlyValue: tenNguoiThueText,
+                ),
+                const SizedBox(height: 14),
 
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildDatePickerBox(
-                          label: "Ngày đến",
-                          dateValue: formatDate(vm.ngayDen),
-                          onTap: () => _selectDate(context, true),
-                        ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildDatePickerBox(
+                        label: "Ngày đến",
+                        dateValue: formatDate(vm.ngayDen),
+                        onTap: () => _selectDate(context, true),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _buildDatePickerBox(
-                          label: "Ngày về",
-                          dateValue: formatDate(vm.ngayVe),
-                          onTap: () => _selectDate(context, false),
-                        ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildDatePickerBox(
+                        label: "Ngày về",
+                        dateValue: formatDate(vm.ngayVe),
+                        onTap: () => _selectDate(context, false),
                       ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
 
-              const SizedBox(height: 28),
+            const SizedBox(height: 28),
 
-              SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: vm.isLoading ? null : _handleSave,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xff437648),
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
+            SizedBox(
+              width: double.infinity,
+              height: 52,
+              child: ElevatedButton(
+                onPressed: vm.isLoading ? null : _handleSave,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xff437648),
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  child: vm.isLoading
-                      ? const SizedBox(
-                    width: 22,
-                    height: 22,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2.5,
-                    ),
-                  )
-                      : Text(
-                    _isEditMode ? "Cập nhật thông tin" : "Lưu người lưu trú",
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                ),
+                child: vm.isLoading
+                    ? const SizedBox(
+                  width: 22,
+                  height: 22,
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 2.5,
+                  ),
+                )
+                    : Text(
+                  _isEditMode ? "Cập nhật thông tin" : "Lưu người lưu trú",
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
                 ),
               ),
+            ),
 
-              const SizedBox(height: 20),
-            ],
-          ),
+            const SizedBox(height: 20),
+          ],
         ),
       ),
     );
@@ -302,6 +298,7 @@ class _NguoiLuuTruTamThoiFormState extends State<NguoiLuuTruTamThoiForm> {
               color: Color(0xffC7C7CC),
               fontWeight: FontWeight.w400,
             ),
+            errorText: vm.errPhong,
             fillColor: const Color(0xffF8F9FA),
             filled: true,
             contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
@@ -339,7 +336,6 @@ class _NguoiLuuTruTamThoiFormState extends State<NguoiLuuTruTamThoiForm> {
             );
           }).toList(),
           onChanged: (val) => vm.setPhongId(val),
-          validator: vm.validatePhong,
         ),
       ],
     );
@@ -387,7 +383,7 @@ class _NguoiLuuTruTamThoiFormState extends State<NguoiLuuTruTamThoiForm> {
     required String hintText,
     TextEditingController? controller,
     String? readOnlyValue,
-    String? Function(String?)? validator,
+    String? errorText,
     TextInputType keyboardType = TextInputType.text,
     List<TextInputFormatter>? inputFormatters,
   }) {
@@ -405,11 +401,9 @@ class _NguoiLuuTruTamThoiFormState extends State<NguoiLuuTruTamThoiForm> {
           ),
         ),
         const SizedBox(height: 6),
-        TextFormField(
+        TextField(
           controller: isReadOnly ? null : controller,
-          initialValue: isReadOnly ? readOnlyValue : null,
           readOnly: isReadOnly,
-          validator: validator,
           keyboardType: keyboardType,
           inputFormatters: inputFormatters,
           style: const TextStyle(
@@ -418,12 +412,13 @@ class _NguoiLuuTruTamThoiFormState extends State<NguoiLuuTruTamThoiForm> {
             color: Color(0xff1C1C1E),
           ),
           decoration: InputDecoration(
-            hintText: hintText,
+            hintText: isReadOnly ? readOnlyValue : hintText,
             hintStyle: const TextStyle(
               fontSize: 13,
               color: Color(0xffC7C7CC),
               fontWeight: FontWeight.w400,
             ),
+            errorText: errorText,
             fillColor: const Color(0xffF8F9FA),
             filled: true,
             contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
