@@ -267,7 +267,7 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                                         context,
                                         vm.txtNgayKy,
                                         firstDate: dauThang,
-                                        lastDate: cuoiThang,
+                                        lastDate: today,
                                       );
                                     } else {
                                       // Tạo mới HĐ -> Cho phép lùi về ngày 01 tháng này
@@ -275,6 +275,7 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                                         context,
                                         vm.txtNgayKy,
                                         firstDate: dauThang,
+                                        lastDate: today.add(const Duration(days: 30)), //Khóa lịch sau 30 ngày thì ko cho chọn nữa
                                       );
                                     }
                                   },

@@ -381,9 +381,13 @@ class HopDongFormViewModel extends ChangeNotifier {
     }else{
       if (!isEdit) {
         // TH1 TẠO MỚI HỢP ĐỒNG
-        // Cho phép lùi ngày dọn vào, nhưng tối đa chỉ lùi tới ngày 01 tháng này
+        // Cho phép lùi ngày dọn vào, nhưng tối đa chỉ lùi tới ngày 01 tháng này và ko quá 30 ngày trong tương lai
+        final maxTuongLai = today.add(const Duration(days: 30));
         if (ngayKy.isBefore(dauThangHienTai)) {
           errNgayKy = "Chỉ được chọn lùi tối đa về ngày 01 tháng này";
+          hopLe = false;
+        } else if (ngayKy.isAfter(maxTuongLai)) {
+          errNgayKy = "Chỉ được phép đặt trước phòng tối đa 30 ngày ở tương lai";
           hopLe = false;
         }
       } else if (hdDTO?.trangThai == 0) {
@@ -398,10 +402,9 @@ class HopDongFormViewModel extends ChangeNotifier {
         //TH3: CẬP NHẬT HỢP ĐỒNG ĐANG HOẠT ĐỘNG
         // Bắt buộc Ngày bắt đầu phải nằm trong THÁNG HIỆN TẠI
         if (ngayKy.isBefore(dauThangHienTai) ||
-            ngayKy.isAfter(cuoiThangHienTai)) {
+            ngayKy.isAfter(today)) {
           errNgayKy =
-          "Ngày bắt đầu phải nằm trong tháng hiện tại (${now.month}/${now
-              .year})";
+          "Ngày bắt đầu phải từ ngày 01/${now.month} đến hôm nay (${formatDate(now)})";
           hopLe = false;
         }
       }
