@@ -97,6 +97,13 @@ class ChiTietHoaDonPhongViewModel extends ChangeNotifier {
           "chiTietDienNuoc": parsedJson['chiTietDienNuoc'],
         };
       }).toList();
+
+      listHoaDon.sort((a, b) {
+        final dateA = a['ngayLap'] != null ? DateTime.tryParse(a['ngayLap'].toString())?.millisecondsSinceEpoch ?? 0 : 0;
+        final dateB = b['ngayLap'] != null ? DateTime.tryParse(b['ngayLap'].toString())?.millisecondsSinceEpoch ?? 0 : 0;
+        return dateB.compareTo(dateA); // Giảm dần: mới nhất lên trên
+      });
+
     } catch (e) {
       errorMessage = e.toString().replaceAll('Exception: ', '');
     } finally {

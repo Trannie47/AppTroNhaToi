@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../../Provider/hoa_don_phong_provider.dart';
@@ -57,20 +58,52 @@ class _TaoHoaDonPageState extends State<TaoHoaDonPage> {
                     elevation: 0.5,
                     leading: IconButton(
                       icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black87, size: 18),
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () => Navigator.pop(context, true),
                     ),
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Tạo hóa đơn - ${vm.tenPhong}",
-                          style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.black87),
-                        ),
-                        Text(
-                          "Kỳ hóa đơn: Tháng ${vm.thangNam}",
-                          style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
-                        ),
-                      ],
+                    title: Consumer<TaoHoaDonPhongPageViewModel>(
+                      builder: (context, vm, child) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Tạo hóa đơn - ${vm.tenPhong}",
+                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  "Kỳ hóa đơn: Tháng ${vm.thangNam}",
+                                  style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                                ),
+                              ],
+                            ),
+                            //NÚT BẤM ĐỔI KỲ HÓA ĐƠN
+                            InkWell(
+                              onTap: () => vm.chonKyHoaDon(context),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xffEAF3EB),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: const Color(0xffC8E6C9)),
+                                ),
+                                child: const Row(
+                                  children: [
+                                    Icon(Icons.calendar_month_rounded, size: 14, color: Color(0xff2E7D32)),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      "Đổi kỳ",
+                                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xff2E7D32)),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     ),
                   ),
                   body: vm.isLoading
@@ -134,20 +167,6 @@ class _TaoHoaDonPageState extends State<TaoHoaDonPage> {
                             ),
                           ),
 
-                        if (vm.errorMessage != null)
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            margin: const EdgeInsets.only(bottom: 12),
-                            decoration: BoxDecoration(
-                              color: Colors.red.shade50,
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: Colors.red.shade200),
-                            ),
-                            child: Text(
-                              vm.errorMessage!,
-                              style: const TextStyle(color: Colors.red, fontSize: 13),
-                            ),
-                          ),
 
                         // HEADER DÙNG CHUNG: NGÀY LẬP HÓA ĐƠN
                         Container(
@@ -760,6 +779,9 @@ class _TaoHoaDonPageState extends State<TaoHoaDonPage> {
           child: TextField(
             controller: ctrl,
             keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+            ],
             style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
             decoration: InputDecoration(
               contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),

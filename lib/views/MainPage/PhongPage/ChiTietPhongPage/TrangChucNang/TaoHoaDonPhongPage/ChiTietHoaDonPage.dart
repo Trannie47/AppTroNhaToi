@@ -581,6 +581,7 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
                   const SnackBar(content: Text("Đã xóa hóa đơn điện nước thành công!"), backgroundColor: Colors.green),
                 );
                 vm.fetchInvoicesByPhong(pId: widget.phongId, tNam: widget.thangNam);
+                Navigator.pop(context, true);
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text(dnProvider.errorMessage ?? "Xóa thất bại!"), backgroundColor: Colors.red),
@@ -594,6 +595,7 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text("Đã xóa hóa đơn thành công!"), backgroundColor: Colors.green),
                 );
+                Navigator.pop(context, true);
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text(vm.errorMessage ?? "Xóa thất bại!"), backgroundColor: Colors.red),

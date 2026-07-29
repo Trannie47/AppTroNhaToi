@@ -15,12 +15,14 @@ class TaoHoaDonPhongPageViewModel extends ChangeNotifier {
   final ImagePicker _picker = ImagePicker();
 
   bool get isLoading => _hoaDonProvider.isLoading;
-  String? get errorMessage => _hoaDonProvider.errorMessage;
+  String? get errorMessage => localErrorMessage ?? _hoaDonProvider.errorMessage;
 
   //giá trị khởi tạo
   int phongId = 101;
   String thangNam = "07/2026";
   String tenPhong = "Phòng 101";
+
+  String? localErrorMessage;
 
   DateTime ngayLapSelected = DateTime.now();
 
@@ -156,6 +158,29 @@ class TaoHoaDonPhongPageViewModel extends ChangeNotifier {
 
     notifyListeners();
   }
+  Future<void> chonKyHoaDon(BuildContext context) async {
+    List<String> parts = thangNam.split('/');
+    int initialMonth = int.tryParse(parts[0]) ?? DateTime.now().month;
+    int initialYear = int.tryParse(parts[1]) ?? DateTime.now().year;
+
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime(initialYear, initialMonth, 1),
+      firstDate: DateTime(2023), // Hoặc giới hạn tuỳ ý phòng hoạt động
+      lastDate: DateTime.now(),   //Không cho chọn vượt quá tháng hiện tại
+      helpText: "CHỌN KỲ TÍNH TIỀN HÓA ĐƠN",
+      fieldLabelText: "Chọn tháng/năm",
+    );
+
+    if (picked != null) {
+      String newThangNam = "${picked.month.toString().padLeft(2, '0')}/${picked.year}";
+      if (newThangNam != thangNam) {
+        thangNam = newThangNam;
+        // Gọi lại dữ liệu init theo kỳ mới được chọn
+        await fetchInitData(phongId, thangNam);
+      }
+    }
+  }
 
   //CHỌN ẢNH ĐỒNG HỒ
   Future<void> pickMeterImage(bool isDien) async {
@@ -175,6 +200,25 @@ class TaoHoaDonPhongPageViewModel extends ChangeNotifier {
     if (!isChotDienNuoc && !isTinhTienHopDong) {
       return false;
     }
+    if (isChotDienNuoc) {
+      int dienCu = int.tryParse(txtDienChiSoCu.text) ?? 0;
+      int dienMoi = int.tryParse(txtDienChiSoMoi.text) ?? 0;
+      int nuocCu = int.tryParse(txtNuocChiSoCu.text) ?? 0;
+      int nuocMoi = int.tryParse(txtNuocChiSoMoi.text) ?? 0;
+
+      if (dienMoi < dienCu) {
+        localErrorMessage = "Chỉ số điện mới ($dienMoi) không được nhỏ hơn chỉ số cũ ($dienCu)!";
+        notifyListeners();
+        return false;
+      }
+
+      if (nuocMoi < nuocCu) {
+        localErrorMessage = "Chỉ số nước mới ($nuocMoi) không được nhỏ hơn chỉ số cũ ($nuocCu)!";
+        notifyListeners();
+        return false;
+      }
+    }
+    localErrorMessage = null;
 
     final customContractsPayload = listContracts.map((hd) {
       return {
