@@ -33,7 +33,9 @@ class FormPhongViewModel extends ChangeNotifier {
   String? _errTenPhong;
   String? get errTenPhong => _errTenPhong;
 
-  FormPhongViewModel(this._phongProvider, this._loaiPhongProvider, this.room);
+  FormPhongViewModel(this._phongProvider, this._loaiPhongProvider, this.room){
+    nameController.addListener(_onNameChanged);
+  }
 
   Future<void> loadDataInitial() async {
     _loaiphongState = LoaiPhongLoading();
@@ -76,22 +78,59 @@ class FormPhongViewModel extends ChangeNotifier {
     _trangThai = trangThai;
     notifyListeners();
   }
+  String _chuanHoaTenPhong(String input) {
+    String text = input.trim().toLowerCase();
+    //Lọc bỏ các biến thể chữ "phòng" hoặc "phong" ở đầu chuỗi
+    text = text.replaceFirst(RegExp(r'^(phòng|phong)\s*'), '');
+
+    return text.trim();
+  }
   bool kiemTraDuLieu() {
     bool hopLe = true;
-    if (nameController.text.trim().isEmpty) {
+    String rawInput = nameController.text;
+
+    if (rawInput.trim().isEmpty) {
       _errTenPhong = "Vui lòng nhập tên phòng trọ!";
       hopLe = false;
     } else {
-      _errTenPhong = null;
+      final tenPhong = _chuanHoaTenPhong(rawInput);
+
+      if (tenPhong.isEmpty) {
+        _errTenPhong = "Tên phòng không hợp lệ!";
+        hopLe = false;
+        notifyListeners();
+        return hopLe;
+      }
+
+      final danhSachPhongHienTai = _phongProvider.listPhong;
+
+      bool isTrungTen = false;
+      if (room != null) {
+        isTrungTen = danhSachPhongHienTai.any((p) =>
+        _chuanHoaTenPhong(p.tenPhong).toLowerCase() == tenPhong.toLowerCase() &&
+            p.phongId != room!.phongId);
+      } else {
+        isTrungTen = danhSachPhongHienTai.any((p) =>
+        _chuanHoaTenPhong(p.tenPhong).toLowerCase() == tenPhong.toLowerCase());
+      }
+
+      if (isTrungTen) {
+        _errTenPhong = "Tên phòng này đã tồn tại, vui lòng chọn tên khác!";
+        hopLe = false;
+      } else {
+        _errTenPhong = null;
+      }
     }
+
     notifyListeners();
     return hopLe;
   }
 
   Future<void> saveRoom() async {
+    final tenChuanHoa = _chuanHoaTenPhong(nameController.text);
     Phong p = Phong(
       phongID: 0,
-      tenPhong: nameController.text.trim(),
+      tenPhong: tenChuanHoa,
       trangThai: _trangThai,
       maLoaiPhong: _idLoaiPhong,
       moTa: descController.text.trim(),
@@ -154,8 +193,15 @@ class FormPhongViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+  void _onNameChanged() {
+    if (_errTenPhong != null) {
+      _errTenPhong = null;
+      notifyListeners();
+    }
+  }
   @override
   void dispose() {
+    nameController.removeListener(_onNameChanged);
     nameController.dispose();
     descController.dispose();
     super.dispose();

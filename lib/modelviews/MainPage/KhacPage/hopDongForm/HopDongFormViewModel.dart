@@ -25,7 +25,38 @@ class HopDongFormViewModel extends ChangeNotifier {
   final HopDongProvider _hopDongProvider;
   final NguoiThueProvider _nguoiThueProvider;
 
-  HopDongFormViewModel(this._hopDongProvider,this._nguoiThueProvider);
+  HopDongFormViewModel(this._hopDongProvider,this._nguoiThueProvider){
+    txtGiaHopDong.addListener(() {
+      if (errGiaHopDong != null) {
+        errGiaHopDong = null;
+        notifyListeners();
+      }
+    });
+    txtTienCoc.addListener(() {
+      if (errTienCoc != null) {
+        errTienCoc = null;
+        notifyListeners();
+      }
+    });
+    txtGhiChu.addListener(() {
+      if (errGhiChu != null) {
+        errGhiChu = null;
+        notifyListeners();
+      }
+    });
+    txtNgayKy.addListener(() {
+      if (errNgayKy != null) {
+        errNgayKy = null;
+        notifyListeners();
+      }
+    });
+    txtNgayHetHan.addListener(() {
+      if (errNgayHetHan != null) {
+        errNgayHetHan = null;
+        notifyListeners();
+      }
+    });
+  }
   final txtPhong = TextEditingController();
   final txtNguoiThue = TextEditingController();
 
@@ -181,11 +212,17 @@ class HopDongFormViewModel extends ChangeNotifier {
   //Chọn phòng sẽ tự động lấy giá phòng gốc hiển thị lên
   void onSelectedPhong(RoomAvailableDTO? phong) {
     selectedPhong = phong;
+    errPhong = null;
     if (phong != null) {
-      txtTongGiaPhong.text =formatMoney(phong.giaPhongGoc);
+      txtTongGiaPhong.text = formatMoney(phong.giaPhongGoc);
     } else {
       txtTongGiaPhong.text = "0";
     }
+    notifyListeners();
+  }
+  void onSelectedNguoiThue(NguoiThue? nguoiThue) {
+    selectedNguoiThue = nguoiThue;
+    errNguoiThue = null;
     notifyListeners();
   }
 
@@ -302,6 +339,8 @@ class HopDongFormViewModel extends ChangeNotifier {
 
     if (ngay != null) {
       controller.text = formatDate(ngay);
+      if (controller == txtNgayKy) errNgayKy = null;
+      if (controller == txtNgayHetHan) errNgayHetHan = null;
       notifyListeners();
     }
   }

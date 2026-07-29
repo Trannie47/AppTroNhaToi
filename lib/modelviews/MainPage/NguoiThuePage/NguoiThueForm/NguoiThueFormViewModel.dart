@@ -25,7 +25,122 @@ class NguoiThueFormViewModel extends ChangeNotifier {
   NguoiThue? _initialTenant;
   bool get isEdit => _initialTenant != null;
 
-  NguoiThueFormViewModel(this._service);
+  String? errHoTen;
+  String? errSDT;
+  String? errCCCD;
+  String? errNgaySinh;
+  String? errQueQuan;
+  String? errGioiTinh;
+
+  NguoiThueFormViewModel(this._service){
+    txtHoTen.addListener(() {
+      errHoTen = null;
+      notifyListeners();
+    });
+    txtSDT.addListener(() {
+      errSDT = null;
+      notifyListeners();
+    });
+    txtCCCD.addListener(() {
+      errCCCD = null;
+      notifyListeners();
+    });
+    txtNgaySinh.addListener(() {
+      errNgaySinh = null;
+      notifyListeners();
+    });
+    txtQueQuan.addListener(() {
+      errQueQuan = null;
+      notifyListeners();
+    });
+    txtGhiChu.addListener(_onFieldChanged);
+  }
+  void _onFieldChanged() {
+    notifyListeners();
+  }
+  void setGioiTinh(bool value) {
+    gioiTinh = value;
+    errGioiTinh = null;
+    notifyListeners();
+  }
+
+  bool validateAll() {
+    errHoTen = txtHoTen.text.trim().isEmpty ? "Vui lòng nhập họ tên" : null;
+
+    final sdt = txtSDT.text.trim();
+    if (sdt.isEmpty) {
+      errSDT = "Vui lòng nhập số điện thoại";
+    } else if (!RegExp(r'^0\d{9}$').hasMatch(sdt)) {
+      errSDT = "Số điện thoại phải gồm đúng 10 số";
+    } else if (checkTrungSDT()) {
+      errSDT = "Số điện thoại này đã tồn tại trong hệ thống";
+    } else {
+      errSDT = null;
+    }
+    final cccd = txtCCCD.text.trim();
+    if (cccd.isEmpty) {
+      errCCCD = "Vui lòng nhập CCCD";
+    } else if (!RegExp(r'^\d{12}$').hasMatch(cccd)) {
+      errCCCD = "CCCD phải gồm đúng 12 số";
+    } else if (checkTrungCCCD()) {
+      errCCCD = "Số CCCD này đã tồn tại trong hệ thống";
+    } else {
+      errCCCD = null;
+    }
+
+    errNgaySinh = _validateNgaySinh(txtNgaySinh.text);
+    errQueQuan =
+    txtQueQuan.text.trim().isEmpty ? "Vui lòng nhập quê quán" : null;
+
+    errGioiTinh = gioiTinh == null ? "Vui lòng chọn giới tính" : null;
+
+    notifyListeners();
+
+    return errHoTen == null &&
+        errSDT == null &&
+        errCCCD == null &&
+        errNgaySinh == null &&
+        errQueQuan == null &&
+        errGioiTinh == null;
+  }
+  String? _validateNgaySinh(String value) {
+    if (value.isEmpty) return "Vui lòng nhập ngày sinh";
+    try {
+      final arr = value.split('/');
+      if (arr.length != 3) return "Ngày sinh không hợp lệ";
+
+      final ngaySinh = DateTime(
+        int.parse(arr[2]),
+        int.parse(arr[1]),
+        int.parse(arr[0]),
+      );
+      if (ngaySinh.day != int.parse(arr[0]) ||
+          ngaySinh.month != int.parse(arr[1]) ||
+          ngaySinh.year != int.parse(arr[2])) {
+        return "Ngày sinh không hợp lệ";
+      }
+
+      int tuoi = DateTime
+          .now()
+          .year - ngaySinh.year;
+      if (DateTime
+          .now()
+          .month < ngaySinh.month ||
+          (DateTime
+              .now()
+              .month == ngaySinh.month &&
+              DateTime
+                  .now()
+                  .day < ngaySinh.day)) {
+        tuoi--;
+      }
+      if (tuoi < 18 || tuoi > 120) return "Phải từ 18 tuổi trở lên";
+    } catch (_) {
+      return "Ngày sinh không hợp lệ";
+    }
+    return null;
+  }
+
   Future<NguoiThue?> luuNguoiThue() async {
     if (_isLoading) return null;
     _isLoading = true;
@@ -136,5 +251,18 @@ class NguoiThueFormViewModel extends ChangeNotifier {
     txtGhiChu.clear();
     gioiTinh = null;
     notifyListeners();
+  }
+  @override
+  void dispose() {
+    txtSearch.dispose();
+    txtHoTen.dispose();
+    txtSDT.dispose();
+    txtCCCD.dispose();
+    txtNgaySinh.dispose();
+    txtQueQuan.dispose();
+    txtPhong.dispose();
+    txtVaiTro.dispose();
+    txtGhiChu.dispose();
+    super.dispose();
   }
 }

@@ -118,21 +118,26 @@ class _PhongPageState extends State<PhongPage> {
                         children: [
                           // Search bar
                           Container(
-                            height: 36,
-                            padding: const EdgeInsets.symmetric(horizontal: 14),
+                            height: 40,
                             decoration: BoxDecoration(
                               color: const Color(0xffECECEC),
                               borderRadius: BorderRadius.circular(16),
                             ),
-                            child: Row(
-                              children: [
-                                Icon(Icons.search, color: Colors.grey.shade500),
-                                const SizedBox(width: 8),
-                                Text(
-                                  "Tìm kiếm phòng...",
-                                  style: TextStyle(color: Colors.grey.shade500),
+                            alignment: Alignment.center,
+                            child: TextField(
+                              controller: vm.searchController,
+                              textAlignVertical: TextAlignVertical.center,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                isDense: true,
+                                contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                                hintText: "Tìm kiếm tên phòng, loại phòng...",
+                                hintStyle: TextStyle(
+                                  color: Colors.grey.shade500,
+                                  fontSize: 13,
                                 ),
-                              ],
+                                prefixIcon: Icon(Icons.search, color: Colors.grey.shade500, size: 20),
+                              ),
                             ),
                           ),
                           const SizedBox(height: 18),

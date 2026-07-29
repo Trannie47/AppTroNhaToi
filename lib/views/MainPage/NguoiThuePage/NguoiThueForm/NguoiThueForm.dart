@@ -2,6 +2,7 @@ import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/views/MainPage/NguoiThuePage/qr_cccd_scanner_page/qr_cccd_scanner_page.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../../../Provider/nguoi_thue_provider.dart';
 import '../../../../modelviews/MainPage/NguoiThuePage/NguoiThueForm/NguoiThueFormViewModel.dart';
@@ -118,7 +119,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
             onPressed: vm.isLoading
                 ? null
                 : () async {
-              if (vm.formKey.currentState!.validate()) {
+              if (vm.validateAll()) {
                 try {
                   final resultTenant = await vm.luuNguoiThue();
 
@@ -184,13 +185,10 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
         ),
       ),
 
-      body: Form(
-        key: vm.formKey,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(12, 4, 12, 16),
-
-          child: Column(
-            children: [
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(12, 4, 12, 16),
+        child: Column(
+          children: [
               // /// SEARCH
               GestureDetector(
                 onTap: () {
@@ -271,12 +269,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                       title: "Họ và tên",
                       hint: "Nhập họ và tên đầy đủ",
                       controller: vm.txtHoTen,
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return "Vui lòng nhập họ tên";
-                        }
-                        return null;
-                      },
+                      errorText: vm.errHoTen,
                     ),
 
                     _input(
@@ -284,19 +277,8 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                       hint: "VD: 0901 234 567",
                       controller: vm.txtSDT,
                       keyboardType: TextInputType.phone,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Vui lòng nhập số điện thoại";
-                        }
-
-                        if (!RegExp(r'^0\d{9}$').hasMatch(value)) {
-                          return "Số điện thoại phải gồm đúng 10 số";
-                        }
-                        if (vm.checkTrungSDT()) {
-                          return "Số điện thoại này đã tồn tại trong hệ thống";
-                        }
-                        return null;
-                      },
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      errorText: vm.errSDT,
                     ),
 
                     _input(
@@ -304,20 +286,8 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                       hint: "Nhập số CCCD/CMND",
                       controller: vm.txtCCCD,
                       keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Vui lòng nhập CCCD";
-                        }
-
-                        if (!RegExp(r'^\d{12}$').hasMatch(value)) {
-                          return "CCCD phải gồm đúng 12 số";
-                        }
-                        if (vm.checkTrungCCCD()) {
-                          return "Số CCCD này đã tồn tại trong hệ thống";
-                        }
-
-                        return null;
-                      },
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      errorText: vm.errCCCD,
                     ),
 
                     Row(
@@ -435,7 +405,8 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                                       color: Color(0xffB5B5B5),
                                       fontSize: 13,
                                     ),
-
+                                    errorText: vm.errNgaySinh,
+                                    errorStyle: const TextStyle(color: Colors.red, fontSize: 11),
                                     suffixIcon: IconButton(
                                       onPressed: () async {
                                         DateTime? picked = await showDatePicker(
@@ -504,14 +475,8 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                                 const SizedBox(height: 8),
 
                                 FormField<bool>(
-                                  validator: (value) {
-                                    if (vm.gioiTinh == null) {
-                                      return "Vui lòng chọn giới tính";
-                                    }
-                                    return null;
-                                  },
-
                                   builder: (state) {
+                                    bool hasError = vm.errGioiTinh != null;
                                     return Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
@@ -523,6 +488,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                                           decoration: BoxDecoration(
                                             color: const Color(0xffF8F8F8),
                                             borderRadius: BorderRadius.circular(14),
+                                            border: hasError ? Border.all(color: Colors.red) : null,
                                           ),
 
                                           child: DropdownButtonHideUnderline(
@@ -552,8 +518,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
 
                                               onChanged: (value) {
                                                 if (value != null) {
-                                                  vm.gioiTinh = value; // Gán data vào VM chung
-                                                  state.didChange(value); // Báo hiệu FormField cập nhật
+                                                  vm.setGioiTinh(value);
                                                 }
                                               },
                                             ),
@@ -564,7 +529,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                                           Padding(
                                             padding: const EdgeInsets.only(top: 5),
                                             child: Text(
-                                              state.errorText!,
+                                              vm.errGioiTinh!,
                                               style: const TextStyle(
                                                 color: Colors.red,
                                                 fontSize: 11,
@@ -586,13 +551,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                       title: "Quê quán",
                       hint: "Tỉnh / Thành phố",
                       controller: vm.txtQueQuan,
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return "Vui lòng nhập quê quán";
-                        }
-
-                        return null;
-                      },
+                      errorText: vm.errQueQuan,
                     ),
                   ],
                 ),
@@ -632,7 +591,6 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
             ],
           ),
         ),
-      ),
     );
   }
 
@@ -681,7 +639,8 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
     required TextEditingController controller,
     TextInputType keyboardType = TextInputType.text,
     String? subTitle,
-    String? Function(String?)? validator,
+    String? errorText,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     return Padding(
       padding: const EdgeInsets.only(top: 14),
@@ -702,8 +661,8 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
           TextFormField(
             controller: controller,
             keyboardType: keyboardType,
-            validator: validator,
-
+            inputFormatters: inputFormatters,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
             style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
 
             decoration: InputDecoration(
@@ -713,7 +672,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                 color: Color(0xffB5B5B5),
                 fontSize: 13,
               ),
-
+              errorText: errorText,
               errorStyle: const TextStyle(color: Colors.red, fontSize: 11),
 
               filled: true,

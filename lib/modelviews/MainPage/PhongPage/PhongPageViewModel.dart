@@ -10,6 +10,8 @@ class PhongPageViewModel extends ChangeNotifier {
 
   int _currentFilter = -1;
   int get currentFilter => _currentFilter;
+  final TextEditingController searchController = TextEditingController();
+  String _searchQuery = "";
 
   bool get isLoading => _service.isLoading;
   List<ItemPhong> get listPhong => _service.listPhong;
@@ -19,18 +21,38 @@ class PhongPageViewModel extends ChangeNotifier {
 
   PhongPageViewModel(this._service) {
     _service.addListener(_onProviderUpdate);
+    searchController.addListener(_onSearchChanged);
+  }
+  void _onSearchChanged() {
+    _searchQuery = searchController.text.toLowerCase().trim();
+    notifyListeners();
   }
   List<ItemPhong> get listPhongHienThi {
+    List<ItemPhong> baseList;
     switch (_currentFilter) {
       case 0:
-        return listPhongTrong;
+        baseList = listPhongTrong;
+        break;
       case 1:
-        return listPhongDangThue;
+        baseList = listPhongDangThue;
+        break;
       case 2:
-        return listPhongDangSua;
+        baseList = listPhongDangSua;
+        break;
       default:
-        return listPhong;
+        baseList = listPhong;
     }
+    //Nếu ô tìm kiếm rỗng thì trả về luôn danh sách theo tab đó
+    if (_searchQuery.isEmpty) {
+      return baseList;
+    }
+
+    //Lọc danh sách theo từ khóa (Tìm tên phòng hoặc loại phòng)
+    return baseList.where((phong) {
+      final ten = (phong.tenPhong).toLowerCase();
+      final loai = (phong.loaiPhong.tenLoaiPhong).toLowerCase();
+      return ten.contains(_searchQuery) || loai.contains(_searchQuery);
+    }).toList();
   }
   void setFilter(int filterValue) {
     if (_currentFilter == filterValue) return;
@@ -45,6 +67,8 @@ class PhongPageViewModel extends ChangeNotifier {
   @override
   void dispose() {
     _service.removeListener(_onProviderUpdate);
+    searchController.removeListener(_onSearchChanged);
+    searchController.dispose();
     super.dispose();
   }
 }

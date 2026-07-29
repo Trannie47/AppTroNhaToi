@@ -395,51 +395,42 @@ class _FormPhongState extends State<FormPhong> {
                             //Load phòng thành công
                             case LoaiPhongSuccess():
                               final danhSachLoai = state.listLoaiPhong;
-
-                              if (danhSachLoai.isEmpty) {
-                                return const Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 16),
-                                  child: Center(
-                                    child: Text(
-                                      "Chưa có loại phòng nào dưới hệ thống.",
-                                      style: TextStyle(
-                                        color: Colors.grey,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }
-
                               return AnimatedBuilder(
                                 animation: vm,
                                 builder: (context, _) {
                                   return Column(
                                     children: [
-                                      ...List.generate(danhSachLoai.length, (
-                                        index,
-                                      ) {
-                                        final item = danhSachLoai[index];
-
-                                        bool selected =
-                                            vm.idLoaiPhong ==
-                                            item.maLoaiPhong;
-
-                                        return GestureDetector(
-                                          onTap: () {
-                                            vm.setIdLoaiPhong(
-                                              item.maLoaiPhong,
-                                            );
-                                          },
-                                          child: itemLoaiPhongSelectBox(
-                                            item,
-                                            selected,
+                                      // Nếu danh sách trống thì hiện text thông báo
+                                      if (danhSachLoai.isEmpty)
+                                        const Padding(
+                                          padding: EdgeInsets.only(bottom: 16),
+                                          child: Text(
+                                            "Chưa có loại phòng nào dưới hệ thống. Vui lòng thêm loại phòng trước khi lưu phòng trọ.",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              color: Colors.grey,
+                                              fontSize: 13,
+                                            ),
                                           ),
-                                        );
-                                      }),
+                                        )
+                                      else
+                                        ...List.generate(danhSachLoai.length, (index) {
+                                          final item = danhSachLoai[index];
+                                          bool selected = vm.idLoaiPhong == item.maLoaiPhong;
+
+                                          return GestureDetector(
+                                            onTap: () {
+                                              vm.setIdLoaiPhong(item.maLoaiPhong);
+                                            },
+                                            child: itemLoaiPhongSelectBox(
+                                              item,
+                                              selected,
+                                            ),
+                                          );
+                                        }),
+
                                       const SizedBox(height: 12),
 
-                                      // Nút thêm loại phòng mới giữ nguyên...
                                       Container(
                                         width: double.infinity,
                                         padding: const EdgeInsets.symmetric(
@@ -457,7 +448,7 @@ class _FormPhongState extends State<FormPhong> {
                                           onTap: goToFormRoomType,
                                           child: const Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.center,
+                                            MainAxisAlignment.center,
                                             children: [
                                               Icon(
                                                 Icons.add_circle_outline,

@@ -37,8 +37,39 @@ class FormLoaiPhongViewModel extends ChangeNotifier {
       text: loaiPhong?.giaTien.toStringAsFixed(0) ?? "",
     );
     isMayLanh = loaiPhong?.isMayLanh ?? false;
+
+    tenLoaiPhongController.addListener(_clearErrorTen);
+    dienTichController.addListener(_clearErrorDienTich);
+    soNguoiController.addListener(_clearErrorSoNguoi);
+    giaTienController.addListener(_clearErrorGiaTien);
   }
 
+  void _clearErrorTen() {
+    if (errTenLoaiPhong != null) {
+      errTenLoaiPhong = null;
+      notifyListeners();
+    }
+  }
+  void _clearErrorDienTich() {
+    if (errDienTich != null) {
+      errDienTich = null;
+      notifyListeners();
+    }
+  }
+
+  void _clearErrorSoNguoi() {
+    if (errSoNguoi != null) {
+      errSoNguoi = null;
+      notifyListeners();
+    }
+  }
+
+  void _clearErrorGiaTien() {
+    if (errGiaTien != null) {
+      errGiaTien = null;
+      notifyListeners();
+    }
+  }
   void toggleMayLanh(bool value) {
     isMayLanh = value;
     notifyListeners();

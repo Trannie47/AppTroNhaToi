@@ -35,7 +35,6 @@ class _FormLoaiPhongState extends State<FormLoaiPhong> {
     });
   }
 
-  // 🔥 ĐÃ CẬP NHẬT: Xử lý lưu dữ liệu (Tự động phân biệt Thêm/Sửa thông báo và đóng màn hình)
   void xuLyLuuLoaiPhong() async {
     if (!vm.kiemTraDuLieu()) return;
     final result = await vm.saveLoaiPhongProcess();
@@ -138,6 +137,7 @@ class _FormLoaiPhongState extends State<FormLoaiPhong> {
                             borderRadius: BorderRadius.circular(14),
                             borderSide: BorderSide.none,
                           ),
+                          floatingLabelBehavior: FloatingLabelBehavior.auto,
                         ),
                       ),
                       const SizedBox(height: 10),

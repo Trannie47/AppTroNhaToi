@@ -145,10 +145,7 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                                       selectedItem: vm.selectedPhong,
                                       itemAsString: (item) => item.tenPhong,
                                       onChanged: (value) {
-                                        setState(() {
-                                          vm.selectedPhong = value;
-                                          vm.onSelectedPhong(value);
-                                        });
+                                        vm.onSelectedPhong(value);
                                       },
                                     ),
                                     if (vm.errPhong != null) ...[
@@ -217,9 +214,7 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                                     selectedItem: vm.selectedNguoiThue,
                                     itemAsString: (item) => item.hoTen!,
                                     onChanged: (value) {
-                                      setState(() {
-                                        vm.selectedNguoiThue = value;
-                                      });
+                                      vm.onSelectedNguoiThue(value);
                                     },
 
                                   ),
