@@ -1,11 +1,12 @@
+import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/LapRapPage/LapRapPageModel.dart';
 import 'package:flutter/foundation.dart';
 import '../models/lap_rap.dart';
-import '../repositories/lapRapThietBi_repository.dart';
+import '../repositories/lapRap_repository.dart';
 
-class LapRapThietbiProvider extends ChangeNotifier {
-  final LapRapThietBiRepository _lapRapRepo = LapRapThietBiRepository();
+class LapRapProvider extends ChangeNotifier {
+  final LapRapRepository _lapRapRepo = LapRapRepository();
 
-  Future<List<LapRap>> getThietBiByPhongId(int phongId) async {
+  Future<List<LapRapPageModel>> getThietBiByPhongId(int phongId) async {
     return await _lapRapRepo.getThietBiByPhongId(phongId);
   }
 
@@ -22,10 +23,8 @@ class LapRapThietbiProvider extends ChangeNotifier {
       ngayLap: ngayLap,
     );
   }
-  Future<LapRap?> capNhatLapRap({
-    required int id,
-    required int soLuong,
-  }) async {
+
+  Future<LapRap?> capNhatLapRap({required int id, required int soLuong}) async {
     return await _lapRapRepo.capNhatLapRap(id: id, soLuong: soLuong);
   }
 }

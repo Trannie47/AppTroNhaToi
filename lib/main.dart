@@ -2,7 +2,7 @@ import 'package:AppTroNhaToi/Provider/cau_hinh_gia_provider.dart';
 import 'package:AppTroNhaToi/Provider/dien_nuoc_provider.dart';
 import 'package:AppTroNhaToi/Provider/hoa_don_gui_xe_provider.dart';
 import 'package:AppTroNhaToi/Provider/hoa_don_phong_provider.dart';
-import 'package:AppTroNhaToi/Provider/lap_rap_thietbi_provider.dart';
+import 'package:AppTroNhaToi/Provider/lap_rap_provider.dart';
 import 'package:AppTroNhaToi/Provider/nguoi_luu_tru_tam_thoi_provider.dart';
 import 'package:AppTroNhaToi/Provider/phieu_thu_hang_thang_provider.dart';
 import 'package:AppTroNhaToi/Provider/phong_provider.dart';
@@ -36,14 +36,14 @@ void main() {
         ChangeNotifierProvider(create: (_) => LoaiPhongProvider()),
         ChangeNotifierProvider(create: (_) => HopDongProvider()),
         ChangeNotifierProvider(create: (_) => DienNuocProvider()),
-        ChangeNotifierProvider(create: (_)=> PhuongTienProvider()),
-        ChangeNotifierProvider(create: (_) => LapRapThietbiProvider()),
+        ChangeNotifierProvider(create: (_) => PhuongTienProvider()),
+        ChangeNotifierProvider(create: (_) => LapRapProvider()),
         ChangeNotifierProvider(create: (_) => NguoiLuuTruTamThoiProvider()),
-        ChangeNotifierProvider(create: (_)=> CauHinhGiaProvider()),
-        ChangeNotifierProvider(create: (_)=> HoadonPhongProvider()),
-        ChangeNotifierProvider(create: (_)=> PhieuThuHangThangProvider()),
-        ChangeNotifierProvider(create: (_)=> PhieuThuDienNuocProvider()),
-        ChangeNotifierProvider(create: (_)=> HoaDonGuiXeProvider()),
+        ChangeNotifierProvider(create: (_) => CauHinhGiaProvider()),
+        ChangeNotifierProvider(create: (_) => HoadonPhongProvider()),
+        ChangeNotifierProvider(create: (_) => PhieuThuHangThangProvider()),
+        ChangeNotifierProvider(create: (_) => PhieuThuDienNuocProvider()),
+        ChangeNotifierProvider(create: (_) => HoaDonGuiXeProvider()),
         //File Service được khởi tạo ở đây
         ChangeNotifierProvider(create: (_) => HangHoaProvider()),
         // ChangeNotifierProvider(create: (_) => HoaDonTapHoaProvider()),
@@ -51,16 +51,16 @@ void main() {
         // ChangeNotifierProvider(create: (_) => ThietBiProvider()),
         //ChangeNotifierProvider(create: (_) => ThongKeProvider()),
         ChangeNotifierProvider(
-          create: (_) =>
-          ThongKeProvider()
-            ..getThongKe(
-              thang: DateTime.now().month,
-              nam: DateTime.now().year,
-            ),
+          create: (_) => ThongKeProvider()
+            ..getThongKe(thang: DateTime.now().month, nam: DateTime.now().year),
         ),
         ChangeNotifierProvider(create: (_) => ThietBiProvider()..fetchAll()),
-        ChangeNotifierProvider(create: (_) => HoaDonTapHoaProvider()..fetchAll(),),
-        ChangeNotifierProvider(create: (_) => ThongBaoProvider()..startPolling()),
+        ChangeNotifierProvider(
+          create: (_) => HoaDonTapHoaProvider()..fetchAll(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => ThongBaoProvider()..startPolling(),
+        ),
       ],
       child: const MyApp(),
     ),

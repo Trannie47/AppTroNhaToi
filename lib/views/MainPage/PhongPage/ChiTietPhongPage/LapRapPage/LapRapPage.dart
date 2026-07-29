@@ -1,35 +1,32 @@
-import 'package:AppTroNhaToi/Provider/lap_rap_thietbi_provider.dart';
+import 'package:AppTroNhaToi/Provider/lap_rap_provider.dart';
+import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
+import 'package:AppTroNhaToi/models/item_phong.dart';
+import 'package:AppTroNhaToi/models/lap_rap.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/ChiTietPhongPage/LapRapPage/LapRapPageViewModel.dart';
+import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/LapRapPage/LapRapPageModel.dart';
+import 'package:AppTroNhaToi/widgets/app_error.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../../Provider/thiet_bi_provider.dart';
-import '../../../../../models/item_phong.dart';
-import '../../../../../models/lap_rap.dart';
-import '../../../../../modelviews/MainPage/PhongPage/ChiTietPhongPage/ChiTietThietBiPhongPage/chiTietThietBiPhongViewModel.dart';
-import '../../../../../widgets/app_error.dart';
-import 'ThemThietBiPhongDialog.dart';
+import 'LapRapFormDialog.dart';
 
-class ChiTietThietBiPhongPage extends StatefulWidget {
+class LapRapPage extends StatefulWidget {
   final ItemPhong room;
 
-  const ChiTietThietBiPhongPage({
-    super.key,
-    required this.room,
-  });
+  const LapRapPage({super.key, required this.room});
 
   @override
-  State<ChiTietThietBiPhongPage> createState() =>
-      _ChiTietThietBiPhongPageState();
+  State<LapRapPage> createState() => _LapRapPageState();
 }
 
-class _ChiTietThietBiPhongPageState extends State<ChiTietThietBiPhongPage> {
-  late ChiTietThietBiPhongViewModel vm;
+class _LapRapPageState extends State<LapRapPage> {
+  late LapRapPageViewModel vm;
 
   @override
   void initState() {
     super.initState();
-    vm = ChiTietThietBiPhongViewModel(
-      context.read<LapRapThietbiProvider>(),
+    vm = LapRapPageViewModel(
+      context.read<LapRapProvider>(),
       widget.room.phongId,
     );
 
@@ -40,11 +37,6 @@ class _ChiTietThietBiPhongPageState extends State<ChiTietThietBiPhongPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       vm.fetchThietBiByPhongId();
     });
-  }
-
-  String _formatDate(DateTime? dt) {
-    if (dt == null) return "Chưa rõ";
-    return "${dt.day.toString().padLeft(2, '0')}/${dt.month.toString().padLeft(2, '0')}/${dt.year}";
   }
 
   IconData _getIconByLoai(String? loai) {
@@ -123,7 +115,7 @@ class _ChiTietThietBiPhongPageState extends State<ChiTietThietBiPhongPage> {
                   onPressed: () async {
                     final result = await showDialog<bool>(
                       context: context,
-                      builder: (dialogContext) => ThemThietBiPhongDialog(
+                      builder: (dialogContext) => LapRapFormDialog(
                         phongId: widget.room.phongId,
                         viewModel: vm,
                       ),
@@ -143,7 +135,9 @@ class _ChiTietThietBiPhongPageState extends State<ChiTietThietBiPhongPage> {
                     } else if (result == false) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text("Thêm thiết bị thất bại, vui lòng thử lại!"),
+                          content: Text(
+                            "Thêm thiết bị thất bại, vui lòng thử lại!",
+                          ),
                           backgroundColor: Colors.red,
                         ),
                       );
@@ -169,7 +163,7 @@ class _ChiTietThietBiPhongPageState extends State<ChiTietThietBiPhongPage> {
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
 
@@ -225,10 +219,10 @@ class _ChiTietThietBiPhongPageState extends State<ChiTietThietBiPhongPage> {
                 onTap: () async {
                   final result = await showDialog<bool>(
                     context: context,
-                    builder: (dialogContext) => ThemThietBiPhongDialog(
+                    builder: (dialogContext) => LapRapFormDialog(
                       phongId: widget.room.phongId,
                       viewModel: vm,
-                      lapRap: item, // Truyền item để mở Form Sửa / Xóa
+                      lapRapPageModel: item, // Truyền item để mở Form Sửa / Xóa
                     ),
                   );
 
@@ -254,13 +248,15 @@ class _ChiTietThietBiPhongPageState extends State<ChiTietThietBiPhongPage> {
     );
   }
 
-  Widget _buildItemThietBi(LapRap item) {
-    final tb = item.thietBi;
+  Widget _buildItemThietBi(LapRapPageModel item) {
+    final tb = item.lapRap.thietBi;
     final isTot = tb?.laTot ?? true;
-    final statusColor =
-    isTot ? const Color(0xff2D7A3A) : const Color(0xffD9534F);
-    final iconBgColor =
-    isTot ? const Color(0xffEEF5EF) : const Color(0xffFDF2F2);
+    final statusColor = isTot
+        ? const Color(0xff2D7A3A)
+        : const Color(0xffD9534F);
+    final iconBgColor = isTot
+        ? const Color(0xffEEF5EF)
+        : const Color(0xffFDF2F2);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -289,11 +285,7 @@ class _ChiTietThietBiPhongPageState extends State<ChiTietThietBiPhongPage> {
               color: iconBgColor,
               borderRadius: BorderRadius.circular(14),
             ),
-            child: Icon(
-              _getIconByLoai(tb?.loai),
-              color: statusColor,
-              size: 22,
-            ),
+            child: Icon(_getIconByLoai(tb?.loai), color: statusColor, size: 22),
           ),
           const SizedBox(width: 12),
 
@@ -312,7 +304,7 @@ class _ChiTietThietBiPhongPageState extends State<ChiTietThietBiPhongPage> {
                 const SizedBox(height: 3),
 
                 Text(
-                  "Loại: ${tb?.loai ?? 'Khác'} · Ngày lắp ${_formatDate(item.ngayLap)}",
+                  "Loại: ${tb?.loai ?? 'Khác'} · Ngày lắp ${formatDate(item.lapRap.ngayLap)}",
                   style: const TextStyle(
                     fontSize: 12,
                     color: Color(0xff8E8E93),
@@ -322,14 +314,51 @@ class _ChiTietThietBiPhongPageState extends State<ChiTietThietBiPhongPage> {
 
                 Row(
                   children: [
-                    Text(
-                      tb?.trangThaiText ?? "Tốt",
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        color: statusColor,
+                    if ((item.soLuongHong) == 0 &&
+                        (item.soLuongDangSua) == 0) ...[
+                      Text(
+                        "Tốt",
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xff2D7A3A),
+                        ),
                       ),
-                    ),
+                    ] else ...[
+                      if ((item.soLuongHong) > 0)
+                        Text(
+                          "Đang hỏng: ${item.soLuongHong}",
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xffD9534F),
+                          ),
+                        ),
+
+                      if ((item.soLuongHong) > 0 &&
+                          (item.soLuongDangSua) > 0) ...[
+                        const SizedBox(width: 6),
+                        Text(
+                          "|",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey.shade400,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                      ],
+
+                      if ((item.soLuongDangSua) > 0)
+                        Text(
+                          "Đang sửa: ${item.soLuongDangSua}",
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xffF39C12),
+                          ),
+                        ),
+                    ],
+
                     const SizedBox(width: 6),
                     Text(
                       "|",
@@ -338,9 +367,10 @@ class _ChiTietThietBiPhongPageState extends State<ChiTietThietBiPhongPage> {
                         color: Colors.grey.shade400,
                       ),
                     ),
+
                     const SizedBox(width: 6),
                     Text(
-                      "Số lượng: ${item.soLuong ?? 1}",
+                      "Số lượng: ${item.lapRap.soLuong ?? 1}",
                       style: const TextStyle(
                         fontSize: 12,
                         color: Color(0xff666666),

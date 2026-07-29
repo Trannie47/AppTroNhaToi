@@ -1,10 +1,10 @@
+import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../../Provider/hoa_don_phong_provider.dart';
 import '../../../../../../Provider/phieu_thu_dien_nuoc_provider.dart';
 import '../../../../../../Provider/phong_provider.dart';
-import '../../../../../../core/utils/currency_formatter.dart';
 import '../../../../../../core/utils/date_formatter.dart';
 import '../../../../../../modelviews/MainPage/KhacPage/taoHoaDonPhongPage/ChiTietHoaDonPhongViewModel.dart';
 
@@ -37,14 +37,13 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
     super.initState();
     final provider = Provider.of<HoadonPhongProvider>(context, listen: false);
     final phongProvider = Provider.of<PhongProvider>(context, listen: false);
-    _viewModel = ChiTietHoaDonPhongViewModel(provider: provider,phongProvider: phongProvider,);
-
-    _viewModel.fetchInvoicesByPhong(
-      pId: widget.phongId,
-      tNam: widget.thangNam,
+    _viewModel = ChiTietHoaDonPhongViewModel(
+      provider: provider,
+      phongProvider: phongProvider,
     );
-  }
 
+    _viewModel.fetchInvoicesByPhong(pId: widget.phongId, tNam: widget.thangNam);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +63,11 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
                 backgroundColor: Colors.white,
                 elevation: 0.5,
                 leading: IconButton(
-                  icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black87, size: 18),
+                  icon: const Icon(
+                    Icons.arrow_back_ios_new,
+                    color: Colors.black87,
+                    size: 18,
+                  ),
                   onPressed: () => Navigator.pop(context, true),
                 ),
                 title: Column(
@@ -72,32 +75,43 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
                   children: [
                     Text(
                       "Danh sách Hóa đơn - Phòng ${_viewModel.tenPhong}",
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
                     ),
                     Text(
                       "Kỳ hóa đơn: Tháng ${widget.thangNam} (${vm.listHoaDon.length} hóa đơn)",
-                      style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Colors.grey.shade600,
+                      ),
                     ),
                   ],
                 ),
               ),
               body: vm.isLoading
-                  ? const Center(child: CircularProgressIndicator(color: Color(0xff2E7D32)))
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                        color: Color(0xff2E7D32),
+                      ),
+                    )
                   : vm.listHoaDon.isEmpty
                   ? const Center(
-                child: Text(
-                  "Chưa có hóa đơn nào được lập cho phòng này!",
-                  style: TextStyle(color: Colors.grey, fontSize: 14),
-                ),
-              )
+                      child: Text(
+                        "Chưa có hóa đơn nào được lập cho phòng này!",
+                        style: TextStyle(color: Colors.grey, fontSize: 14),
+                      ),
+                    )
                   : ListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: vm.listHoaDon.length,
-                itemBuilder: (context, index) {
-                  final item = vm.listHoaDon[index];
-                  return _buildInvoiceCardItem(item, index, vm);
-                },
-              ),
+                      padding: const EdgeInsets.all(16),
+                      itemCount: vm.listHoaDon.length,
+                      itemBuilder: (context, index) {
+                        final item = vm.listHoaDon[index];
+                        return _buildInvoiceCardItem(item, index, vm);
+                      },
+                    ),
             );
           },
         ),
@@ -105,7 +119,11 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
     );
   }
 
-  Widget _buildInvoiceCardItem(Map<String, dynamic> item, int index, ChiTietHoaDonPhongViewModel vm) {
+  Widget _buildInvoiceCardItem(
+    Map<String, dynamic> item,
+    int index,
+    ChiTietHoaDonPhongViewModel vm,
+  ) {
     final bool isDienNuoc = item['isDienNuoc'] == true;
     final int trangThai = item['trangThai'] ?? 0;
     final String hoTen = item['hoTen'] ?? 'Khách thuê';
@@ -113,12 +131,19 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
     final String maHoaDon = item['maHoaDon'] ?? '';
     final double tongTien = (item['tongTien'] as num?)?.toDouble() ?? 0;
     final double tongDaThu = (item['tongDaThu'] as num?)?.toDouble() ?? 0;
-    final double conNo = (item['conNo'] as num?)?.toDouble() ?? (tongTien - tongDaThu > 0 ? tongTien - tongDaThu : 0);
+    final double conNo =
+        (item['conNo'] as num?)?.toDouble() ??
+        (tongTien - tongDaThu > 0 ? tongTien - tongDaThu : 0);
 
-    final double tongTienPhong = (item['tongTienPhong'] as num?)?.toDouble() ?? 0;
-    final double tienDichVuKhac = (item['tienDichVuKhac'] as num?)?.toDouble() ?? 0;
+    final double tongTienPhong =
+        (item['tongTienPhong'] as num?)?.toDouble() ?? 0;
+    final double tienDichVuKhac =
+        (item['tienDichVuKhac'] as num?)?.toDouble() ?? 0;
     final List danhSachXe = item['danhSachXe'] ?? [];
-    final double tongTienXe = danhSachXe.fold(0.0, (sum, x) => sum + ((x['price'] as num?)?.toDouble() ?? 0));
+    final double tongTienXe = danhSachXe.fold(
+      0.0,
+      (sum, x) => sum + ((x['price'] as num?)?.toDouble() ?? 0),
+    );
 
     String statusText = "CHƯA THANH TOÁN";
     Color statusBg = Colors.red.shade50;
@@ -166,12 +191,20 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
-              color: isDienNuoc ? const Color(0xffEBF3FE) : const Color(0xffF8F9FA),
+              color: isDienNuoc
+                  ? const Color(0xffEBF3FE)
+                  : const Color(0xffF8F9FA),
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(12),
                 topRight: Radius.circular(12),
               ),
-              border: Border(bottom: BorderSide(color: isDienNuoc ? Colors.blue.shade100 : Colors.grey.shade200)),
+              border: Border(
+                bottom: BorderSide(
+                  color: isDienNuoc
+                      ? Colors.blue.shade100
+                      : Colors.grey.shade200,
+                ),
+              ),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -181,23 +214,33 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        isDienNuoc ? "Hóa đơn Điện Nước - ${item['tenPhong']}" : "Hóa đơn - $hoTen",
+                        isDienNuoc
+                            ? "Hóa đơn Điện Nước - ${item['tenPhong']}"
+                            : "Hóa đơn - $hoTen",
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
-                          color: isDienNuoc ? const Color(0xff1565C0) : const Color(0xff2E7D32),
+                          color: isDienNuoc
+                              ? const Color(0xff1565C0)
+                              : const Color(0xff2E7D32),
                         ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         "Mã HD: $maHoaDon",
-                        style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Colors.grey.shade600,
+                        ),
                       ),
                     ],
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: statusBg,
                     borderRadius: BorderRadius.circular(6),
@@ -215,7 +258,11 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
                 const SizedBox(width: 4),
                 if (trangThai == 0)
                   IconButton(
-                    icon: const Icon(Icons.delete_outline, color: Colors.redAccent, size: 20),
+                    icon: const Icon(
+                      Icons.delete_outline,
+                      color: Colors.redAccent,
+                      size: 20,
+                    ),
                     onPressed: () => _confirmDeleteInvoice(item, vm),
                     tooltip: "Xóa hóa đơn",
                     padding: EdgeInsets.zero,
@@ -231,10 +278,16 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildDetailRow("Phòng:", item['tenPhong'] ?? 'Phòng ${widget.phongId}'),
+                _buildDetailRow(
+                  "Phòng:",
+                  item['tenPhong'] ?? 'Phòng ${widget.phongId}',
+                ),
                 if (!isDienNuoc) ...[
                   const SizedBox(height: 4),
-                  _buildDetailRow("Khách thuê:", "$hoTen ${hopDongId.isNotEmpty ? "($hopDongId)" : ""}"),
+                  _buildDetailRow(
+                    "Khách thuê:",
+                    "$hoTen ${hopDongId.isNotEmpty ? "($hopDongId)" : ""}",
+                  ),
                 ],
                 const SizedBox(height: 4),
                 _buildDetailRow("Ngày lập:", ngayLapFormatted),
@@ -246,7 +299,14 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
 
                 if (!isDienNuoc) ...[
                   const SizedBox(height: 12),
-                  const Text("Chi tiết các khoản phí:", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xff2E7D32))),
+                  const Text(
+                    "Chi tiết các khoản phí:",
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xff2E7D32),
+                    ),
+                  ),
                   const SizedBox(height: 6),
 
                   // 1. Tiền phòng
@@ -263,15 +323,33 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text("• Tiền phòng", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
-                            Text(formatMoney(tongTienPhong), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xff2E7D32))),
+                            const Text(
+                              "• Tiền phòng",
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Text(
+                              formatMoney(tongTienPhong),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff2E7D32),
+                              ),
+                            ),
                           ],
                         ),
-                        if (item['formulaText'] != null && item['formulaText'].toString().isNotEmpty) ...[
+                        if (item['formulaText'] != null &&
+                            item['formulaText'].toString().isNotEmpty) ...[
                           const SizedBox(height: 2),
                           Text(
                             item['formulaText'].toString(),
-                            style: TextStyle(fontSize: 11, color: Colors.grey.shade700, height: 1.3),
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Colors.grey.shade700,
+                              height: 1.3,
+                            ),
                           ),
                         ],
                       ],
@@ -294,21 +372,49 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("• Tiền gửi xe (${danhSachXe.length} chiếc)", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
-                              Text(formatMoney(tongTienXe), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xff2E7D32))),
+                              Text(
+                                "• Tiền gửi xe (${danhSachXe.length} chiếc)",
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              Text(
+                                formatMoney(tongTienXe),
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xff2E7D32),
+                                ),
+                              ),
                             ],
                           ),
                           const SizedBox(height: 4),
-                          ...danhSachXe.map((xe) => Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 2),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("- ${xe['hangXe'] ?? 'Xe'} (${xe['bienSo'] ?? ''})", style: TextStyle(fontSize: 11, color: Colors.grey.shade700)),
-                                Text(formatMoney(xe['price']), style: TextStyle(fontSize: 11, color: Colors.grey.shade700)),
-                              ],
+                          ...danhSachXe.map(
+                            (xe) => Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 2),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "- ${xe['hangXe'] ?? 'Xe'} (${xe['bienSo'] ?? ''})",
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: Colors.grey.shade700,
+                                    ),
+                                  ),
+                                  Text(
+                                    formatMoney(xe['price']),
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: Colors.grey.shade700,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          )),
+                          ),
                         ],
                       ),
                     ),
@@ -327,19 +433,37 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text("• Dịch vụ phát sinh thêm", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
-                          Text(formatMoney(tienDichVuKhac), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xff2E7D32))),
+                          const Text(
+                            "• Dịch vụ phát sinh thêm",
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            formatMoney(tienDichVuKhac),
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xff2E7D32),
+                            ),
+                          ),
                         ],
                       ),
                     ),
                   ],
                 ],
 
-                if (item['ghiChu'] != null && item['ghiChu'].toString().isNotEmpty) ...[
+                if (item['ghiChu'] != null &&
+                    item['ghiChu'].toString().isNotEmpty) ...[
                   const SizedBox(height: 8),
                   Text(
                     "Ghi chú: ${item['ghiChu']}",
-                    style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: Colors.black54),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontStyle: FontStyle.italic,
+                      color: Colors.black54,
+                    ),
                   ),
                 ],
 
@@ -364,14 +488,20 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
                         children: [
                           const Text(
                             "CÒN LẠI PHẢI NỘP:",
-                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black87),
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
                           ),
                           Text(
                             formatMoney(conNo),
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: conNo > 0 ? Colors.red.shade700 : const Color(0xff2E7D32),
+                              color: conNo > 0
+                                  ? Colors.red.shade700
+                                  : const Color(0xff2E7D32),
                             ),
                           ),
                         ],
@@ -399,15 +529,25 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
                 Expanded(
                   child: OutlinedButton.icon(
                     onPressed: () => vm.exportOrSharePdf(item),
-                    icon: const Icon(Icons.download_rounded, size: 16, color: Colors.black87),
+                    icon: const Icon(
+                      Icons.download_rounded,
+                      size: 16,
+                      color: Colors.black87,
+                    ),
                     label: const Text(
                       "Lưu về máy",
-                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black87),
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
                     ),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       side: BorderSide(color: Colors.grey.shade300),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                   ),
                 ),
@@ -426,14 +566,18 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
                               phongId: widget.phongId,
                               thangNam: widget.thangNam,
                               lanGhi: lanGhi,
-                              tenPhong: item['tenPhong'] ?? "Phòng ${widget.phongId}",
+                              tenPhong:
+                                  item['tenPhong'] ?? "Phòng ${widget.phongId}",
                               tongTienDN: tongTien,
                               trangThaiHienTai: trangThai,
                             ),
                           );
 
                           if (reloaded == true && mounted) {
-                            vm.fetchInvoicesByPhong(pId: widget.phongId, tNam: widget.thangNam);
+                            vm.fetchInvoicesByPhong(
+                              pId: widget.phongId,
+                              tNam: widget.thangNam,
+                            );
                           }
                         } else {
                           final bool? reloaded = await showDialog<bool>(
@@ -442,7 +586,8 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
                             builder: (ctx) => CapNhatThanhToanDialog(
                               maHoaDon: maHoaDon,
                               hoTenKhach: hoTen,
-                              tenPhong: item['tenPhong'] ?? "Phòng ${widget.phongId}",
+                              tenPhong:
+                                  item['tenPhong'] ?? "Phòng ${widget.phongId}",
                               tongTienHD: tongTien,
                               tongDaThu: tongDaThu,
                               trangThaiHienTai: trangThai,
@@ -450,19 +595,34 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
                           );
 
                           if (reloaded == true && mounted) {
-                            vm.fetchInvoicesByPhong(pId: widget.phongId, tNam: widget.thangNam);
+                            vm.fetchInvoicesByPhong(
+                              pId: widget.phongId,
+                              tNam: widget.thangNam,
+                            );
                           }
                         }
                       },
-                      icon: const Icon(Icons.edit_outlined, size: 16, color: Colors.white),
+                      icon: const Icon(
+                        Icons.edit_outlined,
+                        size: 16,
+                        color: Colors.white,
+                      ),
                       label: const Text(
                         "Cập nhật",
-                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: isDienNuoc ? const Color(0xff1565C0) : const Color(0xff2E7D32),
+                        backgroundColor: isDienNuoc
+                            ? const Color(0xff1565C0)
+                            : const Color(0xff2E7D32),
                         padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                         elevation: 0,
                       ),
                     ),
@@ -525,16 +685,36 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Color(0xff1565C0))),
-            Text(formatMoney(thanhTien), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Color(0xff1565C0))),
+            Text(
+              label,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+                color: Color(0xff1565C0),
+              ),
+            ),
+            Text(
+              formatMoney(thanhTien),
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+                color: Color(0xff1565C0),
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 2),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text("Chỉ số: $cu ➔ $moi (Sử dụng: $suDung)", style: TextStyle(fontSize: 11, color: Colors.grey.shade700)),
-            Text("Đơn giá: ${formatMoney(donGia)}", style: TextStyle(fontSize: 11, color: Colors.grey.shade700)),
+            Text(
+              "Chỉ số: $cu ➔ $moi (Sử dụng: $suDung)",
+              style: TextStyle(fontSize: 11, color: Colors.grey.shade700),
+            ),
+            Text(
+              "Đơn giá: ${formatMoney(donGia)}",
+              style: TextStyle(fontSize: 11, color: Colors.grey.shade700),
+            ),
           ],
         ),
       ],
@@ -545,13 +725,26 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: const TextStyle(fontSize: 12, color: Colors.black54)),
-        Text(value, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.black87)),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 12, color: Colors.black54),
+        ),
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: Colors.black87,
+          ),
+        ),
       ],
     );
   }
 
-  void _confirmDeleteInvoice(Map<String, dynamic> item, ChiTietHoaDonPhongViewModel vm) {
+  void _confirmDeleteInvoice(
+    Map<String, dynamic> item,
+    ChiTietHoaDonPhongViewModel vm,
+  ) {
     final bool isDienNuoc = item['isDienNuoc'] == true;
     final String maHD = item['maHoaDon'] ?? '';
 
@@ -570,7 +763,10 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
           final bool isTheLastOne = vm.listHoaDon.length <= 1;
           if (isDienNuoc) {
             final int lanGhi = item['lanGhi'] ?? 1;
-            final dnProvider = Provider.of<PhieuThuDienNuocProvider>(context, listen: false);
+            final dnProvider = Provider.of<PhieuThuDienNuocProvider>(
+              context,
+              listen: false,
+            );
 
             final success = await dnProvider.removePhieuThuDienNuoc(
               phongId: widget.phongId,
@@ -581,16 +777,25 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
             if (mounted) {
               if (success) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Đã xóa hóa đơn điện nước thành công!"), backgroundColor: Colors.green),
+                  const SnackBar(
+                    content: Text("Đã xóa hóa đơn điện nước thành công!"),
+                    backgroundColor: Colors.green,
+                  ),
                 );
                 if (isTheLastOne) {
                   Navigator.pop(context, true);
                 } else {
-                  vm.fetchInvoicesByPhong(pId: widget.phongId, tNam: widget.thangNam);
+                  vm.fetchInvoicesByPhong(
+                    pId: widget.phongId,
+                    tNam: widget.thangNam,
+                  );
                 }
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(dnProvider.errorMessage ?? "Xóa thất bại!"), backgroundColor: Colors.red),
+                  SnackBar(
+                    content: Text(dnProvider.errorMessage ?? "Xóa thất bại!"),
+                    backgroundColor: Colors.red,
+                  ),
                 );
               }
             }
@@ -599,14 +804,20 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
             if (mounted) {
               if (success) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Đã xóa hóa đơn thành công!"), backgroundColor: Colors.green),
+                  const SnackBar(
+                    content: Text("Đã xóa hóa đơn thành công!"),
+                    backgroundColor: Colors.green,
+                  ),
                 );
                 if (isTheLastOne) {
                   Navigator.pop(context, true);
                 }
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(vm.errorMessage ?? "Xóa thất bại!"), backgroundColor: Colors.red),
+                  SnackBar(
+                    content: Text(vm.errorMessage ?? "Xóa thất bại!"),
+                    backgroundColor: Colors.red,
+                  ),
                 );
               }
             }

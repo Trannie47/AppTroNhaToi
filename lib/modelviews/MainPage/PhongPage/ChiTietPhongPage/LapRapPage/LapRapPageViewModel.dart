@@ -1,17 +1,16 @@
-import 'package:AppTroNhaToi/Provider/lap_rap_thietbi_provider.dart';
-import 'package:AppTroNhaToi/models/lap_rap.dart';
+import 'package:AppTroNhaToi/Provider/lap_rap_provider.dart';
+import 'package:AppTroNhaToi/Provider/thiet_bi_provider.dart';
+import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/LapRapPage/LapRapPageModel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../../Provider/thiet_bi_provider.dart';
-
-class ChiTietThietBiPhongViewModel extends ChangeNotifier {
-  final LapRapThietbiProvider _lapRapProvider;
+class LapRapPageViewModel extends ChangeNotifier {
+  final LapRapProvider _lapRapProvider;
   final int phongId;
 
-  List<LapRap> _dsLapRap = [];
-  List<LapRap> get dsLapRap => _dsLapRap;
+  List<LapRapPageModel> _dsLapRap = [];
+  List<LapRapPageModel> get dsLapRap => _dsLapRap;
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -22,7 +21,7 @@ class ChiTietThietBiPhongViewModel extends ChangeNotifier {
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
-  ChiTietThietBiPhongViewModel(this._lapRapProvider, this.phongId);
+  LapRapPageViewModel(this._lapRapProvider, this.phongId);
 
   Future<void> fetchThietBiByPhongId() async {
     _isLoading = true;
@@ -77,10 +76,7 @@ class ChiTietThietBiPhongViewModel extends ChangeNotifier {
     }
   }
 
-  Future<bool> capNhatLapRap({
-    required int id,
-    required int soLuong,
-  }) async {
+  Future<bool> capNhatLapRap({required int id, required int soLuong}) async {
     _isSubmitting = true;
     _errorMessage = null;
     notifyListeners();
@@ -107,6 +103,7 @@ class ChiTietThietBiPhongViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
   //dùng để gọi api load lại dữ liệu mới trong quá trình thêm số lượng của thiết bị vào phòng
   Future<void> reloadAll(BuildContext context) async {
     await fetchThietBiByPhongId();

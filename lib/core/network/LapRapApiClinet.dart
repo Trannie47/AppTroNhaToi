@@ -1,20 +1,22 @@
 import 'package:AppTroNhaToi/core/network/retrofit_client.dart';
+import 'package:AppTroNhaToi/models/lap_rap.dart';
+import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/LapRapPage/LapRapPageModel.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
-import '../../models/lap_rap.dart';
-
-class LapRapThietBiApiClient{
+class LapRapApiClient {
   final Dio _dio = RetrofitClient().dio;
 
-  Future<List<LapRap>> getThietBiByPhongId(int phongId) async {
+  Future<List<LapRapPageModel>> getThietBiByPhongId(int phongId) async {
     try {
       final response = await _dio.get("thiet-bi/phong/$phongId");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final List<dynamic> data = response.data;
         return data
-            .map((json) => LapRap.fromMap(json as Map<String, dynamic>))
+            .map(
+              (json) => LapRapPageModel.fromMap(json as Map<String, dynamic>),
+            )
             .toList();
       }
       throw Exception("Không thể lấy danh sách thiết bị trong phòng");
@@ -66,16 +68,12 @@ class LapRapThietBiApiClient{
       throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
     }
   }
-  Future<LapRap?> capNhatLapRap({
-    required int id,
-    required int soLuong,
-  }) async {
+
+  Future<LapRap?> capNhatLapRap({required int id, required int soLuong}) async {
     try {
       final response = await _dio.patch(
         "lap-rap/$id",
-        data: {
-          "soLuong": soLuong,
-        },
+        data: {"soLuong": soLuong},
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {

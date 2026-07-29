@@ -1,28 +1,29 @@
+import 'package:AppTroNhaToi/Provider/thiet_bi_provider.dart';
+import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/ChiTietPhongPage/LapRapPage/LapRapPageViewModel.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThietBiPage/thietBiPageModel.dart';
+import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/LapRapPage/LapRapPageModel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../../Provider/thiet_bi_provider.dart';
-import '../../../../../models/lap_rap.dart';
-import '../../../../../modelviews/MainPage/PhongPage/ChiTietPhongPage/ChiTietThietBiPhongPage/chiTietThietBiPhongViewModel.dart';
-import '../../../KhacPage/ThietBiPage/thietBiPageModel.dart';
-
-class ThemThietBiPhongDialog extends StatefulWidget {
+class LapRapFormDialog extends StatefulWidget {
   final int phongId;
-  final LapRap? lapRap; // Nếu truyền lapRap -> Chế độ Sửa/Xóa. Nếu null -> Thêm mới
-  final ChiTietThietBiPhongViewModel viewModel; // Nhận ViewModel từ UI
+  final LapRapPageModel?
+  lapRapPageModel; // Nếu truyền lapRap -> Chế độ Sửa/Xóa. Nếu null -> Thêm mới
+  final LapRapPageViewModel viewModel; // Nhận ViewModel từ UI
 
-  const ThemThietBiPhongDialog({
+  const LapRapFormDialog({
     super.key,
     required this.phongId,
-    this.lapRap,
+    this.lapRapPageModel,
     required this.viewModel,
   });
 
   @override
-  State<ThemThietBiPhongDialog> createState() => _ThemThietBiPhongDialogState();
+  State<LapRapFormDialog> createState() => _LapRapFormDialogState();
 }
 
-class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
+class _LapRapFormDialogState extends State<LapRapFormDialog> {
   ThietBiPageModel? _selectedThietBi;
   late int _soLuong;
   late DateTime _selectedDate;
@@ -30,14 +31,14 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
   bool _isSubmitting = false;
   String? _errorMessage;
 
-  bool get _isEditMode => widget.lapRap != null;
+  bool get _isEditMode => widget.lapRapPageModel != null;
 
   @override
   void initState() {
     super.initState();
 
-    _soLuong = widget.lapRap?.soLuong ?? 1;
-    _selectedDate = widget.lapRap?.ngayLap ?? DateTime.now();
+    _soLuong = widget.lapRapPageModel?.lapRap.soLuong ?? 1;
+    _selectedDate = widget.lapRapPageModel?.lapRap.ngayLap ?? DateTime.now();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ThietBiProvider>().fetchAll();
@@ -54,9 +55,7 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: Color(0xff2D7A3A),
-            ),
+            colorScheme: const ColorScheme.light(primary: Color(0xff2D7A3A)),
           ),
           child: child!,
         );
@@ -69,26 +68,25 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
     }
   }
 
-  String _formatDate(DateTime date) {
-    return "${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}";
-  }
-
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<ThietBiProvider>();
 
     // Tìm thiết bị tương ứng trong kho tổng
     ThietBiPageModel? matchingModel;
-    if (_isEditMode && widget.lapRap?.thietBi?.thietBiID != null) {
+    if (_isEditMode &&
+        widget.lapRapPageModel?.lapRap.thietBi?.thietBiID != null) {
       try {
         matchingModel = provider.list.firstWhere(
-              (e) => e.thietBi.thietBiID == widget.lapRap!.thietBi!.thietBiID,
+          (e) =>
+              e.thietBi.thietBiID ==
+              widget.lapRapPageModel!.lapRap.thietBi!.thietBiID,
         );
       } catch (_) {}
     }
 
     // Tính số lượng tối đa có thể chọn
-    final initialSoLuong = widget.lapRap?.soLuong ?? 0;
+    final initialSoLuong = widget.lapRapPageModel?.lapRap.soLuong ?? 0;
     final int maxSoLuong = _isEditMode
         ? ((matchingModel?.soLuongConLai ?? 0) + initialSoLuong)
         : (_selectedThietBi?.soLuongConLai ?? 999);
@@ -99,9 +97,7 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
         .toList();
 
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       backgroundColor: Colors.white,
       insetPadding: const EdgeInsets.symmetric(horizontal: 24),
       child: Padding(
@@ -136,14 +132,18 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
             if (_isEditMode)
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xffF2F2F7),
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(color: const Color(0xffEFEFEF)),
                 ),
                 child: Text(
-                  widget.lapRap?.thietBi?.tenThietBi ?? 'Chưa rõ tên',
+                  widget.lapRapPageModel?.lapRap.thietBi?.tenThietBi ??
+                      'Chưa rõ tên',
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -158,11 +158,17 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
                   "--Chọn thiết bị--",
                   style: TextStyle(color: Color(0xff8E8E93), fontSize: 14),
                 ),
-                icon: const Icon(Icons.arrow_drop_down, color: Color(0xff8E8E93)),
+                icon: const Icon(
+                  Icons.arrow_drop_down,
+                  color: Color(0xff8E8E93),
+                ),
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: const Color(0xffF8F9FA),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(14),
                     borderSide: const BorderSide(color: Color(0xffEFEFEF)),
@@ -181,18 +187,21 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
                     value: item,
                     child: Text(
                       item.thietBi.tenThietBi ?? 'Chưa rõ tên',
-                      style: const TextStyle(fontSize: 14, color: Color(0xff1C1C1E)),
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Color(0xff1C1C1E),
+                      ),
                     ),
                   );
                 }).toList(),
                 onChanged: _isSubmitting
                     ? null
                     : (val) {
-                  setState(() {
-                    _selectedThietBi = val;
-                    _errorMessage = null;
-                  });
-                },
+                        setState(() {
+                          _selectedThietBi = val;
+                          _errorMessage = null;
+                        });
+                      },
               ),
 
             const SizedBox(height: 16),
@@ -212,7 +221,10 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
                 if (_isEditMode && matchingModel != null)
                   Text(
                     "(Kho còn: ${matchingModel.soLuongConLai})",
-                    style: const TextStyle(fontSize: 12, color: Color(0xff8E8E93)),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Color(0xff8E8E93),
+                    ),
                   ),
               ],
             ),
@@ -229,14 +241,15 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
                 children: [
                   // Nút Giảm (-)
                   IconButton(
-                    onPressed: (_soLuong <= (_isEditMode ? 0 : 1) || _isSubmitting)
+                    onPressed:
+                        (_soLuong <= (_isEditMode ? 0 : 1) || _isSubmitting)
                         ? null
                         : () {
-                      setState(() {
-                        _soLuong--;
-                        _errorMessage = null;
-                      });
-                    },
+                            setState(() {
+                              _soLuong--;
+                              _errorMessage = null;
+                            });
+                          },
                     icon: Icon(
                       Icons.remove_circle_outline_rounded,
                       color: _soLuong <= (_isEditMode ? 0 : 1)
@@ -251,7 +264,9 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: _soLuong == 0 ? Colors.red : const Color(0xff1C1C1E),
+                      color: _soLuong == 0
+                          ? Colors.red
+                          : const Color(0xff1C1C1E),
                     ),
                   ),
 
@@ -260,11 +275,11 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
                     onPressed: (_soLuong >= maxSoLuong || _isSubmitting)
                         ? null
                         : () {
-                      setState(() {
-                        _soLuong++;
-                        _errorMessage = null;
-                      });
-                    },
+                            setState(() {
+                              _soLuong++;
+                              _errorMessage = null;
+                            });
+                          },
                     icon: Icon(
                       Icons.add_circle_outline_rounded,
                       color: _soLuong >= maxSoLuong
@@ -295,7 +310,10 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: const Color(0xffF8F9FA),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   suffixIcon: const Icon(
                     Icons.calendar_today_outlined,
                     color: Colors.black87,
@@ -311,7 +329,7 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
                   ),
                 ),
                 child: Text(
-                  _formatDate(_selectedDate),
+                  formatDate(_selectedDate),
                   style: const TextStyle(
                     fontSize: 14,
                     color: Color(0xff1C1C1E),
@@ -325,7 +343,10 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
               const SizedBox(height: 14),
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xffFDF2F2),
                   borderRadius: BorderRadius.circular(10),
@@ -333,7 +354,11 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.error_outline_rounded, color: Color(0xffD9534F), size: 18),
+                    const Icon(
+                      Icons.error_outline_rounded,
+                      color: Color(0xffD9534F),
+                      size: 18,
+                    ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -358,7 +383,9 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
                   child: SizedBox(
                     height: 46,
                     child: OutlinedButton(
-                      onPressed: _isSubmitting ? null : () => Navigator.pop(context),
+                      onPressed: _isSubmitting
+                          ? null
+                          : () => Navigator.pop(context),
                       style: OutlinedButton.styleFrom(
                         side: const BorderSide(color: Color(0xffD0D5DD)),
                         shape: RoundedRectangleBorder(
@@ -393,28 +420,30 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
                       ),
                       child: _isSubmitting
                           ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
-                        ),
-                      )
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
                           : Text(
-                        _isEditMode
-                            ? (_soLuong == 0 ? "Xóa khỏi phòng" : "Cập nhật")
-                            : "Thêm",
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                        ),
-                      ),
+                              _isEditMode
+                                  ? (_soLuong == 0
+                                        ? "Xóa khỏi phòng"
+                                        : "Cập nhật")
+                                  : "Thêm",
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                              ),
+                            ),
                     ),
                   ),
                 ),
               ],
-            )
+            ),
           ],
         ),
       ),
@@ -424,7 +453,7 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
   Future<void> _handleAction() async {
     //TRƯỜNG HỢP CHỈNH SỬA / XÓA (Khi nhấn vào item trong phòng)
     if (_isEditMode) {
-      final lapRapId = widget.lapRap?.id;
+      final lapRapId = widget.lapRapPageModel?.lapRap.id;
       if (lapRapId == null) {
         setState(() {
           _errorMessage = "Không tìm thấy mã lắp đặt!";
@@ -438,10 +467,7 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
       });
 
       try {
-        await widget.viewModel.capNhatLapRap(
-          id: lapRapId,
-          soLuong: _soLuong,
-        );
+        await widget.viewModel.capNhatLapRap(id: lapRapId, soLuong: _soLuong);
 
         if (mounted) {
           Navigator.pop(context, true);
@@ -476,7 +502,7 @@ class _ThemThietBiPhongDialogState extends State<ThemThietBiPhongDialog> {
     if (_soLuong > _selectedThietBi!.soLuongConLai) {
       setState(() {
         _errorMessage =
-        "Không đủ số lượng! Trong kho chỉ còn ${_selectedThietBi!.soLuongConLai} cái.";
+            "Không đủ số lượng! Trong kho chỉ còn ${_selectedThietBi!.soLuongConLai} cái.";
       });
       return;
     }

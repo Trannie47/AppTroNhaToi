@@ -10,7 +10,7 @@ import '../../../../states/phong_save_state.dart';
 import '../../../../widgets/app_confirm_dialog.dart';
 import '../../../../widgets/app_error.dart';
 import '../FormPhong/FormPhong.dart';
-import 'ChiTietThietBiPhongPage/chiTietThietBiPhongPage.dart';
+import 'LapRapPage/LapRapPage.dart';
 import 'TrangChucNang/GhiDienNuocPage/ghiDienNuocPage.dart';
 import 'TrangChucNang/LichSuThuePage/lichSuThuePage.dart';
 import 'TrangChucNang/TaoHoaDonPhongPage/taoHoaDonPhong.dart';
@@ -18,19 +18,16 @@ import 'TrangChucNang/TaoHoaDonPhongPage/taoHoaDonPhong.dart';
 class PhongChiTiet extends StatefulWidget {
   final ItemPhong room;
 
-  const PhongChiTiet({
-    super.key,
-    required this.room,
-  });
+  const PhongChiTiet({super.key, required this.room});
 
   @override
   State<PhongChiTiet> createState() => _PhongChiTiet();
-
 }
-  class _PhongChiTiet extends State<PhongChiTiet> {
-    late ChiTietPhongViewModel vm;
+
+class _PhongChiTiet extends State<PhongChiTiet> {
+  late ChiTietPhongViewModel vm;
   @override
-  void initState(){
+  void initState() {
     super.initState();
     vm = ChiTietPhongViewModel(
       context.read<PhongProvider>(),
@@ -46,518 +43,558 @@ class PhongChiTiet extends StatefulWidget {
       vm.getListNguoiThueFromIdPhong(widget.room.phongId);
     });
   }
-    void _chinhSuaPhong(ItemPhong room) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => FormPhong(room: room)),
+
+  void _chinhSuaPhong(ItemPhong room) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => FormPhong(room: room)),
+    );
+  }
+
+  void _xemThietBiInPhong(ItemPhong room) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => LapRapPage(room: room)),
+    );
+  }
+
+  void _xuaLyXoaPhong(ItemPhong room) async {
+    //Nếu phòng đang có hợp đồng liên kết -> Chặn lại không cho ẩn
+    if (room.dsHopDong.isNotEmpty) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Không thể ẩn! Phòng đang có dữ liệu Hợp đồng liên kết. Vui lòng thanh lý hoặc xử lý hợp đồng trước!",
+          ),
+          backgroundColor: Color(0xFF1E293B),
+        ),
       );
+      return;
     }
-    void _xemThietBiInPhong(ItemPhong room) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => ChiTietThietBiPhongPage(room: room)),
-      );
-    }
-    void _xuaLyXoaPhong(ItemPhong room) async {
-      //Nếu phòng đang có hợp đồng liên kết -> Chặn lại không cho ẩn
-      if (room.dsHopDong.isNotEmpty) {
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(
+
+    //Bật Dialog xác nhận ẩn phòng
+    final dialogResult = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AppConfirmDialog(
+        title: "Ẩn phòng trọ",
+        content: "Bạn có chắc chắn muốn ẩn phòng ${room.tenPhong} không?",
+        textConfirm: "Ẩn ngay",
+        isDangerous: true,
+        onConfirm: () {
+          Navigator.pop(dialogContext, true);
+        },
+      ),
+    );
+
+    if (dialogResult == true && mounted) {
+      final navigator = Navigator.of(context);
+      final scaffoldMessenger = ScaffoldMessenger.of(context);
+
+      await vm.removePhong(room.phongId);
+
+      if (vm.phongSaveState is PhongSaveSuccess) {
+        scaffoldMessenger.showSnackBar(
           const SnackBar(
-            content: Text(
-              "Không thể ẩn! Phòng đang có dữ liệu Hợp đồng liên kết. Vui lòng thanh lý hoặc xử lý hợp đồng trước!",
-            ),
-            backgroundColor: Color(0xFF1E293B),
+            content: Text("Ẩn phòng trọ thành công!"),
+            backgroundColor: Colors.green,
           ),
         );
-        return;
-      }
-
-      //Bật Dialog xác nhận ẩn phòng
-      final dialogResult = await showDialog<bool>(
-        context: context,
-        builder: (dialogContext) => AppConfirmDialog(
-          title: "Ẩn phòng trọ",
-          content: "Bạn có chắc chắn muốn ẩn phòng ${room.tenPhong} không?",
-          textConfirm: "Ẩn ngay",
-          isDangerous: true,
-          onConfirm: () {
-            Navigator.pop(dialogContext, true);
-          },
-        ),
-      );
-
-      if (dialogResult == true && mounted) {
-        final navigator = Navigator.of(context);
-        final scaffoldMessenger = ScaffoldMessenger.of(context);
-
-        await vm.removePhong(room.phongId);
-
-        if (vm.phongSaveState is PhongSaveSuccess) {
-          scaffoldMessenger.showSnackBar(
-            const SnackBar(
-              content: Text("Ẩn phòng trọ thành công!"),
-              backgroundColor: Colors.green,
+        // Pop màn hình Chi tiết để quay lại danh sách phòng chính
+        navigator.pop();
+      } else if (vm.phongSaveState is PhongSaveError) {
+        scaffoldMessenger.showSnackBar(
+          SnackBar(
+            content: Text(
+              "Ẩn thất bại: ${(vm.phongSaveState as PhongSaveError).messageError}",
             ),
-          );
-          // Pop màn hình Chi tiết để quay lại danh sách phòng chính
-          navigator.pop();
-        } else if (vm.phongSaveState is PhongSaveError) {
-          scaffoldMessenger.showSnackBar(
-            SnackBar(
-              content: Text(
-                "Ẩn thất bại: ${(vm.phongSaveState as PhongSaveError).messageError}",
-              ),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     }
-    @override
-    Widget build(BuildContext context) {
-      final room = context.watch<PhongProvider>().listPhong.firstWhere(
-            (p) => p.phongId == widget.room.phongId,
-        orElse: () => widget.room,
-      );
-      // Lấy ra các màu sắc và văn bản trạng thái trực tiếp từ thuộc tính trangThai của room
-      Color statusColor = _getTrangThaiColor(room.trangThai);
-      String statusText = _getTrangThaiText(room.trangThai);
+  }
 
-      return Scaffold(
-        backgroundColor: const Color(0xFFF6F7F8),
+  @override
+  Widget build(BuildContext context) {
+    final room = context.watch<PhongProvider>().listPhong.firstWhere(
+      (p) => p.phongId == widget.room.phongId,
+      orElse: () => widget.room,
+    );
+    // Lấy ra các màu sắc và văn bản trạng thái trực tiếp từ thuộc tính trangThai của room
+    Color statusColor = _getTrangThaiColor(room.trangThai);
+    String statusText = _getTrangThaiText(room.trangThai);
 
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.chevron_left, size: 28, color: Colors.black),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          title: Text(
-            "Phòng ${room.tenPhong}",
-            style: const TextStyle(
-              color: Colors.black,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          centerTitle: false,
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 16),
-              child: PopupMenuButton<String>(
-                offset: const Offset(0, 48),
-                padding: EdgeInsets.zero,
-                icon: const Icon(
-                  Icons.more_vert,
-                  size: 20,
-                  color: Color(0xff1C1C1E),
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                color: Colors.white,
-                elevation: 8,
-                onSelected: (value) {
-                  switch (value) {
-                    case 'edit':
-                      _chinhSuaPhong(room);
-                      break;
+    return Scaffold(
+      backgroundColor: const Color(0xFFF6F7F8),
 
-                    case 'device':
-                      _xemThietBiInPhong(room);
-                      break;
-
-                    case 'delete':
-                      _xuaLyXoaPhong(room);
-                      break;
-                  }
-                },
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                    value: 'edit',
-                    child: _menuItem(
-                      Icons.edit_outlined,
-                      const Color(0xFF2D7A3A),
-                      "Chỉnh sửa thông tin phòng",
-                      "Sửa tên, trạng thái, mô tả",
-                    ),
-                  ),
-                  PopupMenuItem(
-                    value: 'device',
-                    child: _menuItem(
-                      Icons.devices_other_rounded,
-                      const Color(0xFF2D7A3A),
-                      "Xem thiết bị trong phòng",
-                      "Danh sách máy lạnh, tủ lạnh...",
-                    ),
-                  ),
-                  const PopupMenuDivider(),
-                  PopupMenuItem(
-                    value: 'delete',
-                    child: _menuItem(
-                      Icons.delete_outline_rounded,
-                      Colors.red,
-                      "Ẩn phòng trọ này",
-                      "Chỉ ẩn khi chưa có hợp đồng",
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.chevron_left, size: 28, color: Colors.black),
+          onPressed: () => Navigator.of(context).pop(),
         ),
-
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-
-              //  BANNER TRẠNG THÁI
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 16, vertical: 14),
-                decoration: BoxDecoration(
-                  color: statusColor.withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                      color: statusColor.withOpacity(0.2), width: 1),
-                ),
-                child: Row(
-                  children: [
-                    CircleAvatar(radius: 5, backgroundColor: statusColor),
-                    const SizedBox(width: 10),
-                    Text(
-                      statusText,
-                      style: TextStyle(
-                        color: statusColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // hàng chức năng tiện ích
-              _buildQuickActionsRow(room),
-              const SizedBox(height: 20),
-
-              // Thông tin phòng trọ
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Thông tin phòng",
-                      style: TextStyle(color: Color(0xFF2D7A3A),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14),
-                    ),
-                    const SizedBox(height: 12),
-                    _infoLine(label: "Loại phòng",
-                        value: room.loaiPhong.tenLoaiPhong),
-                    _infoLine(label: "Diện tích",
-                        value: "${room.loaiPhong.dienTich.toInt()} m²"),
-                    _infoLine(
-                        label: "Giá thuê",
-                        value: "${_formatCurrency(room.giahientai)}đ/tháng",
-                        valueColor: const Color(0xFF2D7A3A),
-                        isBold: true
-                    ),
-                    _infoLine(label: "Số người tối đa",
-                        value: "${room.loaiPhong.soNguoiToiDa} người"),
-                    _infoLine(label: "Máy lạnh",
-                        value: room.loaiPhong.isMayLanh ? "Có" : "Không"),
-                    _infoLine(label: "Mô tả",
-                        value: room.moTa.isEmpty ? "Không có mô tả" : room.moTa,
-                        isLast: true),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              //Danh sách người đang thuê phòng này
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      vm.nguoiThueState is NguoiThueSuccess
-                          ? "Người thuê hiện tại (${(vm.nguoiThueState as NguoiThueSuccess).listNguoithue.length})"
-                          : "Người thuê hiện tại (...)",
-                      style: const TextStyle(
-                        color: Color(0xFF2D7A3A),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                    ...switch (vm.nguoiThueState){
-                      NguoiThueLoading() => [
-                        const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 24),
-                          child: Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF2D7A3A)))),
-                        )
-                      ],
-
-                      NguoiThueError(errorMessage: final msg) => [
-                        AppErrorWidget(message: msg,
-                            onRetry:(){
-                                vm.getListNguoiThueFromIdPhong(room.phongId);
-                            }
-                        )
-
-                      ],
-                      NguoiThueSuccess(listNguoithue: final dsKhach) => [
-                        const SizedBox(height: 16),
-                        if (dsKhach.isEmpty)
-                          const Center(
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(vertical: 12),
-                              child: Text(
-                                "Phòng hiện đang trống, chưa có người thuê.",
-                                style: TextStyle(color: Colors.grey, fontSize: 13, fontStyle: FontStyle.italic),
-                              ),
-                            ),
-                          )
-                        else
-                          ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: dsKhach.length,
-                            itemBuilder: (context, index) {
-                              final khach = dsKhach[index];
-                              final isLastItem = index == dsKhach.length - 1;
-
-                              return _itemNguoiThue(khach: khach, isLastItem: isLastItem);
-                            },
-                          ),
-                      ],
-                    }
-                  ],
-                ),
-              ),
-            ],
+        title: Text(
+          "Phòng ${room.tenPhong}",
+          style: const TextStyle(
+            color: Colors.black,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
           ),
         ),
-      );
-    }
-
-    Widget _menuItem(
-        IconData icon,
-        Color color,
-        String title,
-        String subtitle,
-        ) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(icon, color: color, size: 18),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                      color: color == Colors.red ? Colors.red : const Color(0xff1C1C1E),
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: const TextStyle(fontSize: 11, color: Colors.grey),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-
-    // Hàng chức năng tiện ích cho phong
-    Widget _buildQuickActionsRow(ItemPhong room) {
-      return SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: [
-            _actionChip(title: "Ghi điện nước",
-                icon: Icons.flash_on,
-                isActive: true,
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => GhiDienNuocPage(phongId: room.phongId,tenPhong: room.tenPhong)),
-                  );
-                }
-            ),
-            const SizedBox(width: 8),
-            _actionChip(title: "Tạo hóa đơn",
-                icon: Icons.receipt_long,
-                isActive: false,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      // Truyền tên phòng sang TaoHoaDonPage luôn
-                      builder: (context) => TaoHoaDonPage(
-                       phongId: room.phongId,
-                      ),
-                    ),
-                  );
-                }),
-            // const SizedBox(width: 8),
-            // _actionChip(title: "Hợp đồng",
-            //     icon: Icons.assignment,
-            //     isActive: false,
-            //     onTap: () {}),
-            const SizedBox(width: 8),
-            _actionChip(title: "Lịch sử thuê",
-                icon: Icons.history,
-                isActive: false,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => LichSuThuePage(
-                        phongId: room.phongId,
-                        tenPhong: room.tenPhong,
-                      ),
-                    ),
-                  );
-                }),
-          ],
-        ),
-      );
-    }
-
-    Widget _actionChip({
-      required String title,
-      required IconData icon,
-      required bool isActive,
-      required VoidCallback onTap,
-    }) {
-      Color mainColor = const Color(0xFF2D7A3A);
-      return GestureDetector(
-        onTap: onTap,
-        child:Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: BoxDecoration(
-            color: isActive ? mainColor : Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-                color: isActive ? mainColor : Colors.grey.shade300, width: 1.2),
-          ),
-          child: Row(
-            children: [
-              Icon(icon, size: 16,
-                  color: isActive ? Colors.white : Colors.black54),
-              const SizedBox(width: 6),
-              Text(
-                title,
-                style: TextStyle(fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                    color: isActive ? Colors.white : Colors.black.withOpacity(
-                        0.7)),
-              ),
-            ],
-          ),
-        ) ,
-      );
-    }
-
-    Widget _infoLine({
-      required String label,
-      required String value,
-      Color? valueColor,
-      bool isBold = false,
-      bool isLast = false,
-    }) {
-      return Column(
-        children: [
+        centerTitle: false,
+        actions: [
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(label, style: const TextStyle(
-                    color: Colors.black54, fontSize: 14)),
-                Expanded(
-                  child: Text(
-                    value,
-                    textAlign: TextAlign.right,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-                      color: valueColor ?? Colors.black87,
-                    ),
+            padding: const EdgeInsets.only(right: 16),
+            child: PopupMenuButton<String>(
+              offset: const Offset(0, 48),
+              padding: EdgeInsets.zero,
+              icon: const Icon(
+                Icons.more_vert,
+                size: 20,
+                color: Color(0xff1C1C1E),
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              color: Colors.white,
+              elevation: 8,
+              onSelected: (value) {
+                switch (value) {
+                  case 'edit':
+                    _chinhSuaPhong(room);
+                    break;
+
+                  case 'device':
+                    _xemThietBiInPhong(room);
+                    break;
+
+                  case 'delete':
+                    _xuaLyXoaPhong(room);
+                    break;
+                }
+              },
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: 'edit',
+                  child: _menuItem(
+                    Icons.edit_outlined,
+                    const Color(0xFF2D7A3A),
+                    "Chỉnh sửa thông tin phòng",
+                    "Sửa tên, trạng thái, mô tả",
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 'device',
+                  child: _menuItem(
+                    Icons.devices_other_rounded,
+                    const Color(0xFF2D7A3A),
+                    "Xem thiết bị trong phòng",
+                    "Danh sách máy lạnh, tủ lạnh...",
+                  ),
+                ),
+                const PopupMenuDivider(),
+                PopupMenuItem(
+                  value: 'delete',
+                  child: _menuItem(
+                    Icons.delete_outline_rounded,
+                    Colors.red,
+                    "Ẩn phòng trọ này",
+                    "Chỉ ẩn khi chưa có hợp đồng",
                   ),
                 ),
               ],
             ),
           ),
-          if (!isLast) Divider(color: Colors.grey.shade100, height: 1),
         ],
-      );
-    }
+      ),
 
-    // màu trạng thái phòng
-    Color _getTrangThaiColor(int status) {
-      if (status == 0) return Colors.green;
-      if (status == 1) return Colors.orange;
-      return Colors.red;
-    }
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            //  BANNER TRẠNG THÁI
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              decoration: BoxDecoration(
+                color: statusColor.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: statusColor.withOpacity(0.2),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                children: [
+                  CircleAvatar(radius: 5, backgroundColor: statusColor),
+                  const SizedBox(width: 10),
+                  Text(
+                    statusText,
+                    style: TextStyle(
+                      color: statusColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
 
-    // chữ trạng thái phòng
-    String _getTrangThaiText(int status) {
-      if (status == 0) return "Còn trống";
-      if (status == 1) return "Đang cho thuê";
-      return "Đang sửa chữa";
-    }
+            // hàng chức năng tiện ích
+            _buildQuickActionsRow(room),
+            const SizedBox(height: 20),
 
-    String _formatCurrency(double amount) {
-      final n = amount.toInt();
-      final s = n.toString();
-      final buffer = StringBuffer();
-      for (int i = 0; i < s.length; i++) {
-        if (i > 0 && (s.length - i) % 3 == 0) buffer.write(',');
-        buffer.write(s[i]);
-      }
-      return buffer.toString();
+            // Thông tin phòng trọ
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Thông tin phòng",
+                    style: TextStyle(
+                      color: Color(0xFF2D7A3A),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  _infoLine(
+                    label: "Loại phòng",
+                    value: room.loaiPhong.tenLoaiPhong,
+                  ),
+                  _infoLine(
+                    label: "Diện tích",
+                    value: "${room.loaiPhong.dienTich.toInt()} m²",
+                  ),
+                  _infoLine(
+                    label: "Giá thuê",
+                    value: "${_formatCurrency(room.giahientai)}đ/tháng",
+                    valueColor: const Color(0xFF2D7A3A),
+                    isBold: true,
+                  ),
+                  _infoLine(
+                    label: "Số người tối đa",
+                    value: "${room.loaiPhong.soNguoiToiDa} người",
+                  ),
+                  _infoLine(
+                    label: "Máy lạnh",
+                    value: room.loaiPhong.isMayLanh ? "Có" : "Không",
+                  ),
+                  _infoLine(
+                    label: "Mô tả",
+                    value: room.moTa.isEmpty ? "Không có mô tả" : room.moTa,
+                    isLast: true,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            //Danh sách người đang thuê phòng này
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    vm.nguoiThueState is NguoiThueSuccess
+                        ? "Người thuê hiện tại (${(vm.nguoiThueState as NguoiThueSuccess).listNguoithue.length})"
+                        : "Người thuê hiện tại (...)",
+                    style: const TextStyle(
+                      color: Color(0xFF2D7A3A),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                  ...switch (vm.nguoiThueState) {
+                    NguoiThueLoading() => [
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 24),
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Color(0xFF2D7A3A),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+
+                    NguoiThueError(errorMessage: final msg) => [
+                      AppErrorWidget(
+                        message: msg,
+                        onRetry: () {
+                          vm.getListNguoiThueFromIdPhong(room.phongId);
+                        },
+                      ),
+                    ],
+                    NguoiThueSuccess(listNguoithue: final dsKhach) => [
+                      const SizedBox(height: 16),
+                      if (dsKhach.isEmpty)
+                        const Center(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 12),
+                            child: Text(
+                              "Phòng hiện đang trống, chưa có người thuê.",
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 13,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                          ),
+                        )
+                      else
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: dsKhach.length,
+                          itemBuilder: (context, index) {
+                            final khach = dsKhach[index];
+                            final isLastItem = index == dsKhach.length - 1;
+
+                            return _itemNguoiThue(
+                              khach: khach,
+                              isLastItem: isLastItem,
+                            );
+                          },
+                        ),
+                    ],
+                  },
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _menuItem(IconData icon, Color color, String title, String subtitle) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: color, size: 18),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                    color: color == Colors.red
+                        ? Colors.red
+                        : const Color(0xff1C1C1E),
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: const TextStyle(fontSize: 11, color: Colors.grey),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Hàng chức năng tiện ích cho phong
+  Widget _buildQuickActionsRow(ItemPhong room) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          _actionChip(
+            title: "Ghi điện nước",
+            icon: Icons.flash_on,
+            isActive: true,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => GhiDienNuocPage(
+                    phongId: room.phongId,
+                    tenPhong: room.tenPhong,
+                  ),
+                ),
+              );
+            },
+          ),
+          const SizedBox(width: 8),
+          _actionChip(
+            title: "Tạo hóa đơn",
+            icon: Icons.receipt_long,
+            isActive: false,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  // Truyền tên phòng sang TaoHoaDonPage luôn
+                  builder: (context) => TaoHoaDonPage(phongId: room.phongId),
+                ),
+              );
+            },
+          ),
+          // const SizedBox(width: 8),
+          // _actionChip(title: "Hợp đồng",
+          //     icon: Icons.assignment,
+          //     isActive: false,
+          //     onTap: () {}),
+          const SizedBox(width: 8),
+          _actionChip(
+            title: "Lịch sử thuê",
+            icon: Icons.history,
+            isActive: false,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => LichSuThuePage(
+                    phongId: room.phongId,
+                    tenPhong: room.tenPhong,
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _actionChip({
+    required String title,
+    required IconData icon,
+    required bool isActive,
+    required VoidCallback onTap,
+  }) {
+    Color mainColor = const Color(0xFF2D7A3A);
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isActive ? mainColor : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isActive ? mainColor : Colors.grey.shade300,
+            width: 1.2,
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              size: 16,
+              color: isActive ? Colors.white : Colors.black54,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: isActive ? Colors.white : Colors.black.withOpacity(0.7),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _infoLine({
+    required String label,
+    required String value,
+    Color? valueColor,
+    bool isBold = false,
+    bool isLast = false,
+  }) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                label,
+                style: const TextStyle(color: Colors.black54, fontSize: 14),
+              ),
+              Expanded(
+                child: Text(
+                  value,
+                  textAlign: TextAlign.right,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+                    color: valueColor ?? Colors.black87,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (!isLast) Divider(color: Colors.grey.shade100, height: 1),
+      ],
+    );
+  }
+
+  // màu trạng thái phòng
+  Color _getTrangThaiColor(int status) {
+    if (status == 0) return Colors.green;
+    if (status == 1) return Colors.orange;
+    return Colors.red;
+  }
+
+  // chữ trạng thái phòng
+  String _getTrangThaiText(int status) {
+    if (status == 0) return "Còn trống";
+    if (status == 1) return "Đang cho thuê";
+    return "Đang sửa chữa";
+  }
+
+  String _formatCurrency(double amount) {
+    final n = amount.toInt();
+    final s = n.toString();
+    final buffer = StringBuffer();
+    for (int i = 0; i < s.length; i++) {
+      if (i > 0 && (s.length - i) % 3 == 0) buffer.write(',');
+      buffer.write(s[i]);
     }
+    return buffer.toString();
+  }
 
   Widget _itemNguoiThue({required dynamic khach, required bool isLastItem}) {
     String initials = vietTat(khach.hoTen);
@@ -568,7 +605,6 @@ class PhongChiTiet extends StatefulWidget {
           padding: const EdgeInsets.symmetric(vertical: 10),
           child: Row(
             children: [
-
               CircleAvatar(
                 radius: 24,
                 backgroundColor: const Color(0xFFE2ECFF),
@@ -590,12 +626,19 @@ class PhongChiTiet extends StatefulWidget {
                   children: [
                     Text(
                       khach.hoTen ?? 'Chưa rõ họ tên',
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.black87),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                        color: Colors.black87,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       "${khach.sdt ?? 'Không có SĐT'}",
-                      style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                      style: TextStyle(
+                        color: Colors.grey.shade600,
+                        fontSize: 13,
+                      ),
                     ),
                   ],
                 ),
@@ -603,7 +646,8 @@ class PhongChiTiet extends StatefulWidget {
             ],
           ),
         ),
-        if (!isLastItem) Divider(color: Colors.grey.shade100, height: 1, indent: 62),
+        if (!isLastItem)
+          Divider(color: Colors.grey.shade100, height: 1, indent: 62),
       ],
     );
   }
