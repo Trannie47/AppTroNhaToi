@@ -86,6 +86,13 @@ class MyApp extends StatelessWidget {
       ],
 
       theme: ThemeData(useMaterial3: false, platform: TargetPlatform.iOS),
+      builder: (context, child) {
+        return GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+          child: child,
+        );
+      },
 
       home: const HomePage(),
     );

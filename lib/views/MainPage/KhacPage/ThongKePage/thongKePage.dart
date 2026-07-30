@@ -85,8 +85,8 @@ class _ThongKePageState extends State<ThongKePage> {
                     case 8:
                       return _buildTopDebt(vm);
 
-                    case 9:
-                      return _buildRecentActivity(vm);
+                    // case 9:
+                    //   return _buildRecentActivity(vm);
 
                     default:
                       return const SizedBox();
@@ -1431,97 +1431,97 @@ class _ThongKePageState extends State<ThongKePage> {
 
   // RECENT ACTIVITY
   // TODO: chưa làm sẽ cập nhật lại sau
-  Widget _buildRecentActivity(ThongKePageViewModel vm) {
-    final activities = [
-      {
-        "icon": Icons.payments_rounded,
-        "title": "Thu tiền phòng P101",
-        "time": "10 phút trước",
-        "color": Colors.green,
-      },
-      {
-        "icon": Icons.build_rounded,
-        "title": "Thanh toán sửa chữa máy lạnh",
-        "time": "40 phút trước",
-        "color": Colors.orange,
-      },
-      {
-        "icon": Icons.inventory_rounded,
-        "title": "Nhập thiết bị mới",
-        "time": "1 giờ trước",
-        "color": Colors.blue,
-      },
-      {
-        "icon": Icons.logout_rounded,
-        "title": "Người thuê trả phòng",
-        "time": "Hôm nay",
-        "color": Colors.red,
-      },
-      {
-        "icon": Icons.description_rounded,
-        "title": "Lập hợp đồng mới",
-        "time": "Hôm nay",
-        "color": const Color(0xFF7C4DFF),
-      },
-    ];
+  // Widget _buildRecentActivity(ThongKePageViewModel vm) {
+  //   final activities = [
+  //     {
+  //       "icon": Icons.payments_rounded,
+  //       "title": "Thu tiền phòng P101",
+  //       "time": "10 phút trước",
+  //       "color": Colors.green,
+  //     },
+  //     {
+  //       "icon": Icons.build_rounded,
+  //       "title": "Thanh toán sửa chữa máy lạnh",
+  //       "time": "40 phút trước",
+  //       "color": Colors.orange,
+  //     },
+  //     {
+  //       "icon": Icons.inventory_rounded,
+  //       "title": "Nhập thiết bị mới",
+  //       "time": "1 giờ trước",
+  //       "color": Colors.blue,
+  //     },
+  //     {
+  //       "icon": Icons.logout_rounded,
+  //       "title": "Người thuê trả phòng",
+  //       "time": "Hôm nay",
+  //       "color": Colors.red,
+  //     },
+  //     {
+  //       "icon": Icons.description_rounded,
+  //       "title": "Lập hợp đồng mới",
+  //       "time": "Hôm nay",
+  //       "color": const Color(0xFF7C4DFF),
+  //     },
+  //   ];
 
-    return Container(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(22),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.04),
-                blurRadius: 16,
-                offset: const Offset(0, 6),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Row(
-                children: [
-                  Icon(Icons.history_rounded, color: Color(0xFF7C4DFF)),
-                  SizedBox(width: 10),
-                  Text(
-                    "Hoạt động gần đây",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
+  //   return Container(
+  //     child: Padding(
+  //       padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
+  //       child: Container(
+  //         padding: const EdgeInsets.all(20),
+  //         decoration: BoxDecoration(
+  //           color: Colors.white,
+  //           borderRadius: BorderRadius.circular(22),
+  //           boxShadow: [
+  //             BoxShadow(
+  //               color: Colors.black.withValues(alpha: 0.04),
+  //               blurRadius: 16,
+  //               offset: const Offset(0, 6),
+  //             ),
+  //           ],
+  //         ),
+  //         child: Column(
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: [
+  //             const Row(
+  //               children: [
+  //                 Icon(Icons.history_rounded, color: Color(0xFF7C4DFF)),
+  //                 SizedBox(width: 10),
+  //                 Text(
+  //                   "Hoạt động gần đây",
+  //                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+  //                 ),
+  //               ],
+  //             ),
 
-              const SizedBox(height: 20),
+  //             const SizedBox(height: 20),
 
-              ...activities.map(
-                (item) => ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: CircleAvatar(
-                    backgroundColor: (item["color"] as Color).withOpacity(.12),
-                    child: Icon(
-                      item["icon"] as IconData,
-                      color: item["color"] as Color,
-                    ),
-                  ),
-                  title: Text(
-                    item["title"].toString(),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+  //             ...activities.map(
+  //               (item) => ListTile(
+  //                 contentPadding: EdgeInsets.zero,
+  //                 leading: CircleAvatar(
+  //                   backgroundColor: (item["color"] as Color).withOpacity(.12),
+  //                   child: Icon(
+  //                     item["icon"] as IconData,
+  //                     color: item["color"] as Color,
+  //                   ),
+  //                 ),
+  //                 title: Text(
+  //                   item["title"].toString(),
+  //                   maxLines: 1,
+  //                   overflow: TextOverflow.ellipsis,
+  //                 ),
 
-                  subtitle: Text(item["time"].toString()),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  //                 subtitle: Text(item["time"].toString()),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 }
 
 // REVENUE CHART PAINTER

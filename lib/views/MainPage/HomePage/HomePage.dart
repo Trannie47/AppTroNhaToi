@@ -218,39 +218,35 @@ class _HomePageState extends State<HomePage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _item(Icons.flash_on, "Ghi điện",
-                () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const GhiDienNuocHomePage(),
-                ),
-              );
-            },),
-          _item(Icons.receipt, "Hóa đơn",
-              (){
-                Navigator.push(context,
-                  MaterialPageRoute(builder: (context)=> const HoaDonHomePage()
-                  ),
-                );
-              }),
+          _item(Icons.flash_on, "Ghi điện", () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const GhiDienNuocHomePage(),
+              ),
+            );
+          }),
+          _item(Icons.receipt, "Hóa đơn", () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const HoaDonHomePage()),
+            );
+          }),
 
-          _item(Icons.person_add, "Người thuê",
-              (){
-                  Navigator.push(context, 
-                    MaterialPageRoute(builder: (context)=> const NguoiThueForm()
-                    ),
-                  );
-              }),
-          _item(Icons.description, "Hợp đồng",
-              (){
-                Navigator.push(context,
-                  MaterialPageRoute(builder: (context)=> HopDongPage()),
-                );
-              }),
+          _item(Icons.person_add, "Người thuê", () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const NguoiThueForm()),
+            );
+          }),
+          _item(Icons.description, "Hợp đồng", () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => HopDongPage()),
+            );
+          }),
         ],
       ),
-
     );
   }
 
@@ -768,7 +764,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
 
-          const Icon(Icons.chevron_right, color: Colors.grey),
+          // const Icon(Icons.chevron_right, color: Colors.grey),
         ],
       ),
     );

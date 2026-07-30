@@ -228,8 +228,8 @@ class _HangHoaFormState extends State<HangHoaForm> {
                         errorText: vm.errGiaBan,
                         keyboardType: TextInputType.number,
 
-
                         inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
                           DinhDangGiaVN(),
                         ],
                         suffix: "đ",
@@ -249,8 +249,10 @@ class _HangHoaFormState extends State<HangHoaForm> {
                         errorText: vm.errGiaNhap,
                         keyboardType: TextInputType.number,
                         suffix: "đ",
-                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          DinhDangGiaVN(),
+                        ],
                         onChanged: () {
                           vm.errGiaNhap = null;
                           vm.notifyListeners();
