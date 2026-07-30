@@ -257,6 +257,12 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
     final double soTien = (item['soTien'] as num?)?.toDouble() ?? 0;
     final double tongDaThu = (item['tongDaThu'] as num?)?.toDouble() ?? 0;
 
+    String? ghiChuThu;
+    if (item['phieuThuHangThang'] != null && item['phieuThuHangThang'] is Map) {
+      ghiChuThu = item['phieuThuHangThang']['ghiChu']?.toString();
+    }
+    ghiChuThu ??= item['ghiChuThu']?.toString();
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
@@ -411,7 +417,6 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
                             );
                           }
 
-                          // Nếu thanh toán thành công, gọi lệnh reload lại danh sách
                           if (reloaded == true && context.mounted) {
                             vm.loadData();
                           }
@@ -429,6 +434,31 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
               ),
             ],
           ),
+
+          if (ghiChuThu != null && ghiChuThu.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: const Color(0xffF9F9F9),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: const Color(0xffEEEEEE)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.note_alt_outlined, size: 14, color: Colors.grey),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      "Ghi chú: $ghiChuThu",
+                      style: const TextStyle(fontSize: 11, color: Colors.black87, fontStyle: FontStyle.italic),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );

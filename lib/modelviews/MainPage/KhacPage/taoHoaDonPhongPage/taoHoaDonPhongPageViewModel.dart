@@ -261,7 +261,7 @@ class TaoHoaDonPhongPageViewModel extends ChangeNotifier {
         chiSoDienMoi: int.tryParse(txtDienChiSoMoi.text) ?? 0,
         chiSoNuocCu: int.tryParse(txtNuocChiSoCu.text) ?? 0,
         chiSoNuocMoi: int.tryParse(txtNuocChiSoMoi.text) ?? 0,
-        tienDichVuKhac: double.tryParse(txtTienDichVuKhac.text) ?? 0,
+        tienDichVuKhac: double.tryParse(txtTienDichVuKhac.text.replaceAll('.', '')) ?? 0,
         ghiChu: txtGhiChu.text,
         danhSachHopDongJson: jsonPayloadStr,
         anhDienMoi: isChotDienNuoc ? imgDien : null,

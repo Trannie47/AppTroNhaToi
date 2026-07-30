@@ -723,6 +723,10 @@ class _TaoHoaDonPageState extends State<TaoHoaDonPage> {
                                                                 .number,
                                                         textAlign:
                                                             TextAlign.right,
+                                                        inputFormatters: [
+                                                          FilteringTextInputFormatter.digitsOnly,
+                                                          DinhDangGiaVN(),
+                                                        ],
                                                         style: const TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
@@ -1382,6 +1386,10 @@ class _TaoHoaDonPageState extends State<TaoHoaDonPage> {
             controller: ctrl,
             keyboardType: TextInputType.number,
             textAlign: TextAlign.right,
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              DinhDangGiaVN(),
+            ],
             style: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,
