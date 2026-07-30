@@ -167,7 +167,7 @@ class GiaHanHopDongViewModel extends ChangeNotifier {
         ghiChu: txtGhiChu.text.trim().isNotEmpty ? txtGhiChu.text.trim() : null,
         files: listImagePhuLuc.isNotEmpty ? listImagePhuLuc : null,
       );
-
+      await _hopDongProvider.getListHD();
       isLoading = false;
       notifyListeners();
       return true; // Trả về true báo thành công

@@ -14,8 +14,37 @@ class ItemNTHopDong extends StatelessWidget {
     this.onTap,
   });
 
+  bool get _isSapHetHan {
+    if (hopDong.trangThai != 1) return false; // Chỉ tính hợp đồng đang hiệu lực
+
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final ngayHetHan = DateTime(
+      hopDong.ngayHetHan.year,
+      hopDong.ngayHetHan.month,
+      hopDong.ngayHetHan.day,
+    );
+
+    final soNgayConLai = ngayHetHan.difference(today).inDays;
+    return soNgayConLai >= 0 && soNgayConLai <= 30;
+  }
+
+  int get _soNgayConLai {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final ngayHetHan = DateTime(
+      hopDong.ngayHetHan.year,
+      hopDong.ngayHetHan.month,
+      hopDong.ngayHetHan.day,
+    );
+    return ngayHetHan.difference(today).inDays;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final sapHetHan = _isSapHetHan;
+    final ngayConLai = _soNgayConLai;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -24,6 +53,9 @@ class ItemNTHopDong extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(18),
+          border: sapHetHan
+              ? Border.all(color: const Color(0xFFFFA726), width: 1.2)
+              : null,
         ),
         child: Row(
           children: [
@@ -37,7 +69,7 @@ class ItemNTHopDong extends StatelessWidget {
               alignment: Alignment.center,
               child: Text(
                 vietTat(hopDong.nguoithue.hoTen),
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                   color: Color(0xff3467EB),
@@ -51,12 +83,34 @@ class ItemNTHopDong extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                   Text(
-                    hopDong.nguoithue.hoTen,
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w700,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        hopDong.nguoithue.hoTen,
+                        style: const TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      if (sapHetHan) ...[
+                        const SizedBox(width: 8), // Khoảng cách nhỏ giữa tên và nhãn
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFEF3C7),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            ngayConLai == 0 ? "Hôm nay hết hạn" : "Còn $ngayConLai ngày",
+                            style: const TextStyle(
+                              fontSize: 11,
+                              color: Color(0xFFD97706),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
 
                   const SizedBox(height: 4),
@@ -103,7 +157,7 @@ class ItemNTHopDong extends StatelessWidget {
                       const SizedBox(width: 10),
 
                       Text(
-                        "${formatMoney( hopDong.giaPhongThucTe)}/tháng",
+                        "${formatMoney(hopDong.giaPhongThucTe)}/tháng",
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
@@ -115,6 +169,8 @@ class ItemNTHopDong extends StatelessWidget {
                 ],
               ),
             ),
+
+            const SizedBox(width: 8),
 
             const Icon(
               Icons.chevron_right_rounded,

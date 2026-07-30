@@ -220,7 +220,7 @@ class _GiaHanHopDongPageState extends State<GiaHanHopDongPage> {
                 const SizedBox(height: 12),
 
                 _section(
-                  title: "Ảnh phụ lục / Hợp đồng gia hạn (Tùy chọn)",
+                  title: "Ảnh Hợp đồng gia hạn (Tùy chọn)",
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -241,7 +241,7 @@ class _GiaHanHopDongPageState extends State<GiaHanHopDongPage> {
                                 Icon(Icons.add_a_photo_outlined, color: Colors.grey.shade600, size: 28),
                                 const SizedBox(height: 6),
                                 Text(
-                                  "Chạm để thêm ảnh phụ lục",
+                                  "Chạm để thêm ảnh ",
                                   style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
                                 ),
                               ],
