@@ -250,41 +250,23 @@ class TaoHoaDonPhongPageViewModel extends ChangeNotifier {
     final jsonPayloadStr = jsonEncode(customContractsPayload);
     debugPrint("[FLUTTER PAYLOAD] $jsonPayloadStr");
 
-    bool success = false;
-    if (isTinhTienHopDong) {
-      success = await _hoaDonProvider.createHoaDonBatch(
-        phongId: phongId,
-        thangNam: thangNam,
-        ngayLap: ngayLapSelected.toIso8601String(),
-        isChotDienNuoc: isChotDienNuoc,
-        chiSoDienCu: int.tryParse(txtDienChiSoCu.text) ?? 0,
-        chiSoDienMoi: int.tryParse(txtDienChiSoMoi.text) ?? 0,
-        chiSoNuocCu: int.tryParse(txtNuocChiSoCu.text) ?? 0,
-        chiSoNuocMoi: int.tryParse(txtNuocChiSoMoi.text) ?? 0,
-        tienDichVuKhac: double.tryParse(txtTienDichVuKhac.text.replaceAll('.', '')) ?? 0,
-        ghiChu: txtGhiChu.text,
-        danhSachHopDongJson: jsonPayloadStr,
-        anhDienMoi: isChotDienNuoc ? imgDien : null,
-        anhNuocMoi: isChotDienNuoc ? imgNuoc : null,
-      );
-    } else {
-      success = await _hoaDonProvider.createHoaDonBatch(
-        phongId: phongId,
-        thangNam: thangNam,
-        ngayLap: ngayLapSelected.toIso8601String(),
-        isChotDienNuoc: true,
-        chiSoDienCu: int.tryParse(txtDienChiSoCu.text) ?? 0,
-        chiSoDienMoi: int.tryParse(txtDienChiSoMoi.text) ?? 0,
-        chiSoNuocCu: int.tryParse(txtNuocChiSoCu.text) ?? 0,
-        chiSoNuocMoi: int.tryParse(txtNuocChiSoMoi.text) ?? 0,
-        tienDichVuKhac: 0,
-        ghiChu: txtGhiChu.text,
-        danhSachHopDongJson: jsonPayloadStr,
-        anhDienMoi: imgDien,
-        anhNuocMoi: imgNuoc,
-      );
-    }
-
+    bool success = await _hoaDonProvider.createHoaDonBatch(
+      phongId: phongId,
+      thangNam: thangNam,
+      ngayLap: ngayLapSelected.toIso8601String(),
+      isChotDienNuoc: isChotDienNuoc, // Truyền trạng thái công tắc điện nước
+      chiSoDienCu: int.tryParse(txtDienChiSoCu.text) ?? 0,
+      chiSoDienMoi: int.tryParse(txtDienChiSoMoi.text) ?? 0,
+      chiSoNuocCu: int.tryParse(txtNuocChiSoCu.text) ?? 0,
+      chiSoNuocMoi: int.tryParse(txtNuocChiSoMoi.text) ?? 0,
+      // Nếu tắt tính tiền hợp đồng thì tiền dịch vụ khác và danh sách hợp đồng gửi lên sẽ được coi như không tính
+      tienDichVuKhac: isTinhTienHopDong ? (double.tryParse(txtTienDichVuKhac.text.replaceAll('.', '')) ?? 0) : 0,
+      ghiChu: txtGhiChu.text,
+      //Nếu tắt tính tiền hợp đồng thì truyền null để backend không tạo hóa đơn hợp đồng!
+      danhSachHopDongJson: isTinhTienHopDong ? jsonPayloadStr : null,
+      anhDienMoi: isChotDienNuoc ? imgDien : null,
+      anhNuocMoi: isChotDienNuoc ? imgNuoc : null,
+    );
     if (success) {
       createdHoaDonList = _hoaDonProvider.createdHoaDonList;
     }
