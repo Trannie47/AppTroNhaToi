@@ -262,11 +262,21 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                                         firstDate: today,
                                       );
                                     } else if (isActiveContract) {
+                                      // Lấy ngày bắt đầu gốc của hợp đồng cũ để làm mốc chặn dưới (không cho chọn lùi hơn ngày hợp đồng cũ)
+                                      DateTime ngayKyGoc = vm.hdDTO?.ngayKy ?? dauThang;
+                                      DateTime minDate;
+                                      if (ngayKyGoc.year == now.year && ngayKyGoc.month == now.month) {
+                                        // Nếu trong tháng này, ngày bắt buộc phải lớn hơn ngày bắt đầu cũ ít nhất 1 ngày (VD: cũ là 16 thì mới từ 17)
+                                        minDate = ngayKyGoc.add(const Duration(days: 1));
+                                      } else {
+                                        // Nếu hợp đồng cũ từ các tháng trước, mốc tối thiểu là ngày 01 của tháng này
+                                        minDate = dauThang;
+                                      }
                                       // HĐ Đang hoạt động (trangThai == 1) -> CHỈ CHO CHỌN NGÀY TRONG THÁNG HIỆN TẠI
                                       vm.chonNgay(
                                         context,
                                         vm.txtNgayKy,
-                                        firstDate: dauThang,
+                                        firstDate: minDate,
                                         lastDate: today,
                                       );
                                     } else {

@@ -400,11 +400,26 @@ class HopDongFormViewModel extends ChangeNotifier {
       }
       else if (hdDTO?.trangThai == 1) {
         //TH3: CẬP NHẬT HỢP ĐỒNG ĐANG HOẠT ĐỘNG
-        // Bắt buộc Ngày bắt đầu phải nằm trong THÁNG HIỆN TẠI
-        if (ngayKy.isBefore(dauThangHienTai) ||
-            ngayKy.isAfter(today)) {
+        final todayOnly = DateTime(now.year, now.month, now.day);
+
+        //Lấy ngày ký gốc và chuẩn hóa về 00:00:00
+        final rawNgayKyGoc = hdDTO?.ngayKy ?? dauThangHienTai;
+        final ngayKyGoc = DateTime(rawNgayKyGoc.year, rawNgayKyGoc.month, rawNgayKyGoc.day);
+
+        //Tính mốc tối thiểu
+        DateTime minAllowedDate;
+        if (ngayKyGoc.year == now.year && ngayKyGoc.month == now.month) {
+          minAllowedDate = ngayKyGoc.add(const Duration(days: 1));
+        } else {
+          minAllowedDate = dauThangHienTai;
+        }
+
+        final ngayKyOnly = DateTime(ngayKy.year, ngayKy.month, ngayKy.day);
+
+        if (ngayKyOnly.isBefore(minAllowedDate) ||
+            ngayKyOnly.isAfter(todayOnly)) {
           errNgayKy =
-          "Ngày bắt đầu phải từ ngày 01/${now.month} đến hôm nay (${formatDate(now)})";
+          "Ngày bắt đầu phải từ ngày ${formatDate(minAllowedDate)} đến hôm nay (${formatDate(now)})";
           hopLe = false;
         }
       }
