@@ -685,28 +685,28 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
                 }
               },
             ),
+            if (widget.SoLuongLapDat == 0)
+              _menuItem(
+                icon: Icons.delete_outline,
 
-            _menuItem(
-              icon: Icons.delete_outline,
+                iconColor: Colors.red,
 
-              iconColor: Colors.red,
+                iconBg: const Color(0xffFFECEC),
 
-              iconBg: const Color(0xffFFECEC),
+                title: "Ẩn thiết bị",
 
-              title: "Ẩn thiết bị",
+                subTitle: "Không thể hoàn tác",
 
-              subTitle: "Không thể hoàn tác",
+                titleColor: Colors.red,
 
-              titleColor: Colors.red,
+                onTap: () {
+                  setState(() {
+                    vm.hienMenu = false;
+                  });
 
-              onTap: () {
-                setState(() {
-                  vm.hienMenu = false;
-                });
-
-                _showXoaDialog();
-              },
-            ),
+                  _showXoaDialog();
+                },
+              ),
 
             const SizedBox(height: 10),
             SizedBox(
@@ -765,7 +765,6 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
   void _showXoaDialog() {
     showDialog(
       context: context,
-
       builder: (context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
@@ -783,21 +782,31 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
               onPressed: () {
                 Navigator.pop(context);
               },
-
               child: const Text("Hủy"),
             ),
 
             ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
 
-              onPressed: () {
-                Navigator.pop(context);
+              onPressed: () async {
+                Navigator.pop(context); // đóng dialog trước
 
-                Future.delayed(const Duration(milliseconds: 100), () {
-                  if (mounted) {
-                    Navigator.of(this.context).pop(true);
-                  }
-                });
+                final ok = await vm.xoaThietBi();
+
+                if (!mounted) return;
+
+                if (ok) {
+                  ScaffoldMessenger.of(this.context).showSnackBar(
+                    const SnackBar(content: Text("Đã ẩn thiết bị thành công")),
+                  );
+                  Navigator.of(this.context).pop(true); // quay lại trang trước
+                } else {
+                  ScaffoldMessenger.of(this.context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Không thể ẩn thiết bị. Vui lòng thử lại."),
+                    ),
+                  );
+                }
               },
 
               child: const Text("Ẩn", style: TextStyle(color: Colors.white)),

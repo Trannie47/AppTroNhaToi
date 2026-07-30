@@ -200,10 +200,10 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-        CircleAvatar(
-          backgroundColor: Colors.white,
-          child: const Icon(Icons.notifications_none),
-        ),
+        // CircleAvatar(
+        //   backgroundColor: Colors.white,
+        //   child: const Icon(Icons.notifications_none),
+        // ),
       ],
     );
   }
@@ -467,11 +467,11 @@ class _HomePageState extends State<HomePage> {
               "Công nợ tạp hóa",
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            if (vm.debts.isNotEmpty)
-              const Text(
-                "Xem tất cả",
-                style: TextStyle(color: Color(0xFF2D7A3A)),
-              ),
+            // if (vm.debts.isNotEmpty)
+            //   const Text(
+            //     "Xem tất cả",
+            //     style: TextStyle(color: Color(0xFF2D7A3A)),
+            //   ),
           ],
         ),
 

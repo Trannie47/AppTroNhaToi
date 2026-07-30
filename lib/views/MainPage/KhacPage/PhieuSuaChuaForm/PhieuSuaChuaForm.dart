@@ -1,5 +1,6 @@
 import 'package:AppTroNhaToi/Provider/phong_provider.dart';
 import 'package:AppTroNhaToi/Provider/sua_chua_provider.dart';
+import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/models/hoa_don_sua_chua.dart';
 import 'package:AppTroNhaToi/models/item_phong.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
@@ -177,6 +178,7 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
                   _input(
                     title: "Ngày sửa chữa",
                     hint: "dd/MM/yyyy",
+                    readOnly: true,
                     controller: vm.txtNgaySuaChua,
                     errorText: vm.errNgaySuaChua,
                     keyboardType: TextInputType.number,
@@ -283,6 +285,10 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
                       controller: vm.txtChiPhi,
                       errorText: vm.errChiPhi,
                       keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        DinhDangGiaVN(),
+                      ],
                       suffixText: "Vnd",
                     ),
 
@@ -391,6 +397,8 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
     String? suffixText,
     int maxLines = 1,
     TextInputType keyboardType = TextInputType.text,
+    bool enabled = true,
+    bool readOnly = false,
     List<TextInputFormatter>? inputFormatters,
   }) {
     return Column(
@@ -412,7 +420,8 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
           keyboardType: keyboardType,
           inputFormatters: inputFormatters,
           maxLines: maxLines,
-
+          enabled: enabled,
+          readOnly: readOnly,
           decoration: InputDecoration(
             hintText: hint,
             errorText: null,

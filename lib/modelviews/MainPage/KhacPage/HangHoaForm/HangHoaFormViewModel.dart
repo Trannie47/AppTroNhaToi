@@ -58,9 +58,7 @@ class HangHoaFormViewModel extends ChangeNotifier {
       hopLe = false;
     }
 
-
-    double? giaBan =
-    double.tryParse(txtGiaBan.text.replaceAll('.', ''));
+    double? giaBan = double.tryParse(txtGiaBan.text.replaceAll('.', ''));
     if (txtGiaBan.text.trim().isEmpty) {
       errGiaBan = "Vui lòng nhập giá bán";
       hopLe = false;
@@ -69,9 +67,7 @@ class HangHoaFormViewModel extends ChangeNotifier {
       hopLe = false;
     }
 
-
-    double? giaNhap =
-    double.tryParse(txtGiaNhap.text.replaceAll('.', ''));
+    double? giaNhap = double.tryParse(txtGiaNhap.text.replaceAll('.', ''));
     if (txtGiaNhap.text.trim().isEmpty) {
       errGiaNhap = "Vui lòng nhập giá nhập";
       hopLe = false;
@@ -108,16 +104,11 @@ class HangHoaFormViewModel extends ChangeNotifier {
         maHangHoa: _hangHoaDangSua?.maHangHoa,
         tenHangHoa: txtTenHangHoa.text.trim(),
 
-        giaBan: double.tryParse(
-          txtGiaBan.text.replaceAll('.', '').trim(),
-        ),
+        giaBan: double.tryParse(txtGiaBan.text.replaceAll('.', '').trim()),
 
-        giaNhap: double.tryParse(
-          txtGiaNhap.text.replaceAll('.', '').trim(),
-        ),
+        giaNhap: double.tryParse(txtGiaNhap.text.replaceAll('.', '').trim()),
         donViTinh: txtDonVi.text.trim(),
       );
-      print(hh);
       if (isEditMode) {
         final ok = await _service.capNhat(hh);
         return ok ? hh : null;

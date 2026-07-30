@@ -103,6 +103,12 @@ class ChiTietThietBiPageViewModel extends ChangeNotifier {
     return await _suaChuaProvider.them(suaChua);
   }
 
+  Future<bool> xoaThietBi() async {
+    if (thietBi.thietBiID == null) return false;
+
+    return await _thietBiProvider.xoa(thietBi.thietBiID!);
+  }
+
   @override
   void dispose() {
     _suaChuaProvider.removeListener(_onProviderUpdate);

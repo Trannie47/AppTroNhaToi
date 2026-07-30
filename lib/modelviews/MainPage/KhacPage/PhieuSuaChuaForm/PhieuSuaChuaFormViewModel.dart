@@ -79,16 +79,20 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
     BuildContext context,
     TextEditingController controller,
   ) async {
+    final now = DateTime.now();
+
+    final firstDayOfMonth = DateTime(now.year, now.month, 1);
+    final lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
+
     DateTime? ngay = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime(2100),
+      initialDate: now,
+      firstDate: firstDayOfMonth,
+      lastDate: lastDayOfMonth,
     );
 
     if (ngay != null) {
       controller.text = formatDate(ngay);
-
       notifyListeners();
     }
   }
@@ -172,7 +176,7 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
     }
 
     if (taoHoaDon) {
-      if (txtChiPhi.text.trim().isEmpty) {
+      if (txtChiPhi.text.replaceAll('.', '').trim().isEmpty) {
         errChiPhi = "Vui lòng nhập chi phí sửa chữa";
 
         hopLe = false;
@@ -180,7 +184,8 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
     }
 
     if (txtChiPhi.text.trim().isNotEmpty) {
-      int? chiPhi = int.tryParse(txtChiPhi.text);
+      int? chiPhi = int.tryParse(txtChiPhi.text.replaceAll('.', '').trim());
+
       if (chiPhi == null) {
         errChiPhi = "Chi phí chỉ được nhập số nguyên";
 
@@ -206,7 +211,6 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
 
     suaChua = suaChuaData;
     hoaDonSuaChua = hoaDonData;
-    print(suaChuaData);
     phongID = suaChua?.phongID;
     if (suaChua == null) {
       txtNgaySuaChua.text = formatDate(DateTime.now());
@@ -257,7 +261,9 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
           ? HoaDonSuaChua(
               maHoaDonSC: daTaoHoaDon ? maHoaDon : null,
               trangThai: trangThai,
-              giaTien: double.parse(txtChiPhi.text),
+              giaTien: double.tryParse(
+                txtChiPhi.text.replaceAll('.', '').trim(),
+              ),
               loaiSua: loaiSua,
               ngayLapHoaDonSC: DateFormate.chuyenNgay(txtNgayHoaDon.text),
             )
