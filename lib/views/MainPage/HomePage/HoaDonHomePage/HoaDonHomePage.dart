@@ -262,6 +262,18 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
       ghiChuThu = item['phieuThuHangThang']['ghiChu']?.toString();
     }
     ghiChuThu ??= item['ghiChuThu']?.toString();
+    String? ngayThuStr;
+    if (item['phieuThuHangThang'] != null && item['phieuThuHangThang'] is Map) {
+      final rawNgayThu = item['phieuThuHangThang']['ngayThu']?.toString();
+      if (rawNgayThu != null && rawNgayThu.isNotEmpty) {
+        try {
+          final parsedDate = DateTime.parse(rawNgayThu);
+          ngayThuStr = "${parsedDate.day.toString().padLeft(2, '0')}/${parsedDate.month.toString().padLeft(2, '0')}/${parsedDate.year}";
+        } catch (_) {
+          ngayThuStr = rawNgayThu.substring(0, 10);
+        }
+      }
+    }
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -435,7 +447,7 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
             ],
           ),
 
-          if (ghiChuThu != null && ghiChuThu.isNotEmpty) ...[
+          if ((ngayThuStr != null && ngayThuStr.isNotEmpty) || (ghiChuThu != null && ghiChuThu.isNotEmpty)) ...[
             const SizedBox(height: 8),
             Container(
               width: double.infinity,
@@ -445,16 +457,36 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: const Color(0xffEEEEEE)),
               ),
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.note_alt_outlined, size: 14, color: Colors.grey),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Text(
-                      "Ghi chú: $ghiChuThu",
-                      style: const TextStyle(fontSize: 11, color: Colors.black87, fontStyle: FontStyle.italic),
+                  if (ngayThuStr != null && ngayThuStr.isNotEmpty) ...[
+                    Row(
+                      children: [
+                        const Icon(Icons.calendar_today, size: 13, color: Color(0xff616161)),
+                        const SizedBox(width: 6),
+                        Text(
+                          "Ngày thu: $ngayThuStr",
+                          style:  TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.grey.shade700),
+                        ),
+                      ],
                     ),
-                  ),
+                    if (ghiChuThu != null && ghiChuThu.isNotEmpty) const SizedBox(height: 4),
+                  ],
+                  if (ghiChuThu != null && ghiChuThu.isNotEmpty) ...[
+                    Row(
+                      children: [
+                        const Icon(Icons.note_alt_outlined, size: 13, color: Colors.grey),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            "Ghi chú: $ghiChuThu",
+                            style: const TextStyle(fontSize: 11, color: Colors.black87, fontStyle: FontStyle.italic),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ],
               ),
             ),
