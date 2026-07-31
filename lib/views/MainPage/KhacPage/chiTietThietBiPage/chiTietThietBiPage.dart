@@ -587,7 +587,7 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
                     style: TextStyle(
                       color: titleColor,
                       fontWeight: FontWeight.w500,
-                      fontSize: 14,
+                      fontSize: 12,
                     ),
                   ),
 
