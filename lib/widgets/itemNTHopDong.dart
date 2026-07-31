@@ -15,7 +15,7 @@ class ItemNTHopDong extends StatelessWidget {
   });
 
   bool get _isSapHetHan {
-    if (hopDong.trangThai != 1) return false; // Chỉ tính hợp đồng đang hiệu lực
+    if (hopDong.trangThai != 1) return false;
 
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
@@ -58,6 +58,7 @@ class ItemNTHopDong extends StatelessWidget {
               : null,
         ),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
               width: 52,
@@ -83,19 +84,22 @@ class ItemNTHopDong extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 8,
+                    runSpacing: 4,
                     children: [
                       Text(
                         hopDong.nguoithue.hoTen,
                         style: const TextStyle(
-                          fontSize: 17,
+                          fontSize: 16,
                           fontWeight: FontWeight.w700,
+                          color: Color(0xff111111),
                         ),
                       ),
-                      if (sapHetHan) ...[
-                        const SizedBox(width: 8), // Khoảng cách nhỏ giữa tên và nhãn
+                      if (sapHetHan)
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                           decoration: BoxDecoration(
                             color: const Color(0xFFFEF3C7),
                             borderRadius: BorderRadius.circular(12),
@@ -109,7 +113,6 @@ class ItemNTHopDong extends StatelessWidget {
                             ),
                           ),
                         ),
-                      ],
                     ],
                   ),
 
@@ -125,7 +128,10 @@ class ItemNTHopDong extends StatelessWidget {
 
                   const SizedBox(height: 8),
 
-                  Row(
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 10,
+                    runSpacing: 4,
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
@@ -145,21 +151,10 @@ class ItemNTHopDong extends StatelessWidget {
                           ),
                         ),
                       ),
-
-                      const SizedBox(width: 10),
-
-                      Container(
-                        width: 1,
-                        height: 14,
-                        color: const Color(0xffD9D9D9),
-                      ),
-
-                      const SizedBox(width: 10),
-
                       Text(
                         "${formatMoney(hopDong.giaPhongThucTe)}/tháng",
                         style: const TextStyle(
-                          fontSize: 14,
+                          fontSize: 13,
                           fontWeight: FontWeight.w700,
                           color: Color(0xff2E7D32),
                         ),
