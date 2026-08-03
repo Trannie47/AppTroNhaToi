@@ -1,3 +1,4 @@
+import 'package:AppTroNhaToi/models/DTO/NguoiThueAvailableDTO.dart';
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/repositories/nguoithue_repository.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThuCongNoForm/thuCongNoFormModel.dart';
@@ -111,6 +112,20 @@ class NguoiThueProvider extends ChangeNotifier {
   Future<List<NguoiThue>> getListNguoiThueAvailableForContract() async {
     final result = await _repo.getListNguoiThueAvailableForContract();
     return result;
+  }
+
+  //lấy người đủ điều kiện đứng tên đại diện.
+  Future<List<NguoiThueAvailableDTO>> getAvailableRepresentatives({
+    DateTime? ngayKy,
+  }) async {
+    return await _repo.getAvailableRepresentatives(ngayKy: ngayKy);
+  }
+
+  // lấy người đủ điều kiện làm thành viên ở cùng.
+  Future<List<NguoiThueAvailableDTO>> getAvailableMembers({
+    int? excludeIdnt,
+  }) async {
+    return await _repo.getAvailableMembers(excludeIdnt: excludeIdnt);
   }
 
   Future<List<NguoiThue>> getListNguoiThueFromIdPhong(int idPhong) async {

@@ -1,6 +1,7 @@
+import 'ThanhVienHopDongDTO.dart';
+
 class HopDongDTO {
   final String hopDongID;
-  final int idnt;
   final int phongID;
   final DateTime ngayKy;
   final DateTime ngayHetHan;
@@ -9,11 +10,10 @@ class HopDongDTO {
   final int trangThai; //0: hợp đồng khởi tạo(chưa tới ngày hiệu lực), 1: HD hiệu lực, 2: hết hiệu lực
   final PhongHD phong;
   final String? ghiChu;
-  final NguoiThueHD nguoithue;
   final List<String> dsAnhHopDong;
+  final List<ThanhVienHopDongDTO> hopDongNguoiThue;
   HopDongDTO({
     required this.hopDongID,
-    required this.idnt,
     required this.phongID,
     required this.ngayKy,
     required this.ngayHetHan,
@@ -22,13 +22,21 @@ class HopDongDTO {
     this.ghiChu,
     required this.trangThai,
     required this.phong,
-    required this.nguoithue,
     required this.dsAnhHopDong,
+    required this.hopDongNguoiThue,
 });
+  ThanhVienHopDongDTO? get daiDienChinh {
+    try {
+      return hopDongNguoiThue.firstWhere((tv) => tv.laDaiDien);
+    } catch (_) {
+      return hopDongNguoiThue.isNotEmpty ? hopDongNguoiThue.first : null;
+    }
+  }
+  int get idnt => daiDienChinh?.idnt ?? 0;
+  NguoiThueHD get nguoithue => daiDienChinh?.nguoiThue ?? NguoiThueHD(hoTen: 'Không rõ', soDienThoai: 'Không rõ');
   factory HopDongDTO.fromMap(Map<String,dynamic> json){
     return HopDongDTO(
       hopDongID: json['hopDongId'] ?? '',
-      idnt: json['idnt'] ?? 0,
       phongID: json['phongId'] ?? 0,
       ngayKy: DateTime.parse(json['ngayKy']),
       ngayHetHan: DateTime.parse(json['ngayHetHan']),
@@ -44,14 +52,16 @@ class HopDongDTO {
           ? List<String>.from(json['anhHopDong'])
           : (json['anhHopDong'] != null ? [json['anhHopDong'].toString()] : []),
       phong: PhongHD.fromMap(json['phong'] ?? {}),
-      nguoithue: NguoiThueHD.fromMap(json['nguoithue'] ?? {}
-      ),
-
+      hopDongNguoiThue: json['hopDongNguoiThue'] is List
+          ? (json['hopDongNguoiThue'] as List)
+          .map((item) => ThanhVienHopDongDTO.fromMap(item as Map<String, dynamic>))
+          .toList()
+          : [],
     );
   }
   @override
   String toString() {
-    return 'HopDongDTO(hopDongID: $hopDongID, idnt: $idnt, phongID: $phongID, ngayKy: $ngayKy, ngayHetHan: $ngayHetHan, tienCoc: $tienCoc, giaPhongThucTe: $giaPhongThucTe, trangThai: $trangThai, phong: ${phong.tenPhong}, ghiChu: $ghiChu, nguoithue: ${nguoithue.hoTen}, dsAnhHopDong: $dsAnhHopDong giaGocCuaPhong: ${phong.giaPhongGoc})';
+    return 'HopDongDTO(hopDongID: $hopDongID, phongID: $phongID, ngayKy: $ngayKy, ngayHetHan: $ngayHetHan, tienCoc: $tienCoc, giaPhongThucTe: $giaPhongThucTe, trangThai: $trangThai, phong: ${phong.tenPhong}, ghiChu: $ghiChu, nguoithue: ${nguoithue.hoTen}, dsAnhHopDong: $dsAnhHopDong giaGocCuaPhong: ${phong.giaPhongGoc})';
   }
 }
 class PhongHD{

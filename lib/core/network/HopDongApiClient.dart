@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:AppTroNhaToi/core/network/retrofit_client.dart';
@@ -31,17 +32,18 @@ class HopDongApiClient {
   }
 
   Future<HopDong> createContract(
-    HopDong hopDong,
+  Map<String, dynamic> hopDongPayload,
     List<File> imageHopDong,
   ) async {
     final formData = FormData.fromMap({
-      'idnt': hopDong.idnt,
-      'phongId': hopDong.phongID,
-      'ngayKy': hopDong.ngayKy?.toIso8601String().split('T').first,
-      'ngayHetHan': hopDong.ngayHetHan?.toIso8601String().split('T').first,
-      'tienCoc': hopDong.tienCoc,
-      'giaPhongThucTe': hopDong.giaPhongThucTe,
-      'ghiChu': hopDong.ghiChu,
+      'phongId': hopDongPayload['phongId'],
+      'ngayKy': hopDongPayload['ngayKy'],
+      'ngayHetHan': hopDongPayload['ngayHetHan'],
+      'tienCoc': hopDongPayload['tienCoc'],
+      'giaPhongThucTe': hopDongPayload['giaPhongThucTe'],
+      'ghiChu': hopDongPayload['ghiChu'],
+      'danhSachThanhVien': jsonEncode(hopDongPayload['danhSachThanhVien']),
+
 
       // Danh sách file ảnh thật (binary)
       'files': [
@@ -71,17 +73,17 @@ class HopDongApiClient {
   }
 
   Future<HopDong> updateContract(
-    HopDong hopDong,
+      Map<String, dynamic> hopDongPayload,
     List<File> imageHopDong,
   ) async {
     final formData = FormData.fromMap({
-      'idnt': hopDong.idnt,
-      'phongId': hopDong.phongID,
-      'ngayKy': hopDong.ngayKy?.toIso8601String().split('T').first,
-      'ngayHetHan': hopDong.ngayHetHan?.toIso8601String().split('T').first,
-      'tienCoc': hopDong.tienCoc?.toInt(),
-      'giaPhongThucTe': hopDong.giaPhongThucTe?.toInt(),
-      'ghiChu': hopDong.ghiChu,
+      'phongId': hopDongPayload['phongId'],
+      'ngayKy': hopDongPayload['ngayKy'],
+      'ngayHetHan': hopDongPayload['ngayHetHan'],
+      'tienCoc': hopDongPayload['tienCoc'],
+      'giaPhongThucTe': hopDongPayload['giaPhongThucTe'],
+      'ghiChu': hopDongPayload['ghiChu'],
+      'danhSachThanhVien': jsonEncode(hopDongPayload['danhSachThanhVien']),
 
       // Danh sách file ảnh thật (binary)
       'files': [
@@ -93,8 +95,9 @@ class HopDongApiClient {
       ],
     });
     try {
+      final hopDongId = hopDongPayload['hopDongId'];
       final request = await _dio.post(
-        "hop-dong/${hopDong.hopDongID}/updateContract",
+        "hop-dong/$hopDongId/updateContract",
         data: formData,
       );
       if (request.statusCode == 200 || request.statusCode == 201) {

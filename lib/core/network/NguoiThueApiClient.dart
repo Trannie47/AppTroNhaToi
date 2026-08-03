@@ -1,4 +1,5 @@
 import 'package:AppTroNhaToi/core/network/retrofit_client.dart';
+import 'package:AppTroNhaToi/models/DTO/NguoiThueAvailableDTO.dart';
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThuCongNoForm/thuCongNoFormModel.dart';
 import 'package:dio/dio.dart';
@@ -94,6 +95,47 @@ class NguoiThueApiClient {
       rethrow;
     }
   }
+
+  Future<List<NguoiThueAvailableDTO>> getAvailableRepresentatives({
+    DateTime? ngayKy,
+  }) async {
+    final response = await _dio.get(
+      "nguoi-thue/available-representatives",
+      queryParameters: {
+        if (ngayKy != null) 'ngayKy': _formatDateOnly(ngayKy),
+      },
+    );
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final List<dynamic> data = response.data;
+      return data
+          .map((json) => NguoiThueAvailableDTO.fromJson(json))
+          .toList();
+    }
+    throw Exception(
+      "Lấy ds người đại diện thất bại (Mã lỗi: ${response.statusCode})",
+    );
+  }
+
+  Future<List<NguoiThueAvailableDTO>> getAvailableMembers({
+    int? excludeIdnt,
+  }) async {
+    final response = await _dio.get(
+      "nguoi-thue/available-members",
+      queryParameters: {
+        if (excludeIdnt != null) 'excludeIdnt': excludeIdnt,
+      },
+    );
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final List<dynamic> data = response.data;
+      return data
+          .map((json) => NguoiThueAvailableDTO.fromJson(json))
+          .toList();
+    }
+    throw Exception(
+      "Lấy ds thành viên thất bại (Mã lỗi: ${response.statusCode})",
+    );
+  }
+
   // Gọi API backend để lấy danh sách người thuê còn công nợ tạp hóa.
   Future<List<ThuCongNoFormModel>> getNguoiThueCongNoTapHoa() async {
     try {
@@ -118,8 +160,6 @@ class NguoiThueApiClient {
     }
   }
 
-
-
   Future<List<NguoiThue>> getListNguoiThueFromIdPhong(int idPhong) async {
     try {
       final response = await _dio.get("phong/$idPhong/getListNguoiThue");
@@ -139,6 +179,12 @@ class NguoiThueApiClient {
       }
       throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
     }
+  }
+
+  String _formatDateOnly(DateTime date) {
+    return '${date.year.toString().padLeft(4, '0')}-'
+        '${date.month.toString().padLeft(2, '0')}-'
+        '${date.day.toString().padLeft(2, '0')}';
   }
 
   String _mapErrorToMessage(DioException e) {

@@ -12,11 +12,11 @@ class HopdongRepository {
   Future<List<HopDongDTO>> getListHopDong(){
     return hopDongApiClient.getListHopDong();
   }
-  Future<HopDong> createContract(HopDong hopDong, List<File> imageHopDong){
-    return hopDongApiClient.createContract(hopDong, imageHopDong);
+  Future<HopDong> createContract(Map<String, dynamic> hopDongPayload, List<File> imageHopDong){
+    return hopDongApiClient.createContract(hopDongPayload, imageHopDong);
   }
-  Future<HopDong> updateContract(HopDong hopDong, List<File> imageHopDong){
-    return hopDongApiClient.updateContract(hopDong, imageHopDong);
+  Future<HopDong> updateContract(Map<String, dynamic> hopDongPayload, List<File> imageHopDong){
+    return hopDongApiClient.updateContract(hopDongPayload, imageHopDong);
   }
   Future<HopDong> renewContract({
     required String hopDongId,

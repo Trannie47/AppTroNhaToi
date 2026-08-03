@@ -105,7 +105,6 @@ class ChiTietHopDongViewModel extends ChangeNotifier {
   void updateHopDongData(HopDong hd) {
     _hopDong = HopDongDTO(
       hopDongID: hd.hopDongID ?? _hopDong.hopDongID,
-      idnt: hd.idnt ?? _hopDong.idnt,
       phongID: hd.phongID ?? _hopDong.phongID,
       ngayKy: hd.ngayKy ?? _hopDong.ngayKy,
       ngayHetHan: hd.ngayHetHan ?? _hopDong.ngayHetHan,
@@ -115,7 +114,7 @@ class ChiTietHopDongViewModel extends ChangeNotifier {
       dsAnhHopDong: (hd.dsAnhHopDong != null && hd.dsAnhHopDong!.isNotEmpty) ? hd.dsAnhHopDong! : _hopDong!.dsAnhHopDong,
       trangThai: hd.trangThai ?? _hopDong.trangThai,
       phong: _hopDong.phong,
-      nguoithue: _hopDong.nguoithue,
+      hopDongNguoiThue: [],
     );
     isUpdated = true;
     notifyListeners();

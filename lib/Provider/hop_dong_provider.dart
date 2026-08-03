@@ -26,12 +26,12 @@ class HopDongProvider extends ChangeNotifier {
   }
 
   Future<HopDong> createHopDong(
-    HopDong hopDong,
-    List<File> imageHopDong,
+      Map<String, dynamic> hopDongPayload,
+      List<File> imageHopDong,
   ) async {
     try {
       final result = await hopdongRepository.createContract(
-        hopDong,
+        hopDongPayload,
         imageHopDong,
       );
       return result;
@@ -41,12 +41,12 @@ class HopDongProvider extends ChangeNotifier {
   }
 
   Future<HopDong> updateHopDong(
-    HopDong hopDong,
-    List<File> imageHopDong,
+      Map<String, dynamic> hopDongPayload,
+      List<File> imageHopDong,
   ) async {
     try {
       final result = await hopdongRepository.updateContract(
-        hopDong,
+        hopDongPayload,
         imageHopDong,
       );
       return result;

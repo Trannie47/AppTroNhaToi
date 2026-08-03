@@ -45,6 +45,10 @@ class ItemNTHopDong extends StatelessWidget {
     final sapHetHan = _isSapHetHan;
     final ngayConLai = _soNgayConLai;
 
+    // Lấy thông tin tên đại diện và tổng số thành viên trong hợp đồng
+    final tenDaiDien = hopDong.nguoithue.hoTen;
+    final soLuongThanhVien = hopDong.hopDongNguoiThue.length;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -56,6 +60,13 @@ class ItemNTHopDong extends StatelessWidget {
           border: sapHetHan
               ? Border.all(color: const Color(0xFFFFA726), width: 1.2)
               : null,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.02),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -69,7 +80,7 @@ class ItemNTHopDong extends StatelessWidget {
               ),
               alignment: Alignment.center,
               child: Text(
-                vietTat(hopDong.nguoithue.hoTen),
+                vietTat(tenDaiDien),
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
@@ -90,7 +101,7 @@ class ItemNTHopDong extends StatelessWidget {
                     runSpacing: 4,
                     children: [
                       Text(
-                        hopDong.nguoithue.hoTen,
+                        tenDaiDien,
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
@@ -116,14 +127,46 @@ class ItemNTHopDong extends StatelessWidget {
                     ],
                   ),
 
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 6),
 
-                  Text(
-                    "Mã HĐ: ${hopDong.hopDongID}",
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey.shade600,
-                    ),
+                  // Mã hợp đồng và huy hiệu số lượng thành viên được làm nổi bật
+                  Row(
+                    children: [
+                      Text(
+                        "Mã HĐ: ${hopDong.hopDongID}",
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFE3F2FD),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.people_outline,
+                              size: 11,
+                              color: Color(0xFF1976D2),
+                            ),
+                            const SizedBox(width: 3),
+                            Text(
+                              "$soLuongThanhVien người",
+                              style: const TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF1976D2),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
 
                   const SizedBox(height: 8),
