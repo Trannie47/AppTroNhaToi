@@ -2,7 +2,7 @@ import 'package:AppTroNhaToi/models/hoa_don_sua_chua.dart';
 
 class SuaChuaDTO {
   final int? id;
-  final int? phongId;
+  final int? lapRapId;
   final int? thietBiId;
   final String? nguyenNhan;
   final DateTime ngaySuaChua;
@@ -10,7 +10,7 @@ class SuaChuaDTO {
 
   SuaChuaDTO({
     this.id,
-    this.phongId,
+    this.lapRapId,
     this.thietBiId,
     this.nguyenNhan,
     required this.ngaySuaChua,
@@ -20,7 +20,7 @@ class SuaChuaDTO {
   factory SuaChuaDTO.fromMap(Map<String, dynamic> map) {
     return SuaChuaDTO(
       id: map['id'] as int?,
-      phongId: map['phongId'] as int?,
+      lapRapId: map['lapRapId'] as int?,
       thietBiId: map['thietBiId'] as int?,
       nguyenNhan: map['nguyenNhan'] as String?,
       ngaySuaChua:
@@ -37,7 +37,7 @@ class SuaChuaDTO {
   Map<String, dynamic> toMap() {
     return {
       if (id != null) 'id': id,
-      if (phongId != null) 'phongId': phongId,
+      if (lapRapId != null) 'lapRapId': lapRapId,
       if (thietBiId != null) 'thietBiId': thietBiId,
       'nguyenNhan': nguyenNhan,
       'ngaySuaChua': ngaySuaChua.toUtc().toIso8601String(),
@@ -60,7 +60,7 @@ class SuaChuaDTO {
   String toString() {
     return 'SuaChuaDTO('
         'id: $id, '
-        'phongId: $phongId, '
+        'lapRapId: $lapRapId, '
         'thietBiId: $thietBiId, '
         'nguyenNhan: $nguyenNhan, '
         'ngaySuaChua: $ngaySuaChua, '

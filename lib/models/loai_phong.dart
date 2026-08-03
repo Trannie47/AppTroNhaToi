@@ -19,10 +19,14 @@ class LoaiPhong {
     return LoaiPhong(
       maLoaiPhong: map['maLoaiPhong'] as int,
       tenLoaiPhong: map['tenLoaiPhong'] as String,
-      dienTich: map['dienTich'] != null ? (double.tryParse(map['dienTich'].toString()) ?? 0.0) : 0.0,
+      dienTich: map['dienTich'] != null
+          ? (double.tryParse(map['dienTich'].toString()) ?? 0.0)
+          : 0.0,
       isMayLanh: map['isMayLanh'] == 1 || map['isMayLanh'] == true,
       soNguoiToiDa: map['soNguoiToiDa'] as int,
-      giaTien: map['giaTien'] != null ? (double.tryParse(map['giaTien'].toString()) ?? 0.0) : 0.0,
+      giaTien: map['giaTien'] != null
+          ? (double.tryParse(map['giaTien'].toString()) ?? 0.0)
+          : 0.0,
     );
   }
 

@@ -1,4 +1,4 @@
-import 'package:AppTroNhaToi/models/loaiphong.dart';
+import 'package:AppTroNhaToi/models/loai_phong.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -36,7 +36,12 @@ class FormLoaiPhongViewModel extends ChangeNotifier {
     );
     final initialGia = loaiPhong?.giaTien ?? 0;
     giaTienController = TextEditingController(
-      text: initialGia > 0 ? NumberFormat('#,###', 'vi_VN').format(initialGia).replaceAll(',', '.') : "",
+      text: initialGia > 0
+          ? NumberFormat(
+              '#,###',
+              'vi_VN',
+            ).format(initialGia).replaceAll(',', '.')
+          : "",
     );
     isMayLanh = loaiPhong?.isMayLanh ?? false;
 
@@ -52,6 +57,7 @@ class FormLoaiPhongViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
   void _clearErrorDienTich() {
     if (errDienTich != null) {
       errDienTich = null;
@@ -72,6 +78,7 @@ class FormLoaiPhongViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
   void toggleMayLanh(bool value) {
     isMayLanh = value;
     notifyListeners();
@@ -147,7 +154,8 @@ class FormLoaiPhongViewModel extends ChangeNotifier {
     notifyListeners();
     final rawGiaTien = giaTienController.text.trim().replaceAll('.', '');
     LoaiPhong lp = LoaiPhong(
-      maLoaiPhong: loaiPhong?.maLoaiPhong ?? 0, // 0 nếu tạo mới, backend tự sinh ID
+      maLoaiPhong:
+          loaiPhong?.maLoaiPhong ?? 0, // 0 nếu tạo mới, backend tự sinh ID
       tenLoaiPhong: tenLoaiPhongController.text.trim(),
       dienTich: double.tryParse(dienTichController.text) ?? 0,
       soNguoiToiDa: int.tryParse(soNguoiController.text) ?? 0,

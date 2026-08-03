@@ -1,4 +1,4 @@
-import 'package:AppTroNhaToi/models/loaiphong.dart';
+import 'package:AppTroNhaToi/models/loai_phong.dart';
 import 'package:AppTroNhaToi/Provider/loai_phong_provider.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/loaiPhongModelViewsForm/FormLoaiPhong.dart'; // Giữ nguyên import ViewModel của Tài
 import 'package:flutter/material.dart';
@@ -11,11 +11,7 @@ class FormLoaiPhong extends StatefulWidget {
   final Function(LoaiPhong)? onAdd;
   final LoaiPhong? loaiPhong;
 
-  const FormLoaiPhong({
-    super.key,
-    this.loaiPhong,
-    this.onAdd,
-  });
+  const FormLoaiPhong({super.key, this.loaiPhong, this.onAdd});
 
   @override
   State<FormLoaiPhong> createState() => _FormLoaiPhongState();
@@ -46,9 +42,11 @@ class _FormLoaiPhongState extends State<FormLoaiPhong> {
       widget.onAdd?.call(result);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(widget.loaiPhong != null
-              ? "Cập nhật loại phòng thành công!"
-              : "Thêm mới loại phòng thành công!"),
+          content: Text(
+            widget.loaiPhong != null
+                ? "Cập nhật loại phòng thành công!"
+                : "Thêm mới loại phòng thành công!",
+          ),
           backgroundColor: Colors.green,
           duration: const Duration(seconds: 2),
         ),
@@ -126,7 +124,10 @@ class _FormLoaiPhongState extends State<FormLoaiPhong> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text("Tên loại phòng", style: TextStyle(fontWeight: FontWeight.w500)),
+                      const Text(
+                        "Tên loại phòng",
+                        style: TextStyle(fontWeight: FontWeight.w500),
+                      ),
                       const SizedBox(height: 10),
                       TextField(
                         controller: vm.tenLoaiPhongController,
@@ -143,7 +144,10 @@ class _FormLoaiPhongState extends State<FormLoaiPhong> {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      const Text("Tên hiển thị khi chọn loại lúc thêm phòng", style: TextStyle(color: Colors.grey, fontSize: 12)),
+                      const Text(
+                        "Tên hiển thị khi chọn loại lúc thêm phòng",
+                        style: TextStyle(color: Colors.grey, fontSize: 12),
+                      ),
                       const SizedBox(height: 20),
                       Row(
                         children: [
@@ -155,7 +159,9 @@ class _FormLoaiPhongState extends State<FormLoaiPhong> {
                               suffix: "m²",
                               errorText: vm.errDienTich,
                               inputFormatters: [
-                                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+                                FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d*\.?\d*'),
+                                ),
                               ],
                             ),
                           ),
@@ -167,7 +173,9 @@ class _FormLoaiPhongState extends State<FormLoaiPhong> {
                               suffix: "người",
                               hintText: "VD : 2",
                               errorText: vm.errSoNguoi,
-                              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                              ],
                             ),
                           ),
                         ],
@@ -179,10 +187,16 @@ class _FormLoaiPhongState extends State<FormLoaiPhong> {
                         suffix: "đ/tháng",
                         hintText: "VD : 2000000",
                         errorText: vm.errGiaTien,
-                        inputFormatters: [FilteringTextInputFormatter.digitsOnly,DinhDangGiaVN()],
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          DinhDangGiaVN(),
+                        ],
                       ),
                       const SizedBox(height: 10),
-                      const Text("Giá mặc định khi lập hợp đồng cho phòng thuộc loại này", style: TextStyle(color: Colors.grey, fontSize: 12)),
+                      const Text(
+                        "Giá mặc định khi lập hợp đồng cho phòng thuộc loại này",
+                        style: TextStyle(color: Colors.grey, fontSize: 12),
+                      ),
                     ],
                   ),
                 ),
@@ -195,9 +209,18 @@ class _FormLoaiPhongState extends State<FormLoaiPhong> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("Có máy lạnh", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                            Text(
+                              "Có máy lạnh",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                             SizedBox(height: 4),
-                            Text("Phòng được trang bị máy lạnh sẵn", style: TextStyle(color: Colors.grey)),
+                            Text(
+                              "Phòng được trang bị máy lạnh sẵn",
+                              style: TextStyle(color: Colors.grey),
+                            ),
                           ],
                         ),
                       ),
@@ -227,7 +250,9 @@ class _FormLoaiPhongState extends State<FormLoaiPhong> {
                   child: Padding(
                     padding: EdgeInsets.all(16),
                     child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF2D7A3A)),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Color(0xFF2D7A3A),
+                      ),
                     ),
                   ),
                 ),
@@ -249,7 +274,13 @@ class _FormLoaiPhongState extends State<FormLoaiPhong> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(color: Color(0xFF2D7A3A), fontWeight: FontWeight.bold)),
+          Text(
+            title,
+            style: const TextStyle(
+              color: Color(0xFF2D7A3A),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 18),
           child,
         ],
@@ -284,14 +315,20 @@ class _FormLoaiPhongState extends State<FormLoaiPhong> {
               padding: const EdgeInsets.only(right: 14),
               child: Center(
                 widthFactor: 1,
-                child: Text(suffix, style: const TextStyle(color: Colors.grey, fontSize: 16)),
+                child: Text(
+                  suffix,
+                  style: const TextStyle(color: Colors.grey, fontSize: 16),
+                ),
               ),
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
               borderSide: BorderSide.none,
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 16,
+            ),
           ),
         ),
       ],

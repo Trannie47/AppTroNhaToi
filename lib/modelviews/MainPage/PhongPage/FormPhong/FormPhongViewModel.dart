@@ -1,4 +1,4 @@
-import 'package:AppTroNhaToi/models/loaiphong.dart';
+import 'package:AppTroNhaToi/models/loai_phong.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:flutter/material.dart';
 
@@ -33,7 +33,7 @@ class FormPhongViewModel extends ChangeNotifier {
   String? _errTenPhong;
   String? get errTenPhong => _errTenPhong;
 
-  FormPhongViewModel(this._phongProvider, this._loaiPhongProvider, this.room){
+  FormPhongViewModel(this._phongProvider, this._loaiPhongProvider, this.room) {
     nameController.addListener(_onNameChanged);
   }
 
@@ -57,16 +57,20 @@ class FormPhongViewModel extends ChangeNotifier {
         }
       }
     } catch (e) {
-      _loaiphongState = LoaiPhongError(e.toString().replaceFirst('Exception: ', ''));
+      _loaiphongState = LoaiPhongError(
+        e.toString().replaceFirst('Exception: ', ''),
+      );
     } finally {
       notifyListeners();
     }
   }
+
   void reloadLoaiPhongAfterAddition(int newId) {
     _loaiphongState = LoaiPhongSuccess(_loaiPhongProvider.listLoaiPhong);
     _idLoaiPhong = newId;
     notifyListeners();
   }
+
   void setIdLoaiPhong(int idLoaiPhong) {
     if (_idLoaiPhong == idLoaiPhong) return;
     _idLoaiPhong = idLoaiPhong;
@@ -78,6 +82,7 @@ class FormPhongViewModel extends ChangeNotifier {
     _trangThai = trangThai;
     notifyListeners();
   }
+
   String _chuanHoaTenPhong(String input) {
     String text = input.trim().toLowerCase();
     //Lọc bỏ các biến thể chữ "phòng" hoặc "phong" ở đầu chuỗi
@@ -85,6 +90,7 @@ class FormPhongViewModel extends ChangeNotifier {
 
     return text.trim();
   }
+
   bool kiemTraDuLieu() {
     bool hopLe = true;
     String rawInput = nameController.text;
@@ -106,12 +112,18 @@ class FormPhongViewModel extends ChangeNotifier {
 
       bool isTrungTen = false;
       if (room != null) {
-        isTrungTen = danhSachPhongHienTai.any((p) =>
-        _chuanHoaTenPhong(p.tenPhong).toLowerCase() == tenPhong.toLowerCase() &&
-            p.phongId != room!.phongId);
+        isTrungTen = danhSachPhongHienTai.any(
+          (p) =>
+              _chuanHoaTenPhong(p.tenPhong).toLowerCase() ==
+                  tenPhong.toLowerCase() &&
+              p.phongId != room!.phongId,
+        );
       } else {
-        isTrungTen = danhSachPhongHienTai.any((p) =>
-        _chuanHoaTenPhong(p.tenPhong).toLowerCase() == tenPhong.toLowerCase());
+        isTrungTen = danhSachPhongHienTai.any(
+          (p) =>
+              _chuanHoaTenPhong(p.tenPhong).toLowerCase() ==
+              tenPhong.toLowerCase(),
+        );
       }
 
       if (isTrungTen) {
@@ -142,14 +154,19 @@ class FormPhongViewModel extends ChangeNotifier {
       if (result != null) {
         _phongSaveState = PhongSaveSuccess(result);
       } else {
-        _phongSaveState = PhongSaveError("Không nhận được phản hồi từ hệ thống!");
+        _phongSaveState = PhongSaveError(
+          "Không nhận được phản hồi từ hệ thống!",
+        );
       }
     } catch (e) {
-      _phongSaveState = PhongSaveError(e.toString().replaceFirst('Exception: ', ''));
+      _phongSaveState = PhongSaveError(
+        e.toString().replaceFirst('Exception: ', ''),
+      );
     } finally {
       notifyListeners();
     }
   }
+
   Future<void> updateRoom(Phong roomUpdate) async {
     try {
       _phongSaveState = PhongSaveLoading();
@@ -158,10 +175,14 @@ class FormPhongViewModel extends ChangeNotifier {
       if (result != null) {
         _phongSaveState = PhongSaveSuccess(result);
       } else {
-        _phongSaveState = PhongSaveError("Không nhận được phản hồi từ hệ thống!");
+        _phongSaveState = PhongSaveError(
+          "Không nhận được phản hồi từ hệ thống!",
+        );
       }
     } catch (e) {
-      _phongSaveState = PhongSaveError(e.toString().replaceFirst('Exception: ', ''));
+      _phongSaveState = PhongSaveError(
+        e.toString().replaceFirst('Exception: ', ''),
+      );
     } finally {
       notifyListeners();
     }
@@ -187,18 +208,22 @@ class FormPhongViewModel extends ChangeNotifier {
       _phongSaveState = PhongSaveError("Không nhận được phản hồi từ hệ thống!");
       return false;
     } catch (e) {
-      _phongSaveState = PhongSaveError(e.toString().replaceFirst('Exception: ', ''));
+      _phongSaveState = PhongSaveError(
+        e.toString().replaceFirst('Exception: ', ''),
+      );
       return false;
     } finally {
       notifyListeners();
     }
   }
+
   void _onNameChanged() {
     if (_errTenPhong != null) {
       _errTenPhong = null;
       notifyListeners();
     }
   }
+
   @override
   void dispose() {
     nameController.removeListener(_onNameChanged);
@@ -206,5 +231,4 @@ class FormPhongViewModel extends ChangeNotifier {
     descController.dispose();
     super.dispose();
   }
-
 }

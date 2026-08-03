@@ -1,4 +1,4 @@
-import 'package:AppTroNhaToi/models/loaiphong.dart';
+import 'package:AppTroNhaToi/models/loai_phong.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:flutter/material.dart';
 
@@ -27,6 +27,7 @@ class PhongPageViewModel extends ChangeNotifier {
     _searchQuery = searchController.text.toLowerCase().trim();
     notifyListeners();
   }
+
   List<ItemPhong> get listPhongHienThi {
     List<ItemPhong> baseList;
     switch (_currentFilter) {
@@ -54,16 +55,19 @@ class PhongPageViewModel extends ChangeNotifier {
       return ten.contains(_searchQuery) || loai.contains(_searchQuery);
     }).toList();
   }
+
   void setFilter(int filterValue) {
     if (_currentFilter == filterValue) return;
     _currentFilter = filterValue;
     notifyListeners();
   }
+
   Future<void> refresh() => _service.getListPhong();
 
   void _onProviderUpdate() {
     notifyListeners();
   }
+
   @override
   void dispose() {
     _service.removeListener(_onProviderUpdate);

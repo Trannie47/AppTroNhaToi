@@ -1,14 +1,17 @@
+import 'package:AppTroNhaToi/models/thiet_bi.dart';
+import 'package:AppTroNhaToi/models/lap_rap.dart';
+
 class SuaChua {
   final int? id;
-  final int? phongID;
   final int? thietBiID;
+  final int? lapRapID;
   final String? nguyenNhan;
   final DateTime? ngaySuaChua;
 
   SuaChua({
     this.id,
-    this.phongID,
     this.thietBiID,
+    this.lapRapID,
     this.nguyenNhan,
     this.ngaySuaChua,
   });
@@ -16,11 +19,11 @@ class SuaChua {
   factory SuaChua.fromMap(Map<String, dynamic> map) {
     return SuaChua(
       id: map['id'] as int?,
-      phongID: map['phongId'] as int?,
-      thietBiID: map['thietBiId'] as int?,
+      thietBiID: (map['thietBiId'] ?? map['thietBiID']) as int?,
+      lapRapID: (map['lapRapId'] ?? map['LapRapID']) as int?,
       nguyenNhan: map['nguyenNhan'] as String?,
       ngaySuaChua: map['ngaySuaChua'] != null
-          ? DateTime.tryParse(map['ngaySuaChua'].toString())
+          ? DateTime.tryParse(map['ngaySuaChua'] as String)
           : null,
     );
   }
@@ -28,8 +31,8 @@ class SuaChua {
   Map<String, dynamic> toMap() {
     return {
       if (id != null) 'id': id,
-      'phongId': phongID,
       'thietBiId': thietBiID,
+      'lapRapId': lapRapID,
       'nguyenNhan': nguyenNhan,
       'ngaySuaChua': ngaySuaChua?.toIso8601String().split('T').first,
     };
@@ -37,16 +40,15 @@ class SuaChua {
 
   SuaChua copyWith({
     int? id,
-    int? phongID,
     int? thietBiID,
+    int? lapRapID,
     String? nguyenNhan,
     DateTime? ngaySuaChua,
-    bool? isDelete,
   }) {
     return SuaChua(
       id: id ?? this.id,
-      phongID: phongID ?? this.phongID,
       thietBiID: thietBiID ?? this.thietBiID,
+      lapRapID: lapRapID ?? this.lapRapID,
       nguyenNhan: nguyenNhan ?? this.nguyenNhan,
       ngaySuaChua: ngaySuaChua ?? this.ngaySuaChua,
     );
@@ -54,12 +56,8 @@ class SuaChua {
 
   @override
   String toString() {
-    return 'SuaChua('
-        'id: $id, '
-        'phongID: $phongID, '
-        'thietBiID: $thietBiID, '
-        'nguyenNhan: $nguyenNhan, '
-        'ngaySuaChua: $ngaySuaChua, '
+    return 'SuaChua(id: $id, thietBiID: $thietBiID, lapRapID: $lapRapID, '
+        'nguyenNhan: $nguyenNhan, ngaySuaChua: $ngaySuaChua, '
         ')';
   }
 }

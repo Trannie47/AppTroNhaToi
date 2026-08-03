@@ -1,9 +1,8 @@
-import 'package:AppTroNhaToi/models/loaiphong.dart';
+import 'package:AppTroNhaToi/models/loai_phong.dart';
 import 'package:flutter/material.dart';
 
 class DanhSachPhongThuePageViewModel extends ChangeNotifier {
-  final TextEditingController searchController =
-      TextEditingController();
+  final TextEditingController searchController = TextEditingController();
 
   final List<LoaiPhong> dsLoaiPhong = [
     LoaiPhong(

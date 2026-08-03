@@ -2,20 +2,20 @@ import 'package:AppTroNhaToi/Provider/thiet_bi_provider.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/ChiTietPhongPage/LapRapPage/LapRapPageViewModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThietBiPage/thietBiPageModel.dart';
-import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/LapRapPage/LapRapPageModel.dart';
+import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/LapRapPage/NhomThietBiTrongPhongModel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class LapRapFormDialog extends StatefulWidget {
   final int phongId;
-  final LapRapPageModel?
-  lapRapPageModel; // Nếu truyền lapRap -> Chế độ Sửa/Xóa. Nếu null -> Thêm mới
-  final LapRapPageViewModel viewModel; // Nhận ViewModel từ UI
+
+  final NhomThietBiTrongPhong? nhom;
+  final LapRapPageViewModel viewModel;
 
   const LapRapFormDialog({
     super.key,
     required this.phongId,
-    this.lapRapPageModel,
+    this.nhom,
     required this.viewModel,
   });
 
@@ -31,21 +31,20 @@ class _LapRapFormDialogState extends State<LapRapFormDialog> {
   bool _isSubmitting = false;
   String? _errorMessage;
 
-  bool get _isEditMode => widget.lapRapPageModel != null;
+  bool get _isEditMode => widget.nhom != null;
 
   @override
   void initState() {
     super.initState();
 
-    _soLuong = widget.lapRapPageModel?.lapRap.soLuong ?? 1;
-    _selectedDate = widget.lapRapPageModel?.lapRap.ngayLap ?? DateTime.now();
+    _soLuong = widget.nhom?.soLuong ?? 1;
+    _selectedDate = widget.nhom?.ngayLapGanNhat ?? DateTime.now();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ThietBiProvider>().fetchAll();
     });
   }
 
-  // Bật lịch chọn ngày
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -72,26 +71,22 @@ class _LapRapFormDialogState extends State<LapRapFormDialog> {
   Widget build(BuildContext context) {
     final provider = context.watch<ThietBiProvider>();
 
-    // Tìm thiết bị tương ứng trong kho tổng
     ThietBiPageModel? matchingModel;
-    if (_isEditMode &&
-        widget.lapRapPageModel?.lapRap.thietBi?.thietBiID != null) {
+    if (_isEditMode && widget.nhom?.thietBiId != null) {
       try {
         matchingModel = provider.list.firstWhere(
-          (e) =>
-              e.thietBi.thietBiID ==
-              widget.lapRapPageModel!.lapRap.thietBi!.thietBiID,
+          (e) => e.thietBi.thietBiID == widget.nhom!.thietBiId,
         );
       } catch (_) {}
     }
 
-    // Tính số lượng tối đa có thể chọn
-    final initialSoLuong = widget.lapRapPageModel?.lapRap.soLuong ?? 0;
+    // Số lượng tối đa có thể chọn = kho còn lại + số lượng đang có trong phòng
+    // (vì phần đang có trong phòng cũng được tính là "đã lấy ra khỏi kho" rồi)
+    final initialSoLuong = widget.nhom?.soLuong ?? 0;
     final int maxSoLuong = _isEditMode
         ? ((matchingModel?.soLuongConLai ?? 0) + initialSoLuong)
         : (_selectedThietBi?.soLuongConLai ?? 999);
 
-    // Danh sách thiết bị còn hàng cho Dropdown
     final dsThietBiConHang = provider.list
         .where((item) => item.soLuongConLai > 0)
         .toList();
@@ -106,7 +101,6 @@ class _LapRapFormDialogState extends State<LapRapFormDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // TIÊU ĐỀ DIALOG
             Text(
               _isEditMode ? "Chỉnh sửa thiết bị" : "Thêm thiết bị vào phòng",
               style: const TextStyle(
@@ -117,7 +111,6 @@ class _LapRapFormDialogState extends State<LapRapFormDialog> {
             ),
             const SizedBox(height: 16),
 
-            // CHỌN THIẾT BỊ
             const Text(
               "Thiết bị",
               style: TextStyle(
@@ -128,7 +121,6 @@ class _LapRapFormDialogState extends State<LapRapFormDialog> {
             ),
             const SizedBox(height: 6),
 
-            // Ở CHẾ ĐỘ SỬA: KHÓA TÊN THIẾT BỊ (CHỈ ĐỌC)
             if (_isEditMode)
               Container(
                 width: double.infinity,
@@ -142,8 +134,7 @@ class _LapRapFormDialogState extends State<LapRapFormDialog> {
                   border: Border.all(color: const Color(0xffEFEFEF)),
                 ),
                 child: Text(
-                  widget.lapRapPageModel?.lapRap.thietBi?.tenThietBi ??
-                      'Chưa rõ tên',
+                  widget.nhom?.thietBi?.tenThietBi ?? 'Chưa rõ tên',
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -206,7 +197,6 @@ class _LapRapFormDialogState extends State<LapRapFormDialog> {
 
             const SizedBox(height: 16),
 
-            // BỘ TĂNG GIẢM SỐ LƯỢNG
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -239,7 +229,6 @@ class _LapRapFormDialogState extends State<LapRapFormDialog> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Nút Giảm (-)
                   IconButton(
                     onPressed:
                         (_soLuong <= (_isEditMode ? 0 : 1) || _isSubmitting)
@@ -257,8 +246,6 @@ class _LapRapFormDialogState extends State<LapRapFormDialog> {
                           : Colors.red.shade600,
                     ),
                   ),
-
-                  // Con số hiển thị
                   Text(
                     "$_soLuong",
                     style: TextStyle(
@@ -269,8 +256,6 @@ class _LapRapFormDialogState extends State<LapRapFormDialog> {
                           : const Color(0xff1C1C1E),
                     ),
                   ),
-
-                  // Nút Tăng (+)
                   IconButton(
                     onPressed: (_soLuong >= maxSoLuong || _isSubmitting)
                         ? null
@@ -293,7 +278,6 @@ class _LapRapFormDialogState extends State<LapRapFormDialog> {
 
             const SizedBox(height: 16),
 
-            // CHỌN NGÀY LẮP
             const Text(
               "Ngày lắp",
               style: TextStyle(
@@ -338,7 +322,6 @@ class _LapRapFormDialogState extends State<LapRapFormDialog> {
               ),
             ),
 
-            // Thông báo lỗi
             if (_errorMessage != null) ...[
               const SizedBox(height: 14),
               Container(
@@ -451,23 +434,19 @@ class _LapRapFormDialogState extends State<LapRapFormDialog> {
   }
 
   Future<void> _handleAction() async {
-    //TRƯỜNG HỢP CHỈNH SỬA / XÓA (Khi nhấn vào item trong phòng)
+    // CHẾ ĐỘ SỬA (tăng/giảm số lượng hoặc xóa khỏi phòng)
     if (_isEditMode) {
-      final lapRapId = widget.lapRapPageModel?.lapRap.id;
-      if (lapRapId == null) {
-        setState(() {
-          _errorMessage = "Không tìm thấy mã lắp đặt!";
-        });
-        return;
-      }
-
       setState(() {
         _isSubmitting = true;
         _errorMessage = null;
       });
 
       try {
-        await widget.viewModel.capNhatLapRap(id: lapRapId, soLuong: _soLuong);
+        await widget.viewModel.capNhatSoLuongThietBi(
+          nhom: widget.nhom!,
+          soLuongMoi: _soLuong,
+          ngayLap: _selectedDate,
+        );
 
         if (mounted) {
           Navigator.pop(context, true);
@@ -488,7 +467,7 @@ class _LapRapFormDialogState extends State<LapRapFormDialog> {
       return;
     }
 
-    // TRƯỜNG HỢP THÊM MỚI (Khi nhấn nút + Thêm ở góc trên)
+    // CHẾ ĐỘ THÊM MỚI
     if (_selectedThietBi == null) {
       setState(() {
         _errorMessage = "Vui lòng chọn thiết bị!";
@@ -513,7 +492,7 @@ class _LapRapFormDialogState extends State<LapRapFormDialog> {
     });
 
     try {
-      final success = await widget.viewModel.taoLapRap(
+      final success = await widget.viewModel.themThietBi(
         thietBiId: thietBiId,
         soLuong: _soLuong,
         ngayLap: _selectedDate,

@@ -37,7 +37,7 @@ class LapRapApiClient {
   Future<LapRap?> taoLapRap({
     required int phongId,
     required int thietBiId,
-    required int soLuong,
+    required String ghiChu,
     required DateTime ngayLap,
   }) async {
     try {
@@ -46,7 +46,7 @@ class LapRapApiClient {
         data: {
           "phongId": phongId,
           "thietBiId": thietBiId,
-          "soLuong": soLuong,
+          "ghiChu": ghiChu,
           "ngayLap": ngayLap.toIso8601String(),
         },
       );
@@ -69,11 +69,14 @@ class LapRapApiClient {
     }
   }
 
-  Future<LapRap?> capNhatLapRap({required int id, required int soLuong}) async {
+  Future<LapRap?> capNhatLapRap({
+    required int id,
+    required String ghiChu,
+  }) async {
     try {
       final response = await _dio.patch(
         "lap-rap/$id",
-        data: {"soLuong": soLuong},
+        data: {"ghiChu": ghiChu},
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {

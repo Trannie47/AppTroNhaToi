@@ -7,10 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../Provider/phong_provider.dart';
-import '../../../models/loaiphong.dart';
+import '../../../models/loai_phong.dart';
 import '../../../modelviews/MainPage/PhongPage/PhongPageViewModel.dart';
 import 'ChiTietPhongPage/phongChiTiet.dart';
-
 
 class PhongPage extends StatefulWidget {
   const PhongPage({super.key});
@@ -30,11 +29,9 @@ class _PhongPageState extends State<PhongPage> {
         setState(() {});
       }
     });
-    WidgetsBinding.instance.addPostFrameCallback((_){
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       vm.refresh();
     });
-
-
   }
 
   @override
@@ -44,18 +41,15 @@ class _PhongPageState extends State<PhongPage> {
   }
 
   void themPhong() async {
-
     await Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const FormPhong(),
-      ),
+      MaterialPageRoute(builder: (context) => const FormPhong()),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final listPhong= vm.listPhong;
+    final listPhong = vm.listPhong;
     return Scaffold(
       backgroundColor: const Color(0xffF6F6F6),
 
@@ -130,13 +124,19 @@ class _PhongPageState extends State<PhongPage> {
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 isDense: true,
-                                contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 10,
+                                ),
                                 hintText: "Tìm kiếm tên phòng, loại phòng...",
                                 hintStyle: TextStyle(
                                   color: Colors.grey.shade500,
                                   fontSize: 13,
                                 ),
-                                prefixIcon: Icon(Icons.search, color: Colors.grey.shade500, size: 20),
+                                prefixIcon: Icon(
+                                  Icons.search,
+                                  color: Colors.grey.shade500,
+                                  size: 20,
+                                ),
                               ),
                             ),
                           ),
@@ -156,21 +156,24 @@ class _PhongPageState extends State<PhongPage> {
                                 const SizedBox(width: 10),
                                 _itemFilter(
                                   filter: 0,
-                                  text: "Còn trống (${vm.listPhongTrong.length})",
+                                  text:
+                                      "Còn trống (${vm.listPhongTrong.length})",
                                   bgColor: const Color(0xffEAF3EB),
                                   textColor: const Color(0xff2D7A3A),
                                 ),
                                 const SizedBox(width: 10),
                                 _itemFilter(
                                   filter: 1,
-                                  text: "Đang thuê (${vm.listPhongDangThue.length})",
+                                  text:
+                                      "Đang thuê (${vm.listPhongDangThue.length})",
                                   bgColor: const Color(0xffFFF1E1),
                                   textColor: const Color(0xffFF8A00),
                                 ),
                                 const SizedBox(width: 10),
                                 _itemFilter(
                                   filter: 2,
-                                  text: "Đang sửa (${vm.listPhongDangSua.length})",
+                                  text:
+                                      "Đang sửa (${vm.listPhongDangSua.length})",
                                   bgColor: const Color(0xffFFEAEA),
                                   textColor: Colors.red,
                                 ),
@@ -217,43 +220,50 @@ class _PhongPageState extends State<PhongPage> {
                         vertical: 8,
                       ),
                       child: vm.listPhongHienThi.isEmpty
-                      ? const Center(child: Text("Không có phòng trọ nào thuộc trạng thái này"))
-                      :
-                      ListView.builder(
-                        itemCount: vm.listPhongHienThi.length,
-                        itemBuilder: (context, index) {
-                          final itemBackend = vm.listPhongHienThi[index];
-                          final currentPhong = Phong(
-                            phongID: itemBackend.phongId,
-                            tenPhong: itemBackend.tenPhong,
-                            trangThai: itemBackend.trangThai,
-                            moTa: itemBackend.moTa,
-                            maLoaiPhong: itemBackend.maLoaiPhong,
-                          );
-                          final currentLoaiPhong = LoaiPhong(
-                            maLoaiPhong: itemBackend.loaiPhong.maLoaiPhong,
-                            tenLoaiPhong: itemBackend.loaiPhong.tenLoaiPhong,
-                            dienTich: itemBackend.loaiPhong.dienTich,
-                            isMayLanh: itemBackend.loaiPhong.isMayLanh,
-                            soNguoiToiDa: itemBackend.loaiPhong.soNguoiToiDa,
-                            giaTien: itemBackend.loaiPhong.giaTien, // item phòng phải hiển thị giá loại phòng lên
-                          );
-                          return ItemPhong(
-                            phong: currentPhong,
-                            loaiPhong: currentLoaiPhong,
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => PhongChiTiet(
-                                      room: itemBackend
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        },
-                      ),
+                          ? const Center(
+                              child: Text(
+                                "Không có phòng trọ nào thuộc trạng thái này",
+                              ),
+                            )
+                          : ListView.builder(
+                              itemCount: vm.listPhongHienThi.length,
+                              itemBuilder: (context, index) {
+                                final itemBackend = vm.listPhongHienThi[index];
+                                final currentPhong = Phong(
+                                  phongID: itemBackend.phongId,
+                                  tenPhong: itemBackend.tenPhong,
+                                  trangThai: itemBackend.trangThai,
+                                  moTa: itemBackend.moTa,
+                                  maLoaiPhong: itemBackend.maLoaiPhong,
+                                );
+                                final currentLoaiPhong = LoaiPhong(
+                                  maLoaiPhong:
+                                      itemBackend.loaiPhong.maLoaiPhong,
+                                  tenLoaiPhong:
+                                      itemBackend.loaiPhong.tenLoaiPhong,
+                                  dienTich: itemBackend.loaiPhong.dienTich,
+                                  isMayLanh: itemBackend.loaiPhong.isMayLanh,
+                                  soNguoiToiDa:
+                                      itemBackend.loaiPhong.soNguoiToiDa,
+                                  giaTien: itemBackend
+                                      .loaiPhong
+                                      .giaTien, // item phòng phải hiển thị giá loại phòng lên
+                                );
+                                return ItemPhong(
+                                  phong: currentPhong,
+                                  loaiPhong: currentLoaiPhong,
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            PhongChiTiet(room: itemBackend),
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                            ),
                     ),
                   ),
                 ],

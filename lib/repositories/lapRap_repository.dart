@@ -1,4 +1,4 @@
-import 'package:AppTroNhaToi/core/network/LapRapApiClinet.dart';
+import 'package:AppTroNhaToi/core/network/LapRapApiClient.dart';
 import 'package:AppTroNhaToi/models/lap_rap.dart';
 import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/LapRapPage/LapRapPageModel.dart';
 
@@ -12,18 +12,21 @@ class LapRapRepository {
   Future<LapRap?> taoLapRap({
     required int phongId,
     required int thietBiId,
-    required int soLuong,
+    required String ghiChu,
     required DateTime ngayLap,
   }) async {
     return await _lapRapApiClient.taoLapRap(
       phongId: phongId,
       thietBiId: thietBiId,
-      soLuong: soLuong,
+      ghiChu: ghiChu,
       ngayLap: ngayLap,
     );
   }
 
-  Future<LapRap?> capNhatLapRap({required int id, required int soLuong}) async {
-    return await _lapRapApiClient.capNhatLapRap(id: id, soLuong: soLuong);
+  Future<LapRap?> capNhatLapRap({
+    required int id,
+    required String ghiChu,
+  }) async {
+    return await _lapRapApiClient.capNhatLapRap(id: id, ghiChu: ghiChu);
   }
 }

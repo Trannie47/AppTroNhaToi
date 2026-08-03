@@ -1,9 +1,8 @@
 import 'package:AppTroNhaToi/Provider/lap_rap_provider.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/models/item_phong.dart';
-import 'package:AppTroNhaToi/models/lap_rap.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/ChiTietPhongPage/LapRapPage/LapRapPageViewModel.dart';
-import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/LapRapPage/LapRapPageModel.dart';
+import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/LapRapPage/NhomThietBiTrongPhongModel.dart';
 import 'package:AppTroNhaToi/widgets/app_error.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -95,6 +94,8 @@ class _LapRapPageState extends State<LapRapPage> {
             ),
             const SizedBox(height: 2),
             Text(
+              // Số thiết bị VẬT LÝ thực tế trong phòng = tổng số dòng LapRap
+              // (không phải số loại thiết bị, nên vẫn dùng dsLapRap.length)
               "Phòng ${widget.room.tenPhong} · ${vm.dsLapRap.length} thiết bị",
               style: const TextStyle(
                 fontSize: 12,
@@ -123,7 +124,6 @@ class _LapRapPageState extends State<LapRapPage> {
 
                     if (!mounted) return;
 
-                    // HIỂN THỊ THÔNG BÁO VÀ LOAD LẠI DANH SÁCH TẠI MÀN HÌNH CHÍNH
                     if (result == true) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -208,21 +208,24 @@ class _LapRapPageState extends State<LapRapPage> {
             );
           }
 
+          // Hiển thị theo NHÓM (1 dòng = 1 loại thiết bị + số lượng),
+          // không phải danh sách phẳng từng thiết bị vật lý.
+          final dsNhom = vm.dsNhomThietBi;
+
           return ListView.builder(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 30),
-            itemCount: vm.dsLapRap.length,
+            itemCount: dsNhom.length,
             itemBuilder: (context, index) {
-              final item = vm.dsLapRap[index];
+              final nhom = dsNhom[index];
               return InkWell(
                 borderRadius: BorderRadius.circular(20),
-                // SỰ KIỆN NHẤN VÀO ITEM ĐỂ SỬA / XÓA
                 onTap: () async {
                   final result = await showDialog<bool>(
                     context: context,
                     builder: (dialogContext) => LapRapFormDialog(
                       phongId: widget.room.phongId,
                       viewModel: vm,
-                      lapRapPageModel: item, // Truyền item để mở Form Sửa / Xóa
+                      nhom: nhom, // Truyền nhóm để mở Form Sửa / Xóa
                     ),
                   );
 
@@ -235,11 +238,10 @@ class _LapRapPageState extends State<LapRapPage> {
                         backgroundColor: Color(0xff2D7A3A),
                       ),
                     );
-                    // Reload dữ liệu
                     await vm.reloadAll(context);
                   }
                 },
-                child: _buildItemThietBi(item),
+                child: _buildItemThietBi(nhom),
               );
             },
           );
@@ -248,8 +250,8 @@ class _LapRapPageState extends State<LapRapPage> {
     );
   }
 
-  Widget _buildItemThietBi(LapRapPageModel item) {
-    final tb = item.lapRap.thietBi;
+  Widget _buildItemThietBi(NhomThietBiTrongPhong nhom) {
+    final tb = nhom.thietBi;
     final isTot = tb?.laTot ?? true;
     final statusColor = isTot
         ? const Color(0xff2D7A3A)
@@ -304,7 +306,7 @@ class _LapRapPageState extends State<LapRapPage> {
                 const SizedBox(height: 3),
 
                 Text(
-                  "Loại: ${tb?.loai ?? 'Khác'} · Ngày lắp ${formatDate(item.lapRap.ngayLap)}",
+                  "Loại: ${tb?.loai ?? 'Khác'} · Ngày lắp ${formatDate(nhom.ngayLapGanNhat ?? DateTime.now())}",
                   style: const TextStyle(
                     fontSize: 12,
                     color: Color(0xff8E8E93),
@@ -314,20 +316,19 @@ class _LapRapPageState extends State<LapRapPage> {
 
                 Row(
                   children: [
-                    if ((item.soLuongHong) == 0 &&
-                        (item.soLuongDangSua) == 0) ...[
-                      Text(
+                    if (nhom.soLuongHong == 0 && nhom.soLuongDangSua == 0) ...[
+                      const Text(
                         "Tốt",
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w700,
-                          color: const Color(0xff2D7A3A),
+                          color: Color(0xff2D7A3A),
                         ),
                       ),
                     ] else ...[
-                      if ((item.soLuongHong) > 0)
+                      if (nhom.soLuongHong > 0)
                         Text(
-                          "Đang hỏng: ${item.soLuongHong}",
+                          "Đang hỏng: ${nhom.soLuongHong}",
                           style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
@@ -335,8 +336,7 @@ class _LapRapPageState extends State<LapRapPage> {
                           ),
                         ),
 
-                      if ((item.soLuongHong) > 0 &&
-                          (item.soLuongDangSua) > 0) ...[
+                      if (nhom.soLuongHong > 0 && nhom.soLuongDangSua > 0) ...[
                         const SizedBox(width: 6),
                         Text(
                           "|",
@@ -348,10 +348,10 @@ class _LapRapPageState extends State<LapRapPage> {
                         const SizedBox(width: 6),
                       ],
 
-                      if ((item.soLuongDangSua) > 0)
+                      if (nhom.soLuongDangSua > 0)
                         Text(
-                          "Đang sửa: ${item.soLuongDangSua}",
-                          style: TextStyle(
+                          "Đang sửa: ${nhom.soLuongDangSua}",
+                          style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
                             color: Color(0xffF39C12),
@@ -370,7 +370,9 @@ class _LapRapPageState extends State<LapRapPage> {
 
                     const SizedBox(width: 6),
                     Text(
-                      "Số lượng: ${item.lapRap.soLuong ?? 1}",
+                      // soLuong = số dòng LapRap trong nhóm (đếm được, không
+                      // còn field ảo item.lapRap.soLuong nữa)
+                      "Số lượng: ${nhom.soLuong}",
                       style: const TextStyle(
                         fontSize: 12,
                         color: Color(0xff666666),

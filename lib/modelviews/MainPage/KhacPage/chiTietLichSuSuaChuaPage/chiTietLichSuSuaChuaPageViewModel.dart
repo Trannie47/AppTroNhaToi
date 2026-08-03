@@ -1,6 +1,5 @@
 import 'package:AppTroNhaToi/Provider/sua_chua_provider.dart';
 import 'package:AppTroNhaToi/models/hoa_don_sua_chua.dart';
-import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/sua_chua.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +19,6 @@ class ChiTietLichSuSuaChuaPageViewModel extends ChangeNotifier {
   ) {
     suaChua = suaChuaData;
     hoaDonSuaChua = hoaDonSuaChuaData;
-    print(hoaDonSuaChua);
     thietBi = thietBiData;
     _provider = provider;
   }
@@ -81,7 +79,7 @@ class ChiTietLichSuSuaChuaPageViewModel extends ChangeNotifier {
 
   Future<bool> xoaChiTiet() async {
     try {
-      final result = await _provider.xoa(suaChua.id!, suaChua.phongID!);
+      final result = await _provider.xoa(suaChua.id!, suaChua.lapRapID!);
 
       if (result) {
         notifyListeners();

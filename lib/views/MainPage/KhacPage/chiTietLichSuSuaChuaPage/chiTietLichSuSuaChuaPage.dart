@@ -76,7 +76,7 @@ class _ChiTietLichSuSuaChuaPageState extends State<ChiTietLichSuSuaChuaPage> {
       setState(() {
         vm.suaChua = SuaChua(
           id: result.id,
-          phongID: result.phongId,
+          lapRapID: result.lapRapId,
           thietBiID: result.thietBiId,
           nguyenNhan: result.nguyenNhan,
           ngaySuaChua: result.ngaySuaChua,

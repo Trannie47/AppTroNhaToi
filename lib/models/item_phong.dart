@@ -1,4 +1,4 @@
-import 'package:AppTroNhaToi/models/loaiphong.dart';
+import 'package:AppTroNhaToi/models/loai_phong.dart';
 
 class ItemPhong {
   final int phongId;
@@ -18,7 +18,7 @@ class ItemPhong {
     required this.maLoaiPhong,
     required this.loaiPhong,
     required this.dsHopDong,
-    required this.giahientai
+    required this.giahientai,
   });
 
   factory ItemPhong.fromMap(Map<String, dynamic> map) {
@@ -31,14 +31,20 @@ class ItemPhong {
 
       loaiPhong: map['loaiPhong'] != null
           ? LoaiPhong.fromMap(map['loaiPhong'] as Map<String, dynamic>)
-          : LoaiPhong(maLoaiPhong: 0, tenLoaiPhong: 'Chưa rõ', dienTich: 0, soNguoiToiDa: 0, giaTien: 0),
+          : LoaiPhong(
+              maLoaiPhong: 0,
+              tenLoaiPhong: 'Chưa rõ',
+              dienTich: 0,
+              soNguoiToiDa: 0,
+              giaTien: 0,
+            ),
 
       dsHopDong: map['HopDong'] != null
           ? List<hopDongTrongPhong>.from(
-        (map['HopDong'] as List).map(
-              (x) => hopDongTrongPhong.fromMap(x as Map<String, dynamic>),
-        ),
-      )
+              (map['HopDong'] as List).map(
+                (x) => hopDongTrongPhong.fromMap(x as Map<String, dynamic>),
+              ),
+            )
           : [],
 
       giahientai: map['giahientai'] != null
@@ -48,12 +54,12 @@ class ItemPhong {
   }
 
   @override
-  String toString(){
+  String toString() {
     return 'ItemPhong(phongId: $phongId, tenPhong: $tenPhong, trangThai: $trangThai, giaHienTai: $giahientai, loai: ${loaiPhong.tenLoaiPhong})';
   }
-
 }
-class hopDongTrongPhong{
+
+class hopDongTrongPhong {
   final String hopDongId;
   final int idnt;
   final int phongId;
@@ -67,17 +73,23 @@ class hopDongTrongPhong{
     required this.phongId,
     this.ngayKy,
     this.ngayHetHan,
-    required this.giaPhongThucTe
+    required this.giaPhongThucTe,
   });
 
-  factory hopDongTrongPhong.fromMap(Map<String,dynamic> map){
+  factory hopDongTrongPhong.fromMap(Map<String, dynamic> map) {
     return hopDongTrongPhong(
       hopDongId: map['hopDongId'] as String? ?? '',
       idnt: map['idnt'] as int? ?? 0,
       phongId: map['phongId'] as int? ?? 0,
-      ngayKy: map['ngayKy'] != null ? DateTime.tryParse(map['ngayKy'].toString()) : null,
-      ngayHetHan: map['ngayHetHan'] != null ? DateTime.tryParse(map['ngayHetHan'].toString()) : null,
-      giaPhongThucTe: map['giaPhongThucTe'] != null ? (double.tryParse(map['giaPhongThucTe'].toString()) ?? 0.0) : 0.0,
+      ngayKy: map['ngayKy'] != null
+          ? DateTime.tryParse(map['ngayKy'].toString())
+          : null,
+      ngayHetHan: map['ngayHetHan'] != null
+          ? DateTime.tryParse(map['ngayHetHan'].toString())
+          : null,
+      giaPhongThucTe: map['giaPhongThucTe'] != null
+          ? (double.tryParse(map['giaPhongThucTe'].toString()) ?? 0.0)
+          : 0.0,
     );
   }
 }

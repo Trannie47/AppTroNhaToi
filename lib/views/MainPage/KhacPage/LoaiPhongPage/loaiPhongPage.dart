@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:AppTroNhaToi/models/loaiphong.dart';
+import 'package:AppTroNhaToi/models/loai_phong.dart';
 import 'package:AppTroNhaToi/Provider/loai_phong_provider.dart';
 import 'package:AppTroNhaToi/states/loaiphong_state.dart';
 
@@ -70,7 +70,10 @@ class _LoaiPhongPageState extends State<LoaiPhongPage> {
               icon: const Icon(Icons.add, size: 16, color: Colors.white),
               label: const Text(
                 "Thêm",
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF2D7A3A),
@@ -116,33 +119,39 @@ class _LoaiPhongPageState extends State<LoaiPhongPage> {
                 backgroundColor: Colors.red.withOpacity(0.08),
                 foregroundColor: Colors.red.shade700,
                 elevation: 0,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
               ),
               onPressed: () => vm.loadDataInitial(),
               icon: const Icon(Icons.refresh, size: 16),
-              label: const Text("Thử lại", style: TextStyle(fontWeight: FontWeight.w700)),
+              label: const Text(
+                "Thử lại",
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
             ),
           ],
         ),
       ),
 
-      LoaiPhongSuccess(listLoaiPhong: final dsLoai) => dsLoai.isEmpty
-          ? const Center(
-        child: Text(
-          "Chưa có loại phòng nào dưới hệ thống.",
-          style: TextStyle(color: Colors.grey, fontSize: 13),
-        ),
-      )
-          : ListView.builder(
-        padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
-        itemCount: dsLoai.length,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 14),
-            child: _buildLoaiPhongCard(context, dsLoai[index]),
-          );
-        },
-      ),
+      LoaiPhongSuccess(listLoaiPhong: final dsLoai) =>
+        dsLoai.isEmpty
+            ? const Center(
+                child: Text(
+                  "Chưa có loại phòng nào dưới hệ thống.",
+                  style: TextStyle(color: Colors.grey, fontSize: 13),
+                ),
+              )
+            : ListView.builder(
+                padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+                itemCount: dsLoai.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 14),
+                    child: _buildLoaiPhongCard(context, dsLoai[index]),
+                  );
+                },
+              ),
     };
   }
 
@@ -221,7 +230,7 @@ class _LoaiPhongPageState extends State<LoaiPhongPage> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 GestureDetector(
-                  onTap: () async{
+                  onTap: () async {
                     await Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -247,14 +256,19 @@ class _LoaiPhongPageState extends State<LoaiPhongPage> {
                       builder: (BuildContext dialogContext) {
                         return AppConfirmDialog(
                           title: "Ẩn loại phòng",
-                          content: "Bạn có chắc chắn muốn ẩn loại phòng '${item.tenLoaiPhong}' này không?",
+                          content:
+                              "Bạn có chắc chắn muốn ẩn loại phòng '${item.tenLoaiPhong}' này không?",
                           textConfirm: "Ẩn đi",
                           textCancel: "Hủy",
                           isDangerous: true,
                           onConfirm: () async {
-                            Navigator.pop(dialogContext); // Đóng dialog xác nhận trước
+                            Navigator.pop(
+                              dialogContext,
+                            ); // Đóng dialog xác nhận trước
 
-                            final errorMsg = await vm.deleteLoaiPhongProcess(item.maLoaiPhong);
+                            final errorMsg = await vm.deleteLoaiPhongProcess(
+                              item.maLoaiPhong,
+                            );
 
                             if (!mounted) return;
 

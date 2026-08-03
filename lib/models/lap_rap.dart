@@ -5,7 +5,7 @@ class LapRap {
   final int? phongID;
   final int? thietBiID;
   final DateTime? ngayLap;
-  final int? soLuong;
+  final String? ghiChu;
   final ThietBi? thietBi;
 
   LapRap({
@@ -13,7 +13,7 @@ class LapRap {
     this.phongID,
     this.thietBiID,
     this.ngayLap,
-    this.soLuong,
+    this.ghiChu,
     this.thietBi,
   });
 
@@ -25,7 +25,7 @@ class LapRap {
       ngayLap: map['ngayLap'] != null
           ? DateTime.tryParse(map['ngayLap'] as String)
           : null,
-      soLuong: map['soLuong'] as int?,
+      ghiChu: map['ghiChu'] as String?,
       thietBi: map['thietBi'] != null
           ? ThietBi.fromMap(map['thietBi'] as Map<String, dynamic>)
           : null,
@@ -35,11 +35,10 @@ class LapRap {
   Map<String, dynamic> toMap() {
     return {
       if (id != null) 'id': id,
-      'PhongID': phongID,
-      'thietBiID': thietBiID,
+      'phongId': phongID,
+      'thietBiId': thietBiID,
       'ngayLap': ngayLap?.toIso8601String().split('T').first,
-      'soLuong': soLuong,
-      if (thietBi != null) 'thietBi': thietBi?.toMap(),
+      'ghiChu': ghiChu,
     };
   }
 
@@ -48,7 +47,7 @@ class LapRap {
     int? phongID,
     int? thietBiID,
     DateTime? ngayLap,
-    int? soLuong,
+    String? ghiChu,
     ThietBi? thietBi,
   }) {
     return LapRap(
@@ -56,7 +55,7 @@ class LapRap {
       phongID: phongID ?? this.phongID,
       thietBiID: thietBiID ?? this.thietBiID,
       ngayLap: ngayLap ?? this.ngayLap,
-      soLuong: soLuong ?? this.soLuong,
+      ghiChu: ghiChu ?? this.ghiChu,
       thietBi: thietBi ?? this.thietBi,
     );
   }
@@ -64,6 +63,6 @@ class LapRap {
   @override
   String toString() {
     return 'LapRap(id: $id, phongID: $phongID, thietBiID: $thietBiID, '
-        'ngayLap: $ngayLap, soLuong: $soLuong,thietBi: $thietBi)';
+        'ngayLap: $ngayLap, ghiChu: $ghiChu, thietBi: $thietBi)';
   }
 }

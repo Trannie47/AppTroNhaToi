@@ -30,7 +30,7 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
   String? errPhong;
   int? loaiSua = 0;
   int? trangThai = 0;
-  int? phongID;
+  int? lapRapID;
   late ThietBi thietBi;
   final PhongProvider _phongProvider;
   final SuaChuaProvider _suaChuaProvider;
@@ -123,7 +123,7 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
 
       DateTime? ngayHoaDon = chuyenNgay(txtNgayHoaDon.text);
 
-      if (phongID == null || phongID == 0) {
+      if (lapRapID == null || lapRapID == 0) {
         errPhong = "Vui lòng chọn phòng";
 
         hopLe = false;
@@ -211,7 +211,7 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
 
     suaChua = suaChuaData;
     hoaDonSuaChua = hoaDonData;
-    phongID = suaChua?.phongID;
+    lapRapID = suaChua?.lapRapID;
     if (suaChua == null) {
       txtNgaySuaChua.text = formatDate(DateTime.now());
 
@@ -253,7 +253,7 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
 
     final dto = SuaChuaDTO(
       id: maSuaChua,
-      phongId: phongID,
+      lapRapId: lapRapID,
       thietBiId: thietBi.thietBiID,
       nguyenNhan: txtNguyenNhan.text.trim(),
       ngaySuaChua: DateFormate.chuyenNgay(txtNgaySuaChua.text)!,

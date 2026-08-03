@@ -70,13 +70,13 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
           hintText: "-- Chọn phòng --",
           items: vm.dsPhong,
           selectedItem: vm.dsPhong
-              .where((e) => e.phongId == vm.phongID)
+              .where((e) => e.phongId == vm.lapRapID)
               .cast<ItemPhong?>()
               .firstOrNull,
           itemAsString: (item) => item.tenPhong,
           onChanged: (value) {
             setState(() {
-              vm.phongID = value?.phongId;
+              vm.lapRapID = value?.phongId;
               vm.errPhong = null;
             });
           },

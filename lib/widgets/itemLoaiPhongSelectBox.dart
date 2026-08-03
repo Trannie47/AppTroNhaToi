@@ -1,5 +1,5 @@
 //Tạo widgets item SelectBox cho Loại Phòng
-import 'package:AppTroNhaToi/models/loaiphong.dart';
+import 'package:AppTroNhaToi/models/loai_phong.dart';
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:flutter/material.dart';
 

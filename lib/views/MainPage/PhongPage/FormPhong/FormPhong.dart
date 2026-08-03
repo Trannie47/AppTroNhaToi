@@ -1,5 +1,5 @@
 import 'package:AppTroNhaToi/models/item_phong.dart';
-import 'package:AppTroNhaToi/models/loaiphong.dart';
+import 'package:AppTroNhaToi/models/loai_phong.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/FormPhong/FormPhongViewModel.dart';
 import 'package:AppTroNhaToi/states/loaiphong_state.dart';
@@ -25,8 +25,12 @@ class FormPhong extends StatefulWidget {
 
 class _FormPhongState extends State<FormPhong> {
   late FormPhongViewModel vm;
-  bool get isEdit=> widget.room!=null; //Check xem có phải chỉnh sửa hay không
-  bool get isHasContract => isEdit && (widget.room?.dsHopDong.isNotEmpty ?? false); // check xem phòng này có hợp đồng không để ràng buộc trạng thái.
+  bool get isEdit =>
+      widget.room != null; //Check xem có phải chỉnh sửa hay không
+  bool get isHasContract =>
+      isEdit &&
+      (widget.room?.dsHopDong.isNotEmpty ??
+          false); // check xem phòng này có hợp đồng không để ràng buộc trạng thái.
   @override
   void initState() {
     super.initState();
@@ -72,17 +76,17 @@ class _FormPhongState extends State<FormPhong> {
 
     if (state is PhongSaveSuccess) {
       LoaiPhong selectedLoai = LoaiPhong(
-          maLoaiPhong: vm.idLoaiPhong,
-          tenLoaiPhong: 'Chưa rõ',
-          dienTich: 0,
-          soNguoiToiDa: 0,
-          giaTien: 0
+        maLoaiPhong: vm.idLoaiPhong,
+        tenLoaiPhong: 'Chưa rõ',
+        dienTich: 0,
+        soNguoiToiDa: 0,
+        giaTien: 0,
       );
 
       final loaiState = vm.loaiphongState;
       if (loaiState is LoaiPhongSuccess) {
         selectedLoai = loaiState.listLoaiPhong.firstWhere(
-              (element) => element.maLoaiPhong == vm.idLoaiPhong,
+          (element) => element.maLoaiPhong == vm.idLoaiPhong,
           orElse: () => selectedLoai,
         );
       }
@@ -107,7 +111,11 @@ class _FormPhongState extends State<FormPhong> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(isEdit ? "Cập nhật thông tin phòng thành công!" : "Thêm phòng trọ mới thành công!"),
+          content: Text(
+            isEdit
+                ? "Cập nhật thông tin phòng thành công!"
+                : "Thêm phòng trọ mới thành công!",
+          ),
           backgroundColor: Colors.green,
           duration: const Duration(seconds: 2),
         ),
@@ -116,7 +124,11 @@ class _FormPhongState extends State<FormPhong> {
     } else if (state is PhongSaveError) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(isEdit ? "Lưu thất bại: ${state.messageError}" : "Cập nhật thất bại: ${state.messageError}"),
+          content: Text(
+            isEdit
+                ? "Lưu thất bại: ${state.messageError}"
+                : "Cập nhật thất bại: ${state.messageError}",
+          ),
           backgroundColor: Colors.red,
         ),
       );
@@ -126,9 +138,7 @@ class _FormPhongState extends State<FormPhong> {
   void goToFormRoomType() async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const FormLoaiPhong(),
-      ),
+      MaterialPageRoute(builder: (context) => const FormLoaiPhong()),
     );
 
     // Nếu màn hình FormLoaiPhong pop về một object LoaiPhong hợp lệ
@@ -139,13 +149,11 @@ class _FormPhongState extends State<FormPhong> {
 
   @override
   Widget build(BuildContext context) {
-
     return AnimatedBuilder(
       animation: vm,
       builder: (context, _) {
         // Kiểm tra xem trạng thái trong ViewModel có phải đang Loading hay không
-        final isWholeScreenLoading =
-            vm.phongSaveState is PhongSaveLoading;
+        final isWholeScreenLoading = vm.phongSaveState is PhongSaveLoading;
         return Stack(
           children: [
             Scaffold(
@@ -174,8 +182,7 @@ class _FormPhongState extends State<FormPhong> {
                   child: AnimatedBuilder(
                     animation: vm,
                     builder: (context, _) {
-                      final isSaving =
-                          vm.phongSaveState is PhongSaveLoading;
+                      final isSaving = vm.phongSaveState is PhongSaveLoading;
 
                       return ElevatedButton(
                         style: ElevatedButton.styleFrom(
@@ -262,42 +269,48 @@ class _FormPhongState extends State<FormPhong> {
                                 children: [
                                   Expanded(
                                     child: Opacity(
-                                        opacity: isHasContract? 0.4: 1.0,
+                                      opacity: isHasContract ? 0.4 : 1.0,
                                       child: _statusItem(
                                         title: "Còn trống",
                                         color: Colors.green,
                                         selected: vm.trangThai == 0,
-                                        onTap: isHasContract? ()=>  _showWarningSnackbar("Phòng đang có Hợp đồng hoạt động. Không thể đưa phòng về trạng thái trống!")
-                                                            : ()=> vm.setTrangThai(0),
+                                        onTap: isHasContract
+                                            ? () => _showWarningSnackbar(
+                                                "Phòng đang có Hợp đồng hoạt động. Không thể đưa phòng về trạng thái trống!",
+                                              )
+                                            : () => vm.setTrangThai(0),
                                       ),
                                     ),
                                   ),
                                   const SizedBox(width: 10),
                                   Expanded(
                                     child: Opacity(
-                                        opacity: isHasContract ? 1.0 : 0.4,
+                                      opacity: isHasContract ? 1.0 : 0.4,
                                       child: _statusItem(
                                         title: "Đang thuê",
                                         color: Colors.orange,
                                         selected: vm.trangThai == 1,
-                                        onTap: isHasContract ?
-                                            () => vm.setTrangThai(1)
-                                            : ()=> _showWarningSnackbar("Trạng thái 'Đang thuê' sẽ tự động kích hoạt khi bạn lập Hợp đồng cho phòng này!")
+                                        onTap: isHasContract
+                                            ? () => vm.setTrangThai(1)
+                                            : () => _showWarningSnackbar(
+                                                "Trạng thái 'Đang thuê' sẽ tự động kích hoạt khi bạn lập Hợp đồng cho phòng này!",
+                                              ),
                                       ),
-                                    )
+                                    ),
                                   ),
                                   const SizedBox(width: 10),
                                   Expanded(
                                     child: Opacity(
-                                        opacity: isHasContract ? 0.4: 1.0,
+                                      opacity: isHasContract ? 0.4 : 1.0,
                                       child: _statusItem(
                                         title: "Đang sửa chữa",
                                         color: Colors.red,
                                         selected: vm.trangThai == 2,
-                                        onTap: isHasContract ?
-                                        ()=> _showWarningSnackbar("Phòng đang có khách ở, không thể chuyển sang trạng thái sửa chữa!")
-                                            : () => vm.setTrangThai(2)
-                                           
+                                        onTap: isHasContract
+                                            ? () => _showWarningSnackbar(
+                                                "Phòng đang có khách ở, không thể chuyển sang trạng thái sửa chữa!",
+                                              )
+                                            : () => vm.setTrangThai(2),
                                       ),
                                     ),
                                   ),
@@ -414,13 +427,19 @@ class _FormPhongState extends State<FormPhong> {
                                           ),
                                         )
                                       else
-                                        ...List.generate(danhSachLoai.length, (index) {
+                                        ...List.generate(danhSachLoai.length, (
+                                          index,
+                                        ) {
                                           final item = danhSachLoai[index];
-                                          bool selected = vm.idLoaiPhong == item.maLoaiPhong;
+                                          bool selected =
+                                              vm.idLoaiPhong ==
+                                              item.maLoaiPhong;
 
                                           return GestureDetector(
                                             onTap: () {
-                                              vm.setIdLoaiPhong(item.maLoaiPhong);
+                                              vm.setIdLoaiPhong(
+                                                item.maLoaiPhong,
+                                              );
                                             },
                                             child: itemLoaiPhongSelectBox(
                                               item,
@@ -448,7 +467,7 @@ class _FormPhongState extends State<FormPhong> {
                                           onTap: goToFormRoomType,
                                           child: const Row(
                                             mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                                MainAxisAlignment.center,
                                             children: [
                                               Icon(
                                                 Icons.add_circle_outline,

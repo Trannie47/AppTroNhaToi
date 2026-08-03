@@ -13,18 +13,25 @@ class LapRapProvider extends ChangeNotifier {
   Future<LapRap?> taoLapRap({
     required int phongId,
     required int thietBiId,
-    required int soLuong,
+    required String ghiChu,
     required DateTime ngayLap,
   }) async {
     return await _lapRapRepo.taoLapRap(
       phongId: phongId,
       thietBiId: thietBiId,
-      soLuong: soLuong,
+      ghiChu: ghiChu,
       ngayLap: ngayLap,
     );
   }
 
-  Future<LapRap?> capNhatLapRap({required int id, required int soLuong}) async {
-    return await _lapRapRepo.capNhatLapRap(id: id, soLuong: soLuong);
+  Future<LapRap?> capNhatLapRap({
+    required int id,
+    required String ghiChu,
+  }) async {
+    return await _lapRapRepo.capNhatLapRap(id: id, ghiChu: ghiChu);
   }
+
+  // Future<bool> xoaLapRap(int id) async {
+  //   return await _lapRapRepo.xoaLapRap(id);
+  // }
 }

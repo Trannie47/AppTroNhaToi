@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import '../models/loaiphong.dart';
+import '../models/loai_phong.dart';
 import '../repositories/loaiphong_repository.dart';
 
 class LoaiPhongProvider extends ChangeNotifier {
@@ -20,6 +20,7 @@ class LoaiPhongProvider extends ChangeNotifier {
       rethrow; // Bắn lỗi ra ngoài để ViewModel tự bắt và chuyển State
     }
   }
+
   Future<LoaiPhong?> createLoaiPhong(LoaiPhong loaiPhong) async {
     try {
       final newLoai = await _loaiPhongRepository.createLoaiPhong(loaiPhong);
@@ -33,15 +34,19 @@ class LoaiPhongProvider extends ChangeNotifier {
       rethrow;
     }
   }
+
   Future<LoaiPhong?> updateLoaiPhong(LoaiPhong loaiPhong) async {
     try {
       final updatedLoai = await _loaiPhongRepository.updateLoaiPhong(loaiPhong);
       if (updatedLoai != null) {
         // Tìm vị trí phần tử cũ trong danh sách hiện tại của App
-        int index = _listLoaiPhong.indexWhere((element) => element.maLoaiPhong == updatedLoai.maLoaiPhong);
+        int index = _listLoaiPhong.indexWhere(
+          (element) => element.maLoaiPhong == updatedLoai.maLoaiPhong,
+        );
 
         if (index != -1) {
-          _listLoaiPhong[index] = updatedLoai; // Cập nhật đè dữ liệu mới vào vị trí cũ
+          _listLoaiPhong[index] =
+              updatedLoai; // Cập nhật đè dữ liệu mới vào vị trí cũ
           notifyListeners();
         }
       }
@@ -53,12 +58,15 @@ class LoaiPhongProvider extends ChangeNotifier {
       rethrow; // Bắn lỗi lên để ViewModel xử lý đưa ra SnackBar
     }
   }
+
   Future<bool> deleteLoaiPhong(int maLoaiPhong) async {
     try {
       final isSuccess = await _loaiPhongRepository.deleteLoaiPhong(maLoaiPhong);
       if (isSuccess) {
         // Xóa phần tử đã ẩn ra khỏi danh sách local của App
-        _listLoaiPhong.removeWhere((element) => element.maLoaiPhong == maLoaiPhong);
+        _listLoaiPhong.removeWhere(
+          (element) => element.maLoaiPhong == maLoaiPhong,
+        );
         notifyListeners(); // Thông báo giao diện cập nhật lại
       }
       return isSuccess;

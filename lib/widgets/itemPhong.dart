@@ -1,4 +1,4 @@
-import 'package:AppTroNhaToi/models/loaiphong.dart';
+import 'package:AppTroNhaToi/models/loai_phong.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +40,9 @@ class ItemPhong extends StatelessWidget {
       child: Container(
         width: double.infinity, // Cho phép co giãn theo chiều ngang màn hình
         margin: const EdgeInsets.only(bottom: 14),
-        padding: const EdgeInsets.all(14), // Padding đều 4 phía giúp thoáng layout
+        padding: const EdgeInsets.all(
+          14,
+        ), // Padding đều 4 phía giúp thoáng layout
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(18),
@@ -107,7 +109,10 @@ class ItemPhong extends StatelessWidget {
 
                 /// STATUS
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: bgTrangThai,
@@ -129,7 +134,7 @@ class ItemPhong extends StatelessWidget {
 
             Wrap(
               spacing: 14, // Khoảng cách ngang giữa các item
-              runSpacing: 6,  // Khoảng cách dọc nếu bị rớt xuống dòng mới
+              runSpacing: 6, // Khoảng cách dọc nếu bị rớt xuống dòng mới
               children: [
                 // GIÁ
                 Row(
