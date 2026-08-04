@@ -392,23 +392,22 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                                 _dateField(
                                   vm.txtNgayKy,
                                   vm.errNgayKy,
-                                  onTapCalendar: () {
-                                    final now = DateTime.now();
-                                    final today = DateTime(now.year, now.month, now.day);
-                                    final dauThang = DateTime(now.year, now.month, 1);
+                                  disabled: isActiveContract,
+                                  onTapCalendar: isActiveContract
+                                      ? null
+                                      : () {
+                                          final now = DateTime.now();
+                                          final today = DateTime(now.year, now.month, now.day);
+                                          final dauThang = DateTime(now.year, now.month, 1);
 
-                                    if (isPendingContract) {
-                                      vm.chonNgay(context, vm.txtNgayKy, firstDate: today);
-                                    } else if (isActiveContract) {
-                                      DateTime ngayKyGoc = vm.hdDTO?.ngayKy ?? dauThang;
-                                      DateTime minDate = (ngayKyGoc.year == now.year && ngayKyGoc.month == now.month)
-                                          ? ngayKyGoc.add(const Duration(days: 1))
-                                          : dauThang;
-                                      vm.chonNgay(context, vm.txtNgayKy, firstDate: minDate, lastDate: today);
-                                    } else {
-                                      vm.chonNgay(context, vm.txtNgayKy, firstDate: dauThang, lastDate: today.add(const Duration(days: 30)));
-                                    }
-                                  },
+                                          if (isPendingContract) {
+                                            final ngayBatDauDuKien = vm.hdDTO?.ngayKy ?? today;
+                                            final lastDate = ngayBatDauDuKien.isBefore(today) ? today : ngayBatDauDuKien;
+                                            vm.chonNgay(context, vm.txtNgayKy, firstDate: today, lastDate: lastDate);
+                                          } else {
+                                            vm.chonNgay(context, vm.txtNgayKy, firstDate: dauThang, lastDate: today.add(const Duration(days: 30)));
+                                          }
+                                        },
                                 ),
                               ],
                             ),

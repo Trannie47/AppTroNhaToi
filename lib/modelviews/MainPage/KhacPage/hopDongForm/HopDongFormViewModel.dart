@@ -264,13 +264,7 @@ class HopDongFormViewModel extends ChangeNotifier {
     hdDTO = hopDong;
 
     if (hopDong != null) {
-      final now = DateTime.now();
-
-      if (hopDong.trangThai == 1) {
-        txtNgayKy.text = formatDate(now);
-      } else {
-        txtNgayKy.text = formatDate(hopDong.ngayKy);
-      }
+      txtNgayKy.text = formatDate(hopDong.ngayKy);
 
       txtNgayHetHan.text = formatDate(hopDong.ngayHetHan);
       final giaThucTe = hopDong.giaPhongThucTe.toInt();
@@ -457,6 +451,9 @@ class HopDongFormViewModel extends ChangeNotifier {
       } else if (hdDTO?.trangThai == 0) {
         if (ngayKy.isBefore(today)) {
           errNgayKy = "Phải từ ngày hiện tại trở đi";
+          hopLe = false;
+        } else if (ngayKy.isAfter(hdDTO!.ngayKy)) {
+          errNgayKy = "Không được vượt quá ngày bắt đầu dự kiến ban đầu";
           hopLe = false;
         }
       } else if (hdDTO?.trangThai == 1) {
