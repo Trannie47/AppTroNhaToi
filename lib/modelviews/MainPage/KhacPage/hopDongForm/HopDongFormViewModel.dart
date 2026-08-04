@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:AppTroNhaToi/Provider/hop_dong_provider.dart';
@@ -16,6 +17,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/utils/map_dio_error_to_message.dart';
 import '../../../../models/DTO/HopDongDTO.dart';
+import '../../../../models/DTO/ThanhVienFormItemDTO.dart';
 import '../../../../models/DTO/ThanhVienHopDongDTO.dart';
 import '../../../../states/hop_dong_update_state.dart';
 
@@ -83,10 +85,17 @@ class HopDongFormViewModel extends ChangeNotifier {
   CreateContractState get createContractState => _createContractState;
 
   // Quản lý danh sách thành viên ở chung
-  List<Map<String, dynamic>> listThanhVienOChung = [];
-
-  void addThanhVienOChung(NguoiThueAvailableDTO nguoiThue, String quanHe) {
-    listThanhVienOChung.add({'nguoiThue': nguoiThue, 'quanHe': quanHe});
+  List<ThanhVienFormItemDTO> listThanhVienOChung = [];
+  void addThanhVienOChung(
+      NguoiThueAvailableDTO nguoiThue,
+      String quanHe,
+      ) {
+    listThanhVienOChung.add(
+      ThanhVienFormItemDTO(
+        nguoiThue: nguoiThue,
+        quanHe: quanHe,
+      ),
+    );
     notifyListeners();
   }
 
@@ -113,8 +122,7 @@ class HopDongFormViewModel extends ChangeNotifier {
       if (e is DioException) {
         loi = mapDioErrorToMessage(e);
       } else {
-        if (kDebugMode)
-          print("Lỗi logic hệ thống trong HopDongFormViewModel: $e");
+        if (kDebugMode) print("Lỗi logic hệ thống trong HopDongFormViewModel: $e");
       }
       _roomsAvailable = HopDongError(loi);
     } finally {
@@ -150,11 +158,8 @@ class HopDongFormViewModel extends ChangeNotifier {
       if (selectedNguoiThue?.idnt != null) {
         excludedIds.add(selectedNguoiThue!.idnt!);
       }
-      for (var tv in listThanhVienOChung) {
-        NguoiThueAvailableDTO nt = tv['nguoiThue'];
-        if (nt.idnt != null) {
-          excludedIds.add(nt.idnt!);
-        }
+      for (final tv in listThanhVienOChung) {
+        excludedIds.add(tv.idnt);
       }
 
       //Gọi API lấy danh sách những người chưa có phòng
@@ -176,10 +181,7 @@ class HopDongFormViewModel extends ChangeNotifier {
     _createContractState = CreateContractLoading();
     notifyListeners();
     try {
-      final result = await _hopDongProvider.createHopDong(
-        hopDongInfor,
-        listImageContract,
-      );
+      final result = await _hopDongProvider.createHopDong(hopDongInfor, listImageContract);
       _createContractState = CreateContractSuccess(result);
     } catch (e) {
       String loi = "Đã có lỗi xảy ra, vui lòng thử lại sau!";
@@ -198,10 +200,9 @@ class HopDongFormViewModel extends ChangeNotifier {
     _updateContractState = HopDongUpdateLoading();
     notifyListeners();
     try {
-      final result = await _hopDongProvider.updateHopDong(
-        hopDongInfor,
-        listImageContract,
-      );
+      final hopDongInforr = getInforContractPayload();
+      print('PAYLOAD: ${jsonEncode(hopDongInforr)}');
+      final result = await _hopDongProvider.updateHopDong(hopDongInfor, listImageContract);
       _updateContractState = HopDongUpdateSuccess(result);
     } catch (e) {
       String loi = "Đã có lỗi xảy ra, vui lòng thử lại sau!";
@@ -215,9 +216,7 @@ class HopDongFormViewModel extends ChangeNotifier {
   }
 
   Future<void> selectImageCotract() async {
-    final List<XFile> imageSelect = await _picker.pickMultiImage(
-      imageQuality: 80,
-    );
+    final List<XFile> imageSelect = await _picker.pickMultiImage(imageQuality: 80);
     if (imageSelect.isNotEmpty) {
       listImageContract.addAll(imageSelect.map((x) => File(x.path)));
       errImageContract = null;
@@ -239,10 +238,7 @@ class HopDongFormViewModel extends ChangeNotifier {
     selectedPhong = phong;
     errPhong = null;
     if (phong != null) {
-      txtTongGiaPhong.text = NumberFormat(
-        '#,###',
-        'vi_VN',
-      ).format(phong.giaPhongGoc).replaceAll(',', '.');
+      txtTongGiaPhong.text = NumberFormat('#,###', 'vi_VN').format(phong.giaPhongGoc).replaceAll(',', '.');
     } else {
       txtTongGiaPhong.text = "0";
     }
@@ -278,19 +274,9 @@ class HopDongFormViewModel extends ChangeNotifier {
 
       txtNgayHetHan.text = formatDate(hopDong.ngayHetHan);
       final giaThucTe = hopDong.giaPhongThucTe.toInt();
-      txtGiaHopDong.text = giaThucTe > 0
-          ? NumberFormat(
-              '#,###',
-              'vi_VN',
-            ).format(giaThucTe).replaceAll(',', '.')
-          : "";
+      txtGiaHopDong.text = giaThucTe > 0 ? NumberFormat('#,###', 'vi_VN').format(giaThucTe).replaceAll(',', '.') : "";
       final tienCocVal = hopDong.tienCoc.toInt();
-      txtTienCoc.text = tienCocVal > 0
-          ? NumberFormat(
-              '#,###',
-              'vi_VN',
-            ).format(tienCocVal).replaceAll(',', '.')
-          : "";
+      txtTienCoc.text = tienCocVal > 0 ? NumberFormat('#,###', 'vi_VN').format(tienCocVal).replaceAll(',', '.') : "";
       txtGhiChu.text = hopDong.ghiChu ?? "";
 
       selectedPhong = RoomAvailableDTO(
@@ -300,17 +286,48 @@ class HopDongFormViewModel extends ChangeNotifier {
       );
       txtTongGiaPhong.text = formatMoney(hopDong.phong.giaPhongGoc);
 
-      selectedNguoiThue = NguoiThueAvailableDTO(
-        idnt: hopDong.idnt,
-        hoTen: hopDong.nguoithue.hoTen,
-        tuoi: 18,
-        coTheLamDaiDien: true,
-      );
+      final daiDien = hopDong.daiDienChinh;
+      if (daiDien != null) {
+        selectedNguoiThue = NguoiThueAvailableDTO(
+          idnt: daiDien.idnt,
+          hoTen: daiDien.nguoiThue?.hoTen ?? 'Không rõ',
+          tuoi: 18,
+          coTheLamDaiDien: true,
+        );
+      }
+
+      listThanhVienOChung = hopDong.hopDongNguoiThue
+          .where((tv) => !tv.laDaiDien)
+          .map(
+            (tv) => ThanhVienFormItemDTO(
+          nguoiThue: NguoiThueAvailableDTO(
+            idnt: tv.idnt,
+            hoTen: tv.nguoiThue?.hoTen ?? 'Không rõ',
+            tuoi: 18,
+            coTheLamThanhVien: true,
+          ),
+          quanHe: tv.quanHeVoiDaiDien ?? 'Thành viên',
+        ),
+      )
+          .toList();
+
     } else {
       txtNgayKy.text = formatDate(DateTime.now());
     }
 
     notifyListeners();
+  }
+  // Kiểm tra xem người dùng có thay đổi Giá phòng hoặc Tiền cọc so với ban đầu không
+  bool get hasPriceChanged {
+    if (hdDTO == null) return false;
+
+    double oldGia = hdDTO!.giaPhongThucTe;
+    double oldCoc = hdDTO!.tienCoc;
+
+    double newGia = double.tryParse(txtGiaHopDong.text.replaceAll('.', '')) ?? 0.0;
+    double newCoc = double.tryParse(txtTienCoc.text.replaceAll('.', '')) ?? 0.0;
+
+    return oldGia != newGia || oldCoc != newCoc;
   }
 
   Map<String, dynamic>? getInforContractPayload() {
@@ -318,38 +335,26 @@ class HopDongFormViewModel extends ChangeNotifier {
     DateTime? ngayKyParsed = chuyenNgay(txtNgayKy.text);
     DateTime? ngayHetHanParsed = chuyenNgay(txtNgayHetHan.text);
 
-    double tienCocParsed =
-        double.tryParse(txtTienCoc.text.replaceAll('.', '')) ?? 0.0;
-    double giaHopDongParsed =
-        double.tryParse(txtGiaHopDong.text.replaceAll('.', '')) ?? 0.0;
+    double tienCocParsed = double.tryParse(txtTienCoc.text.replaceAll('.', '')) ?? 0.0;
+    double giaHopDongParsed = double.tryParse(txtGiaHopDong.text.replaceAll('.', '')) ?? 0.0;
 
-    // Dùng Set để theo dõi các idnt đã được thêm vào, đảm bảo không bao giờ bị trùng
     final Set<int> addedIdnts = {};
     List<Map<String, dynamic>> danhSachThanhVien = [];
 
-    int daiDienIdnt = selectedNguoiThue!.idnt!;
+    int? daiDienIdnt = selectedNguoiThue!.idnt;
+
     addedIdnts.add(daiDienIdnt);
-    danhSachThanhVien.add(
-      ThanhVienHopDongDTO(
-        idnt: daiDienIdnt,
-        laDaiDien: true,
-        quanHeVoiDaiDien: null, // Hoặc gán chuỗi nếu nghiệp vụ yêu cầu
-      ).toJson(),
-    );
+    danhSachThanhVien.add({
+      'idnt': daiDienIdnt,
+      'laDaiDien': true,
+      'quanHeVoiDaiDien': null,
+    });
 
-    //Thêm các thành viên ở chung (chỉ thêm nếu idnt chưa từng xuất hiện)
-    for (var tv in listThanhVienOChung) {
-      NguoiThueAvailableDTO nt = tv['nguoiThue'];
-      String quanHe = tv['quanHe'];
-
-      if (nt.idnt != null && !addedIdnts.contains(nt.idnt!)) {
-        addedIdnts.add(nt.idnt!);
+    for (final tv in listThanhVienOChung) {
+      if (!addedIdnts.contains(tv.idnt)) {
+        addedIdnts.add(tv.idnt);
         danhSachThanhVien.add(
-          ThanhVienHopDongDTO(
-            idnt: nt.idnt!,
-            laDaiDien: false,
-            quanHeVoiDaiDien: quanHe,
-          ).toJson(),
+          tv.toJson(),
         );
       }
     }
@@ -358,8 +363,8 @@ class HopDongFormViewModel extends ChangeNotifier {
       "hopDongId": hdDTO?.hopDongID,
       "trangThai": hdDTO?.trangThai,
       "phongId": selectedPhong?.id,
-      "ngayKy": ngayKyParsed?.toIso8601String(),
-      "ngayHetHan": ngayHetHanParsed?.toIso8601String(),
+      "ngayKy": _formatDateOnly(ngayKyParsed),
+      "ngayHetHan": _formatDateOnly(ngayHetHanParsed),
       "tienCoc": tienCocParsed,
       "giaPhongThucTe": giaHopDongParsed,
       "ghiChu": txtGhiChu.text.toString(),
@@ -381,21 +386,19 @@ class HopDongFormViewModel extends ChangeNotifier {
   }
 
   Future<void> chonNgay(
-    BuildContext context,
-    TextEditingController controller, {
-    DateTime? firstDate,
-    DateTime? lastDate,
-  }) async {
+      BuildContext context,
+      TextEditingController controller, {
+        DateTime? firstDate,
+        DateTime? lastDate,
+      }) async {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     DateTime initDate = chuyenNgay(controller.text) ?? today;
     DateTime minDate = firstDate ?? DateTime(2020);
     DateTime maxDate = lastDate ?? DateTime(2100);
 
-    if (initDate.isBefore(minDate))
-      initDate = minDate;
-    else if (initDate.isAfter(maxDate))
-      initDate = maxDate;
+    if (initDate.isBefore(minDate)) initDate = minDate;
+    else if (initDate.isAfter(maxDate)) initDate = maxDate;
 
     DateTime? ngay = await showDatePicker(
       context: context,
@@ -414,13 +417,13 @@ class HopDongFormViewModel extends ChangeNotifier {
 
   bool get coThayDoi =>
       selectedPhong != null ||
-      selectedNguoiThue != null ||
-      txtNgayHetHan.text.isNotEmpty ||
-      txtGiaHopDong.text.isNotEmpty ||
-      txtTienCoc.text.isNotEmpty ||
-      txtGhiChu.text.isNotEmpty ||
-      listImageContract.isNotEmpty ||
-      listThanhVienOChung.isNotEmpty;
+          selectedNguoiThue != null ||
+          txtNgayHetHan.text.isNotEmpty ||
+          txtGiaHopDong.text.isNotEmpty ||
+          txtTienCoc.text.isNotEmpty ||
+          txtGhiChu.text.isNotEmpty ||
+          listImageContract.isNotEmpty ||
+          listThanhVienOChung.isNotEmpty;
 
   bool kiemTraDuLieu() {
     errPhong = null;
@@ -448,8 +451,7 @@ class HopDongFormViewModel extends ChangeNotifier {
           errNgayKy = "Chỉ được chọn lùi tối đa về ngày 01 tháng này";
           hopLe = false;
         } else if (ngayKy.isAfter(maxTuongLai)) {
-          errNgayKy =
-              "Chỉ được phép đặt trước phòng tối đa 30 ngày ở tương lai";
+          errNgayKy = "Chỉ được phép đặt trước phòng tối đa 30 ngày ở tương lai";
           hopLe = false;
         }
       } else if (hdDTO?.trangThai == 0) {
@@ -458,25 +460,7 @@ class HopDongFormViewModel extends ChangeNotifier {
           hopLe = false;
         }
       } else if (hdDTO?.trangThai == 1) {
-        final rawNgayKyGoc = hdDTO?.ngayKy ?? dauThangHienTai;
-        final ngayKyGoc = DateTime(
-          rawNgayKyGoc.year,
-          rawNgayKyGoc.month,
-          rawNgayKyGoc.day,
-        );
-
-        DateTime minAllowedDate =
-            (ngayKyGoc.year == now.year && ngayKyGoc.month == now.month)
-            ? ngayKyGoc.add(const Duration(days: 1))
-            : dauThangHienTai;
-
-        final ngayKyOnly = DateTime(ngayKy.year, ngayKy.month, ngayKy.day);
-
-        if (ngayKyOnly.isBefore(minAllowedDate) || ngayKyOnly.isAfter(today)) {
-          errNgayKy =
-              "Ngày bắt đầu phải từ ngày ${formatDate(minAllowedDate)} đến hôm nay";
-          hopLe = false;
-        }
+        errNgayKy = null;
       }
     }
 
@@ -525,14 +509,22 @@ class HopDongFormViewModel extends ChangeNotifier {
       errNguoiThue = "Vui lòng chọn người đại diện";
       hopLe = false;
     }
-
-    if (listImageContract.isEmpty) {
+    // Chỉ bắt buộc ảnh khi tạo hợp đồng mới.
+    // Khi cập nhật, không cần thêm ảnh mới.
+    if (!isEdit && listImageContract.isEmpty) {
       errImageContract = "Vui lòng chụp hoặc thêm ít nhất một ảnh hợp đồng";
       hopLe = false;
     }
 
     notifyListeners();
     return hopLe;
+  }
+  String? _formatDateOnly(DateTime? date) {
+    if (date == null) return null;
+
+    return '${date.year.toString().padLeft(4, '0')}-'
+        '${date.month.toString().padLeft(2, '0')}-'
+        '${date.day.toString().padLeft(2, '0')}';
   }
 
   @override
