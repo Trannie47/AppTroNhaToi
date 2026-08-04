@@ -1,3 +1,4 @@
+import 'package:AppTroNhaToi/Provider/SuCoProvider.dart';
 import 'package:AppTroNhaToi/Provider/cau_hinh_gia_provider.dart';
 import 'package:AppTroNhaToi/Provider/dien_nuoc_provider.dart';
 import 'package:AppTroNhaToi/Provider/hoa_don_gui_xe_provider.dart';
@@ -61,6 +62,8 @@ void main() {
         ChangeNotifierProvider(
           create: (_) => ThongBaoProvider()..startPolling(),
         ),
+
+        ChangeNotifierProvider(create: (_) => SuCoProvider()),
       ],
       child: const MyApp(),
     ),

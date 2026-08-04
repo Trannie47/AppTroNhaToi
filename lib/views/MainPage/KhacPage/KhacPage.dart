@@ -4,6 +4,7 @@ import 'package:AppTroNhaToi/Provider/thong_ke_provider.dart';
 import 'package:AppTroNhaToi/Provider/hop_dong_provider.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/CauHinhGiaPage/cauHinhGiaPage.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/LoaiPhongPage/loaiPhongPage.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/SuCoPage/SuCoPage.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/TapHoaPage/TapHoaPage.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThietBiPage/thietBiPage.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThongKePage/thongKePage.dart';
@@ -201,6 +202,27 @@ class _KhacPageState extends State<KhacPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => const ThongKePage()),
+                      );
+                    },
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  _buildItem(
+                    icon: Icons.report_problem_outlined,
+                    iconColor: Colors.red,
+                    iconBg: const Color(0xFFFFEBEE),
+                    title: "Sự cố",
+                    subtitle:
+                    "Quản lý sự cố,\ntheo dõi sửa chữa và luân chuyển phòng",
+                    status: "Quản lý sự cố",
+                    statusColor: Colors.red,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const SuCoPage(),
+                        ),
                       );
                     },
                   ),
