@@ -6,7 +6,6 @@ import '../../models/hoa_don_gui_xe.dart';
 class HoaDonGuiXeApiClient {
   final Dio _dio = RetrofitClient().dio;
 
-
   Future<List<HoaDonGuiXe>> getDanhSachHoaDonGuiXe() async {
     try {
       final response = await _dio.get('/hoa-don-gui-xe/getds');
@@ -27,7 +26,6 @@ class HoaDonGuiXeApiClient {
       throw e.toString();
     }
   }
-
 
   String _mapErrorToMessage(DioException e) {
     if (e.type == DioExceptionType.receiveTimeout ||

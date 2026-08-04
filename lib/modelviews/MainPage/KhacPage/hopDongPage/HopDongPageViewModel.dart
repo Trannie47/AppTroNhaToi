@@ -8,48 +8,52 @@ import '../../../../core/utils/map_dio_error_to_message.dart';
 import '../../../../models/DTO/HopDongDTO.dart';
 
 class HopDongPageViewModel extends ChangeNotifier {
-  final  HopDongProvider hopDongProvider;
+  final HopDongProvider hopDongProvider;
   HopDongPageViewModel({required this.hopDongProvider});
 
   HopDongState _hopDongState = HopDongInitial();
-  HopDongState get hopDongState=> _hopDongState;
+  HopDongState get hopDongState => _hopDongState;
 
-  List<HopDongDTO> _listHopDong=[];
+  List<HopDongDTO> _listHopDong = [];
 
   List<HopDongDTO> get listHD => _listHopDong;
-  List<HopDongDTO> get listHDHieuLuc => _listHopDong.where((hd)=> hd.trangThai==1).toList();
-  List<HopDongDTO> get listHDKhoiTao=> _listHopDong.where((hd)=> hd.trangThai==0).toList();
-  List<HopDongDTO> get listHDKetThuc=> _listHopDong.where((hd)=> hd.trangThai==2).toList();
+  List<HopDongDTO> get listHDHieuLuc =>
+      _listHopDong.where((hd) => hd.trangThai == 1).toList();
+  List<HopDongDTO> get listHDKhoiTao =>
+      _listHopDong.where((hd) => hd.trangThai == 0).toList();
+  List<HopDongDTO> get listHDKetThuc =>
+      _listHopDong.where((hd) => hd.trangThai == 2).toList();
 
   int _currentFilter = -1;
   int get currentFilter => _currentFilter;
 
-  Future<void> loadListHD() async{
-    _hopDongState= HopDongLoading();
+  Future<void> loadListHD() async {
+    _hopDongState = HopDongLoading();
     notifyListeners();
-    try{
-      final result= await hopDongProvider.getListHD();
+    try {
+      final result = await hopDongProvider.getListHD();
       result.sort((a, b) {
         return b.hopDongID.compareTo(a.hopDongID);
       });
       _listHopDong = result;
-      _hopDongState= HopDongSuccess(_listHopDong);
-    }catch(e){
+      _hopDongState = HopDongSuccess(_listHopDong);
+    } catch (e) {
       String loi = "Đã có lỗi xảy ra, vui lòng thử lại sau!";
-      if(e is DioException){
-        loi= mapDioErrorToMessage(e);
-      }else{
+      if (e is DioException) {
+        loi = mapDioErrorToMessage(e);
+      } else {
         if (kDebugMode) {
           print("Lỗi logic hệ thôngs trong HopDongViewModel: $e");
         } else {
           loi = "Hệ thống đang gặp sự cố kỹ thuật, vui lòng quay lại sau!";
         }
       }
-      _hopDongState= HopDongError(loi);
-    }finally{
+      _hopDongState = HopDongError(loi);
+    } finally {
       notifyListeners();
     }
   }
+
   // Hàm Kiểm tra cache trước khi gọi API
   Future<void> loadList() async {
     if (hopDongProvider.listHD.isNotEmpty) {
@@ -60,6 +64,7 @@ class HopDongPageViewModel extends ChangeNotifier {
     }
     await loadListHD(); // Nếu chưa có dữ liệu thì gọi API để lấy mới
   }
+
   List<HopDongDTO> get listHDHienThi {
     switch (_currentFilter) {
       case 0:

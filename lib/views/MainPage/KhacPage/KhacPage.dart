@@ -28,9 +28,15 @@ class _KhacPageState extends State<KhacPage> {
   @override
   void initState() {
     super.initState();
-    final hopDongProvider = Provider.of<HopDongProvider>(context, listen: false);
-    final cauHinhGiaProvider = Provider.of<CauHinhGiaProvider>(context, listen: false);
-    vm = KhacPageModelView(hopDongProvider,cauHinhGiaProvider);
+    final hopDongProvider = Provider.of<HopDongProvider>(
+      context,
+      listen: false,
+    );
+    final cauHinhGiaProvider = Provider.of<CauHinhGiaProvider>(
+      context,
+      listen: false,
+    );
+    vm = KhacPageModelView(hopDongProvider, cauHinhGiaProvider);
     vm.addListener(() {
       if (mounted) {
         setState(() {});
@@ -95,15 +101,18 @@ class _KhacPageState extends State<KhacPage> {
                     iconColor: Colors.indigo,
                     iconBg: const Color(0xFFEDEBFF),
                     title: "Hợp đồng",
-                    subtitle: "Quản lý hợp đồng thuê phòng,\ntheo dõi ngày hết hạn",
-                    status: soLuongSapHetHan > 0 ? "$soLuongSapHetHan sắp hết hạn" : "Không có hợp đồng sắp hết hạn",
-                    statusColor: soLuongSapHetHan > 0 ? const Color(0xFFFFA726) : Colors.grey.shade600,
+                    subtitle:
+                        "Quản lý hợp đồng thuê phòng,\ntheo dõi ngày hết hạn",
+                    status: soLuongSapHetHan > 0
+                        ? "$soLuongSapHetHan sắp hết hạn"
+                        : "Không có hợp đồng sắp hết hạn",
+                    statusColor: soLuongSapHetHan > 0
+                        ? const Color(0xFFFFA726)
+                        : Colors.grey.shade600,
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (_) => HopDongPage(),
-                        ),
+                        MaterialPageRoute(builder: (_) => HopDongPage()),
                       );
                     },
                   ),
@@ -114,7 +123,8 @@ class _KhacPageState extends State<KhacPage> {
                     iconColor: Colors.teal,
                     iconBg: const Color(0xFFE0F2F1),
                     title: "Loại phòng",
-                    subtitle: "Quản lý danh sách loại phòng,\ndiện tích, giá thuê gốc và tiện ích",
+                    subtitle:
+                        "Quản lý danh sách loại phòng,\ndiện tích, giá thuê gốc và tiện ích",
                     status: "Cấu hình danh mục",
                     statusColor: Colors.teal,
                     onTap: () {
@@ -130,15 +140,14 @@ class _KhacPageState extends State<KhacPage> {
                     iconColor: Colors.blue.shade700,
                     iconBg: const Color(0xFFE3F2FD),
                     title: "Cấu hình giá",
-                    subtitle: "Thiết lập đơn giá điện, nước\nmặc định cho toàn bộ hệ thống",
+                    subtitle:
+                        "Thiết lập đơn giá điện, nước\nmặc định cho toàn bộ hệ thống",
                     status: statusCauHinhGia,
                     statusColor: Colors.blue.shade700,
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (_) => CauHinhGiaPage(),
-                        ),
+                        MaterialPageRoute(builder: (_) => CauHinhGiaPage()),
                       );
                     },
                   ),
@@ -154,9 +163,7 @@ class _KhacPageState extends State<KhacPage> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (_) => const ThietBiPage(),
-                        ),
+                        MaterialPageRoute(builder: (_) => const ThietBiPage()),
                       );
                     },
                   ),
@@ -166,15 +173,15 @@ class _KhacPageState extends State<KhacPage> {
                     iconColor: Colors.orange,
                     iconBg: const Color(0xFFFFF1D6),
                     title: "Tạp hóa",
-                    subtitle: "Quản lý hàng hóa, lập hóa đơn,\ntheo dõi công nợ",
-                    status: "${NumberFormat('#,##0').format(hoaDonTapHoaProvider.tongCongNo)}đ công nợ",
+                    subtitle:
+                        "Quản lý hàng hóa, lập hóa đơn,\ntheo dõi công nợ",
+                    status:
+                        "${NumberFormat('#,##0').format(hoaDonTapHoaProvider.tongCongNo)}đ công nợ",
                     statusColor: Colors.red,
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (_) => const TapHoaPage(),
-                        ),
+                        MaterialPageRoute(builder: (_) => const TapHoaPage()),
                       );
                     },
                   ),
@@ -184,16 +191,16 @@ class _KhacPageState extends State<KhacPage> {
                     iconColor: Colors.deepPurple,
                     iconBg: const Color(0xFFF0E5FF),
                     title: "Thống kê",
-                    subtitle: "Báo cáo doanh thu, chi phí,\nlợi nhuận theo tháng",
-                    status: "Tháng ${thongKeProvider.thangHienTai}: "
+                    subtitle:
+                        "Báo cáo doanh thu, chi phí,\nlợi nhuận theo tháng",
+                    status:
+                        "Tháng ${thongKeProvider.thangHienTai}: "
                         "${NumberFormat('#,##0').format(thongKeProvider.tongDoanhThuThang)}đ",
                     statusColor: Colors.deepPurple,
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (_) => const ThongKePage(),
-                        ),
+                        MaterialPageRoute(builder: (_) => const ThongKePage()),
                       );
                     },
                   ),
@@ -219,10 +226,7 @@ class _KhacPageState extends State<KhacPage> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 14,
-          vertical: 10,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(18),
@@ -236,11 +240,7 @@ class _KhacPageState extends State<KhacPage> {
                 color: iconBg,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(
-                icon,
-                color: iconColor,
-                size: 22,
-              ),
+              child: Icon(icon, color: iconColor, size: 22),
             ),
             const SizedBox(width: 15),
             Expanded(

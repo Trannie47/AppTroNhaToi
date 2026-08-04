@@ -78,9 +78,7 @@ class _ChiTietLichSuMuaThietBiPageState
       builder: (dialogContext) {
         return AlertDialog(
           title: const Text("Ẩn lịch sử mua"),
-          content: const Text(
-            "Bạn có chắc muốn ẩn lịch sử mua này không?",
-          ),
+          content: const Text("Bạn có chắc muốn ẩn lịch sử mua này không?"),
           actions: [
             TextButton(
               onPressed: () {
@@ -106,10 +104,7 @@ class _ChiTietLichSuMuaThietBiPageState
     try {
       final provider = context.read<LichSuMuaThietBiProvider>();
 
-      final ok = await provider.xoa(
-        vm.lichSuMua.id!,
-        vm.lichSuMua.thietBiID!,
-      );
+      final ok = await provider.xoa(vm.lichSuMua.id!, vm.lichSuMua.thietBiID!);
 
       if (!mounted) return;
 
@@ -118,19 +113,15 @@ class _ChiTietLichSuMuaThietBiPageState
         return;
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Ẩn lịch sử mua thất bại"),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Ẩn lịch sử mua thất bại")));
     } catch (e) {
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     }
   }
 
@@ -192,8 +183,8 @@ class _ChiTietLichSuMuaThietBiPageState
 
     final hienBaCham =
         ngayMua != null &&
-            ngayMua.year == now.year &&
-            ngayMua.month == now.month;
+        ngayMua.year == now.year &&
+        ngayMua.month == now.month;
 
     return Scaffold(
       backgroundColor: const Color(0xffF5F5F5),

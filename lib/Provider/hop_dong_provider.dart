@@ -26,8 +26,8 @@ class HopDongProvider extends ChangeNotifier {
   }
 
   Future<HopDong> createHopDong(
-      Map<String, dynamic> hopDongPayload,
-      List<File> imageHopDong,
+    Map<String, dynamic> hopDongPayload,
+    List<File> imageHopDong,
   ) async {
     try {
       final result = await hopdongRepository.createContract(
@@ -41,8 +41,8 @@ class HopDongProvider extends ChangeNotifier {
   }
 
   Future<HopDong> updateHopDong(
-      Map<String, dynamic> hopDongPayload,
-      List<File> imageHopDong,
+    Map<String, dynamic> hopDongPayload,
+    List<File> imageHopDong,
   ) async {
     try {
       final result = await hopdongRepository.updateContract(
@@ -54,6 +54,7 @@ class HopDongProvider extends ChangeNotifier {
       rethrow;
     }
   }
+
   Future<HopDong> renewHopDong({
     required String hopDongId,
     required DateTime ngayHetHanMoi,
@@ -72,6 +73,7 @@ class HopDongProvider extends ChangeNotifier {
       rethrow;
     }
   }
+
   Future<bool> deleteHopDong(String hopDongId) async {
     try {
       // Nhận về đối tượng HopDong bị xóa từ server
@@ -88,6 +90,7 @@ class HopDongProvider extends ChangeNotifier {
       return false;
     }
   }
+
   Future<bool> cancelHopDong(String hopDongId) async {
     try {
       final canceledHopDong = await hopdongRepository.cancelContract(hopDongId);

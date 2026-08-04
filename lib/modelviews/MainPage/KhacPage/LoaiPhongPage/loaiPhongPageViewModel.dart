@@ -19,11 +19,14 @@ class LoaiPhongPageViewModel extends ChangeNotifier {
       final danhSachLoai = await _loaiPhongProvider.getListLoaiPhong();
       _loaiphongState = LoaiPhongSuccess(danhSachLoai);
     } catch (e) {
-      _loaiphongState = LoaiPhongError(e.toString().replaceFirst('Exception: ', ''));
+      _loaiphongState = LoaiPhongError(
+        e.toString().replaceFirst('Exception: ', ''),
+      );
     } finally {
       notifyListeners();
     }
   }
+
   Future<String?> deleteLoaiPhongProcess(int maLoaiPhong) async {
     try {
       await _loaiPhongProvider.deleteLoaiPhong(maLoaiPhong);
@@ -32,13 +35,13 @@ class LoaiPhongPageViewModel extends ChangeNotifier {
       if (_loaiphongState is LoaiPhongSuccess) {
         final hienTai = (_loaiphongState as LoaiPhongSuccess).listLoaiPhong;
         hienTai.removeWhere((element) => element.maLoaiPhong == maLoaiPhong);
-    _loaiphongState = LoaiPhongSuccess(hienTai);
-    notifyListeners();
-    }
-    return null; // Trả về null nghĩa là ẩn thành công không có lỗi
+        _loaiphongState = LoaiPhongSuccess(hienTai);
+        notifyListeners();
+      }
+      return null; // Trả về null nghĩa là ẩn thành công không có lỗi
     } catch (e) {
-    // Nếu Backend chặn (do có phòng liên kết), trả về nội dung lỗi hiển thị lên SnackBar
-    return e.toString().replaceFirst('Exception: ', '');
+      // Nếu Backend chặn (do có phòng liên kết), trả về nội dung lỗi hiển thị lên SnackBar
+      return e.toString().replaceFirst('Exception: ', '');
     }
   }
 }

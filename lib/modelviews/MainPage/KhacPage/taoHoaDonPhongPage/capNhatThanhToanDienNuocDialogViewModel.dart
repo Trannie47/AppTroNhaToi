@@ -42,7 +42,8 @@ class CapNhatThanhToanDienNuocDialogViewModel extends ChangeNotifier {
     );
 
     if (!success) {
-      errorMessage = provider.errorMessage ?? "Lập phiếu thu điện nước thất bại!";
+      errorMessage =
+          provider.errorMessage ?? "Lập phiếu thu điện nước thất bại!";
     }
 
     isLoading = false;

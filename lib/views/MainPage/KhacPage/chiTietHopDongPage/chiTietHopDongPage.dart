@@ -195,7 +195,9 @@ class _ChiTietHopDongPageState extends State<ChiTietHopDongPage> {
                 final responseData = err.response?.data;
                 if (responseData is Map && responseData['message'] != null) {
                   final message = responseData['message'];
-                  errorMsg = message is List ? message.join('\n') : message.toString();
+                  errorMsg = message is List
+                      ? message.join('\n')
+                      : message.toString();
                 }
               } else {
                 errorMsg = e.toString().replaceAll("Exception: ", "");
@@ -251,7 +253,7 @@ class _ChiTietHopDongPageState extends State<ChiTietHopDongPage> {
       builder: (dialogContext) => AppConfirmDialog(
         title: "Xác nhận kết thúc hợp đồng",
         content:
-        "Bạn có chắc chắn muốn kết thúc hợp đồng này không? Hệ thống sẽ kiểm tra công nợ và chốt ngày trả phòng thực tế.",
+            "Bạn có chắc chắn muốn kết thúc hợp đồng này không? Hệ thống sẽ kiểm tra công nợ và chốt ngày trả phòng thực tế.",
         textConfirm: "Kết thúc",
         isDangerous: true,
         onConfirm: () async {
@@ -277,13 +279,16 @@ class _ChiTietHopDongPageState extends State<ChiTietHopDongPage> {
             }
           } catch (e) {
             if (mounted) {
-              String errorMsg = "Không thể kết thúc hợp đồng do còn vướng công nợ!";
+              String errorMsg =
+                  "Không thể kết thúc hợp đồng do còn vướng công nợ!";
               final err = e as dynamic;
               if (err.response != null && err.response?.data != null) {
                 final responseData = err.response?.data;
                 if (responseData is Map && responseData['message'] != null) {
                   final message = responseData['message'];
-                  errorMsg = message is List ? message.join('\n') : message.toString();
+                  errorMsg = message is List
+                      ? message.join('\n')
+                      : message.toString();
                 }
               } else {
                 errorMsg = e.toString().replaceAll("Exception: ", "");
@@ -362,7 +367,10 @@ Widget _tenantInfo(HopDongDTO hopDong) {
             children: [
               Text(
                 hopDong.nguoithue.hoTen,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -373,7 +381,10 @@ Widget _tenantInfo(HopDongDTO hopDong) {
               ),
               const SizedBox(height: 8),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: bgColor,
                   borderRadius: BorderRadius.circular(20),
@@ -421,7 +432,11 @@ Widget _thongTinThuePhong(HopDongDTO hopDong) {
           ),
         ),
         const SizedBox(height: 16),
-        _item("Giá thuê", "${formatMoney(hopDong.giaPhongThucTe)}/tháng", color: const Color(0xff2E7D32)),
+        _item(
+          "Giá thuê",
+          "${formatMoney(hopDong.giaPhongThucTe)}/tháng",
+          color: const Color(0xff2E7D32),
+        ),
         const SizedBox(height: 12),
         _item("Tiền đặt cọc", formatMoney(hopDong.tienCoc)),
         const SizedBox(height: 12),
@@ -484,7 +499,9 @@ Widget _danhSachThanhVienSection(List<ThanhVienHopDongDTO> danhSachThanhVien) {
             margin: const EdgeInsets.only(bottom: 10),
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: isDaiDien ? const Color(0xffF2F9F5) : const Color(0xffF9F9F9),
+              color: isDaiDien
+                  ? const Color(0xffF2F9F5)
+                  : const Color(0xffF9F9F9),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: isDaiDien ? Colors.green.shade200 : Colors.grey.shade200,
@@ -496,14 +513,20 @@ Widget _danhSachThanhVienSection(List<ThanhVienHopDongDTO> danhSachThanhVien) {
                   width: 38,
                   height: 38,
                   decoration: BoxDecoration(
-                    color: isDaiDien ? const Color(0xffE8F5E9) : Colors.grey.shade200,
+                    color: isDaiDien
+                        ? const Color(0xffE8F5E9)
+                        : Colors.grey.shade200,
                     shape: BoxShape.circle,
                   ),
                   alignment: Alignment.center,
                   child: Icon(
-                    isDaiDien ? Icons.verified_user_outlined : Icons.person_outline,
+                    isDaiDien
+                        ? Icons.verified_user_outlined
+                        : Icons.person_outline,
                     size: 18,
-                    color: isDaiDien ? const Color(0xff2E7D32) : Colors.grey.shade700,
+                    color: isDaiDien
+                        ? const Color(0xff2E7D32)
+                        : Colors.grey.shade700,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -527,7 +550,10 @@ Widget _danhSachThanhVienSection(List<ThanhVienHopDongDTO> danhSachThanhVien) {
                           ),
                           if (isDaiDien)
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
                               decoration: BoxDecoration(
                                 color: Colors.green.shade100,
                                 borderRadius: BorderRadius.circular(4),
@@ -613,7 +639,11 @@ Widget _anhHopDong(BuildContext context, List<String> dsAnh) {
         if (dsAnh.isEmpty)
           Row(
             children: [
-              Icon(Icons.image_not_supported_outlined, color: Colors.grey.shade400, size: 20),
+              Icon(
+                Icons.image_not_supported_outlined,
+                color: Colors.grey.shade400,
+                size: 20,
+              ),
               const SizedBox(width: 8),
               Text(
                 "Chưa có ảnh hợp đồng",
@@ -626,9 +656,7 @@ Widget _anhHopDong(BuildContext context, List<String> dsAnh) {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => XemAnhHopDong(dsAnh: dsAnh),
-                ),
+                MaterialPageRoute(builder: (_) => XemAnhHopDong(dsAnh: dsAnh)),
               );
             },
             child: Container(
@@ -652,7 +680,10 @@ Widget _anhHopDong(BuildContext context, List<String> dsAnh) {
                         width: 80,
                         height: 80,
                         color: Colors.grey.shade200,
-                        child: Icon(Icons.broken_image, color: Colors.grey.shade400),
+                        child: Icon(
+                          Icons.broken_image,
+                          color: Colors.grey.shade400,
+                        ),
                       ),
                     ),
                   ),
@@ -671,7 +702,11 @@ Widget _anhHopDong(BuildContext context, List<String> dsAnh) {
                         const SizedBox(height: 4),
                         Row(
                           children: [
-                            Icon(Icons.check_circle, color: Colors.green.shade600, size: 13),
+                            Icon(
+                              Icons.check_circle,
+                              color: Colors.green.shade600,
+                              size: 13,
+                            ),
                             const SizedBox(width: 4),
                             Text(
                               "${dsAnh.length} ảnh đã upload",
@@ -688,7 +723,10 @@ Widget _anhHopDong(BuildContext context, List<String> dsAnh) {
                   Padding(
                     padding: const EdgeInsets.only(right: 12),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xffF0F7F0),
                         borderRadius: BorderRadius.circular(8),
@@ -696,7 +734,11 @@ Widget _anhHopDong(BuildContext context, List<String> dsAnh) {
                       child: const Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.photo_library_outlined, size: 14, color: Color(0xff2E7D32)),
+                          Icon(
+                            Icons.photo_library_outlined,
+                            size: 14,
+                            color: Color(0xff2E7D32),
+                          ),
                           SizedBox(width: 4),
                           Text(
                             "Xem",
@@ -732,43 +774,43 @@ Widget _chiTietPhongButton(BuildContext context, ChiTietHopDongViewModel vm) {
       onPressed: vm.isLoadingPhong
           ? null
           : () async {
-        final itemPhong = await vm.getInforPhong(vm.hopDong.phongID);
-        if (!context.mounted) return;
+              final itemPhong = await vm.getInforPhong(vm.hopDong.phongID);
+              if (!context.mounted) return;
 
-        if (itemPhong != null) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => PhongChiTiet(room: itemPhong),
-            ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Không tìm thấy thông tin phòng!"),
-              backgroundColor: Colors.red,
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-        }
-      },
+              if (itemPhong != null) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => PhongChiTiet(room: itemPhong),
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Không tìm thấy thông tin phòng!"),
+                    backgroundColor: Colors.red,
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              }
+            },
       child: vm.isLoadingPhong
           ? const SizedBox(
-        width: 20,
-        height: 20,
-        child: CircularProgressIndicator(
-          strokeWidth: 2,
-          color: Color(0xff2E7D32),
-        ),
-      )
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: Color(0xff2E7D32),
+              ),
+            )
           : Text(
-        "Chi tiết Phòng ${vm.hopDong.phong.tenPhong}",
-        style: const TextStyle(
-          color: Color(0xff1D2433),
-          fontSize: 15,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
+              "Chi tiết Phòng ${vm.hopDong.phong.tenPhong}",
+              style: const TextStyle(
+                color: Color(0xff1D2433),
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
     ),
   );
 }
@@ -806,9 +848,7 @@ Widget _menu(BuildContext context, ChiTietHopDongViewModel vm) {
       popupMenuTheme: PopupMenuThemeData(
         color: Colors.white,
         elevation: 4,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
     ),
     child: PopupMenuButton<int>(
@@ -826,9 +866,7 @@ Widget _menu(BuildContext context, ChiTietHopDongViewModel vm) {
         if (item == 1) {
           final result = await Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (_) => HopDongForm(hopDong: vm.hopDong),
-            ),
+            MaterialPageRoute(builder: (_) => HopDongForm(hopDong: vm.hopDong)),
           );
 
           if (result != null) {

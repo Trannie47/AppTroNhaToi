@@ -1,4 +1,3 @@
-
 import 'package:AppTroNhaToi/models/hop_dong.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -29,9 +28,9 @@ class ChiTietNguoiThuePageViewModel extends ChangeNotifier {
       _chiTietNguoiThueState = ChiTietNguoiThueSuccess(result);
     } catch (e) {
       String loi = "Đã có lỗi xảy ra, vui lòng thử lại sau!";
-      if(e is DioException){
-        loi= mapDioErrorToMessage(e);
-      }else{
+      if (e is DioException) {
+        loi = mapDioErrorToMessage(e);
+      } else {
         if (kDebugMode) {
           print("Lỗi logic hệ thôngs trong HopDongViewModel: $e");
         } else {
@@ -43,7 +42,6 @@ class ChiTietNguoiThuePageViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
-
 
   Future<bool> xoaNguoiThue(int idnt) async {
     if (_isLoading) return false;
@@ -60,6 +58,4 @@ class ChiTietNguoiThuePageViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
-
-
 }

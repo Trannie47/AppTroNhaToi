@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppErrorWidget extends StatelessWidget {
   final String message;
-  final VoidCallback onRetry;    // Hàm xử lý khi bấm nút Thử lại
+  final VoidCallback onRetry; // Hàm xử lý khi bấm nút Thử lại
 
   const AppErrorWidget({
     super.key,
@@ -45,7 +45,10 @@ class AppErrorWidget extends StatelessWidget {
                 foregroundColor: Colors.white,
                 elevation: 2,
                 shadowColor: Colors.black.withOpacity(0.2),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),

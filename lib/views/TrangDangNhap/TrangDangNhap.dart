@@ -16,7 +16,7 @@ class _TrangDangNhapState extends State<TrangDangNhap> {
   final TextEditingController _userController = TextEditingController();
   final TextEditingController _passController = TextEditingController();
   bool _isHidden = true; // Biến kiểm soát ẩn hiện mật khẩu
-  String? _errorServer;  // Biến hứng lỗi từ Server trả về
+  String? _errorServer; // Biến hứng lỗi từ Server trả về
 
   @override
   void initState() {
@@ -39,10 +39,7 @@ class _TrangDangNhapState extends State<TrangDangNhap> {
         borderRadius: BorderRadius.circular(10),
         borderSide: BorderSide.none,
       ),
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 14,
-      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
     );
   }
 
@@ -61,16 +58,11 @@ class _TrangDangNhapState extends State<TrangDangNhap> {
       body: Stack(
         children: [
           Positioned.fill(
-            child: Image.asset(
-              'assets/images/bg_tro.png',
-              fit: BoxFit.cover,
-            ),
+            child: Image.asset('assets/images/bg_tro.png', fit: BoxFit.cover),
           ),
 
           Positioned.fill(
-            child: Container(
-              color: Colors.black.withValues(alpha: 0.2),
-            ),
+            child: Container(color: Colors.black.withValues(alpha: 0.2)),
           ),
 
           // Thanh thông báo lỗi giật từ trên đỉnh xuống
@@ -90,10 +82,7 @@ class _TrangDangNhapState extends State<TrangDangNhap> {
                 color: Colors.grey[200],
                 child: Row(
                   children: [
-                    const Icon(
-                      Icons.error_outline,
-                      color: Colors.red,
-                    ),
+                    const Icon(Icons.error_outline, color: Colors.red),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -118,13 +107,8 @@ class _TrangDangNhapState extends State<TrangDangNhap> {
                 Image.asset(
                   'assets/images/Logo_NoBG.png',
                   width: 140,
-                  errorBuilder:
-                      (context, error, stackTrace) =>
-                  const Icon(
-                    Icons.home,
-                    size: 100,
-                    color: Colors.white,
-                  ),
+                  errorBuilder: (context, error, stackTrace) =>
+                      const Icon(Icons.home, size: 100, color: Colors.white),
                 ),
 
                 const SizedBox(height: 20),
@@ -132,10 +116,11 @@ class _TrangDangNhapState extends State<TrangDangNhap> {
                 Expanded(
                   child: SingleChildScrollView(
                     keyboardDismissBehavior:
-                    ScrollViewKeyboardDismissBehavior.onDrag,
+                        ScrollViewKeyboardDismissBehavior.onDrag,
                     child: ConstrainedBox(
                       constraints: BoxConstraints(
-                        minHeight: MediaQuery.of(context).size.height -
+                        minHeight:
+                            MediaQuery.of(context).size.height -
                             MediaQuery.of(context).padding.top -
                             MediaQuery.of(context).padding.bottom -
                             220,
@@ -155,7 +140,10 @@ class _TrangDangNhapState extends State<TrangDangNhap> {
                             children: [
                               const Align(
                                 alignment: Alignment.centerLeft,
-                                child: Text("Tài khoản", style: TextStyle(fontWeight: FontWeight.bold)),
+                                child: Text(
+                                  "Tài khoản",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
                               ),
 
                               const SizedBox(height: 8),
@@ -172,7 +160,10 @@ class _TrangDangNhapState extends State<TrangDangNhap> {
 
                               const Align(
                                 alignment: Alignment.centerLeft,
-                                child: Text("Mật khẩu", style: TextStyle(fontWeight: FontWeight.bold)),
+                                child: Text(
+                                  "Mật khẩu",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
                               ),
 
                               const SizedBox(height: 8),
@@ -181,13 +172,12 @@ class _TrangDangNhapState extends State<TrangDangNhap> {
                               TextField(
                                 controller: _passController,
                                 obscureText: _isHidden,
-                                decoration: inputStyle(
-                                  "Mật khẩu",
-                                  null,
-                                ).copyWith(
+                                decoration: inputStyle("Mật khẩu", null).copyWith(
                                   suffixIcon: IconButton(
                                     icon: Icon(
-                                      _isHidden ? Icons.visibility_off : Icons.visibility,
+                                      _isHidden
+                                          ? Icons.visibility_off
+                                          : Icons.visibility,
                                       color: Colors.grey,
                                     ),
                                     onPressed: () {
@@ -201,7 +191,6 @@ class _TrangDangNhapState extends State<TrangDangNhap> {
                               ),
 
                               const SizedBox(height: 24),
-
 
                               SizedBox(
                                 width: double.infinity,
@@ -220,30 +209,37 @@ class _TrangDangNhapState extends State<TrangDangNhap> {
                                     });
 
                                     // Lấy chữ thô từ 2 ô nhập liệu
-                                    final inputAccount = _userController.text.trim();
-                                    final inputPassword = _passController.text.trim();
+                                    final inputAccount = _userController.text
+                                        .trim();
+                                    final inputPassword = _passController.text
+                                        .trim();
 
-                                    if (inputAccount.isEmpty || inputPassword.isEmpty) {
+                                    if (inputAccount.isEmpty ||
+                                        inputPassword.isEmpty) {
                                       setState(() {
-                                        _errorServer = "Vui lòng nhập đầy đủ thông tin!";
+                                        _errorServer =
+                                            "Vui lòng nhập đầy đủ thông tin!";
                                       });
                                       return;
                                     }
 
-
-
-                                    final userResult = await vm.login(inputAccount, inputPassword);
+                                    final userResult = await vm.login(
+                                      inputAccount,
+                                      inputPassword,
+                                    );
 
                                     if (userResult != null && mounted) {
                                       Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => const MainPage(),
+                                          builder: (context) =>
+                                              const MainPage(),
                                         ),
                                       );
                                     } else {
                                       setState(() {
-                                        _errorServer = "Tài khoản hoặc mật khẩu không chính xác!";
+                                        _errorServer =
+                                            "Tài khoản hoặc mật khẩu không chính xác!";
                                       });
                                     }
                                   },

@@ -36,10 +36,7 @@ class _LichSuThueView extends StatelessWidget {
   final int phongId;
   final String tenPhong;
 
-  const _LichSuThueView({
-    required this.phongId,
-    required this.tenPhong,
-  });
+  const _LichSuThueView({required this.phongId, required this.tenPhong});
 
   @override
   Widget build(BuildContext context) {
@@ -51,9 +48,7 @@ class _LichSuThueView extends StatelessWidget {
         child: Column(
           children: [
             _buildAppBar(context),
-            Expanded(
-              child: _buildBody(context, vm),
-            ),
+            Expanded(child: _buildBody(context, vm)),
           ],
         ),
       ),
@@ -85,17 +80,11 @@ class _LichSuThueView extends StatelessWidget {
               children: [
                 const Text(
                   'Lịch sử thuê',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 Text(
                   'Phòng $tenPhong',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.grey.shade500,
-                  ),
+                  style: TextStyle(fontSize: 13, color: Colors.grey.shade500),
                 ),
               ],
             ),
@@ -147,7 +136,11 @@ class _LichSuThueView extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.inventory_2_outlined, size: 60, color: Colors.grey.shade300),
+            Icon(
+              Icons.inventory_2_outlined,
+              size: 60,
+              color: Colors.grey.shade300,
+            ),
             const SizedBox(height: 16),
             Text(
               "Chưa có lịch sử thuê cho phòng này",
@@ -180,7 +173,9 @@ class _LichSuThueView extends StatelessWidget {
         return nameParts[0].substring(0, 1).toUpperCase() +
             nameParts.last.substring(0, 1).toUpperCase();
       } else if (nameParts.isNotEmpty && nameParts[0].isNotEmpty) {
-        return nameParts[0].substring(0, nameParts[0].length >= 2 ? 2 : 1).toUpperCase();
+        return nameParts[0]
+            .substring(0, nameParts[0].length >= 2 ? 2 : 1)
+            .toUpperCase();
       }
       return '??';
     }
@@ -253,7 +248,10 @@ class _LichSuThueView extends StatelessWidget {
                   ),
                   // 🔥 ĐÃ CHỈNH: Luôn hiển thị nhãn "Đã kết thúc" cố định
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.red.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
@@ -270,9 +268,7 @@ class _LichSuThueView extends StatelessWidget {
                 ],
               ),
 
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 12),
-              ),
+              const Padding(padding: EdgeInsets.symmetric(vertical: 12)),
               const Divider(height: 1, thickness: 1, color: Color(0xffF0F0F0)),
               const SizedBox(height: 12),
 
@@ -280,7 +276,11 @@ class _LichSuThueView extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Icon(Icons.date_range_outlined, size: 16, color: Colors.grey),
+                  const Icon(
+                    Icons.date_range_outlined,
+                    size: 16,
+                    color: Colors.grey,
+                  ),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(

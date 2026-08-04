@@ -4,15 +4,13 @@ import 'package:flutter/foundation.dart';
 import '../../models/nguoi_luu_tru_tam_thoi.dart';
 
 class NguoiLuuTruTamThoiApiClient {
-  final Dio _dio= RetrofitClient().dio;
+  final Dio _dio = RetrofitClient().dio;
 
   Future<List<NguoiLuuTruTamThoi>> getDanhSachLuuTru({int? idnt}) async {
     try {
       final response = await _dio.get(
         "nguoi-luu-tru-tam-thoi",
-        queryParameters: {
-          if (idnt != null) "idnt": idnt,
-        },
+        queryParameters: {if (idnt != null) "idnt": idnt},
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -40,7 +38,8 @@ class NguoiLuuTruTamThoiApiClient {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return NguoiLuuTruTamThoi.fromMap(
-            response.data as Map<String, dynamic>);
+          response.data as Map<String, dynamic>,
+        );
       }
       return null;
     } on DioException catch (e) {
@@ -65,7 +64,8 @@ class NguoiLuuTruTamThoiApiClient {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return NguoiLuuTruTamThoi.fromMap(
-            response.data as Map<String, dynamic>);
+          response.data as Map<String, dynamic>,
+        );
       }
       return null;
     } on DioException catch (e) {
@@ -89,6 +89,7 @@ class NguoiLuuTruTamThoiApiClient {
       throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
     }
   }
+
   String _mapErrorToMessage(DioException e) {
     if (e.type == DioExceptionType.connectionTimeout ||
         e.type == DioExceptionType.connectionError) {

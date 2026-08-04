@@ -5,7 +5,7 @@ import 'package:AppTroNhaToi/views/MainPage/PhongPage/phongPage.dart';
 
 import 'package:flutter/material.dart';
 
-class MainPageModelView extends ChangeNotifier  {
+class MainPageModelView extends ChangeNotifier {
   int currentIndex = 0;
 
   final List<Widget> pages = [
@@ -14,6 +14,4 @@ class MainPageModelView extends ChangeNotifier  {
     const NguoiThuePage(),
     const KhacPage(),
   ];
-
-  
 }

@@ -49,8 +49,8 @@ class HopDong {
       trangThai: map['trangThai'] as int?,
       dsAnhHopDong: map['anhHopDong'] != null
           ? (map['anhHopDong'] is String
-          ? (map['anhHopDong'] as String).split(',')
-          : List<String>.from(map['anhHopDong']))
+                ? (map['anhHopDong'] as String).split(',')
+                : List<String>.from(map['anhHopDong']))
           : null,
       ghiChu: map['ghiChu'] as String?,
       phong: map['phong'] != null

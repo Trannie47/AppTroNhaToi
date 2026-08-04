@@ -21,5 +21,4 @@ class ThietBiRepository {
   Future<ThietBi?> capNhatThietBi(ThietBi thietBi) async {
     return await thietBiApiClient.capNhatThietBi(thietBi);
   }
-
 }

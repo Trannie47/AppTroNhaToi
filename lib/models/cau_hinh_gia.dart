@@ -23,9 +23,6 @@ class CauHinhGia {
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'giaDien': giaDien,
-      'giaNuoc': giaNuoc,
-    };
+    return {'giaDien': giaDien, 'giaNuoc': giaNuoc};
   }
 }

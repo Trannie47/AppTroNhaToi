@@ -18,10 +18,7 @@ class CauHinhGiaApiClient {
     try {
       final response = await _dio.post(
         '/cau-hinh-gia',
-        data: {
-          'giaDien': giaDien,
-          'giaNuoc': giaNuoc,
-        },
+        data: {'giaDien': giaDien, 'giaNuoc': giaNuoc},
       );
       return CauHinhGia.fromMap(response.data);
     } on DioException catch (e) {

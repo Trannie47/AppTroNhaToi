@@ -7,6 +7,7 @@ class PhuongTienRepository {
   Future<List<PhuongTien>> getDsPhuongTienByNguoiThue(int idnt) async {
     return await _apiClient.getDsPhuongTienByNguoiThue(idnt);
   }
+
   Future<PhuongTien> createPhuongTien(PhuongTien xe) async {
     return await _apiClient.createPhuongTien(xe);
   }
@@ -14,6 +15,7 @@ class PhuongTienRepository {
   Future<PhuongTien> updatePhuongTien(num id, PhuongTien xe) async {
     return await _apiClient.updatePhuongTien(id, xe);
   }
+
   Future<PhuongTien> deletePhuongTien(num id) async {
     return await _apiClient.deletePhuongTien(id);
   }

@@ -57,6 +57,7 @@ class NguoiThueApiClient {
       rethrow;
     }
   }
+
   Future<NguoiThue?> updateNguoiThue(int idnt, NguoiThue nguoiThue) async {
     try {
       final response = await _dio.patch(
@@ -79,18 +80,25 @@ class NguoiThueApiClient {
       throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
     }
   }
+
   // lấy ds người thuê có trạng thái 0 or 1 lên màn tạo hợp đồng
-  Future<List<NguoiThue>> getNguoiThueAvailableForContract() async{
-    try{
-      final response= await _dio.get("nguoi-thue/nguoiThueAvailableForContract");
-      if(response.statusCode==200||response.statusCode==201){
-        final List<dynamic> data= response.data;
-        return data.map((json)=> NguoiThue.fromMap(json)).toList();
+  Future<List<NguoiThue>> getNguoiThueAvailableForContract() async {
+    try {
+      final response = await _dio.get(
+        "nguoi-thue/nguoiThueAvailableForContract",
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final List<dynamic> data = response.data;
+        return data.map((json) => NguoiThue.fromMap(json)).toList();
       }
-      throw Exception("Lấy ds người thuê avalable thất bại (Mã lỗi: ${response.statusCode}");
-    }catch(e){
+      throw Exception(
+        "Lấy ds người thuê avalable thất bại (Mã lỗi: ${response.statusCode}",
+      );
+    } catch (e) {
       if (kDebugMode) {
-        print("Loi getNguoiThueAvailableForContract trong NguoiThueApiClient $e");
+        print(
+          "Loi getNguoiThueAvailableForContract trong NguoiThueApiClient $e",
+        );
       }
       rethrow;
     }
@@ -101,15 +109,11 @@ class NguoiThueApiClient {
   }) async {
     final response = await _dio.get(
       "nguoi-thue/available-representatives",
-      queryParameters: {
-        if (ngayKy != null) 'ngayKy': _formatDateOnly(ngayKy),
-      },
+      queryParameters: {if (ngayKy != null) 'ngayKy': _formatDateOnly(ngayKy)},
     );
     if (response.statusCode == 200 || response.statusCode == 201) {
       final List<dynamic> data = response.data;
-      return data
-          .map((json) => NguoiThueAvailableDTO.fromJson(json))
-          .toList();
+      return data.map((json) => NguoiThueAvailableDTO.fromJson(json)).toList();
     }
     throw Exception(
       "Lấy ds người đại diện thất bại (Mã lỗi: ${response.statusCode})",
@@ -121,15 +125,11 @@ class NguoiThueApiClient {
   }) async {
     final response = await _dio.get(
       "nguoi-thue/available-members",
-      queryParameters: {
-        if (excludeIdnt != null) 'excludeIdnt': excludeIdnt,
-      },
+      queryParameters: {if (excludeIdnt != null) 'excludeIdnt': excludeIdnt},
     );
     if (response.statusCode == 200 || response.statusCode == 201) {
       final List<dynamic> data = response.data;
-      return data
-          .map((json) => NguoiThueAvailableDTO.fromJson(json))
-          .toList();
+      return data.map((json) => NguoiThueAvailableDTO.fromJson(json)).toList();
     }
     throw Exception(
       "Lấy ds thành viên thất bại (Mã lỗi: ${response.statusCode})",
@@ -139,16 +139,12 @@ class NguoiThueApiClient {
   // Gọi API backend để lấy danh sách người thuê còn công nợ tạp hóa.
   Future<List<ThuCongNoFormModel>> getNguoiThueCongNoTapHoa() async {
     try {
-      final response = await _dio.get(
-        "nguoi-thue/cong-no-tap-hoa",
-      );
+      final response = await _dio.get("nguoi-thue/cong-no-tap-hoa");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final List<dynamic> data = response.data;
 
-        return data
-            .map((json) => ThuCongNoFormModel.fromMap(json))
-            .toList();
+        return data.map((json) => ThuCongNoFormModel.fromMap(json)).toList();
       }
 
       return [];

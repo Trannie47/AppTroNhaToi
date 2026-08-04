@@ -86,10 +86,7 @@ class HopDongFormViewModel extends ChangeNotifier {
   List<Map<String, dynamic>> listThanhVienOChung = [];
 
   void addThanhVienOChung(NguoiThueAvailableDTO nguoiThue, String quanHe) {
-    listThanhVienOChung.add({
-      'nguoiThue': nguoiThue,
-      'quanHe': quanHe,
-    });
+    listThanhVienOChung.add({'nguoiThue': nguoiThue, 'quanHe': quanHe});
     notifyListeners();
   }
 
@@ -116,7 +113,8 @@ class HopDongFormViewModel extends ChangeNotifier {
       if (e is DioException) {
         loi = mapDioErrorToMessage(e);
       } else {
-        if (kDebugMode) print("Lỗi logic hệ thống trong HopDongFormViewModel: $e");
+        if (kDebugMode)
+          print("Lỗi logic hệ thống trong HopDongFormViewModel: $e");
       }
       _roomsAvailable = HopDongError(loi);
     } finally {
@@ -178,7 +176,10 @@ class HopDongFormViewModel extends ChangeNotifier {
     _createContractState = CreateContractLoading();
     notifyListeners();
     try {
-      final result = await _hopDongProvider.createHopDong(hopDongInfor, listImageContract);
+      final result = await _hopDongProvider.createHopDong(
+        hopDongInfor,
+        listImageContract,
+      );
       _createContractState = CreateContractSuccess(result);
     } catch (e) {
       String loi = "Đã có lỗi xảy ra, vui lòng thử lại sau!";
@@ -197,7 +198,10 @@ class HopDongFormViewModel extends ChangeNotifier {
     _updateContractState = HopDongUpdateLoading();
     notifyListeners();
     try {
-      final result = await _hopDongProvider.updateHopDong(hopDongInfor, listImageContract);
+      final result = await _hopDongProvider.updateHopDong(
+        hopDongInfor,
+        listImageContract,
+      );
       _updateContractState = HopDongUpdateSuccess(result);
     } catch (e) {
       String loi = "Đã có lỗi xảy ra, vui lòng thử lại sau!";
@@ -211,7 +215,9 @@ class HopDongFormViewModel extends ChangeNotifier {
   }
 
   Future<void> selectImageCotract() async {
-    final List<XFile> imageSelect = await _picker.pickMultiImage(imageQuality: 80);
+    final List<XFile> imageSelect = await _picker.pickMultiImage(
+      imageQuality: 80,
+    );
     if (imageSelect.isNotEmpty) {
       listImageContract.addAll(imageSelect.map((x) => File(x.path)));
       errImageContract = null;
@@ -233,7 +239,10 @@ class HopDongFormViewModel extends ChangeNotifier {
     selectedPhong = phong;
     errPhong = null;
     if (phong != null) {
-      txtTongGiaPhong.text = NumberFormat('#,###', 'vi_VN').format(phong.giaPhongGoc).replaceAll(',', '.');
+      txtTongGiaPhong.text = NumberFormat(
+        '#,###',
+        'vi_VN',
+      ).format(phong.giaPhongGoc).replaceAll(',', '.');
     } else {
       txtTongGiaPhong.text = "0";
     }
@@ -269,9 +278,19 @@ class HopDongFormViewModel extends ChangeNotifier {
 
       txtNgayHetHan.text = formatDate(hopDong.ngayHetHan);
       final giaThucTe = hopDong.giaPhongThucTe.toInt();
-      txtGiaHopDong.text = giaThucTe > 0 ? NumberFormat('#,###', 'vi_VN').format(giaThucTe).replaceAll(',', '.') : "";
+      txtGiaHopDong.text = giaThucTe > 0
+          ? NumberFormat(
+              '#,###',
+              'vi_VN',
+            ).format(giaThucTe).replaceAll(',', '.')
+          : "";
       final tienCocVal = hopDong.tienCoc.toInt();
-      txtTienCoc.text = tienCocVal > 0 ? NumberFormat('#,###', 'vi_VN').format(tienCocVal).replaceAll(',', '.') : "";
+      txtTienCoc.text = tienCocVal > 0
+          ? NumberFormat(
+              '#,###',
+              'vi_VN',
+            ).format(tienCocVal).replaceAll(',', '.')
+          : "";
       txtGhiChu.text = hopDong.ghiChu ?? "";
 
       selectedPhong = RoomAvailableDTO(
@@ -299,8 +318,10 @@ class HopDongFormViewModel extends ChangeNotifier {
     DateTime? ngayKyParsed = chuyenNgay(txtNgayKy.text);
     DateTime? ngayHetHanParsed = chuyenNgay(txtNgayHetHan.text);
 
-    double tienCocParsed = double.tryParse(txtTienCoc.text.replaceAll('.', '')) ?? 0.0;
-    double giaHopDongParsed = double.tryParse(txtGiaHopDong.text.replaceAll('.', '')) ?? 0.0;
+    double tienCocParsed =
+        double.tryParse(txtTienCoc.text.replaceAll('.', '')) ?? 0.0;
+    double giaHopDongParsed =
+        double.tryParse(txtGiaHopDong.text.replaceAll('.', '')) ?? 0.0;
 
     // Dùng Set để theo dõi các idnt đã được thêm vào, đảm bảo không bao giờ bị trùng
     final Set<int> addedIdnts = {};
@@ -360,19 +381,21 @@ class HopDongFormViewModel extends ChangeNotifier {
   }
 
   Future<void> chonNgay(
-      BuildContext context,
-      TextEditingController controller, {
-        DateTime? firstDate,
-        DateTime? lastDate,
-      }) async {
+    BuildContext context,
+    TextEditingController controller, {
+    DateTime? firstDate,
+    DateTime? lastDate,
+  }) async {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     DateTime initDate = chuyenNgay(controller.text) ?? today;
     DateTime minDate = firstDate ?? DateTime(2020);
     DateTime maxDate = lastDate ?? DateTime(2100);
 
-    if (initDate.isBefore(minDate)) initDate = minDate;
-    else if (initDate.isAfter(maxDate)) initDate = maxDate;
+    if (initDate.isBefore(minDate))
+      initDate = minDate;
+    else if (initDate.isAfter(maxDate))
+      initDate = maxDate;
 
     DateTime? ngay = await showDatePicker(
       context: context,
@@ -391,13 +414,13 @@ class HopDongFormViewModel extends ChangeNotifier {
 
   bool get coThayDoi =>
       selectedPhong != null ||
-          selectedNguoiThue != null ||
-          txtNgayHetHan.text.isNotEmpty ||
-          txtGiaHopDong.text.isNotEmpty ||
-          txtTienCoc.text.isNotEmpty ||
-          txtGhiChu.text.isNotEmpty ||
-          listImageContract.isNotEmpty ||
-          listThanhVienOChung.isNotEmpty;
+      selectedNguoiThue != null ||
+      txtNgayHetHan.text.isNotEmpty ||
+      txtGiaHopDong.text.isNotEmpty ||
+      txtTienCoc.text.isNotEmpty ||
+      txtGhiChu.text.isNotEmpty ||
+      listImageContract.isNotEmpty ||
+      listThanhVienOChung.isNotEmpty;
 
   bool kiemTraDuLieu() {
     errPhong = null;
@@ -425,7 +448,8 @@ class HopDongFormViewModel extends ChangeNotifier {
           errNgayKy = "Chỉ được chọn lùi tối đa về ngày 01 tháng này";
           hopLe = false;
         } else if (ngayKy.isAfter(maxTuongLai)) {
-          errNgayKy = "Chỉ được phép đặt trước phòng tối đa 30 ngày ở tương lai";
+          errNgayKy =
+              "Chỉ được phép đặt trước phòng tối đa 30 ngày ở tương lai";
           hopLe = false;
         }
       } else if (hdDTO?.trangThai == 0) {
@@ -435,16 +459,22 @@ class HopDongFormViewModel extends ChangeNotifier {
         }
       } else if (hdDTO?.trangThai == 1) {
         final rawNgayKyGoc = hdDTO?.ngayKy ?? dauThangHienTai;
-        final ngayKyGoc = DateTime(rawNgayKyGoc.year, rawNgayKyGoc.month, rawNgayKyGoc.day);
+        final ngayKyGoc = DateTime(
+          rawNgayKyGoc.year,
+          rawNgayKyGoc.month,
+          rawNgayKyGoc.day,
+        );
 
-        DateTime minAllowedDate = (ngayKyGoc.year == now.year && ngayKyGoc.month == now.month)
+        DateTime minAllowedDate =
+            (ngayKyGoc.year == now.year && ngayKyGoc.month == now.month)
             ? ngayKyGoc.add(const Duration(days: 1))
             : dauThangHienTai;
 
         final ngayKyOnly = DateTime(ngayKy.year, ngayKy.month, ngayKy.day);
 
         if (ngayKyOnly.isBefore(minAllowedDate) || ngayKyOnly.isAfter(today)) {
-          errNgayKy = "Ngày bắt đầu phải từ ngày ${formatDate(minAllowedDate)} đến hôm nay";
+          errNgayKy =
+              "Ngày bắt đầu phải từ ngày ${formatDate(minAllowedDate)} đến hôm nay";
           hopLe = false;
         }
       }

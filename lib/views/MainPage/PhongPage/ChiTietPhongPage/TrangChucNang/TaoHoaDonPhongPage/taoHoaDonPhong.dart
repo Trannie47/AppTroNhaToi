@@ -724,7 +724,8 @@ class _TaoHoaDonPageState extends State<TaoHoaDonPage> {
                                                         textAlign:
                                                             TextAlign.right,
                                                         inputFormatters: [
-                                                          FilteringTextInputFormatter.digitsOnly,
+                                                          FilteringTextInputFormatter
+                                                              .digitsOnly,
                                                           DinhDangGiaVN(),
                                                         ],
                                                         style: const TextStyle(

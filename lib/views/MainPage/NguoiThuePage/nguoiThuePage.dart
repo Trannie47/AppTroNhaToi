@@ -11,35 +11,32 @@ import 'ChiTietNguoiThuePage/chiTietNguoiThuePage.dart';
 class NguoiThuePage extends StatefulWidget {
   const NguoiThuePage({super.key});
 
-
   @override
   State<NguoiThuePage> createState() => _NguoiThuePageState();
 }
 
 class _NguoiThuePageState extends State<NguoiThuePage> {
-
   late NguoiThuePageViewModel vm;
 
   @override
   void initState() {
     super.initState();
-      vm = NguoiThuePageViewModel(context.read<NguoiThueProvider>());
-      vm.addListener(() {
-        if (mounted) {
-          setState(() {});
-        }
-      });
+    vm = NguoiThuePageViewModel(context.read<NguoiThueProvider>());
+    vm.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
 
-        vm.refresh();
-
-
-
+    vm.refresh();
   }
+
   @override
   void dispose() {
     super.dispose();
   }
-  void toChiTietNguoiThue(NguoiThue nt) async{
+
+  void toChiTietNguoiThue(NguoiThue nt) async {
     final check = await Navigator.push(
       context,
       MaterialPageRoute(
@@ -159,7 +156,7 @@ class _NguoiThuePageState extends State<NguoiThuePage> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 itemCount: listNguoiThue.length,
                 itemBuilder: (context, index) {
-                  final tagetNguoiThue= listNguoiThue[index];
+                  final tagetNguoiThue = listNguoiThue[index];
                   return ItemNguoiThue(
                     nguoiThue: listNguoiThue[index],
                     onTap: () => toChiTietNguoiThue(tagetNguoiThue),

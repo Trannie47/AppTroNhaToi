@@ -16,7 +16,9 @@ class PhieuThuHangThangRepository {
     );
   }
 
-  Future<List<PhieuThuHangThang>> getByMaHoaDon({required String maHoaDon}) async {
+  Future<List<PhieuThuHangThang>> getByMaHoaDon({
+    required String maHoaDon,
+  }) async {
     return await _apiClient.getByMaHoaDon(maHoaDon: maHoaDon);
   }
 

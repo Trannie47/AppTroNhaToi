@@ -20,18 +20,19 @@ class HopDongPage extends StatefulWidget {
 class _HopDongPageState extends State<HopDongPage> {
   late HopDongPageViewModel vm;
   @override
-  void initState(){
+  void initState() {
     super.initState();
-    vm= HopDongPageViewModel(hopDongProvider: context.read<HopDongProvider>());
+    vm = HopDongPageViewModel(hopDongProvider: context.read<HopDongProvider>());
     vm.addListener(() {
       if (mounted) {
         setState(() {});
       }
     });
-    WidgetsBinding.instance.addPostFrameCallback((_){
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       vm.loadList();
     });
   }
+
   @override
   void dispose() {
     vm.dispose();
@@ -40,16 +41,14 @@ class _HopDongPageState extends State<HopDongPage> {
 
   String tuKhoa = "";
 
-
-
-  void moTrangTaoHopDong() async{
-   final result=await Navigator.push(
+  void moTrangTaoHopDong() async {
+    final result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => const HopDongForm()),
     );
-   if (result == true && mounted) {
-    vm.loadListHD();
-   }
+    if (result == true && mounted) {
+      vm.loadListHD();
+    }
   }
 
   @override
@@ -79,7 +78,10 @@ class _HopDongPageState extends State<HopDongPage> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            child: const Icon(Icons.arrow_back_ios_new, size: 18),
+                            child: const Icon(
+                              Icons.arrow_back_ios_new,
+                              size: 18,
+                            ),
                           ),
                         ),
 
@@ -140,9 +142,14 @@ class _HopDongPageState extends State<HopDongPage> {
                         decoration: InputDecoration(
                           hintText: "Tìm tên người thuê, phòng...",
                           hintStyle: TextStyle(color: Colors.grey.shade400),
-                          prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                          prefixIcon: const Icon(
+                            Icons.search,
+                            color: Colors.grey,
+                          ),
                           border: InputBorder.none,
-                          contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                          ),
                         ),
                       ),
                     ),
@@ -151,7 +158,11 @@ class _HopDongPageState extends State<HopDongPage> {
 
                   Container(
                     color: Colors.white,
-                    padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 16,
+                    ),
                     child: SizedBox(
                       height: 38,
                       child: SingleChildScrollView(
@@ -202,17 +213,18 @@ class _HopDongPageState extends State<HopDongPage> {
               child: switch (vm.hopDongState) {
                 HopDongLoading() => const Center(
                   child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xff2E7D32)),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Color(0xff2E7D32),
+                    ),
                   ),
                 ),
 
-                HopDongError(errorMessage: final msg) =>
-                    AppErrorWidget(
-                        message: msg,
-                        onRetry:(){
-                          vm.loadListHD();
-                        }
-                    ),
+                HopDongError(errorMessage: final msg) => AppErrorWidget(
+                  message: msg,
+                  onRetry: () {
+                    vm.loadListHD();
+                  },
+                ),
 
                 HopDongSuccess(data: final _) => (() {
                   final dsTheoTab = vm.listHDHienThi;
@@ -232,26 +244,30 @@ class _HopDongPageState extends State<HopDongPage> {
                   return dsHienThi.isEmpty
                       ? const Center(child: Text("Không có hợp đồng nào."))
                       : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    itemCount: dsHienThi.length,
-                    itemBuilder: (context, index) {
-                      final itemHD = dsHienThi[index];
-                      return ItemNTHopDong(
-                        hopDong: itemHD,
-                        onTap: () async {
-                          final result = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => ChiTietHopDongPage(hopDong: itemHD),
-                            ),
-                          );
-                          if (result == true && mounted) {
-                            vm.loadListHD();
-                          }
-                        },
-                      );
-                    },
-                  );
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          itemCount: dsHienThi.length,
+                          itemBuilder: (context, index) {
+                            final itemHD = dsHienThi[index];
+                            return ItemNTHopDong(
+                              hopDong: itemHD,
+                              onTap: () async {
+                                final result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        ChiTietHopDongPage(hopDong: itemHD),
+                                  ),
+                                );
+                                if (result == true && mounted) {
+                                  vm.loadListHD();
+                                }
+                              },
+                            );
+                          },
+                        );
                 })(),
 
                 HopDongInitial() => const SizedBox.shrink(),

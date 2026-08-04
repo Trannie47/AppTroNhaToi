@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
-class XemAnhHopDong extends StatefulWidget{
+class XemAnhHopDong extends StatefulWidget {
   final List<String> dsAnh;
-  const XemAnhHopDong({super.key,  required this.dsAnh});
+  const XemAnhHopDong({super.key, required this.dsAnh});
 
   @override
   State<XemAnhHopDong> createState() => _XemAnhHopDong();
 }
+
 class _XemAnhHopDong extends State<XemAnhHopDong> {
   late PageController _pageController;
   int _currentIndex = 0;
@@ -63,8 +64,10 @@ class _XemAnhHopDong extends State<XemAnhHopDong> {
                     children: [
                       Icon(Icons.broken_image, color: Colors.white54, size: 60),
                       SizedBox(height: 8),
-                      Text("Không thể tải ảnh",
-                          style: TextStyle(color: Colors.white54)),
+                      Text(
+                        "Không thể tải ảnh",
+                        style: TextStyle(color: Colors.white54),
+                      ),
                     ],
                   ),
                 ),
@@ -77,26 +80,26 @@ class _XemAnhHopDong extends State<XemAnhHopDong> {
       // Chấm chỉ trang ở dưới
       bottomNavigationBar: widget.dsAnh.length > 1
           ? Container(
-        color: Colors.black,
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(widget.dsAnh.length, (index) {
-            return AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              margin: const EdgeInsets.symmetric(horizontal: 4),
-              width: _currentIndex == index ? 20 : 8,
-              height: 8,
-              decoration: BoxDecoration(
-                color: _currentIndex == index
-                    ? Colors.white
-                    : Colors.white38,
-                borderRadius: BorderRadius.circular(4),
+              color: Colors.black,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(widget.dsAnh.length, (index) {
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    width: _currentIndex == index ? 20 : 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: _currentIndex == index
+                          ? Colors.white
+                          : Colors.white38,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  );
+                }),
               ),
-            );
-          }),
-        ),
-      )
+            )
           : null,
     );
   }

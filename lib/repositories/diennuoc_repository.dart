@@ -3,7 +3,7 @@ import 'package:AppTroNhaToi/models/dien_nuoc.dart';
 import '../core/network/DienNuocApiClient.dart';
 
 class DienNuocRepository {
-  final DienNuocApiClient _apiClient= DienNuocApiClient();
+  final DienNuocApiClient _apiClient = DienNuocApiClient();
 
   Future<DienNuocInitResult> getInitData(int phongId, String thangNam) async {
     try {
@@ -27,13 +27,14 @@ class DienNuocRepository {
       throw Exception("Lỗi DienNuocRepository.fetchInitData: $e");
     }
   }
+
   Future<DienNuoc> createDienNuoc(
-      DienNuoc dienNuoc, {
-        String? anhDienCuPath,
-        String? anhDienMoiPath,
-        String? anhNuocCuPath,
-        String? anhNuocMoiPath,
-      }) async {
+    DienNuoc dienNuoc, {
+    String? anhDienCuPath,
+    String? anhDienMoiPath,
+    String? anhNuocCuPath,
+    String? anhNuocMoiPath,
+  }) async {
     try {
       final rawData = await _apiClient.createDienNuoc(
         dienNuoc,
@@ -51,13 +52,14 @@ class DienNuocRepository {
       throw Exception("Lỗi DienNuocRepository.createDienNuoc: $e");
     }
   }
+
   Future<DienNuoc?> updateDienNuoc(
-      DienNuoc dienNuoc, {
-        String? anhDienCuPath,
-        String? anhDienMoiPath,
-        String? anhNuocCuPath,
-        String? anhNuocMoiPath,
-      }) async {
+    DienNuoc dienNuoc, {
+    String? anhDienCuPath,
+    String? anhDienMoiPath,
+    String? anhNuocCuPath,
+    String? anhNuocMoiPath,
+  }) async {
     final response = await _apiClient.updateDienNuoc(
       dienNuoc,
       anhDienCuPath: anhDienCuPath,
@@ -70,9 +72,9 @@ class DienNuocRepository {
   }
 }
 
-
 class DienNuocInitResult {
-  final String mode;// trả về giữ từ khóa update hay là create để hiển thị UI cho phù hợp
+  final String
+  mode; // trả về giữ từ khóa update hay là create để hiển thị UI cho phù hợp
   final bool isFirstTime; // đánh dấu phòng mới chưa ghi bao giờ
   final DienNuoc dienNuoc;
 

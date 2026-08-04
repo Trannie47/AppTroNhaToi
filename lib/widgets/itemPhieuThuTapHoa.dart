@@ -10,7 +10,6 @@ class ItemPhieuThuTapHoa extends StatefulWidget {
   final ValueChanged<PhieuThuHdTh>? onXacNhan;
   final double soTienConThieu;
 
-
   const ItemPhieuThuTapHoa({
     super.key,
     this.phieuThu,
@@ -93,9 +92,10 @@ class _ItemPhieuThuTapHoaState extends State<ItemPhieuThuTapHoa> {
       maHoaDon: widget.phieuThu?.maHoaDon,
       ngayThu: DateTime.now(),
       nguoiDong: txtNguoiDong.text.trim(),
-      soTien: double.tryParse(
-        txtSoTien.text.replaceAll(".", "").replaceAll(",", ""),
-      ) ??
+      soTien:
+          double.tryParse(
+            txtSoTien.text.replaceAll(".", "").replaceAll(",", ""),
+          ) ??
           0,
     );
 
@@ -195,9 +195,11 @@ class _ItemPhieuThuTapHoaState extends State<ItemPhieuThuTapHoa> {
                     onPressed: () {
                       //Kiểm tra nếu nhập số tiền lớn hơn số tiền còn thiếu thì hiển thị thông báo lỗi
                       if ((double.tryParse(
-                        txtSoTien.text.replaceAll(".", "").replaceAll(",", ""),
-                      ) ??
-                          0) >
+                                txtSoTien.text
+                                    .replaceAll(".", "")
+                                    .replaceAll(",", ""),
+                              ) ??
+                              0) >
                           widget.soTienConThieu) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
@@ -218,9 +220,12 @@ class _ItemPhieuThuTapHoaState extends State<ItemPhieuThuTapHoa> {
                       }
 
                       if ((double.tryParse(
-                        txtSoTien.text.replaceAll(".", "").replaceAll(",", ""),
-                      ) ??
-                          0) <= 0) {
+                                txtSoTien.text
+                                    .replaceAll(".", "")
+                                    .replaceAll(",", ""),
+                              ) ??
+                              0) <=
+                          0) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text("Số tiền phải lớn hơn 0."),

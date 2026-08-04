@@ -36,7 +36,11 @@ class _GhiDienNuocHomePageState extends State<GhiDienNuocHomePage> {
           elevation: 0,
           surfaceTintColor: Colors.white,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new, size: 18, color: Colors.black),
+            icon: const Icon(
+              Icons.arrow_back_ios_new,
+              size: 18,
+              color: Colors.black,
+            ),
             onPressed: () => Navigator.pop(context),
           ),
           titleSpacing: 0,
@@ -53,10 +57,7 @@ class _GhiDienNuocHomePageState extends State<GhiDienNuocHomePage> {
               ),
               Text(
                 "Nhấn vào phòng bất kỳ để nhập chỉ số điện nước",
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: Colors.grey, fontSize: 12),
               ),
             ],
           ),
@@ -179,7 +180,10 @@ class _GhiDienNuocHomePageState extends State<GhiDienNuocHomePage> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: bgTrangThai,
                         borderRadius: BorderRadius.circular(20),
@@ -205,7 +209,11 @@ class _GhiDienNuocHomePageState extends State<GhiDienNuocHomePage> {
                           ),
                         ),
                         SizedBox(width: 4),
-                        Icon(Icons.arrow_forward_ios, size: 12, color: Color(0xff2D7A3A)),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          size: 12,
+                          color: Color(0xff2D7A3A),
+                        ),
                       ],
                     ),
                   ],

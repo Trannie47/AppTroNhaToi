@@ -35,9 +35,13 @@ class PhieuThuHangThangApiClient {
     }
   }
 
-  Future<List<PhieuThuHangThang>> getByMaHoaDon({required String maHoaDon}) async {
+  Future<List<PhieuThuHangThang>> getByMaHoaDon({
+    required String maHoaDon,
+  }) async {
     try {
-      final response = await _dio.get('/phieu-thu-hang-thang/hoa-don/$maHoaDon');
+      final response = await _dio.get(
+        '/phieu-thu-hang-thang/hoa-don/$maHoaDon',
+      );
       final resData = response.data;
 
       if (resData['success'] == true && resData['data'] != null) {
@@ -58,7 +62,8 @@ class PhieuThuHangThangApiClient {
         return {
           'success': true,
           'message': resData['message'] ?? 'Xóa phiếu thu thành công!',
-          'data': resData['data'], // Chứa thông tin tính lại nợ sau khi rollback
+          'data':
+              resData['data'], // Chứa thông tin tính lại nợ sau khi rollback
         };
       } else {
         throw Exception(resData['message'] ?? 'Xóa phiếu thu thất bại!');

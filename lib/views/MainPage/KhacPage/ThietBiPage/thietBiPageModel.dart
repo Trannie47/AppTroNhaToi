@@ -42,7 +42,8 @@ class ThietBiPageModel {
 
   // Số lượng chưa lắp đặt
   //int get soLuongConLai => soLuongMua - soLuongLapDat;
-  int get soLuongConLai => (soLuongMua - soLuongLapDat) < 0 ? 0 : (soLuongMua - soLuongLapDat);
+  int get soLuongConLai =>
+      (soLuongMua - soLuongLapDat) < 0 ? 0 : (soLuongMua - soLuongLapDat);
 
   // Bổ sung thêm 2 hàm này để DropdownButtonFormField trong chỗ thêm thiết bị vào phòng để nó so sánh Object chuẩn xác
   @override

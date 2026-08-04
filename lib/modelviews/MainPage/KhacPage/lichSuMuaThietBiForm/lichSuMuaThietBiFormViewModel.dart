@@ -42,11 +42,11 @@ class LichSuMuaThietBiFormViewModel extends ChangeNotifier {
 
     txtSoLuong.text = lichSu.soLuong?.toString() ?? "";
     txtDonGia.text = (lichSu.donGia ?? 0)
-    .toStringAsFixed(0)
-    .replaceAllMapped(
-      RegExp(r'(\d)(?=(\d{3})+$)'),
-      (match) => '${match[1]}.',
-    );
+        .toStringAsFixed(0)
+        .replaceAllMapped(
+          RegExp(r'(\d)(?=(\d{3})+$)'),
+          (match) => '${match[1]}.',
+        );
     txtGhiChu.text = lichSu.ghiChu ?? "";
 
     ngayMuaChon = lichSu.ngayMua;
@@ -83,9 +83,7 @@ class LichSuMuaThietBiFormViewModel extends ChangeNotifier {
       errDonGia = "Vui lòng nhập đơn giá";
       hopLe = false;
     } else {
-final donGia = double.tryParse(
-  txtDonGia.text.replaceAll(".", "").trim(),
-);
+      final donGia = double.tryParse(txtDonGia.text.replaceAll(".", "").trim());
       if (donGia == null || donGia < 0) {
         errDonGia = "Đơn giá không được âm";
         hopLe = false;
@@ -115,9 +113,7 @@ final donGia = double.tryParse(
         id: _dangSua?.id,
         thietBiID: thietBi.thietBiID,
         soLuong: int.tryParse(txtSoLuong.text.trim()),
-        donGia: double.tryParse(
-  txtDonGia.text.replaceAll(".", "").trim(),
-),
+        donGia: double.tryParse(txtDonGia.text.replaceAll(".", "").trim()),
         ngayMua: ngayMuaChon,
         ghiChu: txtGhiChu.text.trim().isEmpty ? null : txtGhiChu.text.trim(),
       );

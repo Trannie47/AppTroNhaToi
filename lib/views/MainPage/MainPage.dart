@@ -35,7 +35,8 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       body: IndexedStack(
         index: vm.currentIndex,
-        children: vm.pages, // Nạp ds các pages vào đây để chuyển tab tránh việc gọi lại init
+        children: vm
+            .pages, // Nạp ds các pages vào đây để chuyển tab tránh việc gọi lại init
       ),
 
       bottomNavigationBar: BottomNavigationBar(

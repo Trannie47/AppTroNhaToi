@@ -27,10 +27,10 @@ class HoaDonGuiXe {
       maHoaDon: map['maHoaDon'] as int?,
       thangNam: map['thangNam'] as String?,
       idPhuongTien: map['idPT'] ?? map['idPhuongTien'] as num?,
-      ngayLap: map['ngayLap'] != null
-          ? DateTime.parse(map['ngayLap'])
+      ngayLap: map['ngayLap'] != null ? DateTime.parse(map['ngayLap']) : null,
+      soTien: map['soTien'] != null
+          ? num.tryParse(map['soTien'].toString())
           : null,
-      soTien: map['soTien'] != null ? num.tryParse(map['soTien'].toString()) : null,
       trangThai: map['TrangThai'] ?? map['trangThai'] as int?,
     );
   }

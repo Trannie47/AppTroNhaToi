@@ -18,15 +18,18 @@ class PhuongTienNguoiThuePageViewModel extends ChangeNotifier {
   bool get isLoading => _provider.isLoading;
   String? get errorMessage => _provider.errorMessage;
 
-  List<PhuongTien> get xeMay => dsPhuongTien.where((e) => e.loaiXe == 0).toList();
+  List<PhuongTien> get xeMay =>
+      dsPhuongTien.where((e) => e.loaiXe == 0).toList();
   List<PhuongTien> get oTo => dsPhuongTien.where((e) => e.loaiXe == 1).toList();
-  List<PhuongTien> get xeDap => dsPhuongTien.where((e) => e.loaiXe == 2).toList();
+  List<PhuongTien> get xeDap =>
+      dsPhuongTien.where((e) => e.loaiXe == 2).toList();
 
   Future<void> fetchDsPhuongTien() async {
     if (nguoiThue.idnt != null) {
       await _provider.fetchByNguoiThue(nguoiThue.idnt!);
     }
   }
+
   Future<bool> deletePhuongTien(PhuongTien xe) async {
     return await _provider.deletePhuongTien(xe);
   }

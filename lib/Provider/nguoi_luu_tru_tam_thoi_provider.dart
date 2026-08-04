@@ -3,7 +3,8 @@ import '../../models/nguoi_luu_tru_tam_thoi.dart';
 import '../../repositories/nguoiluutrutamthoi_repository.dart';
 
 class NguoiLuuTruTamThoiProvider extends ChangeNotifier {
-  final NguoiLuuTruTamThoiRepository _repository= NguoiLuuTruTamThoiRepository();
+  final NguoiLuuTruTamThoiRepository _repository =
+      NguoiLuuTruTamThoiRepository();
 
   List<NguoiLuuTruTamThoi> _list = [];
   List<NguoiLuuTruTamThoi> get list => _list;
@@ -32,7 +33,9 @@ class NguoiLuuTruTamThoiProvider extends ChangeNotifier {
     }
   }
 
-  Future<NguoiLuuTruTamThoi?> createNguoiLuuTru(NguoiLuuTruTamThoi newItem) async {
+  Future<NguoiLuuTruTamThoi?> createNguoiLuuTru(
+    NguoiLuuTruTamThoi newItem,
+  ) async {
     try {
       final item = await _repository.createNguoiLuuTru(newItem);
       if (item != null) {
@@ -48,7 +51,9 @@ class NguoiLuuTruTamThoiProvider extends ChangeNotifier {
     }
   }
 
-  Future<NguoiLuuTruTamThoi?> updateLuuTru(NguoiLuuTruTamThoi updatedData) async {
+  Future<NguoiLuuTruTamThoi?> updateLuuTru(
+    NguoiLuuTruTamThoi updatedData,
+  ) async {
     try {
       final updatedItem = await _repository.updateLuuTru(updatedData);
       if (updatedItem != null) {

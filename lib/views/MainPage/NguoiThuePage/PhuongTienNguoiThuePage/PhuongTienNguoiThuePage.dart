@@ -84,13 +84,14 @@ class _PhuongTienNguoiThuePageState extends State<PhuongTienNguoiThuePage> {
       ),
     );
   }
+
   void _xacNhanXoaXe(PhuongTien xe) async {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AppConfirmDialog(
         title: "Xóa phương tiện",
         content:
-        "Bạn có chắc chắn muốn xóa phương tiện ${xe.hangXe ?? ''} (${xe.bienSo ?? 'Không BKS'}) không?",
+            "Bạn có chắc chắn muốn xóa phương tiện ${xe.hangXe ?? ''} (${xe.bienSo ?? 'Không BKS'}) không?",
         textConfirm: "Xóa ngay",
         isDangerous: true,
         onConfirm: () => Navigator.pop(dialogContext, true),
@@ -131,10 +132,7 @@ class _PhuongTienNguoiThuePageState extends State<PhuongTienNguoiThuePage> {
             Container(
               height: 62,
               color: Colors.white,
-              padding: const EdgeInsets.only(
-                left: 20,
-                right: 16,
-              ),
+              padding: const EdgeInsets.only(left: 20, right: 16),
               child: Row(
                 children: [
                   /// BACK
@@ -218,67 +216,53 @@ class _PhuongTienNguoiThuePageState extends State<PhuongTienNguoiThuePage> {
             Expanded(
               child: vm.isLoading
                   ? const Center(
-                child: CircularProgressIndicator(
-                  color: Color(0xff2D7A3A),
-                ),
-              )
+                      child: CircularProgressIndicator(
+                        color: Color(0xff2D7A3A),
+                      ),
+                    )
                   : vm.errorMessage != null
                   ? AppErrorWidget(
-                message: vm.errorMessage!,
-                onRetry: () => vm.fetchDsPhuongTien(),
-              )
+                      message: vm.errorMessage!,
+                      onRetry: () => vm.fetchDsPhuongTien(),
+                    )
                   : vm.dsPhuongTien.isEmpty
                   ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.directions_car_outlined,
-                      size: 64,
-                      color: Colors.grey.shade400,
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      "Người thuê này hiện chưa có phương tiện nào",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey.shade600,
-                        fontWeight: FontWeight.w500,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.directions_car_outlined,
+                            size: 64,
+                            color: Colors.grey.shade400,
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            "Người thuê này hiện chưa có phương tiện nào",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey.shade600,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-              )
+                    )
                   : ListView(
-                padding: const EdgeInsets.fromLTRB(
-                  16,
-                  14,
-                  16,
-                  110,
-                ),
-                children: [
-                  /// XE MÁY
-                  if (vm.xeMay.isNotEmpty)
-                    _groupXe(
-                      title: "Xe máy",
-                      dsXe: vm.xeMay,
-                    ),
+                      padding: const EdgeInsets.fromLTRB(16, 14, 16, 110),
+                      children: [
+                        /// XE MÁY
+                        if (vm.xeMay.isNotEmpty)
+                          _groupXe(title: "Xe máy", dsXe: vm.xeMay),
 
-                  /// Ô TÔ
-                  if (vm.oTo.isNotEmpty)
-                    _groupXe(
-                      title: "Xe ô tô",
-                      dsXe: vm.oTo,
-                    ),
+                        /// Ô TÔ
+                        if (vm.oTo.isNotEmpty)
+                          _groupXe(title: "Xe ô tô", dsXe: vm.oTo),
 
-                  /// XE ĐẠP
-                  if (vm.xeDap.isNotEmpty)
-                    _groupXe(
-                      title: "Xe đạp",
-                      dsXe: vm.xeDap,
+                        /// XE ĐẠP
+                        if (vm.xeDap.isNotEmpty)
+                          _groupXe(title: "Xe đạp", dsXe: vm.xeDap),
+                      ],
                     ),
-                ],
-              ),
             ),
           ],
         ),
@@ -287,12 +271,7 @@ class _PhuongTienNguoiThuePageState extends State<PhuongTienNguoiThuePage> {
       /// BUTTON THÊM PHƯƠNG TIỆN
       bottomNavigationBar: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(
-            16,
-            0,
-            16,
-            14,
-          ),
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
           child: SizedBox(
             height: 56,
             child: ElevatedButton(
@@ -307,11 +286,7 @@ class _PhuongTienNguoiThuePageState extends State<PhuongTienNguoiThuePage> {
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.add_rounded,
-                    size: 18,
-                    color: Colors.white,
-                  ),
+                  Icon(Icons.add_rounded, size: 18, color: Colors.white),
                   SizedBox(width: 8),
                   Text(
                     "Thêm phương tiện",
@@ -330,18 +305,12 @@ class _PhuongTienNguoiThuePageState extends State<PhuongTienNguoiThuePage> {
     );
   }
 
-  Widget _groupXe({
-    required String title,
-    required List<PhuongTien> dsXe,
-  }) {
+  Widget _groupXe({required String title, required List<PhuongTien> dsXe}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(
-            bottom: 12,
-            top: 4,
-          ),
+          padding: const EdgeInsets.only(bottom: 12, top: 4),
           child: Text(
             "$title (${dsXe.length})",
             style: const TextStyle(
@@ -351,38 +320,33 @@ class _PhuongTienNguoiThuePageState extends State<PhuongTienNguoiThuePage> {
             ),
           ),
         ),
-        ...List.generate(
-          dsXe.length,
-              (index) {
-            final xe = dsXe[index];
-            return Padding(
-              padding: const EdgeInsets.only(
-                bottom: 14,
-              ),
-              child: ItemPhuongTien(
-                phuongTien: xe,
-                delete: () {
-                  _xacNhanXoaXe(xe);
-                },
-                edit: () async {
-                  final result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => PhuongTienForm(
-                        nguoiThue: widget.nguoiThue,
-                        dsHopDong: widget.dsHopDong,
-                        phuongTienSua: xe,
-                      ),
+        ...List.generate(dsXe.length, (index) {
+          final xe = dsXe[index];
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 14),
+            child: ItemPhuongTien(
+              phuongTien: xe,
+              delete: () {
+                _xacNhanXoaXe(xe);
+              },
+              edit: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => PhuongTienForm(
+                      nguoiThue: widget.nguoiThue,
+                      dsHopDong: widget.dsHopDong,
+                      phuongTienSua: xe,
                     ),
-                  );
-                  if (result != null && mounted) {
-                    vm.fetchDsPhuongTien();
-                  }
-                },
-              ),
-            );
-          },
-        ),
+                  ),
+                );
+                if (result != null && mounted) {
+                  vm.fetchDsPhuongTien();
+                }
+              },
+            ),
+          );
+        }),
       ],
     );
   }

@@ -46,7 +46,10 @@ class PhieuThuHangThangProvider extends ChangeNotifier {
       );
 
       final phieuThuMoi = result['phieuThu'] as PhieuThuHangThang;
-      _listPhieuThu.insert(0, phieuThuMoi); // Thêm nhanh vào đầu danh sách local
+      _listPhieuThu.insert(
+        0,
+        phieuThuMoi,
+      ); // Thêm nhanh vào đầu danh sách local
 
       _isLoading = false;
       notifyListeners();

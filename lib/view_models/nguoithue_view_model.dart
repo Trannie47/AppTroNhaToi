@@ -4,8 +4,8 @@ import 'package:AppTroNhaToi/states/NguoiThueState.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 
-class NguoithueViewModel extends ChangeNotifier{
-  final NguoithueRepository nguoithueRepository= NguoithueRepository();
+class NguoithueViewModel extends ChangeNotifier {
+  final NguoithueRepository nguoithueRepository = NguoithueRepository();
   final TextEditingController searchController = TextEditingController();
 
   final TextEditingController txtHoTen = TextEditingController();
@@ -18,38 +18,37 @@ class NguoithueViewModel extends ChangeNotifier{
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   bool? gioiTinh;
 
-  List<NguoiThue> _listNguoiThue= [];
-  List<NguoiThue> get listNguoithu=> _listNguoiThue;
+  List<NguoiThue> _listNguoiThue = [];
+  List<NguoiThue> get listNguoithu => _listNguoiThue;
 
-  bool _isLoading= false;
+  bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  NguoiThueState _nguoiThueState= NguoiThueLoading();
+  NguoiThueState _nguoiThueState = NguoiThueLoading();
   NguoiThueState get nguoiThueState => _nguoiThueState;
   Future<void> fetchAllNguoiThue() async {
-
-    if(_isLoading) return;  // Nếu hệ thống đang load thì ko cho spam gọi api
-    _isLoading= true;
+    if (_isLoading) return; // Nếu hệ thống đang load thì ko cho spam gọi api
+    _isLoading = true;
     notifyListeners();
 
-    try{
-      _listNguoiThue= await nguoithueRepository.getListNguoiThue();
+    try {
+      _listNguoiThue = await nguoithueRepository.getListNguoiThue();
       print("List Nguoiw thue lay duwojc la $_listNguoiThue");
-    }catch(e){
+    } catch (e) {
       print("Loi NguoiThueViewModel $e");
-      _listNguoiThue=[];
-    }finally{
-      _isLoading= false;
+      _listNguoiThue = [];
+    } finally {
+      _isLoading = false;
       notifyListeners();
     }
   }
 
-  Future<bool> luuNguoiThue() async{
-    if( _isLoading) return false;
-    _isLoading= true;
+  Future<bool> luuNguoiThue() async {
+    if (_isLoading) return false;
+    _isLoading = true;
     notifyListeners();
 
-    try{
+    try {
       DateTime? ngaySinhParsed;
       if (txtNgaySinh.text.isNotEmpty) {
         List<String> arr = txtNgaySinh.text.split('/');
@@ -61,31 +60,31 @@ class NguoithueViewModel extends ChangeNotifier{
           );
         }
       }
-      NguoiThue nguoiThue=NguoiThue(
+      NguoiThue nguoiThue = NguoiThue(
         hoTen: txtHoTen.text.trim(),
         cccd: txtCCCD.text.trim(),
         sdt: txtSDT.text.trim(),
         ngaySinh: ngaySinhParsed,
         gioiTinh: gioiTinh ?? true,
         ghiChu: txtGhiChu.text.trim(),
-        queQuan: txtQueQuan.text.trim()
+        queQuan: txtQueQuan.text.trim(),
       );
       bool result = await nguoithueRepository.themNguoiThue(nguoiThue);
-      if(result){
+      if (result) {
         clearAllFileds();
         return true;
       }
       return false;
-    }catch(e){
+    } catch (e) {
       print("Lỗi người thuê $e");
       return false;
-    }finally{
-      _isLoading= false;
+    } finally {
+      _isLoading = false;
       notifyListeners();
     }
   }
 
-  void clearAllFileds(){
+  void clearAllFileds() {
     txtHoTen.clear();
     txtSDT.clear();
     txtCCCD.clear();
@@ -108,7 +107,7 @@ class NguoithueViewModel extends ChangeNotifier{
 
     if (dob.length == 8) {
       txtNgaySinh.text =
-      "${dob.substring(0, 2)}/${dob.substring(2, 4)}/${dob.substring(4, 8)}";
+          "${dob.substring(0, 2)}/${dob.substring(2, 4)}/${dob.substring(4, 8)}";
     }
 
     final gender = parts[4].trim().toLowerCase();
@@ -119,9 +118,10 @@ class NguoithueViewModel extends ChangeNotifier{
 
     notifyListeners();
   }
-  Future<bool> xoaNguoiThue(int idnt) async{
-    if(_isLoading) return false;
-    _isLoading= true;
+
+  Future<bool> xoaNguoiThue(int idnt) async {
+    if (_isLoading) return false;
+    _isLoading = true;
     notifyListeners();
     try {
       final result = await nguoithueRepository.xoaNguoiThue(idnt);
@@ -130,28 +130,32 @@ class NguoithueViewModel extends ChangeNotifier{
         return true;
       }
       return false;
-    }catch(e){
+    } catch (e) {
       print("Loi viemodel khi xoa $e");
       rethrow;
-    }finally{
-      _isLoading=false;
+    } finally {
+      _isLoading = false;
       notifyListeners();
     }
   }
 
-  Future<void> getListNguoiThueFromIdPhong(int idPhong)async{
-    _nguoiThueState= NguoiThueLoading();
+  Future<void> getListNguoiThueFromIdPhong(int idPhong) async {
+    _nguoiThueState = NguoiThueLoading();
     notifyListeners();
-    try{
-      final result= await nguoithueRepository.getListNguoiThueFromIdPhong(idPhong);
-      _nguoiThueState= NguoiThueSuccess(result);
+    try {
+      final result = await nguoithueRepository.getListNguoiThueFromIdPhong(
+        idPhong,
+      );
+      _nguoiThueState = NguoiThueSuccess(result);
       if (kDebugMode) {
         print("ds nguoi thue lay duoc trong phong la $result");
       }
-    }catch(e){
+    } catch (e) {
       print("Lỗi NguoiThueViewModel $e");
-      _nguoiThueState= NguoiThueError(e.toString().replaceFirst('Exception: ', ''));
-    }finally{
+      _nguoiThueState = NguoiThueError(
+        e.toString().replaceFirst('Exception: ', ''),
+      );
+    } finally {
       notifyListeners();
     }
   }

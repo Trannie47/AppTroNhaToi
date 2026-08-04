@@ -5,10 +5,7 @@ class ThuCongNoFormModel {
   final NguoiThue nguoiThue;
   final double tongCongNoTapHoa;
 
-  ThuCongNoFormModel({
-    required this.nguoiThue,
-    required this.tongCongNoTapHoa,
-  });
+  ThuCongNoFormModel({required this.nguoiThue, required this.tongCongNoTapHoa});
 
   factory ThuCongNoFormModel.fromMap(Map<String, dynamic> map) {
     return ThuCongNoFormModel(
@@ -18,10 +15,7 @@ class ThuCongNoFormModel {
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      ...nguoiThue.toMap(),
-      'tongCongNoTapHoa': tongCongNoTapHoa,
-    };
+    return {...nguoiThue.toMap(), 'tongCongNoTapHoa': tongCongNoTapHoa};
   }
 
   ThuCongNoFormModel copyWith({
@@ -30,8 +24,7 @@ class ThuCongNoFormModel {
   }) {
     return ThuCongNoFormModel(
       nguoiThue: nguoiThue ?? this.nguoiThue,
-      tongCongNoTapHoa:
-          tongCongNoTapHoa ?? this.tongCongNoTapHoa,
+      tongCongNoTapHoa: tongCongNoTapHoa ?? this.tongCongNoTapHoa,
     );
   }
 

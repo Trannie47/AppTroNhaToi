@@ -35,7 +35,9 @@ class _NguoiLuuTruTamThoiFormState extends State<NguoiLuuTruTamThoiForm> {
   void initState() {
     super.initState();
 
-    vm = NguoiLuuTruTamThoiFormViewModel(context.read<NguoiLuuTruTamThoiProvider>());
+    vm = NguoiLuuTruTamThoiFormViewModel(
+      context.read<NguoiLuuTruTamThoiProvider>(),
+    );
     vm.initData(widget.itemEdit, widget.dsHopDong);
 
     vm.addListener(() {
@@ -51,7 +53,9 @@ class _NguoiLuuTruTamThoiFormState extends State<NguoiLuuTruTamThoiForm> {
 
   // Chọn ngày bằng hàm tiện ích chonNgayChuan
   Future<void> _selectDate(BuildContext context, bool isNgayDen) async {
-    final initialDate = isNgayDen ? (vm.ngayDen ?? DateTime.now()) : (vm.ngayVe ?? DateTime.now());
+    final initialDate = isNgayDen
+        ? (vm.ngayDen ?? DateTime.now())
+        : (vm.ngayVe ?? DateTime.now());
 
     final picked = await chonNgayChuan(
       context,
@@ -105,7 +109,8 @@ class _NguoiLuuTruTamThoiFormState extends State<NguoiLuuTruTamThoiForm> {
 
   @override
   Widget build(BuildContext context) {
-    final String tenNguoiThueText = widget.tenNguoiThue ?? "Người thuê bảo lãnh";
+    final String tenNguoiThueText =
+        widget.tenNguoiThue ?? "Người thuê bảo lãnh";
 
     return Scaffold(
       backgroundColor: const Color(0xffF7F9F7),
@@ -242,21 +247,23 @@ class _NguoiLuuTruTamThoiFormState extends State<NguoiLuuTruTamThoiForm> {
                 ),
                 child: vm.isLoading
                     ? const SizedBox(
-                  width: 22,
-                  height: 22,
-                  child: CircularProgressIndicator(
-                    color: Colors.white,
-                    strokeWidth: 2.5,
-                  ),
-                )
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2.5,
+                        ),
+                      )
                     : Text(
-                  _isEditMode ? "Cập nhật thông tin" : "Lưu người lưu trú",
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
+                        _isEditMode
+                            ? "Cập nhật thông tin"
+                            : "Lưu người lưu trú",
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
               ),
             ),
 
@@ -301,14 +308,20 @@ class _NguoiLuuTruTamThoiFormState extends State<NguoiLuuTruTamThoiForm> {
             errorText: vm.errPhong,
             fillColor: const Color(0xffF8F9FA),
             filled: true,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: 12,
+            ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(color: Color(0xffE5E5EA)),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xff437648), width: 1.5),
+              borderSide: const BorderSide(
+                color: Color(0xff437648),
+                width: 1.5,
+              ),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
@@ -421,14 +434,20 @@ class _NguoiLuuTruTamThoiFormState extends State<NguoiLuuTruTamThoiForm> {
             errorText: errorText,
             fillColor: const Color(0xffF8F9FA),
             filled: true,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: 12,
+            ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(color: Color(0xffE5E5EA)),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xff437648), width: 1.5),
+              borderSide: const BorderSide(
+                color: Color(0xff437648),
+                width: 1.5,
+              ),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),

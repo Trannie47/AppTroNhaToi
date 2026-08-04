@@ -22,7 +22,8 @@ class PhuongTien {
   });
 
   factory PhuongTien.fromMap(Map<String, dynamic> map) {
-    final double? parsedMoney = (map['SoTien'] as num?)?.toDouble() ??
+    final double? parsedMoney =
+        (map['SoTien'] as num?)?.toDouble() ??
         (map['soTien'] as num?)?.toDouble() ??
         (map['giaGui'] as num?)?.toDouble();
 
@@ -35,7 +36,9 @@ class PhuongTien {
       loaiXe: map['loaixe'] as int? ?? map['loaiXe'] as int? ?? 0,
       idnt: map['idnt'] as int? ?? map['IDNT'] as int?,
       phongId: map['phongId'] as int? ?? map['PhongID'] as int?,
-      tenPhong: map['phong'] != null ? map['phong']['tenPhong'] as String? : null,
+      tenPhong: map['phong'] != null
+          ? map['phong']['tenPhong'] as String?
+          : null,
     );
   }
 

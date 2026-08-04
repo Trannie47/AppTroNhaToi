@@ -3,8 +3,7 @@ import 'package:AppTroNhaToi/core/network/NguoiLuuTruTamThoiApiClient.dart';
 import '../../models/nguoi_luu_tru_tam_thoi.dart';
 
 class NguoiLuuTruTamThoiRepository {
-  final NguoiLuuTruTamThoiApiClient _apiClient= NguoiLuuTruTamThoiApiClient();
-
+  final NguoiLuuTruTamThoiApiClient _apiClient = NguoiLuuTruTamThoiApiClient();
 
   Future<List<NguoiLuuTruTamThoi>> getDanhSachLuuTru({int? idnt}) async {
     return await _apiClient.getDanhSachLuuTru(idnt: idnt);

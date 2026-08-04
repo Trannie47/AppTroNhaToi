@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../models/cau_hinh_gia.dart';
 import '../repositories/cauhinhgia_repository.dart';
 
-
 class CauHinhGiaProvider extends ChangeNotifier {
   final CauHinhGiaRepository _repository = CauHinhGiaRepository();
 

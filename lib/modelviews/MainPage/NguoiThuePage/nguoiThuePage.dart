@@ -25,7 +25,8 @@ class NguoiThuePageViewModel extends ChangeNotifier {
       return ten.contains(query) || sdt.contains(query) || cccd.contains(query);
     }).toList();
   }
-  NguoiThuePageViewModel(this._service){
+
+  NguoiThuePageViewModel(this._service) {
     _service.addListener(_onProviderUpdate);
     searchController.addListener(_onSearchChanged);
   }
@@ -43,6 +44,7 @@ class NguoiThuePageViewModel extends ChangeNotifier {
     searchController.dispose();
     super.dispose();
   }
+
   void _onProviderUpdate() {
     notifyListeners();
   }

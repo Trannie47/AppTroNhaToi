@@ -121,10 +121,19 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
               ),
               const Divider(),
               ListTile(
-                leading: const Icon(Icons.do_not_disturb_alt_rounded, color: Colors.orange),
-                title: const Text("Chưa gán phòng", style: TextStyle(fontWeight: FontWeight.w600)),
+                leading: const Icon(
+                  Icons.do_not_disturb_alt_rounded,
+                  color: Colors.orange,
+                ),
+                title: const Text(
+                  "Chưa gán phòng",
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
                 trailing: vm.selectedPhongId == null
-                    ? const Icon(Icons.check_circle_rounded, color: Color(0xff2D7A3A))
+                    ? const Icon(
+                        Icons.check_circle_rounded,
+                        color: Color(0xff2D7A3A),
+                      )
                     : null,
                 onTap: () {
                   vm.selectPhong(null, null);
@@ -147,15 +156,22 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
                     title: Text(
                       "Phòng $tPhong",
                       style: TextStyle(
-                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
-                        color: isSelected ? const Color(0xff2D7A3A) : const Color(0xff1C1C1E),
+                        fontWeight: isSelected
+                            ? FontWeight.w700
+                            : FontWeight.w600,
+                        color: isSelected
+                            ? const Color(0xff2D7A3A)
+                            : const Color(0xff1C1C1E),
                       ),
                     ),
                     subtitle: Text(
                       "Đang thuê từ ${hd.ngayKy != null ? hd.ngayKy.toString().split(' ')[0] : ''}",
                     ),
                     trailing: isSelected
-                        ? const Icon(Icons.check_circle_rounded, color: Color(0xff2D7A3A))
+                        ? const Icon(
+                            Icons.check_circle_rounded,
+                            color: Color(0xff2D7A3A),
+                          )
                         : null,
                     onTap: () {
                       vm.selectPhong(pId, tPhong);
@@ -245,7 +261,9 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          vm.isEditing ? "Cập nhật phương tiện" : "Thêm phương tiện",
+                          vm.isEditing
+                              ? "Cập nhật phương tiện"
+                              : "Thêm phương tiện",
                           style: const TextStyle(
                             fontSize: 21,
                             fontWeight: FontWeight.w700,
@@ -320,7 +338,9 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text("Người thuê này hiện chưa có hợp đồng thuê phòng nào!"),
+                                  content: Text(
+                                    "Người thuê này hiện chưa có hợp đồng thuê phòng nào!",
+                                  ),
                                 ),
                               );
                             }
@@ -332,37 +352,40 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
                             decoration: BoxDecoration(
                               color: const Color(0xffF8F8F8),
                               borderRadius: BorderRadius.circular(16),
-                              border: Border.all(color: const Color(0xffEAEAEA)),
+                              border: Border.all(
+                                color: const Color(0xffEAEAEA),
+                              ),
                             ),
                             child: Row(
                               children: [
                                 Expanded(
                                   child: _isLoadingRoom
                                       ? const Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: SizedBox(
-                                      width: 18,
-                                      height: 18,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: Color(0xff2D7A3A),
-                                      ),
-                                    ),
-                                  )
+                                          alignment: Alignment.centerLeft,
+                                          child: SizedBox(
+                                            width: 18,
+                                            height: 18,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color: Color(0xff2D7A3A),
+                                            ),
+                                          ),
+                                        )
                                       : Text(
-                                    vm.selectedTenPhong != null
-                                        ? "Phòng ${vm.selectedTenPhong}"
-                                        : "Chưa gán phòng",
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: vm.selectedTenPhong != null
-                                          ? FontWeight.w600
-                                          : FontWeight.w400,
-                                      color: vm.selectedTenPhong != null
-                                          ? const Color(0xff1C1C1E)
-                                          : const Color(0xff8E8E93),
-                                    ),
-                                  ),
+                                          vm.selectedTenPhong != null
+                                              ? "Phòng ${vm.selectedTenPhong}"
+                                              : "Chưa gán phòng",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight:
+                                                vm.selectedTenPhong != null
+                                                ? FontWeight.w600
+                                                : FontWeight.w400,
+                                            color: vm.selectedTenPhong != null
+                                                ? const Color(0xff1C1C1E)
+                                                : const Color(0xff8E8E93),
+                                          ),
+                                        ),
                                 ),
                                 Icon(
                                   Icons.keyboard_arrow_down_rounded,
@@ -520,7 +543,10 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
                               color: Color(0xff9E9E9E),
                             ),
                             errorText: vm.errGiaGui,
-                            errorStyle: const TextStyle(color: Colors.red, fontSize: 11),
+                            errorStyle: const TextStyle(
+                              color: Colors.red,
+                              fontSize: 11,
+                            ),
                             filled: true,
                             fillColor: const Color(0xffF8F8F8),
                             contentPadding: const EdgeInsets.symmetric(
@@ -529,11 +555,15 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
                             ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
-                              borderSide: const BorderSide(color: Color(0xffEAEAEA)),
+                              borderSide: const BorderSide(
+                                color: Color(0xffEAEAEA),
+                              ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
-                              borderSide: const BorderSide(color: Color(0xffEAEAEA)),
+                              borderSide: const BorderSide(
+                                color: Color(0xffEAEAEA),
+                              ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
@@ -548,7 +578,10 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
                             ),
                             focusedErrorBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
-                              borderSide: const BorderSide(color: Colors.red, width: 1.2),
+                              borderSide: const BorderSide(
+                                color: Colors.red,
+                                width: 1.2,
+                              ),
                             ),
                           ),
                         ),
@@ -581,28 +614,30 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
               style: ElevatedButton.styleFrom(
                 elevation: 0,
                 backgroundColor: const Color(0xff2D7A3A),
-                disabledBackgroundColor: const Color(0xff2D7A3A).withOpacity(0.6),
+                disabledBackgroundColor: const Color(
+                  0xff2D7A3A,
+                ).withOpacity(0.6),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(18),
                 ),
               ),
               child: vm.isLoading
                   ? const SizedBox(
-                width: 22,
-                height: 22,
-                child: CircularProgressIndicator(
-                  color: Colors.white,
-                  strokeWidth: 2.5,
-                ),
-              )
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2.5,
+                      ),
+                    )
                   : const Text(
-                "Lưu phương tiện",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
-                ),
-              ),
+                      "Lưu phương tiện",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
             ),
           ),
         ),
@@ -627,7 +662,9 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
             color: isSelected ? const Color(0xffE8F5EA) : Colors.white,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isSelected ? const Color(0xff2D7A3A) : const Color(0xffEAEAEA),
+              color: isSelected
+                  ? const Color(0xff2D7A3A)
+                  : const Color(0xffEAEAEA),
             ),
           ),
           child: Row(
@@ -636,7 +673,9 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
               Icon(
                 icon,
                 size: 18,
-                color: isSelected ? const Color(0xff2D7A3A) : const Color(0xff9E9E9E),
+                color: isSelected
+                    ? const Color(0xff2D7A3A)
+                    : const Color(0xff9E9E9E),
               ),
               const SizedBox(width: 6),
               Text(
@@ -644,7 +683,9 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
-                  color: isSelected ? const Color(0xff2D7A3A) : const Color(0xff7A7A7A),
+                  color: isSelected
+                      ? const Color(0xff2D7A3A)
+                      : const Color(0xff7A7A7A),
                 ),
               ),
             ],
@@ -679,10 +720,7 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
       keyboardType: keyboardType,
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: const TextStyle(
-          fontSize: 14,
-          color: Color(0xff9E9E9E),
-        ),
+        hintStyle: const TextStyle(fontSize: 14, color: Color(0xff9E9E9E)),
         errorText: errorText,
         errorStyle: const TextStyle(color: Colors.red, fontSize: 11),
         filled: true,
@@ -701,10 +739,7 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(
-            color: Color(0xff2D7A3A),
-            width: 1.2,
-          ),
+          borderSide: const BorderSide(color: Color(0xff2D7A3A), width: 1.2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),

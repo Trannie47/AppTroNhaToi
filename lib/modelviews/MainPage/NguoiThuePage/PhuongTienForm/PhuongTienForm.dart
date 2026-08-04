@@ -29,15 +29,15 @@ class PhuongTienFormViewModel extends ChangeNotifier {
   String? errMauSac;
   String? errGiaGui;
 
-  PhuongTienFormViewModel({
-    this.phuongTienSua,
-  }) {
+  PhuongTienFormViewModel({this.phuongTienSua}) {
     if (phuongTienSua != null) {
       txtHangXe.text = phuongTienSua!.hangXe ?? "";
       txtBienSo.text = phuongTienSua!.bienSo ?? "";
       txtMauSac.text = phuongTienSua!.mauSac ?? "";
       final gia = phuongTienSua!.giaGui ?? 0;
-      txtGiaGui.text = gia > 0 ? NumberFormat('#,###', 'vi_VN').format(gia).replaceAll(',', '.') : "";
+      txtGiaGui.text = gia > 0
+          ? NumberFormat('#,###', 'vi_VN').format(gia).replaceAll(',', '.')
+          : "";
       loaiXe = phuongTienSua!.loaiXe;
       selectedPhongId = phuongTienSua!.phongId;
       selectedTenPhong = phuongTienSua!.tenPhong;
@@ -85,7 +85,9 @@ class PhuongTienFormViewModel extends ChangeNotifier {
 
   bool validateAll() {
     errHangXe = txtHangXe.text.trim().isEmpty ? "Vui lòng nhập hãng xe" : null;
-    errMauSac = txtMauSac.text.trim().isEmpty ? "Vui lòng nhập màu sắc xe" : null;
+    errMauSac = txtMauSac.text.trim().isEmpty
+        ? "Vui lòng nhập màu sắc xe"
+        : null;
 
     final bienSo = txtBienSo.text.trim();
     if (loaiXe != 2) {
@@ -154,7 +156,8 @@ class PhuongTienFormViewModel extends ChangeNotifier {
     }
 
     if (!success) {
-      _errorMessage = provider.errorMessage ?? "Đã có lỗi xảy ra, vui lòng thử lại!";
+      _errorMessage =
+          provider.errorMessage ?? "Đã có lỗi xảy ra, vui lòng thử lại!";
     }
 
     _isLoading = false;

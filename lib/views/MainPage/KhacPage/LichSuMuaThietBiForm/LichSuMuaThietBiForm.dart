@@ -43,6 +43,7 @@ class _LichSuMuaThietBiFormState extends State<LichSuMuaThietBiForm> {
       });
     }
   }
+
   @override
   void dispose() {
     _soLuongFocus.dispose();
@@ -182,7 +183,10 @@ class _LichSuMuaThietBiFormState extends State<LichSuMuaThietBiForm> {
                   Text(
                     formatMoney(
                       (int.tryParse(vm.txtSoLuong.text.trim()) ?? 0) *
-                         (double.tryParse( vm.txtDonGia.text.replaceAll(".", ""),) ?? 0)
+                          (double.tryParse(
+                                vm.txtDonGia.text.replaceAll(".", ""),
+                              ) ??
+                              0),
                     ),
                     style: const TextStyle(
                       fontSize: 16,
@@ -316,7 +320,6 @@ class _LichSuMuaThietBiFormState extends State<LichSuMuaThietBiForm> {
                   setState(() {});
                 },
               ),
-
 
               _input(
                 title: "Ngày mua",

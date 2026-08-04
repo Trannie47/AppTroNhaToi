@@ -246,7 +246,9 @@ class _HoaDonGuiXePageState extends State<HoaDonGuiXePage> {
                             child: DropdownButton<String>(
                               value: vm.dsNam.contains(vm.namDangChon)
                                   ? vm.namDangChon
-                                  : (vm.dsNam.isNotEmpty ? vm.dsNam.first : null),
+                                  : (vm.dsNam.isNotEmpty
+                                        ? vm.dsNam.first
+                                        : null),
                               icon: const Icon(
                                 Icons.keyboard_arrow_down_rounded,
                                 size: 18,
@@ -281,45 +283,47 @@ class _HoaDonGuiXePageState extends State<HoaDonGuiXePage> {
                     Expanded(
                       child: vm.isLoading
                           ? const Center(
-                        child: CircularProgressIndicator(
-                          color: Color(0xff2D7A3A),
-                        ),
-                      )
+                              child: CircularProgressIndicator(
+                                color: Color(0xff2D7A3A),
+                              ),
+                            )
                           : vm.dsHoaDonTheoNam.isEmpty
                           ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.receipt_long_outlined,
-                              size: 48,
-                              color: Colors.grey.shade400,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              "Không có hóa đơn năm ${vm.namDangChon}",
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: Colors.grey.shade500,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.receipt_long_outlined,
+                                    size: 48,
+                                    color: Colors.grey.shade400,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    "Không có hóa đơn năm ${vm.namDangChon}",
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: Colors.grey.shade500,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                          ],
-                        ),
-                      )
+                            )
                           : ListView.separated(
-                        itemCount: vm.dsHoaDonTheoNam.length,
-                        separatorBuilder: (_, __) =>
-                        const Divider(height: 22, color: Color(0xffF1F1F1)),
-                        itemBuilder: (context, index) {
-                          final hoaDon = vm.dsHoaDonTheoNam[index];
-                          final xe = vm.getXeTheoHoaDon(hoaDon);
+                              itemCount: vm.dsHoaDonTheoNam.length,
+                              separatorBuilder: (_, __) => const Divider(
+                                height: 22,
+                                color: Color(0xffF1F1F1),
+                              ),
+                              itemBuilder: (context, index) {
+                                final hoaDon = vm.dsHoaDonTheoNam[index];
+                                final xe = vm.getXeTheoHoaDon(hoaDon);
 
-                          return ItemHoaDonGuiXe(
-                            hoaDon: hoaDon,
-                            phuongTien: xe,
-                          );
-                        },
-                      ),
+                                return ItemHoaDonGuiXe(
+                                  hoaDon: hoaDon,
+                                  phuongTien: xe,
+                                );
+                              },
+                            ),
                     ),
                   ],
                 ),

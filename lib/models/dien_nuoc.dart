@@ -14,7 +14,8 @@ class DienNuoc {
   final String? anhNuocMoi;
 
   final String? ngayGhi;
-  final int? trangThai;  // 0: bản ghi này chưa chốt hóa đơn, 1: bản ghi này đã chốt hóa đơn
+  final int?
+  trangThai; // 0: bản ghi này chưa chốt hóa đơn, 1: bản ghi này đã chốt hóa đơn
 
   DienNuoc({
     this.phongId,

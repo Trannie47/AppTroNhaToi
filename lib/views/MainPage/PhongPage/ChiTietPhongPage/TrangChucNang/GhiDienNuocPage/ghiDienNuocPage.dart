@@ -25,7 +25,8 @@ class GhiDienNuocPage extends StatelessWidget {
 
         WidgetsBinding.instance.addPostFrameCallback((_) {
           final now = DateTime.now();
-          final currentThangNam = '${now.month.toString().padLeft(2, '0')}/${now.year}';
+          final currentThangNam =
+              '${now.month.toString().padLeft(2, '0')}/${now.year}';
           vm.init(phongId, currentThangNam);
         });
         return vm;
@@ -39,10 +40,7 @@ class _GhiDienNuocView extends StatelessWidget {
   final int phongId;
   final String tenPhong;
 
-  const _GhiDienNuocView({
-    required this.phongId,
-    required this.tenPhong,
-  });
+  const _GhiDienNuocView({required this.phongId, required this.tenPhong});
 
   @override
   Widget build(BuildContext context) {
@@ -69,9 +67,20 @@ class _GhiDienNuocView extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      CircularProgressIndicator(color: Colors.white, strokeWidth: 3),
+                      CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 3,
+                      ),
                       SizedBox(height: 16),
-                      Text('Đang xử lý...', style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w500, decoration: TextDecoration.none)),
+                      Text(
+                        'Đang xử lý...',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                          decoration: TextDecoration.none,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -92,8 +101,12 @@ class _GhiDienNuocView extends StatelessWidget {
           GestureDetector(
             onTap: () => Navigator.pop(context),
             child: Container(
-              width: 40, height: 40,
-              decoration: const BoxDecoration(color: Color(0xffF6F6F6), shape: BoxShape.circle),
+              width: 40,
+              height: 40,
+              decoration: const BoxDecoration(
+                color: Color(0xffF6F6F6),
+                shape: BoxShape.circle,
+              ),
               child: const Icon(Icons.arrow_back_ios_new, size: 18),
             ),
           ),
@@ -102,7 +115,10 @@ class _GhiDienNuocView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Ghi điện nước', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                const Text(
+                  'Ghi điện nước',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
                 Text('Phòng $tenPhong '),
               ],
             ),
@@ -114,7 +130,9 @@ class _GhiDienNuocView extends StatelessWidget {
 
   Widget _buildBody(BuildContext context, GhiDienNuocPageViewModel vm) {
     if (vm.isLoading) {
-      return const Center(child: CircularProgressIndicator(color: Color(0xff4B7A47)));
+      return const Center(
+        child: CircularProgressIndicator(color: Color(0xff4B7A47)),
+      );
     }
 
     if (vm.errorMessage != null) {
@@ -126,17 +144,25 @@ class _GhiDienNuocView extends StatelessWidget {
             const SizedBox(height: 16),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Text(vm.errorMessage!, textAlign: TextAlign.center, style: const TextStyle(color: Colors.red, fontSize: 16)),
+              child: Text(
+                vm.errorMessage!,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.red, fontSize: 16),
+              ),
             ),
             const SizedBox(height: 16),
             ElevatedButton.icon(
               onPressed: () {
-                final formatThangNam = "${vm.selectedDate.month.toString().padLeft(2, '0')}/${vm.selectedDate.year}";
+                final formatThangNam =
+                    "${vm.selectedDate.month.toString().padLeft(2, '0')}/${vm.selectedDate.year}";
                 vm.init(phongId, formatThangNam);
               },
               icon: const Icon(Icons.refresh),
               label: const Text('Thử lại'),
-              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xff4B7A47), foregroundColor: Colors.white),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xff4B7A47),
+                foregroundColor: Colors.white,
+              ),
             ),
           ],
         ),
@@ -180,19 +206,36 @@ class _GhiDienNuocView extends StatelessWidget {
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(color: const Color(0xffE8F5E9), borderRadius: BorderRadius.circular(12)),
+        decoration: BoxDecoration(
+          color: const Color(0xffE8F5E9),
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Ngày ghi chỉ số', style: TextStyle(fontSize: 13, color: Color(0xff4B7A47), fontWeight: FontWeight.w500)),
+                Text(
+                  'Ngày ghi chỉ số',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Color(0xff4B7A47),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
                 Icon(Icons.calendar_today, size: 16, color: Color(0xff4B7A47)),
               ],
             ),
             const SizedBox(height: 8),
-            Text(ngayHienThi, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xff4B7A47))),
+            Text(
+              ngayHienThi,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Color(0xff4B7A47),
+              ),
+            ),
           ],
         ),
       ),
@@ -202,41 +245,72 @@ class _GhiDienNuocView extends StatelessWidget {
   Widget _buildDienCard(BuildContext context, GhiDienNuocPageViewModel vm) {
     return _buildMeterCard(
       context: context,
-      title: 'Chỉ số điện (kWh)', unit: 'kWh', headerColor: const Color(0xff2D7A3A), newBorderColor: const Color(0xff2D7A3A),
-      cuController: vm.dienCuController, moiController: vm.dienMoiController,
-      cuImageFile: vm.anhDienCuFile, moiImageFile: vm.anhDienMoiFile,
-      imageUrlCu: vm.urlAnhDienCu, imageUrlMoi: vm.urlAnhDienMoi,
-      onPickCu: () => vm.pickImage('dienCu'), onPickMoi: () => vm.pickImage('dienMoi'),
+      title: 'Chỉ số điện (kWh)',
+      unit: 'kWh',
+      headerColor: const Color(0xff2D7A3A),
+      newBorderColor: const Color(0xff2D7A3A),
+      cuController: vm.dienCuController,
+      moiController: vm.dienMoiController,
+      cuImageFile: vm.anhDienCuFile,
+      moiImageFile: vm.anhDienMoiFile,
+      imageUrlCu: vm.urlAnhDienCu,
+      imageUrlMoi: vm.urlAnhDienMoi,
+      onPickCu: () => vm.pickImage('dienCu'),
+      onPickMoi: () => vm.pickImage('dienMoi'),
     );
   }
 
   Widget _buildNuocCard(BuildContext context, GhiDienNuocPageViewModel vm) {
     return _buildMeterCard(
       context: context,
-      title: 'Chỉ số nước (m³)', unit: 'm³', headerColor: const Color(0xff1565C0), newBorderColor: const Color(0xff4F46E5),
-      cuController: vm.nuocCuController, moiController: vm.nuocMoiController,
-      cuImageFile: vm.anhNuocCuFile, moiImageFile: vm.anhNuocMoiFile,
-      imageUrlCu: vm.urlAnhNuocCu, imageUrlMoi: vm.urlAnhNuocMoi,
-      onPickCu: () => vm.pickImage('nuocCu'), onPickMoi: () => vm.pickImage('nuocMoi'),
+      title: 'Chỉ số nước (m³)',
+      unit: 'm³',
+      headerColor: const Color(0xff1565C0),
+      newBorderColor: const Color(0xff4F46E5),
+      cuController: vm.nuocCuController,
+      moiController: vm.nuocMoiController,
+      cuImageFile: vm.anhNuocCuFile,
+      moiImageFile: vm.anhNuocMoiFile,
+      imageUrlCu: vm.urlAnhNuocCu,
+      imageUrlMoi: vm.urlAnhNuocMoi,
+      onPickCu: () => vm.pickImage('nuocCu'),
+      onPickMoi: () => vm.pickImage('nuocMoi'),
     );
   }
 
   Widget _buildMeterCard({
     required BuildContext context,
-    required String title, required String unit, required Color headerColor, required Color newBorderColor,
-    required TextEditingController cuController, required TextEditingController moiController,
-    required File? cuImageFile, required File? moiImageFile,
-    required String? imageUrlCu, required String? imageUrlMoi,
-    required VoidCallback onPickCu, required VoidCallback onPickMoi,
+    required String title,
+    required String unit,
+    required Color headerColor,
+    required Color newBorderColor,
+    required TextEditingController cuController,
+    required TextEditingController moiController,
+    required File? cuImageFile,
+    required File? moiImageFile,
+    required String? imageUrlCu,
+    required String? imageUrlMoi,
+    required VoidCallback onPickCu,
+    required VoidCallback onPickMoi,
   }) {
     return Container(
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
-            child: Text(title, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: headerColor)),
+            child: Text(
+              title,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: headerColor,
+              ),
+            ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -244,11 +318,21 @@ class _GhiDienNuocView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: _buildInputColumn(label: 'Chỉ số cũ', controller: cuController, unit: unit, borderColor: Colors.grey.shade400),
+                  child: _buildInputColumn(
+                    label: 'Chỉ số cũ',
+                    controller: cuController,
+                    unit: unit,
+                    borderColor: Colors.grey.shade400,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: _buildInputColumn(label: 'Chỉ số mới', controller: moiController, unit: unit, borderColor: newBorderColor),
+                  child: _buildInputColumn(
+                    label: 'Chỉ số mới',
+                    controller: moiController,
+                    unit: unit,
+                    borderColor: newBorderColor,
+                  ),
                 ),
               ],
             ),
@@ -258,9 +342,21 @@ class _GhiDienNuocView extends StatelessWidget {
             padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
             child: Row(
               children: [
-                _buildImageBox(context: context, title: 'Ảnh tháng cũ', imageFile: cuImageFile, imageUrl: imageUrlCu, onTap: onPickCu),
+                _buildImageBox(
+                  context: context,
+                  title: 'Ảnh tháng cũ',
+                  imageFile: cuImageFile,
+                  imageUrl: imageUrlCu,
+                  onTap: onPickCu,
+                ),
                 const SizedBox(width: 12),
-                _buildImageBox(context: context, title: 'Ảnh tháng mới', imageFile: moiImageFile, imageUrl: imageUrlMoi, onTap: onPickMoi),
+                _buildImageBox(
+                  context: context,
+                  title: 'Ảnh tháng mới',
+                  imageFile: moiImageFile,
+                  imageUrl: imageUrlMoi,
+                  onTap: onPickMoi,
+                ),
               ],
             ),
           ),
@@ -270,17 +366,27 @@ class _GhiDienNuocView extends StatelessWidget {
   }
 
   Widget _buildInputColumn({
-    required String label, required TextEditingController controller, required String unit, required Color borderColor,
+    required String label,
+    required TextEditingController controller,
+    required String unit,
+    required Color borderColor,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+        ),
         const SizedBox(height: 8),
         Container(
           height: 48,
           padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10), border: Border.all(color: borderColor)),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: borderColor),
+          ),
           child: Row(
             children: [
               Expanded(
@@ -288,10 +394,19 @@ class _GhiDienNuocView extends StatelessWidget {
                   controller: controller,
                   keyboardType: TextInputType.number,
                   inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly, // lọc ko cho nhập những kí tự ngoài kí tự số
+                    FilteringTextInputFormatter
+                        .digitsOnly, // lọc ko cho nhập những kí tự ngoài kí tự số
                   ],
-                  decoration: const InputDecoration(hintText: '0', border: InputBorder.none, isDense: true),
-                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black),
+                  decoration: const InputDecoration(
+                    hintText: '0',
+                    border: InputBorder.none,
+                    isDense: true,
+                  ),
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
               ),
               Text(unit, style: TextStyle(color: Colors.grey.shade600)),
@@ -313,9 +428,15 @@ class _GhiDienNuocView extends StatelessWidget {
     // Xác định hình thức hiển thị ảnh
     DecorationImage? imageDecoration;
     if (imageFile != null) {
-      imageDecoration = DecorationImage(image: FileImage(imageFile), fit: BoxFit.cover);
+      imageDecoration = DecorationImage(
+        image: FileImage(imageFile),
+        fit: BoxFit.cover,
+      );
     } else if (imageUrl != null && imageUrl.isNotEmpty) {
-      imageDecoration = DecorationImage(image: NetworkImage(imageUrl), fit: BoxFit.cover);
+      imageDecoration = DecorationImage(
+        image: NetworkImage(imageUrl),
+        fit: BoxFit.cover,
+      );
     }
 
     return Expanded(
@@ -325,10 +446,17 @@ class _GhiDienNuocView extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(title, style: TextStyle(fontSize: 11, color: Colors.grey.shade600)),
+              Text(
+                title,
+                style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+              ),
               GestureDetector(
                 onTap: onTap,
-                child: const Icon(Icons.add_a_photo, size: 16, color: Color(0xff4B7A47)),
+                child: const Icon(
+                  Icons.add_a_photo,
+                  size: 16,
+                  color: Color(0xff4B7A47),
+                ),
               ),
             ],
           ),
@@ -344,7 +472,8 @@ class _GhiDienNuocView extends StatelessWidget {
               }
             },
             child: Container(
-              height: 100, width: double.infinity,
+              height: 100,
+              width: double.infinity,
               decoration: BoxDecoration(
                 color: const Color(0xffF9F9F9),
                 borderRadius: BorderRadius.circular(8),
@@ -353,15 +482,25 @@ class _GhiDienNuocView extends StatelessWidget {
               ),
               child: imageDecoration == null
                   ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.add_a_photo_outlined, color: Colors.grey.shade400, size: 28),
-                    const SizedBox(height: 4),
-                    Text('Chưa có ảnh', style: TextStyle(fontSize: 10, color: Colors.grey.shade400)),
-                  ],
-                ),
-              )
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.add_a_photo_outlined,
+                            color: Colors.grey.shade400,
+                            size: 28,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Chưa có ảnh',
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.grey.shade400,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
                   : null,
             ),
           ),
@@ -386,7 +525,9 @@ class _GhiDienNuocView extends StatelessWidget {
         child: Stack(
           alignment: Alignment.topRight,
           children: [
-            InteractiveViewer(child: Image(image: imageProvider, fit: BoxFit.contain)),
+            InteractiveViewer(
+              child: Image(image: imageProvider, fit: BoxFit.contain),
+            ),
             IconButton(
               icon: const Icon(Icons.close, color: Colors.white, size: 30),
               onPressed: () => Navigator.pop(context),
@@ -399,17 +540,26 @@ class _GhiDienNuocView extends StatelessWidget {
 
   Widget _buildSaveButton(BuildContext context, GhiDienNuocPageViewModel vm) {
     return SizedBox(
-      width: double.infinity, height: 54,
+      width: double.infinity,
+      height: 54,
       child: ElevatedButton(
         onPressed: () => vm.createDienNuoc(context),
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xff4B7A47),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           elevation: 0,
         ),
         child: Text(
-          vm.mode == 'UPDATE' ? 'Cập nhật chỉ số điện nước' : 'Lưu chỉ số điện nước',
-          style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+          vm.mode == 'UPDATE'
+              ? 'Cập nhật chỉ số điện nước'
+              : 'Lưu chỉ số điện nước',
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );

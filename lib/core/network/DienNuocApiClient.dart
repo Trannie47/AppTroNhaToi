@@ -11,10 +11,7 @@ class DienNuocApiClient {
     try {
       final response = await _dio.get(
         "dien-nuoc/init",
-        queryParameters: {
-          "phongId": phongId,
-          "thangNam": thangNam,
-        },
+        queryParameters: {"phongId": phongId, "thangNam": thangNam},
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -24,7 +21,9 @@ class DienNuocApiClient {
           throw Exception("Dữ liệu trả về không đúng định dạng.");
         }
       }
-      throw Exception("Lỗi khi tải dữ liệu khởi tạo. Mã lỗi: ${response.statusCode}");
+      throw Exception(
+        "Lỗi khi tải dữ liệu khởi tạo. Mã lỗi: ${response.statusCode}",
+      );
     } on DioException catch (e) {
       if (kDebugMode) {
         print("Lỗi DienNuocApiClient.getInitData: $e");
@@ -39,12 +38,12 @@ class DienNuocApiClient {
   }
 
   Future<Map<String, dynamic>> createDienNuoc(
-      DienNuoc dienNuoc, {
-        String? anhDienCuPath,
-        String? anhDienMoiPath,
-        String? anhNuocCuPath,
-        String? anhNuocMoiPath,
-      }) async {
+    DienNuoc dienNuoc, {
+    String? anhDienCuPath,
+    String? anhDienMoiPath,
+    String? anhNuocCuPath,
+    String? anhNuocMoiPath,
+  }) async {
     try {
       final Map<String, dynamic> dataMap = {
         "phongId": dienNuoc.phongId,
@@ -92,13 +91,14 @@ class DienNuocApiClient {
       throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
     }
   }
+
   Future<Map<String, dynamic>> updateDienNuoc(
-      DienNuoc dienNuoc, {
-        String? anhDienCuPath,
-        String? anhDienMoiPath,
-        String? anhNuocCuPath,
-        String? anhNuocMoiPath,
-      }) async {
+    DienNuoc dienNuoc, {
+    String? anhDienCuPath,
+    String? anhDienMoiPath,
+    String? anhNuocCuPath,
+    String? anhNuocMoiPath,
+  }) async {
     try {
       final Map<String, dynamic> dataMap = {
         "chiSoDienCu": dienNuoc.chiSoDienCu,
@@ -108,10 +108,14 @@ class DienNuocApiClient {
         "ngayGhi": dienNuoc.ngayGhi,
       };
 
-      if (anhDienCuPath != null) dataMap["anhDienCu"] = await MultipartFile.fromFile(anhDienCuPath);
-      if (anhDienMoiPath != null) dataMap["anhDienMoi"] = await MultipartFile.fromFile(anhDienMoiPath);
-      if (anhNuocCuPath != null) dataMap["anhNuocCu"] = await MultipartFile.fromFile(anhNuocCuPath);
-      if (anhNuocMoiPath != null) dataMap["anhNuocMoi"] = await MultipartFile.fromFile(anhNuocMoiPath);
+      if (anhDienCuPath != null)
+        dataMap["anhDienCu"] = await MultipartFile.fromFile(anhDienCuPath);
+      if (anhDienMoiPath != null)
+        dataMap["anhDienMoi"] = await MultipartFile.fromFile(anhDienMoiPath);
+      if (anhNuocCuPath != null)
+        dataMap["anhNuocCu"] = await MultipartFile.fromFile(anhNuocCuPath);
+      if (anhNuocMoiPath != null)
+        dataMap["anhNuocMoi"] = await MultipartFile.fromFile(anhNuocMoiPath);
 
       final formData = FormData.fromMap(dataMap);
 
@@ -135,7 +139,6 @@ class DienNuocApiClient {
       throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
     }
   }
-
 
   String _mapErrorToMessage(DioException e) {
     if (e.type == DioExceptionType.receiveTimeout ||

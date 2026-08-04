@@ -37,9 +37,7 @@ class NguoithueRepository {
     return nguoiThueApiClient.getAvailableRepresentatives(ngayKy: ngayKy);
   }
 
-  Future<List<NguoiThueAvailableDTO>> getAvailableMembers({
-    int? excludeIdnt,
-  }) {
+  Future<List<NguoiThueAvailableDTO>> getAvailableMembers({int? excludeIdnt}) {
     return nguoiThueApiClient.getAvailableMembers(excludeIdnt: excludeIdnt);
   }
 

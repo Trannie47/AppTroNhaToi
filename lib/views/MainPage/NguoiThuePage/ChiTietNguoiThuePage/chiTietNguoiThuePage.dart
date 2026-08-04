@@ -21,10 +21,7 @@ import '../hoaDonGuiXePage/hoaDonGuiXePage.dart';
 class ChiTietNguoiThuePage extends StatefulWidget {
   final NguoiThue nguoiThue;
 
-  const ChiTietNguoiThuePage({
-    super.key,
-    required this.nguoiThue,
-  });
+  const ChiTietNguoiThuePage({super.key, required this.nguoiThue});
 
   @override
   State<ChiTietNguoiThuePage> createState() => _ChiTietNguoiThuePageState();
@@ -33,14 +30,18 @@ class ChiTietNguoiThuePage extends StatefulWidget {
 class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
   late ChiTietNguoiThuePageViewModel vm;
   late PhuongTienNguoiThuePageViewModel viewmodel;
-  late NguoiThue _currentNguoiThue; //Tạo biến thay đổi dữ liệu nội bộ màn hình khi upadte nguoi thue
+  late NguoiThue
+  _currentNguoiThue; //Tạo biến thay đổi dữ liệu nội bộ màn hình khi upadte nguoi thue
 
   @override
   void initState() {
     super.initState();
     _currentNguoiThue = widget.nguoiThue;
     vm = ChiTietNguoiThuePageViewModel(context.read<NguoiThueProvider>());
-    viewmodel= PhuongTienNguoiThuePageViewModel(nguoiThue: _currentNguoiThue, provider: context.read<PhuongTienProvider>());
+    viewmodel = PhuongTienNguoiThuePageViewModel(
+      nguoiThue: _currentNguoiThue,
+      provider: context.read<PhuongTienProvider>(),
+    );
     vm.addListener(() {
       if (mounted) {
         setState(() {});
@@ -49,9 +50,9 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       vm.fetchRoomByNguoiThue(widget.nguoiThue.idnt!);
-      viewmodel.fetchDsPhuongTien();// gọi api lấy ds phương tiên để gửi vào màn hóa dơn phươn tiện
+      viewmodel
+          .fetchDsPhuongTien(); // gọi api lấy ds phương tiên để gửi vào màn hóa dơn phươn tiện
     }); //Kích hoạt gọi api lấy ds phòng theo id ngthue
-
   }
 
   @override
@@ -77,7 +78,8 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
       ),
     );
   }
-  void openNguoiLuuTruTamThoi(){
+
+  void openNguoiLuuTruTamThoi() {
     List<HopDong> dsHD = [];
     if (vm.chiTietNguoiThueState is ChiTietNguoiThueSuccess) {
       dsHD = (vm.chiTietNguoiThueState as ChiTietNguoiThueSuccess).listHD;
@@ -95,6 +97,7 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
       ),
     );
   }
+
   Future<void> _diChuyenDenFormCapNhat() async {
     final result = await Navigator.push(
       context,
@@ -110,20 +113,24 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
       });
     }
   }
+
   void openHoaDonGuiXePage() async {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => HoaDonGuiXePage(
-            dsPhuongTien: viewmodel.dsPhuongTien, // Truyền thẳng danh sách xe đã fetch sẵn
-            tenKhachThue: widget.nguoiThue.hoTen ?? "Khách thuê",
-          ),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => HoaDonGuiXePage(
+          dsPhuongTien:
+              viewmodel.dsPhuongTien, // Truyền thẳng danh sách xe đã fetch sẵn
+          tenKhachThue: widget.nguoiThue.hoTen ?? "Khách thuê",
         ),
-      );
+      ),
+    );
   }
+
   @override
   Widget build(BuildContext context) {
-    final detail =_currentNguoiThue; // lấy dữ liệu người thuê được gửi từ mà trước qua
+    final detail =
+        _currentNguoiThue; // lấy dữ liệu người thuê được gửi từ mà trước qua
     return Scaffold(
       backgroundColor: const Color(0xffF7F8FC),
 
@@ -215,11 +222,11 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                       _diChuyenDenFormCapNhat();
                       break;
                     case 'vehicle':
-                        openPhuongTienPage();
+                      openPhuongTienPage();
                       break;
 
                     case 'parking_bill':
-                     openHoaDonGuiXePage();
+                      openHoaDonGuiXePage();
                       break;
 
                     case 'guest':
@@ -342,12 +349,12 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
 
                     const SizedBox(height: 4),
 
-                     Text(
-                       detail.trangThai==0
-                           ? "Chưa có hợp đồng"
-                       : detail.trangThai==1
-                       ? "Đang thuê hoạt động"
-                       : "Đã dọn đi",
+                    Text(
+                      detail.trangThai == 0
+                          ? "Chưa có hợp đồng"
+                          : detail.trangThai == 1
+                          ? "Đang thuê hoạt động"
+                          : "Đã dọn đi",
                       style: TextStyle(
                         color: detail.trangThai == 0
                             ? Colors.orange.shade700
@@ -364,7 +371,8 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                       children: [
                         Expanded(
                           child: GestureDetector(
-                            onTap: () => LauncherUtils.goidien(detail.sdt ?? ""),
+                            onTap: () =>
+                                LauncherUtils.goidien(detail.sdt ?? ""),
                             child: _actionButton(
                               const Icon(
                                 Icons.call_outlined,
@@ -379,7 +387,8 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
 
                         Expanded(
                           child: GestureDetector(
-                            onTap: () => LauncherUtils.nhantin(detail.sdt ?? ""),
+                            onTap: () =>
+                                LauncherUtils.nhantin(detail.sdt ?? ""),
                             child: _actionButton(
                               const Icon(
                                 Icons.message_outlined,
@@ -446,64 +455,70 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
 
                   const SizedBox(height: 18),
                   _section(
-                    title: switch(vm.chiTietNguoiThueState){
-                      ChiTietNguoiThueSuccess(listHD: final list) => "Phòng đang thuê (${list.length})",
+                    title: switch (vm.chiTietNguoiThueState) {
+                      ChiTietNguoiThueSuccess(listHD: final list) =>
+                        "Phòng đang thuê (${list.length})",
                       _ => "Phòng đang thuê (...)",
                     },
                     action: "Xem thêm",
-                    child: switch(vm.chiTietNguoiThueState){
+                    child: switch (vm.chiTietNguoiThueState) {
                       ChiTietNguoiThueLoading() => const Center(
                         child: Padding(
                           padding: EdgeInsets.all(16.0),
-                          child: CircularProgressIndicator(color: Color(0xff2D7A3A)),
+                          child: CircularProgressIndicator(
+                            color: Color(0xff2D7A3A),
+                          ),
                         ),
                       ),
                       ChiTietNguoithueError(message: final msg) =>
-                      AppErrorWidget(
-                        message: msg,
-                        onRetry: (){
-                          vm.fetchRoomByNguoiThue(widget.nguoiThue.idnt!);
-                        },
-                      ),
-
-
-                      ChiTietNguoiThueSuccess(listHD: final list) => list.isEmpty
-                          ? const Padding(
-                        padding: EdgeInsets.all(24.0),
-                        child: Text(
-                          "Người này hiện chưa thuê phòng nào",
-                          style: TextStyle(color: Colors.grey, fontSize: 13),
+                        AppErrorWidget(
+                          message: msg,
+                          onRetry: () {
+                            vm.fetchRoomByNguoiThue(widget.nguoiThue.idnt!);
+                          },
                         ),
-                      )
-                          : Column(
-                        children: list.asMap().entries.map((e) {
-                          final index = e.key;
-                          final hopDong = e.value;
-                          final phong = hopDong.phong;
-                          final loaiPhong = phong?.loaiPhong;
 
-                          String chuoiNgay = "Chưa rõ ngày ký";
-                          if (hopDong.ngayKy != null) {
-                            chuoiNgay = "Đang thuê từ ${formatDate(hopDong.ngayKy)}";
-                          }
+                      ChiTietNguoiThueSuccess(listHD: final list) =>
+                        list.isEmpty
+                            ? const Padding(
+                                padding: EdgeInsets.all(24.0),
+                                child: Text(
+                                  "Người này hiện chưa thuê phòng nào",
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              )
+                            : Column(
+                                children: list.asMap().entries.map((e) {
+                                  final index = e.key;
+                                  final hopDong = e.value;
+                                  final phong = hopDong.phong;
+                                  final loaiPhong = phong?.loaiPhong;
 
-                          return Column(
-                            children: [
-                              _itemPhong(
-                                phong?.tenPhong != null
-                                    ? "P${phong?.tenPhong}"
-                                    : "P??",
-                                "Phòng ${phong?.tenPhong ?? "P??"} · ${loaiPhong?.tenLoaiPhong ?? "Chưa rõ loại"}",
-                                chuoiNgay,
+                                  String chuoiNgay = "Chưa rõ ngày ký";
+                                  if (hopDong.ngayKy != null) {
+                                    chuoiNgay =
+                                        "Đang thuê từ ${formatDate(hopDong.ngayKy)}";
+                                  }
+
+                                  return Column(
+                                    children: [
+                                      _itemPhong(
+                                        phong?.tenPhong != null
+                                            ? "P${phong?.tenPhong}"
+                                            : "P??",
+                                        "Phòng ${phong?.tenPhong ?? "P??"} · ${loaiPhong?.tenLoaiPhong ?? "Chưa rõ loại"}",
+                                        chuoiNgay,
+                                      ),
+                                      if (index != list.length - 1)
+                                        const Divider(height: 0.5),
+                                    ],
+                                  );
+                                }).toList(),
                               ),
-                              if (index != list.length - 1)
-                                const Divider(height: 0.5),
-                            ],
-                          );
-                        }).toList(),
-                      ),
-
-                    }
+                    },
                   ),
 
                   const SizedBox(height: 24),
@@ -536,7 +551,6 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                         ),
                       ),
                     ),
-
                   ),
                 ],
               ),
@@ -550,10 +564,12 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
   Future<void> _thucHienXoaNguoiThue() async {
     final confirmDelete = await showDialog<bool>(
       context: context,
-      barrierDismissible: false,// ngăn người dùng nhấn ra ngoài làm trả về null
+      barrierDismissible:
+          false, // ngăn người dùng nhấn ra ngoài làm trả về null
       builder: (dialogContext) => AppConfirmDialog(
         title: "Ẩn người thuê",
-        content: "Bạn có chắc chắn muốn ẩn người thuê ${widget.nguoiThue.hoTen} không?",
+        content:
+            "Bạn có chắc chắn muốn ẩn người thuê ${widget.nguoiThue.hoTen} không?",
         textConfirm: "Ẩn ngay",
         isDangerous: true,
         onConfirm: () {
@@ -720,7 +736,8 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                     color: Color(0xff1C1C1E),
                   ),
                   maxLines: 1,
-                  overflow: TextOverflow.ellipsis, // Đề phòng tên phòng quá dài tự chấm chấm
+                  overflow: TextOverflow
+                      .ellipsis, // Đề phòng tên phòng quá dài tự chấm chấm
                 ),
 
                 const SizedBox(height: 4),

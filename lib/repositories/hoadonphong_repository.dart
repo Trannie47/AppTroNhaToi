@@ -61,11 +61,16 @@ class HoaDonPhongRepository {
   Future<bool> deleteHoaDonPhong({required String maHoaDon}) async {
     return await _apiClient.deleteHoaDonPhong(maHoaDon: maHoaDon);
   }
-  Future<List<Map<String, dynamic>>> getTatCaHoaDonQuanLy({String? thangNam}) async {
+
+  Future<List<Map<String, dynamic>>> getTatCaHoaDonQuanLy({
+    String? thangNam,
+  }) async {
     return await _apiClient.getTatCaHoaDonQuanLy(thangNam: thangNam);
   }
 
-  Future<Map<String, dynamic>> getChiTietHoaDon({required String maHoaDon}) async {
+  Future<Map<String, dynamic>> getChiTietHoaDon({
+    required String maHoaDon,
+  }) async {
     return await _apiClient.getChiTietHoaDon(maHoaDon: maHoaDon);
   }
 }

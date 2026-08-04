@@ -27,7 +27,7 @@ class CapNhatThanhToanDienNuocDialog extends StatelessWidget {
     final integerPart = amount.round().toString();
     final formatted = integerPart.replaceAllMapped(
       RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-          (Match m) => '${m[1]}.',
+      (Match m) => '${m[1]}.',
     );
     return "${formatted}đ";
   }
@@ -49,8 +49,13 @@ class CapNhatThanhToanDienNuocDialog extends StatelessWidget {
         builder: (context, vm, child) {
           return Dialog(
             backgroundColor: Colors.white,
-            insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            insetPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 24,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -76,14 +81,21 @@ class CapNhatThanhToanDienNuocDialog extends StatelessWidget {
                             const SizedBox(height: 2),
                             Text(
                               "Kỳ tháng $thangNam (Lần $lanGhi)",
-                              style: const TextStyle(fontSize: 12, color: Colors.grey),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey,
+                              ),
                             ),
                           ],
                         ),
                       ),
                       IconButton(
                         onPressed: () => Navigator.pop(context, false),
-                        icon: const Icon(Icons.close, size: 20, color: Colors.grey),
+                        icon: const Icon(
+                          Icons.close,
+                          size: 20,
+                          color: Colors.grey,
+                        ),
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
                       ),
@@ -102,10 +114,20 @@ class CapNhatThanhToanDienNuocDialog extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("Tổng tiền Điện Nước:", style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                        const Text(
+                          "Tổng tiền Điện Nước:",
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                         Text(
                           _formatMoney(vm.tongTienDN),
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xff1565C0)),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xff1565C0),
+                          ),
                         ),
                       ],
                     ),
@@ -122,27 +144,49 @@ class CapNhatThanhToanDienNuocDialog extends StatelessWidget {
                       ),
                       child: const Row(
                         children: [
-                          Icon(Icons.check_circle, color: Color(0xff2E7D32), size: 18),
+                          Icon(
+                            Icons.check_circle,
+                            color: Color(0xff2E7D32),
+                            size: 18,
+                          ),
                           SizedBox(width: 8),
                           Expanded(
                             child: Text(
                               "Hóa đơn điện nước này đã được thanh toán!",
-                              style: TextStyle(color: Color(0xff2E7D32), fontWeight: FontWeight.bold, fontSize: 12),
+                              style: TextStyle(
+                                color: Color(0xff2E7D32),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                              ),
                             ),
                           ),
                         ],
                       ),
                     ),
                   ] else ...[
-                    const Text("Ghi chú thu tiền:", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                    const Text(
+                      "Ghi chú thu tiền:",
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const SizedBox(height: 6),
                     TextField(
                       controller: vm.txtGhiChu,
                       decoration: InputDecoration(
                         hintText: "VD: Đã thu tiền mặt từ đại diện phòng...",
-                        hintStyle: const TextStyle(fontSize: 12, color: Colors.grey),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                        hintStyle: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey,
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 10,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
                     ),
                   ],
@@ -151,7 +195,11 @@ class CapNhatThanhToanDienNuocDialog extends StatelessWidget {
                     const SizedBox(height: 10),
                     Text(
                       vm.errorMessage!,
-                      style: const TextStyle(color: Colors.red, fontSize: 12, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        color: Colors.red,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
 
@@ -165,9 +213,17 @@ class CapNhatThanhToanDienNuocDialog extends StatelessWidget {
                           onPressed: () => Navigator.pop(context, false),
                           style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
-                          child: const Text("Hủy", style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)),
+                          child: const Text(
+                            "Hủy",
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ),
                       if (!vm.isPaid) ...[
@@ -177,22 +233,36 @@ class CapNhatThanhToanDienNuocDialog extends StatelessWidget {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xff1565C0),
                               padding: const EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                             ),
                             onPressed: vm.isLoading
                                 ? null
                                 : () async {
-                              final success = await vm.submitPhieuThuDienNuoc();
-                              if (context.mounted && success) {
-                                Navigator.pop(context, true);
-                              }
-                            },
+                                    final success = await vm
+                                        .submitPhieuThuDienNuoc();
+                                    if (context.mounted && success) {
+                                      Navigator.pop(context, true);
+                                    }
+                                  },
                             child: vm.isLoading
-                                ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                                ? const SizedBox(
+                                    width: 18,
+                                    height: 18,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  )
                                 : const Text(
-                              "XÁC NHẬN THU TIỀN",
-                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
-                            ),
+                                    "XÁC NHẬN THU TIỀN",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13,
+                                    ),
+                                  ),
                           ),
                         ),
                       ],

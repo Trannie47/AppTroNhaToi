@@ -72,7 +72,7 @@ class NguoiThue {
       sdt: sdt ?? this.sdt,
       queQuan: queQuan ?? this.queQuan,
       ghiChu: ghiChu ?? this.ghiChu,
-      trangThai: trangThai?? this.trangThai,
+      trangThai: trangThai ?? this.trangThai,
       gioiTinh: gioiTinh ?? this.gioiTinh,
     );
   }

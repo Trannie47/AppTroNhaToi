@@ -33,7 +33,9 @@ class PhieuThuHangThang {
       ngayThu: map['ngayThu'] != null
           ? DateTime.tryParse(map['ngayThu'].toString())
           : null,
-      soTien: parseDouble(map['soTien']), // Parse an toànDecimal/String từ Prisma
+      soTien: parseDouble(
+        map['soTien'],
+      ), // Parse an toànDecimal/String từ Prisma
       ghiChu: map['ghiChu'] as String?,
       maHoaDon: map['maHoaDon']?.toString(),
     );

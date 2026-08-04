@@ -38,7 +38,11 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
           surfaceTintColor: Colors.white,
           leadingWidth: 40,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new, size: 18, color: Colors.black),
+            icon: const Icon(
+              Icons.arrow_back_ios_new,
+              size: 18,
+              color: Colors.black,
+            ),
             onPressed: () => Navigator.pop(context),
           ),
           titleSpacing: 0,
@@ -58,10 +62,18 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
             // Tính toán tổng tiền thực tế từ dữ liệu trả về của backend
             double tongDaThu = filteredList
                 .where((e) => (e['trangThai'] ?? 0) == 2)
-                .fold(0, (sum, item) => sum + ((item['soTien'] as num?)?.toDouble() ?? 0));
+                .fold(
+                  0,
+                  (sum, item) =>
+                      sum + ((item['soTien'] as num?)?.toDouble() ?? 0),
+                );
             double tongChuaThu = filteredList
                 .where((e) => (e['trangThai'] ?? 0) != 2)
-                .fold(0, (sum, item) => sum + ((item['soTien'] as num?)?.toDouble() ?? 0));
+                .fold(
+                  0,
+                  (sum, item) =>
+                      sum + ((item['soTien'] as num?)?.toDouble() ?? 0),
+                );
 
             return Column(
               children: [
@@ -81,9 +93,23 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text("Đã thu", style: TextStyle(fontSize: 11, color: Color(0xff2D7A3A), fontWeight: FontWeight.bold)),
+                              const Text(
+                                "Đã thu",
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: Color(0xff2D7A3A),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                               const SizedBox(height: 4),
-                              Text(formatMoney(tongDaThu), style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color(0xff2D7A3A))),
+                              Text(
+                                formatMoney(tongDaThu),
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xff2D7A3A),
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -99,9 +125,23 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text("Còn nợ / Chưa thu", style: TextStyle(fontSize: 11, color: Colors.red, fontWeight: FontWeight.bold)),
+                              const Text(
+                                "Còn nợ / Chưa thu",
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                               const SizedBox(height: 4),
-                              Text(formatMoney(tongChuaThu), style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.red)),
+                              Text(
+                                formatMoney(tongChuaThu),
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -124,14 +164,22 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.search, size: 18, color: Colors.grey),
+                            const Icon(
+                              Icons.search,
+                              size: 18,
+                              color: Colors.grey,
+                            ),
                             const SizedBox(width: 8),
                             Expanded(
                               child: TextField(
                                 onChanged: (val) => vm.setSearchQuery(val),
                                 decoration: const InputDecoration(
-                                  hintText: "Tìm theo số phòng, tên người thuê, mã HĐ...",
-                                  hintStyle: TextStyle(fontSize: 12, color: Colors.grey),
+                                  hintText:
+                                      "Tìm theo số phòng, tên người thuê, mã HĐ...",
+                                  hintStyle: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                  ),
                                   border: InputBorder.none,
                                   isDense: true,
                                 ),
@@ -145,26 +193,50 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text("Kỳ hóa đơn: ", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey)),
+                          const Text(
+                            "Kỳ hóa đơn: ",
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey,
+                            ),
+                          ),
                           InkWell(
                             onTap: () => vm.chonKyHoaDon(context),
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
                               decoration: BoxDecoration(
                                 color: const Color(0xffEAF3EB),
                                 borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: const Color(0xffC8E6C9)),
+                                border: Border.all(
+                                  color: const Color(0xffC8E6C9),
+                                ),
                               ),
                               child: Row(
                                 children: [
-                                  const Icon(Icons.calendar_month_rounded, size: 16, color: Color(0xff2D7A3A)),
+                                  const Icon(
+                                    Icons.calendar_month_rounded,
+                                    size: 16,
+                                    color: Color(0xff2D7A3A),
+                                  ),
                                   const SizedBox(width: 6),
                                   Text(
                                     "Tháng ${vm.selectedThangNam}",
-                                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xff2D7A3A)),
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xff2D7A3A),
+                                    ),
                                   ),
                                   const SizedBox(width: 4),
-                                  const Icon(Icons.arrow_drop_down, size: 18, color: Color(0xff2D7A3A)),
+                                  const Icon(
+                                    Icons.arrow_drop_down,
+                                    size: 18,
+                                    color: Color(0xff2D7A3A),
+                                  ),
                                 ],
                               ),
                             ),
@@ -193,22 +265,29 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
 
                 Expanded(
                   child: vm.isLoading
-                      ? const Center(child: CircularProgressIndicator(color: Color(0xff2D7A3A)))
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                            color: Color(0xff2D7A3A),
+                          ),
+                        )
                       : filteredList.isEmpty
                       ? const Center(
-                    child: Text(
-                      "Không tìm thấy hóa đơn nào phù hợp",
-                      style: TextStyle(color: Colors.grey, fontSize: 13),
-                    ),
-                  )
+                          child: Text(
+                            "Không tìm thấy hóa đơn nào phù hợp",
+                            style: TextStyle(color: Colors.grey, fontSize: 13),
+                          ),
+                        )
                       : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                    itemCount: filteredList.length,
-                    itemBuilder: (context, index) {
-                      final item = filteredList[index];
-                      return _buildItemHoaDon(context, item, vm);
-                    },
-                  ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 4,
+                          ),
+                          itemCount: filteredList.length,
+                          itemBuilder: (context, index) {
+                            final item = filteredList[index];
+                            return _buildItemHoaDon(context, item, vm);
+                          },
+                        ),
                 ),
               ],
             );
@@ -218,7 +297,11 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
     );
   }
 
-  Widget _buildFilterTab(HoaDonHomePageViewModel vm, String title, int filterValue) {
+  Widget _buildFilterTab(
+    HoaDonHomePageViewModel vm,
+    String title,
+    int filterValue,
+  ) {
     bool isSelected = vm.selectedFilter == filterValue;
     return Expanded(
       child: GestureDetector(
@@ -227,7 +310,9 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
           padding: const EdgeInsets.symmetric(vertical: 8),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: isSelected ? const Color(0xff2D7A3A) : const Color(0xffF1F3F2),
+            color: isSelected
+                ? const Color(0xff2D7A3A)
+                : const Color(0xffF1F3F2),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
@@ -243,8 +328,13 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
     );
   }
 
-  Widget _buildItemHoaDon(BuildContext context, Map<String, dynamic> item, HoaDonHomePageViewModel vm) {
-    final bool isDienNuoc = item['chiTietJson'] != null &&
+  Widget _buildItemHoaDon(
+    BuildContext context,
+    Map<String, dynamic> item,
+    HoaDonHomePageViewModel vm,
+  ) {
+    final bool isDienNuoc =
+        item['chiTietJson'] != null &&
         item['chiTietJson'].toString().contains('"type":"DIEN_NUOC"');
 
     final int trangThai = item['trangThai'] ?? 0;
@@ -268,7 +358,8 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
       if (rawNgayThu != null && rawNgayThu.isNotEmpty) {
         try {
           final parsedDate = DateTime.parse(rawNgayThu);
-          ngayThuStr = "${parsedDate.day.toString().padLeft(2, '0')}/${parsedDate.month.toString().padLeft(2, '0')}/${parsedDate.year}";
+          ngayThuStr =
+              "${parsedDate.day.toString().padLeft(2, '0')}/${parsedDate.month.toString().padLeft(2, '0')}/${parsedDate.year}";
         } catch (_) {
           ngayThuStr = rawNgayThu.substring(0, 10);
         }
@@ -294,12 +385,16 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: isDienNuoc ? const Color(0xffEAF3EB) : const Color(0xffFFF1E1),
+                      color: isDienNuoc
+                          ? const Color(0xffEAF3EB)
+                          : const Color(0xffFFF1E1),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Icon(
                       isDienNuoc ? Icons.bolt : Icons.receipt_long,
-                      color: isDienNuoc ? const Color(0xff2D7A3A) : const Color(0xffFF8A00),
+                      color: isDienNuoc
+                          ? const Color(0xff2D7A3A)
+                          : const Color(0xffFF8A00),
                       size: 18,
                     ),
                   ),
@@ -310,17 +405,31 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
                       Row(
                         children: [
                           Text(
-                            isDienNuoc ? "Điện nước - Phòng $tenPhong" : hoTenKhach,
-                            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                            isDienNuoc
+                                ? "Điện nước - Phòng $tenPhong"
+                                : hoTenKhach,
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const SizedBox(width: 6),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: const Color(0xffF1F3F2),
                               borderRadius: BorderRadius.circular(6),
                             ),
-                            child: Text(isDienNuoc ? "Điện nước" : "Tiền phòng", style: const TextStyle(fontSize: 10, color: Colors.grey)),
+                            child: Text(
+                              isDienNuoc ? "Điện nước" : "Tiền phòng",
+                              style: const TextStyle(
+                                fontSize: 10,
+                                color: Colors.grey,
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -329,7 +438,10 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
                         isDienNuoc
                             ? "Kỳ: $thangNam · Chi phí chung phòng"
                             : "Phòng $tenPhong · Kỳ: $thangNam · Mã: $maHoaDon",
-                        style: const TextStyle(fontSize: 11, color: Colors.grey),
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: Colors.grey,
+                        ),
                       ),
                     ],
                   ),
@@ -338,7 +450,9 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: isPaid ? const Color(0xffEAF3EB) : const Color(0xffFFEAEA),
+                  color: isPaid
+                      ? const Color(0xffEAF3EB)
+                      : const Color(0xffFFEAEA),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
@@ -357,7 +471,9 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                isDienNuoc ? "Khoản thu chung của phòng" : "Hợp đồng thuê phòng",
+                isDienNuoc
+                    ? "Khoản thu chung của phòng"
+                    : "Hợp đồng thuê phòng",
                 style: const TextStyle(fontSize: 12, color: Colors.black54),
               ),
               Row(
@@ -390,7 +506,9 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
                                 final parsed = item['chiTietJson'] is String
                                     ? jsonDecode(item['chiTietJson'])
                                     : item['chiTietJson'];
-                                lanGhi = int.tryParse(parsed['lanGhi'].toString()) ?? 1;
+                                lanGhi =
+                                    int.tryParse(parsed['lanGhi'].toString()) ??
+                                    1;
                               }
                             } catch (_) {}
 
@@ -437,9 +555,14 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
                           backgroundColor: const Color(0xff2D7A3A),
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           elevation: 0,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                         ),
-                        child: const Text("Thu tiền", style: TextStyle(fontSize: 11, color: Colors.white)),
+                        child: const Text(
+                          "Thu tiền",
+                          style: TextStyle(fontSize: 11, color: Colors.white),
+                        ),
                       ),
                     ),
                 ],
@@ -447,7 +570,8 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
             ],
           ),
 
-          if ((ngayThuStr != null && ngayThuStr.isNotEmpty) || (ghiChuThu != null && ghiChuThu.isNotEmpty)) ...[
+          if ((ngayThuStr != null && ngayThuStr.isNotEmpty) ||
+              (ghiChuThu != null && ghiChuThu.isNotEmpty)) ...[
             const SizedBox(height: 8),
             Container(
               width: double.infinity,
@@ -463,25 +587,42 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
                   if (ngayThuStr != null && ngayThuStr.isNotEmpty) ...[
                     Row(
                       children: [
-                        const Icon(Icons.calendar_today, size: 13, color: Color(0xff616161)),
+                        const Icon(
+                          Icons.calendar_today,
+                          size: 13,
+                          color: Color(0xff616161),
+                        ),
                         const SizedBox(width: 6),
                         Text(
                           "Ngày thu: $ngayThuStr",
-                          style:  TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.grey.shade700),
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey.shade700,
+                          ),
                         ),
                       ],
                     ),
-                    if (ghiChuThu != null && ghiChuThu.isNotEmpty) const SizedBox(height: 4),
+                    if (ghiChuThu != null && ghiChuThu.isNotEmpty)
+                      const SizedBox(height: 4),
                   ],
                   if (ghiChuThu != null && ghiChuThu.isNotEmpty) ...[
                     Row(
                       children: [
-                        const Icon(Icons.note_alt_outlined, size: 13, color: Colors.grey),
+                        const Icon(
+                          Icons.note_alt_outlined,
+                          size: 13,
+                          color: Colors.grey,
+                        ),
                         const SizedBox(width: 6),
                         Expanded(
                           child: Text(
                             "Ghi chú: $ghiChuThu",
-                            style: const TextStyle(fontSize: 11, color: Colors.black87, fontStyle: FontStyle.italic),
+                            style: const TextStyle(
+                              fontSize: 11,
+                              color: Colors.black87,
+                              fontStyle: FontStyle.italic,
+                            ),
                           ),
                         ),
                       ],

@@ -29,7 +29,9 @@ class PhieuThuDienNuocApiClient {
       if (resData['success'] == true && resData['data'] != null) {
         return PhieuThuDienNuoc.fromMap(resData['data']);
       } else {
-        throw Exception(resData['message'] ?? 'Lập phiếu thu điện nước thất bại!');
+        throw Exception(
+          resData['message'] ?? 'Lập phiếu thu điện nước thất bại!',
+        );
       }
     } on DioException catch (e) {
       throw Exception(_mapErrorToMessage(e));
@@ -55,7 +57,9 @@ class PhieuThuDienNuocApiClient {
       if (resData['success'] == true) {
         return true;
       } else {
-        throw Exception(resData['message'] ?? 'Xóa hóa đơn điện nước thất bại!');
+        throw Exception(
+          resData['message'] ?? 'Xóa hóa đơn điện nước thất bại!',
+        );
       }
     } on DioException catch (e) {
       throw Exception(_mapErrorToMessage(e));

@@ -32,7 +32,7 @@ class NguoiThueFormViewModel extends ChangeNotifier {
   String? errQueQuan;
   String? errGioiTinh;
 
-  NguoiThueFormViewModel(this._service){
+  NguoiThueFormViewModel(this._service) {
     txtHoTen.addListener(() {
       errHoTen = null;
       notifyListeners();
@@ -58,6 +58,7 @@ class NguoiThueFormViewModel extends ChangeNotifier {
   void _onFieldChanged() {
     notifyListeners();
   }
+
   void setGioiTinh(bool value) {
     gioiTinh = value;
     errGioiTinh = null;
@@ -89,8 +90,9 @@ class NguoiThueFormViewModel extends ChangeNotifier {
     }
 
     errNgaySinh = _validateNgaySinh(txtNgaySinh.text);
-    errQueQuan =
-    txtQueQuan.text.trim().isEmpty ? "Vui lòng nhập quê quán" : null;
+    errQueQuan = txtQueQuan.text.trim().isEmpty
+        ? "Vui lòng nhập quê quán"
+        : null;
 
     errGioiTinh = gioiTinh == null ? "Vui lòng chọn giới tính" : null;
 
@@ -103,6 +105,7 @@ class NguoiThueFormViewModel extends ChangeNotifier {
         errQueQuan == null &&
         errGioiTinh == null;
   }
+
   String? _validateNgaySinh(String value) {
     if (value.isEmpty) return "Vui lòng nhập ngày sinh";
     try {
@@ -120,18 +123,10 @@ class NguoiThueFormViewModel extends ChangeNotifier {
         return "Ngày sinh không hợp lệ";
       }
 
-      int tuoi = DateTime
-          .now()
-          .year - ngaySinh.year;
-      if (DateTime
-          .now()
-          .month < ngaySinh.month ||
-          (DateTime
-              .now()
-              .month == ngaySinh.month &&
-              DateTime
-                  .now()
-                  .day < ngaySinh.day)) {
+      int tuoi = DateTime.now().year - ngaySinh.year;
+      if (DateTime.now().month < ngaySinh.month ||
+          (DateTime.now().month == ngaySinh.month &&
+              DateTime.now().day < ngaySinh.day)) {
         tuoi--;
       }
       if (tuoi < 18 || tuoi > 120) return "Phải từ 18 tuổi trở lên";
@@ -172,7 +167,10 @@ class NguoiThueFormViewModel extends ChangeNotifier {
       );
       if (isEdit) {
         // Luồng 1: Cập nhật thông tin
-        final updatedResult = await _service.update(_initialTenant!.idnt!, ntData);
+        final updatedResult = await _service.update(
+          _initialTenant!.idnt!,
+          ntData,
+        );
         return updatedResult;
       } else {
         // Luồng 2: Thêm mới người thuê
@@ -191,6 +189,7 @@ class NguoiThueFormViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
   //Đổ dữ liệu cũ lên form nếu là trạng thái chỉnh sửa
   void initData(NguoiThue? tenant) {
     _initialTenant = tenant;
@@ -202,23 +201,32 @@ class NguoiThueFormViewModel extends ChangeNotifier {
       txtQueQuan.text = tenant.queQuan ?? '';
       txtGhiChu.text = tenant.ghiChu ?? '';
       if (tenant.ngaySinh != null) {
-        txtNgaySinh.text = "${tenant.ngaySinh!.day.toString().padLeft(2, '0')}/"
+        txtNgaySinh.text =
+            "${tenant.ngaySinh!.day.toString().padLeft(2, '0')}/"
             "${tenant.ngaySinh!.month.toString().padLeft(2, '0')}/"
             "${tenant.ngaySinh!.year}";
       }
     }
   }
-  bool checkTrungCCCD(){
-    String cccd= txtCCCD.text.trim();
+
+  bool checkTrungCCCD() {
+    String cccd = txtCCCD.text.trim();
     if (cccd.isEmpty) return false;
-    List<NguoiThue> ds= _service.list;
-    return ds.any((nt) => nt.cccd == cccd && (!isEdit || nt.idnt != _initialTenant?.idnt));  }
+    List<NguoiThue> ds = _service.list;
+    return ds.any(
+      (nt) => nt.cccd == cccd && (!isEdit || nt.idnt != _initialTenant?.idnt),
+    );
+  }
+
   bool checkTrungSDT() {
     String sdt = txtSDT.text.trim();
     if (sdt.isEmpty) return false;
 
     List<NguoiThue> ds = _service.list;
-    return ds.any((nt) => nt.sdt == sdt && (!isEdit || nt.idnt != _initialTenant?.idnt));  }
+    return ds.any(
+      (nt) => nt.sdt == sdt && (!isEdit || nt.idnt != _initialTenant?.idnt),
+    );
+  }
 
   void parseCCCDQR(String raw) {
     final parts = raw.split('|');
@@ -232,7 +240,7 @@ class NguoiThueFormViewModel extends ChangeNotifier {
 
     if (dob.length == 8) {
       txtNgaySinh.text =
-      "${dob.substring(0, 2)}/${dob.substring(2, 4)}/${dob.substring(4, 8)}";
+          "${dob.substring(0, 2)}/${dob.substring(2, 4)}/${dob.substring(4, 8)}";
     }
 
     final gender = parts[4].trim().toLowerCase();
@@ -252,6 +260,7 @@ class NguoiThueFormViewModel extends ChangeNotifier {
     gioiTinh = null;
     notifyListeners();
   }
+
   @override
   void dispose() {
     txtSearch.dispose();

@@ -10,7 +10,7 @@ import '../../../../Provider/hoa_don_phong_provider.dart';
 class TaoHoaDonPhongPageViewModel extends ChangeNotifier {
   final HoadonPhongProvider _hoaDonProvider;
   TaoHoaDonPhongPageViewModel({required HoadonPhongProvider hoaDonProvider})
-      : _hoaDonProvider = hoaDonProvider;
+    : _hoaDonProvider = hoaDonProvider;
 
   final ImagePicker _picker = ImagePicker();
 
@@ -27,8 +27,8 @@ class TaoHoaDonPhongPageViewModel extends ChangeNotifier {
   DateTime ngayLapSelected = DateTime.now();
 
   // CÔNG TẮC BẬT/TẮT TÁCH BIỆT
-  bool isChotDienNuoc = true;     // Mục 1: Điện Nước
-  bool isTinhTienHopDong = true;  // Mục 2: Tiền Nhà & Xe Hợp đồng
+  bool isChotDienNuoc = true; // Mục 1: Điện Nước
+  bool isTinhTienHopDong = true; // Mục 2: Tiền Nhà & Xe Hợp đồng
 
   bool _canCreateDienNuoc = true;
   bool get canCreateDienNuoc => _canCreateDienNuoc;
@@ -130,12 +130,12 @@ class TaoHoaDonPhongPageViewModel extends ChangeNotifier {
 
       txtDienDonGia.text = rawGiaDien.toString().replaceAllMapped(
         RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-            (Match m) => '${m[1]}.',
+        (Match m) => '${m[1]}.',
       );
 
       txtNuocDonGia.text = rawGiaNuoc.toString().replaceAllMapped(
         RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-            (Match m) => '${m[1]}.',
+        (Match m) => '${m[1]}.',
       );
 
       if (data['dienNuoc'] != null) {
@@ -147,12 +147,15 @@ class TaoHoaDonPhongPageViewModel extends ChangeNotifier {
       }
       _canCreateDienNuoc = data['canCreateDienNuoc'] ?? true;
       if (!_canCreateDienNuoc) {
-        isChotDienNuoc = false; // Tự động tắt toggle nếu chưa thanh toán tiền điện nước cũ
+        isChotDienNuoc =
+            false; // Tự động tắt toggle nếu chưa thanh toán tiền điện nước cũ
       }
 
       if (data['danhSachHopDong'] != null) {
         final rawList = data['danhSachHopDong'] as List? ?? [];
-        listContracts = rawList.map((e) => HopDongPreviewDTO.fromMap(e)).toList();
+        listContracts = rawList
+            .map((e) => HopDongPreviewDTO.fromMap(e))
+            .toList();
       }
 
       txtTienDichVuKhac.text = (data['tienDichVuKhacDefault'] ?? 0).toString();
@@ -160,6 +163,7 @@ class TaoHoaDonPhongPageViewModel extends ChangeNotifier {
 
     notifyListeners();
   }
+
   Future<void> chonKyHoaDon(BuildContext context) async {
     List<String> parts = thangNam.split('/');
     int initialMonth = int.tryParse(parts[0]) ?? DateTime.now().month;
@@ -169,13 +173,14 @@ class TaoHoaDonPhongPageViewModel extends ChangeNotifier {
       context: context,
       initialDate: DateTime(initialYear, initialMonth, 1),
       firstDate: DateTime(2023), // Hoặc giới hạn tuỳ ý phòng hoạt động
-      lastDate: DateTime.now(),   //Không cho chọn vượt quá tháng hiện tại
+      lastDate: DateTime.now(), //Không cho chọn vượt quá tháng hiện tại
       helpText: "CHỌN KỲ TÍNH TIỀN HÓA ĐƠN",
       fieldLabelText: "Chọn tháng/năm",
     );
 
     if (picked != null) {
-      String newThangNam = "${picked.month.toString().padLeft(2, '0')}/${picked.year}";
+      String newThangNam =
+          "${picked.month.toString().padLeft(2, '0')}/${picked.year}";
       if (newThangNam != thangNam) {
         thangNam = newThangNam;
         // Gọi lại dữ liệu init theo kỳ mới được chọn
@@ -186,7 +191,10 @@ class TaoHoaDonPhongPageViewModel extends ChangeNotifier {
 
   //CHỌN ẢNH ĐỒNG HỒ
   Future<void> pickMeterImage(bool isDien) async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 80);
+    final XFile? image = await _picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
+    );
     if (image != null) {
       if (isDien) {
         imgDien = File(image.path);
@@ -196,7 +204,6 @@ class TaoHoaDonPhongPageViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
-
 
   Future<bool> createBatchHoaDon() async {
     if (!isChotDienNuoc && !isTinhTienHopDong) {
@@ -214,14 +221,16 @@ class TaoHoaDonPhongPageViewModel extends ChangeNotifier {
 
       if (dienMoi <= dienCu) {
         isDienError = true;
-        localErrorMessage = "Chỉ số điện mới ($dienMoi) phải lớn hơn chỉ số cũ ($dienCu)!";
+        localErrorMessage =
+            "Chỉ số điện mới ($dienMoi) phải lớn hơn chỉ số cũ ($dienCu)!";
         notifyListeners();
         return false;
       }
 
       if (nuocMoi <= nuocCu) {
         isNuocError = true;
-        localErrorMessage = "Chỉ số nước mới ($nuocMoi) phải lớn hơn chỉ số cũ ($nuocCu)!";
+        localErrorMessage =
+            "Chỉ số nước mới ($nuocMoi) phải lớn hơn chỉ số cũ ($nuocCu)!";
         notifyListeners();
         return false;
       }
@@ -236,13 +245,15 @@ class TaoHoaDonPhongPageViewModel extends ChangeNotifier {
         'ghiChu': hd.txtGhiChuCtrl.text,
         'danhSachXe': hd.danhSachXe
             .where((x) => x.isEnabled)
-            .map((x) => {
-          'id': x.id,
-          'bienSo': x.bienSo,
-          'hangXe': x.hangXe,
-          'chuXe': x.chuXe,
-          'price': x.price,
-        })
+            .map(
+              (x) => {
+                'id': x.id,
+                'bienSo': x.bienSo,
+                'hangXe': x.hangXe,
+                'chuXe': x.chuXe,
+                'price': x.price,
+              },
+            )
             .toList(),
       };
     }).toList();
@@ -260,7 +271,9 @@ class TaoHoaDonPhongPageViewModel extends ChangeNotifier {
       chiSoNuocCu: int.tryParse(txtNuocChiSoCu.text) ?? 0,
       chiSoNuocMoi: int.tryParse(txtNuocChiSoMoi.text) ?? 0,
       // Nếu tắt tính tiền hợp đồng thì tiền dịch vụ khác và danh sách hợp đồng gửi lên sẽ được coi như không tính
-      tienDichVuKhac: isTinhTienHopDong ? (double.tryParse(txtTienDichVuKhac.text.replaceAll('.', '')) ?? 0) : 0,
+      tienDichVuKhac: isTinhTienHopDong
+          ? (double.tryParse(txtTienDichVuKhac.text.replaceAll('.', '')) ?? 0)
+          : 0,
       ghiChu: txtGhiChu.text,
       //Nếu tắt tính tiền hợp đồng thì truyền null để backend không tạo hóa đơn hợp đồng!
       danhSachHopDongJson: isTinhTienHopDong ? jsonPayloadStr : null,
@@ -278,6 +291,7 @@ class TaoHoaDonPhongPageViewModel extends ChangeNotifier {
     ngayLapSelected = date;
     notifyListeners();
   }
+
   void clearErrors() {
     isDienError = false;
     isNuocError = false;

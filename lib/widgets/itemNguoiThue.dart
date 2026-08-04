@@ -92,10 +92,7 @@ class ItemNguoiThue extends StatelessWidget {
 
             // Mũi tên dẫn đường sang màn hình chi tiết
             if (onTap != null)
-              const Icon(
-                Icons.chevron_right_rounded,
-                color: Color(0xffC7C7CC),
-              ),
+              const Icon(Icons.chevron_right_rounded, color: Color(0xffC7C7CC)),
           ],
         ),
       ),

@@ -5,7 +5,7 @@ class HoaDonHomePageViewModel extends ChangeNotifier {
   final HoadonPhongProvider _hoaDonProvider;
 
   HoaDonHomePageViewModel({required HoadonPhongProvider hoaDonProvider})
-      : _hoaDonProvider = hoaDonProvider;
+    : _hoaDonProvider = hoaDonProvider;
 
   bool get isLoading => _hoaDonProvider.isLoading;
   String? get errorMessage => _hoaDonProvider.errorMessage;
@@ -57,7 +57,8 @@ class HoaDonHomePageViewModel extends ChangeNotifier {
     );
 
     if (picked != null) {
-      String formattedThangNam = "${picked.month.toString().padLeft(2, '0')}/${picked.year}";
+      String formattedThangNam =
+          "${picked.month.toString().padLeft(2, '0')}/${picked.year}";
       if (formattedThangNam != selectedThangNam) {
         selectedThangNam = formattedThangNam;
         loadData();
@@ -69,13 +70,15 @@ class HoaDonHomePageViewModel extends ChangeNotifier {
     final list = _hoaDonProvider.danhSachTatCaHoaDon;
     return list.where((inv) {
       final int trangThai = inv['trangThai'] ?? 0;
-      final bool matchStatus = selectedFilter == -1 || trangThai == selectedFilter;
+      final bool matchStatus =
+          selectedFilter == -1 || trangThai == selectedFilter;
 
       final String tenPhong = (inv['tenPhong'] ?? '').toString().toLowerCase();
       final String hoTen = (inv['hoTenKhach'] ?? '').toString().toLowerCase();
       final String maHD = (inv['maHoaDon'] ?? '').toString().toLowerCase();
 
-      final bool matchSearch = tenPhong.contains(searchQuery.toLowerCase()) ||
+      final bool matchSearch =
+          tenPhong.contains(searchQuery.toLowerCase()) ||
           hoTen.contains(searchQuery.toLowerCase()) ||
           maHD.contains(searchQuery.toLowerCase());
 

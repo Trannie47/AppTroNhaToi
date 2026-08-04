@@ -15,10 +15,7 @@ class HoaDonPhongApiClient {
     try {
       final response = await _dio.get(
         '/hoa-don-phong/init-data',
-        queryParameters: {
-          'phongId': phongId,
-          'thangNam': thangNam,
-        },
+        queryParameters: {'phongId': phongId, 'thangNam': thangNam},
       );
       return response.data as Map<String, dynamic>;
     } on DioException catch (e) {
@@ -53,7 +50,8 @@ class HoaDonPhongApiClient {
         if (chiSoNuocCu != null) 'chiSoNuocCu': chiSoNuocCu,
         if (chiSoNuocMoi != null) 'chiSoNuocMoi': chiSoNuocMoi,
         if (ghiChu != null) 'ghiChu': ghiChu,
-        if (danhSachHopDongJson != null) 'danhSachHopDongJson': danhSachHopDongJson,
+        if (danhSachHopDongJson != null)
+          'danhSachHopDongJson': danhSachHopDongJson,
       };
 
       if (anhDienMoi != null) {
@@ -72,10 +70,7 @@ class HoaDonPhongApiClient {
 
       final formData = FormData.fromMap(mapData);
 
-      final response = await _dio.post(
-        '/hoa-don-phong/create',
-        data: formData,
-      );
+      final response = await _dio.post('/hoa-don-phong/create', data: formData);
 
       final resData = response.data;
       if (resData['success'] == true && resData['data'] != null) {
@@ -96,9 +91,7 @@ class HoaDonPhongApiClient {
     try {
       final response = await _dio.get(
         '/hoa-don-phong/by-phong/$phongId',
-        queryParameters: {
-          if (thangNam != null) 'thangNam': thangNam,
-        },
+        queryParameters: {if (thangNam != null) 'thangNam': thangNam},
       );
       final List rawList = response.data as List;
       return rawList.map((e) => e as Map<String, dynamic>).toList();
@@ -107,7 +100,9 @@ class HoaDonPhongApiClient {
     }
   }
 
-  Future<Map<String, dynamic>> getChiTietHoaDon({required String maHoaDon}) async {
+  Future<Map<String, dynamic>> getChiTietHoaDon({
+    required String maHoaDon,
+  }) async {
     try {
       final response = await _dio.get('/hoa-don-phong/detail/$maHoaDon');
       return response.data as Map<String, dynamic>;
@@ -129,7 +124,10 @@ class HoaDonPhongApiClient {
       throw Exception(_mapErrorToMessage(e));
     }
   }
-  Future<List<Map<String, dynamic>>> getTatCaHoaDonQuanLy({String? thangNam}) async {
+
+  Future<List<Map<String, dynamic>>> getTatCaHoaDonQuanLy({
+    String? thangNam,
+  }) async {
     try {
       final response = await _dio.get(
         '/hoa-don-phong/quan-ly-chung',
@@ -147,7 +145,6 @@ class HoaDonPhongApiClient {
       throw Exception(_mapErrorToMessage(e));
     }
   }
-
 
   String _mapErrorToMessage(DioException e) {
     if (e.type == DioExceptionType.connectionTimeout ||

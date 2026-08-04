@@ -4,8 +4,7 @@ import 'package:AppTroNhaToi/models/dien_nuoc.dart';
 import '../repositories/diennuoc_repository.dart';
 
 class DienNuocProvider extends ChangeNotifier {
-  final DienNuocRepository _repository= DienNuocRepository();
-
+  final DienNuocRepository _repository = DienNuocRepository();
 
   String? _mode;
   String? get mode => _mode;
@@ -23,13 +22,14 @@ class DienNuocProvider extends ChangeNotifier {
     _currentDienNuoc = result.dienNuoc;
     notifyListeners();
   }
+
   Future<void> createDienNuoc(
-      DienNuoc dienNuoc, {
-        String? anhDienCuPath,
-        String? anhDienMoiPath,
-        String? anhNuocCuPath,
-        String? anhNuocMoiPath,
-      }) async {
+    DienNuoc dienNuoc, {
+    String? anhDienCuPath,
+    String? anhDienMoiPath,
+    String? anhNuocCuPath,
+    String? anhNuocMoiPath,
+  }) async {
     final result = await _repository.createDienNuoc(
       dienNuoc,
       anhDienCuPath: anhDienCuPath,
@@ -40,13 +40,14 @@ class DienNuocProvider extends ChangeNotifier {
     _currentDienNuoc = result;
     notifyListeners();
   }
+
   Future<void> updateDienNuoc(
-      DienNuoc dienNuoc, {
-        String? anhDienCuPath,
-        String? anhDienMoiPath,
-        String? anhNuocCuPath,
-        String? anhNuocMoiPath,
-      }) async {
+    DienNuoc dienNuoc, {
+    String? anhDienCuPath,
+    String? anhDienMoiPath,
+    String? anhNuocCuPath,
+    String? anhNuocMoiPath,
+  }) async {
     final result = await _repository.updateDienNuoc(
       dienNuoc,
       anhDienCuPath: anhDienCuPath,

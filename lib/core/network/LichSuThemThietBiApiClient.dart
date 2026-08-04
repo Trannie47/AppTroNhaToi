@@ -140,8 +140,6 @@ class LichSuMuaThietBiApiClient {
     }
   }
 
-
-
   String _mapErrorToMessage(DioException e) {
     if (e.type == DioExceptionType.connectionError ||
         e.type == DioExceptionType.connectionTimeout ||

@@ -43,7 +43,8 @@ class GiaHanHopDongViewModel extends ChangeNotifier {
 
     // Nếu còn trên 30 ngày -> Không cho gia hạn
     if (soNgayConLai > 30) {
-      errorMessage = "Hợp đồng còn $soNgayConLai ngày nữa mới hết hạn. Chỉ được gia hạn khi còn từ 30 ngày trở xuống!";
+      errorMessage =
+          "Hợp đồng còn $soNgayConLai ngày nữa mới hết hạn. Chỉ được gia hạn khi còn từ 30 ngày trở xuống!";
       return false;
     }
     return true;
@@ -77,7 +78,9 @@ class GiaHanHopDongViewModel extends ChangeNotifier {
 
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: (ngayHetHanMoiSelected != null && ngayHetHanMoiSelected!.isAfter(minDate))
+      initialDate:
+          (ngayHetHanMoiSelected != null &&
+              ngayHetHanMoiSelected!.isAfter(minDate))
           ? ngayHetHanMoiSelected!
           : minDate,
       firstDate: minDate, // Khóa không cho chọn ít hơn 3 tháng
@@ -102,11 +105,17 @@ class GiaHanHopDongViewModel extends ChangeNotifier {
     final d6 = DateTime(ngayCu.year, ngayCu.month + 6, ngayCu.day);
     final d12 = DateTime(ngayCu.year, ngayCu.month + 12, ngayCu.day);
 
-    if (ngayMoi.year == d3.year && ngayMoi.month == d3.month && ngayMoi.day == d3.day) {
+    if (ngayMoi.year == d3.year &&
+        ngayMoi.month == d3.month &&
+        ngayMoi.day == d3.day) {
       selectedMonthOption = 3;
-    } else if (ngayMoi.year == d6.year && ngayMoi.month == d6.month && ngayMoi.day == d6.day) {
+    } else if (ngayMoi.year == d6.year &&
+        ngayMoi.month == d6.month &&
+        ngayMoi.day == d6.day) {
       selectedMonthOption = 6;
-    } else if (ngayMoi.year == d12.year && ngayMoi.month == d12.month && ngayMoi.day == d12.day) {
+    } else if (ngayMoi.year == d12.year &&
+        ngayMoi.month == d12.month &&
+        ngayMoi.day == d12.day) {
       selectedMonthOption = 12;
     } else {
       selectedMonthOption = 0; // Tùy chỉnh ngày riêng

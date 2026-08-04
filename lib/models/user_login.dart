@@ -5,11 +5,7 @@ class UserLogin {
   final String username;
   final String email;
 
-  UserLogin({
-    required this.id,
-    required this.username,
-    required this.email
-  });
+  UserLogin({required this.id, required this.username, required this.email});
 
   Map<String, dynamic> toJson() {
     return {'id': id, 'username': username, 'email': email};
@@ -24,18 +20,18 @@ class UserLogin {
   }
 }
 
-class UserData{
+class UserData {
   final String? accessToken;
   final UserLogin? user;
 
-  UserData({this.accessToken,this.user});
+  UserData({this.accessToken, this.user});
 
-  factory UserData.fromJson(Map<String,dynamic> json){
+  factory UserData.fromJson(Map<String, dynamic> json) {
     return UserData(
-      accessToken: json['access_token'] as String? ,
-      user: json['user'] !=null
-            ? UserLogin.fromJson(json['user'] as Map<String,dynamic>)
-            : null
+      accessToken: json['access_token'] as String?,
+      user: json['user'] != null
+          ? UserLogin.fromJson(json['user'] as Map<String, dynamic>)
+          : null,
     );
   }
 }

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
-class QRCCCDScannerPageViewModel
-    extends ChangeNotifier {
-
+class QRCCCDScannerPageViewModel extends ChangeNotifier {
   bool scanned = false;
 
   bool allowScan() {

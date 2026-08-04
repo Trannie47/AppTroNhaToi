@@ -22,7 +22,10 @@ class _GiaHanHopDongPageState extends State<GiaHanHopDongPage> {
   @override
   void initState() {
     super.initState();
-    final hopDongProvider = Provider.of<HopDongProvider>(context, listen: false);
+    final hopDongProvider = Provider.of<HopDongProvider>(
+      context,
+      listen: false,
+    );
     vm = GiaHanHopDongViewModel(hopDongProvider, widget.hopDong);
     vm.init();
 
@@ -63,7 +66,10 @@ class _GiaHanHopDongPageState extends State<GiaHanHopDongPage> {
           behavior: SnackBarBehavior.floating,
         ),
       );
-      Navigator.pop(context, true); // Trả về true để màn hình danh sách/chi tiết reload
+      Navigator.pop(
+        context,
+        true,
+      ); // Trả về true để màn hình danh sách/chi tiết reload
     } else if (vm.errorMessage != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -122,7 +128,10 @@ class _GiaHanHopDongPageState extends State<GiaHanHopDongPage> {
                       const SizedBox(height: 8),
                       _infoRow("Người thuê:", widget.hopDong.nguoithue.hoTen),
                       const SizedBox(height: 8),
-                      _infoRow("Giá thuê:", "${formatMoney(widget.hopDong.giaPhongThucTe.toInt())} đ/tháng"),
+                      _infoRow(
+                        "Giá thuê:",
+                        "${formatMoney(widget.hopDong.giaPhongThucTe.toInt())} đ/tháng",
+                      ),
                       const SizedBox(height: 8),
                       _infoRow(
                         "Hạn hợp đồng hiện tại:",
@@ -146,14 +155,25 @@ class _GiaHanHopDongPageState extends State<GiaHanHopDongPage> {
                       ),
                       const SizedBox(height: 8),
 
-
                       Row(
                         children: [
-                          _chipOption("+ 3 Tháng", 3, () => vm.chonNhanhThang(3)),
+                          _chipOption(
+                            "+ 3 Tháng",
+                            3,
+                            () => vm.chonNhanhThang(3),
+                          ),
                           const SizedBox(width: 8),
-                          _chipOption("+ 6 Tháng", 6, () => vm.chonNhanhThang(6)),
+                          _chipOption(
+                            "+ 6 Tháng",
+                            6,
+                            () => vm.chonNhanhThang(6),
+                          ),
                           const SizedBox(width: 8),
-                          _chipOption("+ 12 Tháng", 12, () => vm.chonNhanhThang(12)),
+                          _chipOption(
+                            "+ 12 Tháng",
+                            12,
+                            () => vm.chonNhanhThang(12),
+                          ),
                         ],
                       ),
 
@@ -175,17 +195,27 @@ class _GiaHanHopDongPageState extends State<GiaHanHopDongPage> {
                             vertical: 14,
                           ),
                           suffixIcon: IconButton(
-                            icon: const Icon(Icons.calendar_month, color: Color(0xff2E7D32)),
+                            icon: const Icon(
+                              Icons.calendar_month,
+                              color: Color(0xff2E7D32),
+                            ),
                             onPressed: () => vm.chonNgay(context),
                           ),
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(color: Color(0xffEAEAEA)),
+                            borderSide: const BorderSide(
+                              color: Color(0xffEAEAEA),
+                            ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(color: Color(0xff2D7A3A), width: 1.2),
+                            borderSide: const BorderSide(
+                              color: Color(0xff2D7A3A),
+                              width: 1.2,
+                            ),
                           ),
                         ),
                       ),
@@ -211,7 +241,10 @@ class _GiaHanHopDongPageState extends State<GiaHanHopDongPage> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(color: Color(0xff2D7A3A), width: 1.2),
+                        borderSide: const BorderSide(
+                          color: Color(0xff2D7A3A),
+                          width: 1.2,
+                        ),
                       ),
                     ),
                   ),
@@ -234,15 +267,25 @@ class _GiaHanHopDongPageState extends State<GiaHanHopDongPage> {
                             decoration: BoxDecoration(
                               color: const Color(0xffF7F7F7),
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Colors.grey.shade300, width: 1.2),
+                              border: Border.all(
+                                color: Colors.grey.shade300,
+                                width: 1.2,
+                              ),
                             ),
                             child: Column(
                               children: [
-                                Icon(Icons.add_a_photo_outlined, color: Colors.grey.shade600, size: 28),
+                                Icon(
+                                  Icons.add_a_photo_outlined,
+                                  color: Colors.grey.shade600,
+                                  size: 28,
+                                ),
                                 const SizedBox(height: 6),
                                 Text(
                                   "Chạm để thêm ảnh ",
-                                  style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                                  style: TextStyle(
+                                    color: Colors.grey.shade600,
+                                    fontSize: 13,
+                                  ),
                                 ),
                               ],
                             ),
@@ -253,7 +296,9 @@ class _GiaHanHopDongPageState extends State<GiaHanHopDongPage> {
                           spacing: 10,
                           runSpacing: 10,
                           children: [
-                            ...List.generate(vm.listImagePhuLuc.length, (index) {
+                            ...List.generate(vm.listImagePhuLuc.length, (
+                              index,
+                            ) {
                               return Stack(
                                 clipBehavior: Clip.none,
                                 children: [
@@ -277,7 +322,11 @@ class _GiaHanHopDongPageState extends State<GiaHanHopDongPage> {
                                           color: Colors.red,
                                           shape: BoxShape.circle,
                                         ),
-                                        child: const Icon(Icons.close, size: 14, color: Colors.white),
+                                        child: const Icon(
+                                          Icons.close,
+                                          size: 14,
+                                          color: Colors.white,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -292,9 +341,15 @@ class _GiaHanHopDongPageState extends State<GiaHanHopDongPage> {
                                 decoration: BoxDecoration(
                                   color: const Color(0xffF7F7F7),
                                   borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(color: Colors.grey.shade300),
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                  ),
                                 ),
-                                child: Icon(Icons.add, color: Colors.grey.shade600, size: 26),
+                                child: Icon(
+                                  Icons.add,
+                                  color: Colors.grey.shade600,
+                                  size: 26,
+                                ),
                               ),
                             ),
                           ],
@@ -312,11 +367,17 @@ class _GiaHanHopDongPageState extends State<GiaHanHopDongPage> {
                     onPressed: vm.isLoading ? null : _xuLySubmitGiaHan,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xff2E7D32),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     child: const Text(
                       "Xác nhận gia hạn",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
@@ -331,11 +392,17 @@ class _GiaHanHopDongPageState extends State<GiaHanHopDongPage> {
                     onPressed: () => _hienThiXacNhanThoat(),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xffC62828),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     child: const Text(
                       "Hủy bỏ",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
@@ -353,11 +420,18 @@ class _GiaHanHopDongPageState extends State<GiaHanHopDongPage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    CircularProgressIndicator(color: Colors.white, strokeWidth: 3),
+                    CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 3,
+                    ),
                     SizedBox(height: 16),
                     Text(
                       "Đang gia hạn...",
-                      style: TextStyle(color: Colors.white, fontSize: 15, decoration: TextDecoration.none),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                        decoration: TextDecoration.none,
+                      ),
                     ),
                   ],
                 ),
@@ -372,11 +446,21 @@ class _GiaHanHopDongPageState extends State<GiaHanHopDongPage> {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14)),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(color: Color(0xff2E7D32), fontWeight: FontWeight.w700, fontSize: 13)),
+          Text(
+            title,
+            style: const TextStyle(
+              color: Color(0xff2E7D32),
+              fontWeight: FontWeight.w700,
+              fontSize: 13,
+            ),
+          ),
           const SizedBox(height: 12),
           child,
         ],
@@ -388,7 +472,10 @@ class _GiaHanHopDongPageState extends State<GiaHanHopDongPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: const TextStyle(fontSize: 13, color: Colors.black54)),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 13, color: Colors.black54),
+        ),
         Text(
           value,
           style: TextStyle(
@@ -408,7 +495,9 @@ class _GiaHanHopDongPageState extends State<GiaHanHopDongPage> {
       child: OutlinedButton(
         onPressed: onTap,
         style: OutlinedButton.styleFrom(
-          backgroundColor: isSelected ? const Color(0xff2E7D32) : Colors.transparent,
+          backgroundColor: isSelected
+              ? const Color(0xff2E7D32)
+              : Colors.transparent,
           side: const BorderSide(color: Color(0xff2E7D32)),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           padding: const EdgeInsets.symmetric(vertical: 10),

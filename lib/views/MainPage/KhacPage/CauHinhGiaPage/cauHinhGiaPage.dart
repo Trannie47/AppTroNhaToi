@@ -84,153 +84,162 @@ class _CauHinhGiaPageState extends State<CauHinhGiaPage> {
               backgroundColor: Colors.white,
               elevation: 0,
               leading: IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new,
-                    color: Colors.black, size: 18),
+                icon: const Icon(
+                  Icons.arrow_back_ios_new,
+                  color: Colors.black,
+                  size: 18,
+                ),
                 onPressed: () => Navigator.pop(context),
               ),
             ),
             body: (provider.isLoading && !vm.isInitLoaded)
                 ? const Center(
-              child: CircularProgressIndicator(color: _primaryGreen),
-            )
+                    child: CircularProgressIndicator(color: _primaryGreen),
+                  )
                 : SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Form(
-                key: vm.formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Thẻ Lần cập nhật gần nhất
-                    if (cauHinhGia != null && cauHinhGia.updatedAt != null)
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(14),
-                        margin: const EdgeInsets.only(bottom: 16),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFEFF5F0),
-                          borderRadius: BorderRadius.circular(16),
-                          border:
-                          Border.all(color: const Color(0xFFD6E4D7)),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.history,
-                                color: _primaryGreen, size: 20),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Text(
-                                'Lần cập nhật gần nhất: ${DateFormat('dd/MM/yyyy HH:mm').format(cauHinhGia.updatedAt!.toLocal())}',
-                                style: const TextStyle(
-                                  fontSize: 13,
-                                  color: _primaryGreen,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                    // Card Cấu hình đơn giá
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
+                    padding: const EdgeInsets.all(16.0),
+                    child: Form(
+                      key: vm.formKey,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            "Thông tin giá dịch vụ",
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: _primaryGreen,
+                          // Thẻ Lần cập nhật gần nhất
+                          if (cauHinhGia != null &&
+                              cauHinhGia.updatedAt != null)
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(14),
+                              margin: const EdgeInsets.only(bottom: 16),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFEFF5F0),
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  color: const Color(0xFFD6E4D7),
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.history,
+                                    color: _primaryGreen,
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      'Lần cập nhật gần nhất: ${DateFormat('dd/MM/yyyy HH:mm').format(cauHinhGia.updatedAt!.toLocal())}',
+                                      style: const TextStyle(
+                                        fontSize: 13,
+                                        color: _primaryGreen,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                          // Card Cấu hình đơn giá
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  "Thông tin giá dịch vụ",
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: _primaryGreen,
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+
+                                // Ô nhập Giá điện
+                                _buildPriceInputField(
+                                  controller: vm.giaDienController,
+                                  label: "Đơn giá điện",
+                                  unit: "đ / kWh",
+                                  icon: Icons.electric_bolt,
+                                  iconColor: Colors.amber.shade800,
+                                  iconBg: const Color(0xFFFFF8E1),
+                                  hint: "VD: 3.500",
+                                  validator: (v) =>
+                                      vm.validateGia(v, "Đơn giá điện"),
+                                ),
+
+                                const SizedBox(height: 16),
+
+                                // Ô nhập Giá nước
+                                _buildPriceInputField(
+                                  controller: vm.giaNuocController,
+                                  label: "Đơn giá nước",
+                                  unit: "đ / m³",
+                                  icon: Icons.water_drop,
+                                  iconColor: Colors.blue,
+                                  iconBg: const Color(0xFFE3F2FD),
+                                  hint: "VD: 15.000",
+                                  validator: (v) =>
+                                      vm.validateGia(v, "Đơn giá nước"),
+                                ),
+
+                                const SizedBox(height: 12),
+                                Text(
+                                  "Đơn giá dùng để tính tự động khi ghi chỉ số điện nước và lập hóa đơn phòng hàng tháng.",
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey.shade600,
+                                    height: 1.3,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          const SizedBox(height: 16),
 
-                          // Ô nhập Giá điện
-                          _buildPriceInputField(
-                            controller: vm.giaDienController,
-                            label: "Đơn giá điện",
-                            unit: "đ / kWh",
-                            icon: Icons.electric_bolt,
-                            iconColor: Colors.amber.shade800,
-                            iconBg: const Color(0xFFFFF8E1),
-                            hint: "VD: 3.500",
-                            validator: (v) =>
-                                vm.validateGia(v, "Đơn giá điện"),
-                          ),
+                          const SizedBox(height: 24),
 
-                          const SizedBox(height: 16),
-
-                          // Ô nhập Giá nước
-                          _buildPriceInputField(
-                            controller: vm.giaNuocController,
-                            label: "Đơn giá nước",
-                            unit: "đ / m³",
-                            icon: Icons.water_drop,
-                            iconColor: Colors.blue,
-                            iconBg: const Color(0xFFE3F2FD),
-                            hint: "VD: 15.000",
-                            validator: (v) =>
-                                vm.validateGia(v, "Đơn giá nước"),
-                          ),
-
-                          const SizedBox(height: 12),
-                          Text(
-                            "Đơn giá dùng để tính tự động khi ghi chỉ số điện nước và lập hóa đơn phòng hàng tháng.",
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey.shade600,
-                              height: 1.3,
+                          // Nút Lưu Cấu Hình
+                          SizedBox(
+                            width: double.infinity,
+                            height: 48,
+                            child: ElevatedButton(
+                              onPressed: provider.isLoading
+                                  ? null
+                                  : _handleSave,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: _primaryGreen,
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              child: provider.isLoading
+                                  ? const SizedBox(
+                                      width: 22,
+                                      height: 22,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2.5,
+                                      ),
+                                    )
+                                  : const Text(
+                                      "Lưu cấu hình giá",
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
                             ),
                           ),
                         ],
                       ),
                     ),
-
-                    const SizedBox(height: 24),
-
-                    // Nút Lưu Cấu Hình
-                    SizedBox(
-                      width: double.infinity,
-                      height: 48,
-                      child: ElevatedButton(
-                        onPressed:
-                        provider.isLoading ? null : _handleSave,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: _primaryGreen,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: provider.isLoading
-                            ? const SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 2.5,
-                          ),
-                        )
-                            : const Text(
-                          "Lưu cấu hình giá",
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+                  ),
           );
         },
       ),
@@ -266,10 +275,7 @@ class _CauHinhGiaPageState extends State<CauHinhGiaPage> {
             FilteringTextInputFormatter.digitsOnly,
             DinhDangGiaVN(),
           ],
-          style: const TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w500,
-          ),
+          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
           decoration: InputDecoration(
             prefixIcon: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -290,14 +296,13 @@ class _CauHinhGiaPageState extends State<CauHinhGiaPage> {
               fontSize: 13,
             ),
             hintText: hint,
-            hintStyle: TextStyle(
-              color: Colors.grey.shade400,
-              fontSize: 14,
-            ),
+            hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
             filled: true,
             fillColor: const Color(0xFFF5F5F5),
-            contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 12,
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,

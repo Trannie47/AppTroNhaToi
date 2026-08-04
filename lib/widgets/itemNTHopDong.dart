@@ -8,11 +8,7 @@ class ItemNTHopDong extends StatelessWidget {
   final HopDongDTO hopDong;
   final VoidCallback? onTap;
 
-  const ItemNTHopDong({
-    super.key,
-    required this.hopDong,
-    this.onTap,
-  });
+  const ItemNTHopDong({super.key, required this.hopDong, this.onTap});
 
   bool get _isSapHetHan {
     if (hopDong.trangThai != 1) return false;
@@ -110,13 +106,18 @@ class ItemNTHopDong extends StatelessWidget {
                       ),
                       if (sapHetHan)
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
                           decoration: BoxDecoration(
                             color: const Color(0xFFFEF3C7),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
-                            ngayConLai == 0 ? "Hôm nay hết hạn" : "Còn $ngayConLai ngày",
+                            ngayConLai == 0
+                                ? "Hôm nay hết hạn"
+                                : "Còn $ngayConLai ngày",
                             style: const TextStyle(
                               fontSize: 11,
                               color: Color(0xFFD97706),
@@ -141,7 +142,10 @@ class ItemNTHopDong extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: const Color(0xFFE3F2FD),
                           borderRadius: BorderRadius.circular(6),
@@ -210,10 +214,7 @@ class ItemNTHopDong extends StatelessWidget {
 
             const SizedBox(width: 8),
 
-            const Icon(
-              Icons.chevron_right_rounded,
-              color: Color(0xffC7C7CC),
-            ),
+            const Icon(Icons.chevron_right_rounded, color: Color(0xffC7C7CC)),
           ],
         ),
       ),

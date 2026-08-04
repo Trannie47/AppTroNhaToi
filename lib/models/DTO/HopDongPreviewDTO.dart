@@ -43,7 +43,7 @@ class HopDongPreviewDTO {
     final integerPart = amount.round().toString();
     return integerPart.replaceAllMapped(
       RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-          (Match m) => '${m[1]}.',
+      (Match m) => '${m[1]}.',
     );
   }
 
@@ -57,7 +57,8 @@ class HopDongPreviewDTO {
       giaPhongGoc: (map['giaPhongGoc'] as num?)?.toDouble() ?? 0,
       soNgayO: map['soNgayO'] ?? 0,
       soNgayTrongThang: map['soNgayTrongThang'] ?? 30,
-      calculatedTienPhong: (map['calculatedTienPhong'] as num?)?.toDouble() ?? 0,
+      calculatedTienPhong:
+          (map['calculatedTienPhong'] as num?)?.toDouble() ?? 0,
       noteFormula: map['noteFormula'] ?? '',
       danhSachXe: rawXe.map((x) => PhuongTienPreviewDTO.fromMap(x)).toList(),
       isAlreadyBilled: map['isAlreadyBilled'] ?? false,
@@ -66,7 +67,10 @@ class HopDongPreviewDTO {
   }
 
   double get tienPhongCurrent {
-    String cleanText = txtTienPhongCtrl.text.replaceAll('.', '').replaceAll(',', '').trim();
+    String cleanText = txtTienPhongCtrl.text
+        .replaceAll('.', '')
+        .replaceAll(',', '')
+        .trim();
     return double.tryParse(cleanText) ?? 0;
   }
 

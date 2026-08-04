@@ -14,7 +14,8 @@ class CapNhatThanhToanViewModel extends ChangeNotifier {
 
   final txtGhiChu = TextEditingController();
 
-  double get conThieu => (tongTienHD - tongDaThu) > 0 ? (tongTienHD - tongDaThu) : 0;
+  double get conThieu =>
+      (tongTienHD - tongDaThu) > 0 ? (tongTienHD - tongDaThu) : 0;
 
   CapNhatThanhToanViewModel({
     required this.phieuThuProvider,

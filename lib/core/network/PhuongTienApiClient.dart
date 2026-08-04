@@ -26,12 +26,10 @@ class PhuongTienApiClient {
       throw Exception("Đã có lỗi xảy ra, vui lòng thử lại!");
     }
   }
+
   Future<PhuongTien> createPhuongTien(PhuongTien xe) async {
     try {
-      final response = await _dio.post(
-        "phuong-tien",
-        data: xe.toMap(),
-      );
+      final response = await _dio.post("phuong-tien", data: xe.toMap());
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return PhuongTien.fromMap(response.data);
@@ -44,12 +42,10 @@ class PhuongTienApiClient {
       throw Exception("Không thể thêm phương tiện, vui lòng thử lại!");
     }
   }
+
   Future<PhuongTien> updatePhuongTien(num id, PhuongTien xe) async {
     try {
-      final response = await _dio.patch(
-        "phuong-tien/$id",
-        data: xe.toMap(),
-      );
+      final response = await _dio.patch("phuong-tien/$id", data: xe.toMap());
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return PhuongTien.fromMap(response.data);
@@ -62,6 +58,7 @@ class PhuongTienApiClient {
       throw Exception("Không thể cập nhật phương tiện, vui lòng thử lại!");
     }
   }
+
   Future<PhuongTien> deletePhuongTien(num id) async {
     try {
       final response = await _dio.delete("phuong-tien/$id");

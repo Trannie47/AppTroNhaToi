@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-class RoomAvailableDTO{
+class RoomAvailableDTO {
   final int id;
   final String tenPhong;
   final double giaPhongGoc;
@@ -8,15 +8,14 @@ class RoomAvailableDTO{
   RoomAvailableDTO({
     required this.id,
     required this.tenPhong,
-    required this.giaPhongGoc
-});
+    required this.giaPhongGoc,
+  });
 
-  factory RoomAvailableDTO.fromJson(Map<String,dynamic> json){
+  factory RoomAvailableDTO.fromJson(Map<String, dynamic> json) {
     return RoomAvailableDTO(
-        id: json['id'] as int,
+      id: json['id'] as int,
       tenPhong: json['tenPhong'] as String,
-      giaPhongGoc: double.parse(json['giaPhongGoc'].toString())
+      giaPhongGoc: double.parse(json['giaPhongGoc'].toString()),
     );
-
   }
 }

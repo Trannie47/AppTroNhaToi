@@ -94,9 +94,9 @@ class HoaDonGuiXePageViewModel extends ChangeNotifier {
   }
 
   PhuongTien? getXeTheoHoaDon(HoaDonGuiXe hoaDon) {
-    final dsXeTimDuoc = dsPhuongTien.where(
-          (e) => e.ID == hoaDon.idPhuongTien,
-    ).toList();
+    final dsXeTimDuoc = dsPhuongTien
+        .where((e) => e.ID == hoaDon.idPhuongTien)
+        .toList();
     if (dsXeTimDuoc.isEmpty) return null;
     return dsXeTimDuoc.first;
   }

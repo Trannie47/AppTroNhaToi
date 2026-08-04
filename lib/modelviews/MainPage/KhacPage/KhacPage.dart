@@ -8,7 +8,7 @@ class KhacPageModelView extends ChangeNotifier {
   final CauHinhGiaProvider _cauHinhGiaProvider;
   bool isLoading = false;
 
-  KhacPageModelView(this._hopDongProvider,this._cauHinhGiaProvider) {
+  KhacPageModelView(this._hopDongProvider, this._cauHinhGiaProvider) {
     _hopDongProvider.addListener(_onHopDongChanged);
     loadData();
   }
@@ -16,6 +16,7 @@ class KhacPageModelView extends ChangeNotifier {
   void _onHopDongChanged() {
     notifyListeners();
   }
+
   Future<void> loadData() async {
     isLoading = true;
     notifyListeners();
@@ -29,6 +30,7 @@ class KhacPageModelView extends ChangeNotifier {
       notifyListeners();
     }
   }
+
   int get soLuongSapHetHan {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
@@ -49,6 +51,7 @@ class KhacPageModelView extends ChangeNotifier {
       return soNgayConLai >= 0 && soNgayConLai <= 30;
     }).length;
   }
+
   @override
   void dispose() {
     _hopDongProvider.removeListener(_onHopDongChanged);

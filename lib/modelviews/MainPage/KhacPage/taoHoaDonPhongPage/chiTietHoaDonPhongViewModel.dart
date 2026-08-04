@@ -62,7 +62,7 @@ class ChiTietHoaDonPhongViewModel extends ChangeNotifier {
           final info = await _phongProvider.getInforPhong(phongId);
           tenPhong = info.tenPhong;
         } catch (_) {
-          tenPhong = "Phòng $phongId"; 
+          tenPhong = "Phòng $phongId";
         }
       }
       await provider.fetchDanhSachByPhong(phongId: phongId, thangNam: thangNam);
@@ -76,7 +76,8 @@ class ChiTietHoaDonPhongViewModel extends ChangeNotifier {
           } catch (_) {}
         }
 
-        bool isDienNuoc = parsedJson['type'] == 'DIEN_NUOC' ||
+        bool isDienNuoc =
+            parsedJson['type'] == 'DIEN_NUOC' ||
             parsedJson['isDienNuocOnly'] == true;
 
         double tongTien = _toDouble(inv['soTien']) > 0
@@ -86,10 +87,15 @@ class ChiTietHoaDonPhongViewModel extends ChangeNotifier {
         double tongDaThu = _toDouble(inv['tongDaThu']);
         double conNo = _toDouble(inv['conNo']);
 
-        int lanGhi = _toInt(parsedJson['lanGhi']) > 0 ? _toInt(parsedJson['lanGhi']) : 1;
+        int lanGhi = _toInt(parsedJson['lanGhi']) > 0
+            ? _toInt(parsedJson['lanGhi'])
+            : 1;
 
         String finalGhiChu = inv['ghiChu'] ?? parsedJson['ghiChu'] ?? '';
-        if (isDienNuoc && (finalGhiChu.isEmpty || finalGhiChu.contains('Chốt') || finalGhiChu.contains('chốt'))) {
+        if (isDienNuoc &&
+            (finalGhiChu.isEmpty ||
+                finalGhiChu.contains('Chốt') ||
+                finalGhiChu.contains('chốt'))) {
           finalGhiChu = "Chot chi so dien nuoc thang $thangNam (Lan $lanGhi)";
         }
 
@@ -99,15 +105,17 @@ class ChiTietHoaDonPhongViewModel extends ChangeNotifier {
           "isDienNuoc": isDienNuoc,
           "lanGhi": lanGhi,
           "hoTen": inv['hoTenKhach'] ?? parsedJson['hoTen'] ?? 'Khách thuê',
-          "tenPhong": inv['tenPhong'] ?? parsedJson['tenPhong'] ?? 'Phòng $phongId',
+          "tenPhong":
+              inv['tenPhong'] ?? parsedJson['tenPhong'] ?? 'Phòng $phongId',
           "thangNam": inv['thangNam'] ?? thangNam,
           "ngayLap": inv['ngayLap'] ?? parsedJson['ngayLap'],
           "tongTien": tongTien,
           "tongDaThu": tongDaThu,
           "conNo": conNo,
           "trangThai": _toInt(inv['trangThai']),
-          "formulaText": parsedJson['danhSachKhachThue'] != null &&
-              (parsedJson['danhSachKhachThue'] as List).isNotEmpty
+          "formulaText":
+              parsedJson['danhSachKhachThue'] != null &&
+                  (parsedJson['danhSachKhachThue'] as List).isNotEmpty
               ? parsedJson['danhSachKhachThue'][0]['noteFormula']
               : null,
           "danhSachXe": parsedJson['danhSachXe'] ?? [],
@@ -119,11 +127,20 @@ class ChiTietHoaDonPhongViewModel extends ChangeNotifier {
       }).toList();
 
       listHoaDon.sort((a, b) {
-        final dateA = a['ngayLap'] != null ? DateTime.tryParse(a['ngayLap'].toString())?.millisecondsSinceEpoch ?? 0 : 0;
-        final dateB = b['ngayLap'] != null ? DateTime.tryParse(b['ngayLap'].toString())?.millisecondsSinceEpoch ?? 0 : 0;
+        final dateA = a['ngayLap'] != null
+            ? DateTime.tryParse(
+                    a['ngayLap'].toString(),
+                  )?.millisecondsSinceEpoch ??
+                  0
+            : 0;
+        final dateB = b['ngayLap'] != null
+            ? DateTime.tryParse(
+                    b['ngayLap'].toString(),
+                  )?.millisecondsSinceEpoch ??
+                  0
+            : 0;
         return dateB.compareTo(dateA); // Giảm dần: mới nhất lên trên
       });
-
     } catch (e) {
       errorMessage = e.toString().replaceAll('Exception: ', '');
     } finally {
@@ -137,7 +154,7 @@ class ChiTietHoaDonPhongViewModel extends ChangeNotifier {
     final integerPart = amount.round().toString();
     final formatted = integerPart.replaceAllMapped(
       RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-          (Match m) => '${m[1]}.',
+      (Match m) => '${m[1]}.',
     );
     return "${formatted}đ";
   }
@@ -174,7 +191,10 @@ class ChiTietHoaDonPhongViewModel extends ChangeNotifier {
     final double tongTienPhong = _toDouble(item['tongTienPhong']);
     final double tienDichVuKhac = _toDouble(item['tienDichVuKhac']);
     final List danhSachXe = item['danhSachXe'] ?? [];
-    final double tongTienXe = danhSachXe.fold(0.0, (sum, x) => sum + _toDouble(x['price']));
+    final double tongTienXe = danhSachXe.fold(
+      0.0,
+      (sum, x) => sum + _toDouble(x['price']),
+    );
     final String formulaText = item['formulaText'] ?? '';
 
     // Dữ liệu riêng cho Điện Nước
@@ -193,18 +213,32 @@ class ChiTietHoaDonPhongViewModel extends ChangeNotifier {
               // Tiêu đề
               pw.Center(
                 child: pw.Text(
-                  isDienNuoc ? "HÓA ĐƠN TIỀN ĐIỆN NƯỚC" : "HÓA ĐƠN THUÊ PHÒNG TRỌ",
-                  style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
+                  isDienNuoc
+                      ? "HÓA ĐƠN TIỀN ĐIỆN NƯỚC"
+                      : "HÓA ĐƠN THUÊ PHÒNG TRỌ",
+                  style: pw.TextStyle(
+                    fontSize: 18,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
                 ),
               ),
               pw.Center(
-                child: pw.Text("Kỳ hóa đơn: Tháng $thangNam", style: const pw.TextStyle(fontSize: 12, color: PdfColors.grey700)),
+                child: pw.Text(
+                  "Kỳ hóa đơn: Tháng $thangNam",
+                  style: const pw.TextStyle(
+                    fontSize: 12,
+                    color: PdfColors.grey700,
+                  ),
+                ),
               ),
               pw.SizedBox(height: 12),
               pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
-                  pw.Text("Mã hóa đơn: $maHoaDon", style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                  pw.Text(
+                    "Mã hóa đơn: $maHoaDon",
+                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                  ),
                   pw.Text("Ngày lập: $ngayLap"),
                 ],
               ),
@@ -215,14 +249,23 @@ class ChiTietHoaDonPhongViewModel extends ChangeNotifier {
 
               //PHÂN TÁCH HIỂN THỊ CHI TIẾT GIỮA ĐIỆN NƯỚC VÀ HỢP ĐỒNG
               if (isDienNuoc) ...[
-                pw.Text("CHI TIẾT TIÊU THỤ ĐIỆN NƯỚC:", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.blue800)),
+                pw.Text(
+                  "CHI TIẾT TIÊU THỤ ĐIỆN NƯỚC:",
+                  style: pw.TextStyle(
+                    fontWeight: pw.FontWeight.bold,
+                    fontSize: 11,
+                    color: PdfColors.blue800,
+                  ),
+                ),
                 pw.SizedBox(height: 6),
 
                 pw.Container(
                   padding: const pw.EdgeInsets.all(8),
                   decoration: pw.BoxDecoration(
                     border: pw.Border.all(color: PdfColors.grey300),
-                    borderRadius: const pw.BorderRadius.all(pw.Radius.circular(6)),
+                    borderRadius: const pw.BorderRadius.all(
+                      pw.Radius.circular(6),
+                    ),
                   ),
                   child: pw.Column(
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -230,27 +273,70 @@ class ChiTietHoaDonPhongViewModel extends ChangeNotifier {
                       pw.Row(
                         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                         children: [
-                          pw.Text("• Điện (kWh):", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
-                          pw.Text(_formatMoney(dien['thanhTien']), style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+                          pw.Text(
+                            "• Điện (kWh):",
+                            style: pw.TextStyle(
+                              fontWeight: pw.FontWeight.bold,
+                              fontSize: 10,
+                            ),
+                          ),
+                          pw.Text(
+                            _formatMoney(dien['thanhTien']),
+                            style: pw.TextStyle(
+                              fontWeight: pw.FontWeight.bold,
+                              fontSize: 10,
+                            ),
+                          ),
                         ],
                       ),
                       pw.SizedBox(height: 2),
-                      pw.Text("Chỉ số: ${dien['cu'] ?? 0} - ${dien['moi'] ?? 0} (Sử dụng: ${dien['suDung'] ?? 0}) | Đơn giá: ${_formatMoney(dien['donGia'])}", style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey700)),
+                      pw.Text(
+                        "Chỉ số: ${dien['cu'] ?? 0} - ${dien['moi'] ?? 0} (Sử dụng: ${dien['suDung'] ?? 0}) | Đơn giá: ${_formatMoney(dien['donGia'])}",
+                        style: const pw.TextStyle(
+                          fontSize: 9,
+                          color: PdfColors.grey700,
+                        ),
+                      ),
                       pw.SizedBox(height: 8),
                       pw.Row(
                         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                         children: [
-                          pw.Text("• Nước (m³):", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
-                          pw.Text(_formatMoney(nuoc['thanhTien']), style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+                          pw.Text(
+                            "• Nước (m³):",
+                            style: pw.TextStyle(
+                              fontWeight: pw.FontWeight.bold,
+                              fontSize: 10,
+                            ),
+                          ),
+                          pw.Text(
+                            _formatMoney(nuoc['thanhTien']),
+                            style: pw.TextStyle(
+                              fontWeight: pw.FontWeight.bold,
+                              fontSize: 10,
+                            ),
+                          ),
                         ],
                       ),
                       pw.SizedBox(height: 2),
-                      pw.Text("Chỉ số: ${nuoc['cu'] ?? 0} - ${nuoc['moi'] ?? 0} (Sử dụng: ${nuoc['suDung'] ?? 0}) | Đơn giá: ${_formatMoney(nuoc['donGia'])}", style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey700)),
+                      pw.Text(
+                        "Chỉ số: ${nuoc['cu'] ?? 0} - ${nuoc['moi'] ?? 0} (Sử dụng: ${nuoc['suDung'] ?? 0}) | Đơn giá: ${_formatMoney(nuoc['donGia'])}",
+                        style: const pw.TextStyle(
+                          fontSize: 9,
+                          color: PdfColors.grey700,
+                        ),
+                      ),
                     ],
                   ),
                 ),
               ] else ...[
-                pw.Text("CHI TIẾT CÁC KHOẢN PHÍ:", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11, color: PdfColors.green800)),
+                pw.Text(
+                  "CHI TIẾT CÁC KHOẢN PHÍ:",
+                  style: pw.TextStyle(
+                    fontWeight: pw.FontWeight.bold,
+                    fontSize: 11,
+                    color: PdfColors.green800,
+                  ),
+                ),
                 pw.SizedBox(height: 6),
 
                 // Tiền phòng
@@ -262,16 +348,37 @@ class ChiTietHoaDonPhongViewModel extends ChangeNotifier {
                       child: pw.Column(
                         crossAxisAlignment: pw.CrossAxisAlignment.start,
                         children: [
-                          pw.Text("• Tiền phòng:", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+                          pw.Text(
+                            "• Tiền phòng:",
+                            style: pw.TextStyle(
+                              fontWeight: pw.FontWeight.bold,
+                              fontSize: 10,
+                            ),
+                          ),
                           if (formulaText.isNotEmpty)
                             pw.Padding(
-                              padding: const pw.EdgeInsets.only(left: 10, top: 2),
-                              child: pw.Text(formulaText, style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey700)),
+                              padding: const pw.EdgeInsets.only(
+                                left: 10,
+                                top: 2,
+                              ),
+                              child: pw.Text(
+                                formulaText,
+                                style: const pw.TextStyle(
+                                  fontSize: 9,
+                                  color: PdfColors.grey700,
+                                ),
+                              ),
                             ),
                         ],
                       ),
                     ),
-                    pw.Text(_formatMoney(tongTienPhong), style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+                    pw.Text(
+                      _formatMoney(tongTienPhong),
+                      style: pw.TextStyle(
+                        fontWeight: pw.FontWeight.bold,
+                        fontSize: 10,
+                      ),
+                    ),
                   ],
                 ),
                 pw.SizedBox(height: 6),
@@ -281,20 +388,46 @@ class ChiTietHoaDonPhongViewModel extends ChangeNotifier {
                   pw.Row(
                     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                     children: [
-                      pw.Text("• Tiền gửi xe (${danhSachXe.length} chiếc):", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
-                      pw.Text(_formatMoney(tongTienXe), style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+                      pw.Text(
+                        "• Tiền gửi xe (${danhSachXe.length} chiếc):",
+                        style: pw.TextStyle(
+                          fontWeight: pw.FontWeight.bold,
+                          fontSize: 10,
+                        ),
+                      ),
+                      pw.Text(
+                        _formatMoney(tongTienXe),
+                        style: pw.TextStyle(
+                          fontWeight: pw.FontWeight.bold,
+                          fontSize: 10,
+                        ),
+                      ),
                     ],
                   ),
-                  ...danhSachXe.map((xe) => pw.Padding(
-                    padding: const pw.EdgeInsets.only(left: 10, top: 2),
-                    child: pw.Row(
-                      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                      children: [
-                        pw.Text("- ${xe['hangXe'] ?? 'Xe'} (${xe['bienSo'] ?? ''})", style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey700)),
-                        pw.Text(_formatMoney(xe['price']), style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey700)),
-                      ],
+                  ...danhSachXe.map(
+                    (xe) => pw.Padding(
+                      padding: const pw.EdgeInsets.only(left: 10, top: 2),
+                      child: pw.Row(
+                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                        children: [
+                          pw.Text(
+                            "- ${xe['hangXe'] ?? 'Xe'} (${xe['bienSo'] ?? ''})",
+                            style: const pw.TextStyle(
+                              fontSize: 9,
+                              color: PdfColors.grey700,
+                            ),
+                          ),
+                          pw.Text(
+                            _formatMoney(xe['price']),
+                            style: const pw.TextStyle(
+                              fontSize: 9,
+                              color: PdfColors.grey700,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  )),
+                  ),
                   pw.SizedBox(height: 6),
                 ],
 
@@ -303,8 +436,20 @@ class ChiTietHoaDonPhongViewModel extends ChangeNotifier {
                   pw.Row(
                     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                     children: [
-                      pw.Text("• Dịch vụ phát sinh thêm:", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
-                      pw.Text(_formatMoney(tienDichVuKhac), style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+                      pw.Text(
+                        "• Dịch vụ phát sinh thêm:",
+                        style: pw.TextStyle(
+                          fontWeight: pw.FontWeight.bold,
+                          fontSize: 10,
+                        ),
+                      ),
+                      pw.Text(
+                        _formatMoney(tienDichVuKhac),
+                        style: pw.TextStyle(
+                          fontWeight: pw.FontWeight.bold,
+                          fontSize: 10,
+                        ),
+                      ),
                     ],
                   ),
                   pw.SizedBox(height: 6),
@@ -313,7 +458,14 @@ class ChiTietHoaDonPhongViewModel extends ChangeNotifier {
 
               if (ghiChu.isNotEmpty) ...[
                 pw.SizedBox(height: 6),
-                pw.Text("Ghi chú: $ghiChu", style: pw.TextStyle(fontStyle: pw.FontStyle.italic, fontSize: 10, color: PdfColors.grey800)),
+                pw.Text(
+                  "Ghi chú: $ghiChu",
+                  style: pw.TextStyle(
+                    fontStyle: pw.FontStyle.italic,
+                    fontSize: 10,
+                    color: PdfColors.grey800,
+                  ),
+                ),
               ],
 
               pw.SizedBox(height: 10),
@@ -323,8 +475,14 @@ class ChiTietHoaDonPhongViewModel extends ChangeNotifier {
               pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
-                  pw.Text("Tổng hóa đơn:", style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                  pw.Text(_formatMoney(tongTien), style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                  pw.Text(
+                    "Tổng hóa đơn:",
+                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                  ),
+                  pw.Text(
+                    _formatMoney(tongTien),
+                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                  ),
                 ],
               ),
               pw.SizedBox(height: 4),
@@ -339,8 +497,22 @@ class ChiTietHoaDonPhongViewModel extends ChangeNotifier {
               pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
-                  pw.Text("CÒN LẠI PHẢI NỘP:", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 13, color: PdfColors.red900)),
-                  pw.Text(_formatMoney(conNo), style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 13, color: PdfColors.red900)),
+                  pw.Text(
+                    "CÒN LẠI PHẢI NỘP:",
+                    style: pw.TextStyle(
+                      fontWeight: pw.FontWeight.bold,
+                      fontSize: 13,
+                      color: PdfColors.red900,
+                    ),
+                  ),
+                  pw.Text(
+                    _formatMoney(conNo),
+                    style: pw.TextStyle(
+                      fontWeight: pw.FontWeight.bold,
+                      fontSize: 13,
+                      color: PdfColors.red900,
+                    ),
+                  ),
                 ],
               ),
 
@@ -351,18 +523,36 @@ class ChiTietHoaDonPhongViewModel extends ChangeNotifier {
                   pw.Center(
                     child: pw.Column(
                       children: [
-                        pw.Text("Người lập phiếu", style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                        pw.Text(
+                          "Người lập phiếu",
+                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                        ),
                         pw.SizedBox(height: 25),
-                        pw.Text("(Ký, ghi rõ họ tên)", style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey700)),
+                        pw.Text(
+                          "(Ký, ghi rõ họ tên)",
+                          style: const pw.TextStyle(
+                            fontSize: 9,
+                            color: PdfColors.grey700,
+                          ),
+                        ),
                       ],
                     ),
                   ),
                   pw.Center(
                     child: pw.Column(
                       children: [
-                        pw.Text("Khách thuê", style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                        pw.Text(
+                          "Khách thuê",
+                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                        ),
                         pw.SizedBox(height: 25),
-                        pw.Text("(Ký, ghi rõ họ tên)", style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey700)),
+                        pw.Text(
+                          "(Ký, ghi rõ họ tên)",
+                          style: const pw.TextStyle(
+                            fontSize: 9,
+                            color: PdfColors.grey700,
+                          ),
+                        ),
                       ],
                     ),
                   ),

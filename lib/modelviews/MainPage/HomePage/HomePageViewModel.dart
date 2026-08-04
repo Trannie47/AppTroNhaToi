@@ -15,11 +15,11 @@ class HomePageViewModel extends ChangeNotifier {
   final ThongBaoProvider _thongBaoProvider;
 
   HomePageViewModel(
-      this._phongProvider,
-      this._thongKeProvider,
-      this._nguoiThueProvider,
-      this._thongBaoProvider,
-      ) {
+    this._phongProvider,
+    this._thongKeProvider,
+    this._nguoiThueProvider,
+    this._thongBaoProvider,
+  ) {
     _phongProvider.addListener(_onPhongUpdate);
     _thongKeProvider.addListener(_onThongKeUpdate);
     _nguoiThueProvider.addListener(_onNguoiThueUpdate);
@@ -64,8 +64,8 @@ class HomePageViewModel extends ChangeNotifier {
 
   bool get isLoading =>
       _phongProvider.isLoading ||
-          _thongKeProvider.isLoading ||
-          _nguoiThueProvider.isLoading;
+      _thongKeProvider.isLoading ||
+      _nguoiThueProvider.isLoading;
 
   double get doanhThuThang => data?.doanhThu.tongDoanhThu ?? 0;
 

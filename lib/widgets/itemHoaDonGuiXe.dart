@@ -7,11 +7,7 @@ class ItemHoaDonGuiXe extends StatelessWidget {
   final HoaDonGuiXe hoaDon;
   final PhuongTien? phuongTien;
 
-  const ItemHoaDonGuiXe({
-    super.key,
-    required this.hoaDon,
-    this.phuongTien,
-  });
+  const ItemHoaDonGuiXe({super.key, required this.hoaDon, this.phuongTien});
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +29,12 @@ class ItemHoaDonGuiXe extends StatelessWidget {
     }
 
     // Lấy số tiền từ hóa đơn, nếu trống thì lấy giá gửi của phương tiện
-    final double soTien = double.tryParse((hoaDon.soTien ?? phuongTien?.giaGui ?? 0).toString()) ?? 0;    final String tenXe = phuongTien?.hangXe ?? "Xe máy";
+    final double soTien =
+        double.tryParse(
+          (hoaDon.soTien ?? phuongTien?.giaGui ?? 0).toString(),
+        ) ??
+        0;
+    final String tenXe = phuongTien?.hangXe ?? "Xe máy";
     final String bienSo = phuongTien?.bienSo ?? "";
     final String thangNam = hoaDon.thangNam ?? "";
 

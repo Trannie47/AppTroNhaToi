@@ -32,6 +32,7 @@ class PhuongTienProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
   Future<bool> createPhuongTien(PhuongTien xe) async {
     _isLoading = true;
     _errorMessage = null;
@@ -51,6 +52,7 @@ class PhuongTienProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
   Future<bool> updatePhuongTien(num id, PhuongTien xe) async {
     _isLoading = true;
     _errorMessage = null;
@@ -97,6 +99,7 @@ class PhuongTienProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
   void clear() {
     _list = [];
     _errorMessage = null;

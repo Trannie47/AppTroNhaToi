@@ -84,9 +84,7 @@ class _LuuTruTamThoiPageState extends State<LuuTruTamThoiPage> {
   String _getTenPhong(int? phongId) {
     if (phongId == null) return "";
     try {
-      final hd = widget.dsHopDong.firstWhere(
-            (e) => e.phongID == phongId,
-      );
+      final hd = widget.dsHopDong.firstWhere((e) => e.phongID == phongId);
       final ten = hd.phong?.tenPhong;
       if (ten != null && ten.isNotEmpty) {
         return "P$ten";
@@ -103,7 +101,7 @@ class _LuuTruTamThoiPageState extends State<LuuTruTamThoiPage> {
       builder: (ctx) => AppConfirmDialog(
         title: "Xóa lưu trú tạm thời",
         content:
-        "Bạn có chắc chắn muốn xóa thông tin lưu trú của \"${item.hoTen ?? 'người này'}\" không? Thao tác này không thể hoàn tác.",
+            "Bạn có chắc chắn muốn xóa thông tin lưu trú của \"${item.hoTen ?? 'người này'}\" không? Thao tác này không thể hoàn tác.",
         textConfirm: "Xóa ngay",
         textCancel: "Hủy",
         isDangerous: true,
@@ -215,7 +213,7 @@ class _LuuTruTamThoiPageState extends State<LuuTruTamThoiPage> {
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
       body: Builder(
@@ -233,8 +231,11 @@ class _LuuTruTamThoiPageState extends State<LuuTruTamThoiPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.error_outline_rounded,
-                      size: 48, color: Colors.red),
+                  const Icon(
+                    Icons.error_outline_rounded,
+                    size: 48,
+                    color: Colors.red,
+                  ),
                   const SizedBox(height: 12),
                   Text(
                     vm.errorMessage!,
@@ -244,7 +245,7 @@ class _LuuTruTamThoiPageState extends State<LuuTruTamThoiPage> {
                   ElevatedButton(
                     onPressed: () => vm.getDanhSach(),
                     child: const Text("Thử lại"),
-                  )
+                  ),
                 ],
               ),
             );
@@ -303,9 +304,7 @@ class _LuuTruTamThoiPageState extends State<LuuTruTamThoiPage> {
                   return InkWell(
                     onTap: () => _onEditItem(item),
                     borderRadius: BorderRadius.vertical(
-                      top: index == 0
-                          ? const Radius.circular(20)
-                          : Radius.zero,
+                      top: index == 0 ? const Radius.circular(20) : Radius.zero,
                       bottom: index == vm.dsLuuTru.length - 1
                           ? const Radius.circular(20)
                           : Radius.zero,
