@@ -1,21 +1,21 @@
 import 'package:AppTroNhaToi/Provider/lap_rap_provider.dart';
 import 'package:AppTroNhaToi/Provider/thiet_bi_provider.dart';
-import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/LapRapPage/LapRapPageModel.dart';
-import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/LapRapPage/NhomThietBiTrongPhongModel.dart';
+import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/ThietBiPhongPage/ThietBiPhongPageModel.dart';
+import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/ThietBiPhongPage/NhomThietBiTrongPhongModel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 
-class LapRapPageViewModel extends ChangeNotifier {
+class ThietBiPhongPageViewModel extends ChangeNotifier {
   final LapRapProvider _lapRapProvider;
   final int phongId;
 
-  List<LapRapPageModel> _dsLapRap = [];
-  List<LapRapPageModel> get dsLapRap => _dsLapRap;
+  List<ThietBiPhongPageModel> _dsLapRap = [];
+  List<ThietBiPhongPageModel> get dsLapRap => _dsLapRap;
 
-  /// Danh sách đã gộp nhóm theo thietBiId — dùng để hiển thị lên UI
-  /// dạng "1 dòng = 1 loại thiết bị + số lượng", vì backend không có
-  /// field soLuong (mỗi LapRap = 1 thiết bị vật lý).
+  /// Danh sách đã gộp nhóm theo thietBiId — chỉ dùng để HIỂN THỊ
+  /// dạng "1 dòng = 1 loại thiết bị + số lượng đang có trong phòng".
+  /// Thao tác thêm/sửa/xóa vẫn luôn thực hiện trên từng thiết bị riêng lẻ.
   List<NhomThietBiTrongPhong> get dsNhomThietBi =>
       gomNhomTheoThietBi(_dsLapRap);
 
@@ -28,7 +28,7 @@ class LapRapPageViewModel extends ChangeNotifier {
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
-  LapRapPageViewModel(this._lapRapProvider, this.phongId);
+  ThietBiPhongPageViewModel(this._lapRapProvider, this.phongId);
 
   Future<void> fetchThietBiByPhongId() async {
     _isLoading = true;
@@ -48,35 +48,25 @@ class LapRapPageViewModel extends ChangeNotifier {
     }
   }
 
-  /// THÊM MỚI: tạo `soLuong` dòng LapRap riêng biệt cho cùng 1 loại thiết bị
-  /// (vì backend không nhận field soLuong, mỗi lần gọi API = 1 thiết bị).
+  /// THÊM MỚI: gắn đúng 1 thiết bị vào phòng.
   Future<bool> themThietBi({
     required int thietBiId,
-    required int soLuong,
     required DateTime ngayLap,
     String ghiChu = '',
   }) async {
-    if (soLuong <= 0) {
-      _errorMessage = "Số lượng phải lớn hơn 0";
-      notifyListeners();
-      return false;
-    }
-
     _isSubmitting = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      for (int i = 0; i < soLuong; i++) {
-        final result = await _lapRapProvider.taoLapRap(
-          phongId: phongId,
-          thietBiId: thietBiId,
-          ghiChu: ghiChu,
-          ngayLap: ngayLap,
-        );
-        if (result == null) {
-          throw Exception("Tạo lắp ráp thất bại ở thiết bị thứ ${i + 1}");
-        }
+      final result = await _lapRapProvider.taoLapRap(
+        phongId: phongId,
+        thietBiId: thietBiId,
+        ghiChu: ghiChu,
+        ngayLap: ngayLap,
+      );
+      if (result == null) {
+        throw Exception("Thêm thiết bị thất bại");
       }
 
       await fetchThietBiByPhongId();
@@ -93,19 +83,15 @@ class LapRapPageViewModel extends ChangeNotifier {
     }
   }
 
-  /// CẬP NHẬT SỐ LƯỢNG: so sánh số lượng mới với nhóm hiện tại.
-  /// - Tăng: tạo thêm dòng mới cho phần chênh lệch.
-  /// - Giảm: xóa mềm bớt các dòng dư ra (ưu tiên xóa dòng KHÔNG đang sửa
-  ///   chữa / không hỏng trước, tránh xóa nhầm thiết bị đang có vấn đề).
-  /// - Về 0: xóa mềm toàn bộ nhóm ("Xóa khỏi phòng").
-  Future<bool> capNhatSoLuongThietBi({
-    required NhomThietBiTrongPhong nhom,
-    required int soLuongMoi,
+  /// CẬP NHẬT: sửa ghi chú / ngày lắp cho đúng 1 bản ghi lắp ráp.
+  Future<bool> capNhatThietBi({
+    required ThietBiPhongPageModel item,
     required DateTime ngayLap,
     String ghiChu = '',
   }) async {
-    if (soLuongMoi < 0) {
-      _errorMessage = "Số lượng không hợp lệ";
+    final id = item.lapRap.id;
+    if (id == null) {
+      _errorMessage = "Không xác định được thiết bị cần cập nhật";
       notifyListeners();
       return false;
     }
@@ -115,53 +101,20 @@ class LapRapPageViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final soLuongHienTai = nhom.soLuong;
-
-      if (soLuongMoi > soLuongHienTai) {
-        // TĂNG: tạo thêm phần chênh lệch
-        final soCanThem = soLuongMoi - soLuongHienTai;
-        for (int i = 0; i < soCanThem; i++) {
-          final result = await _lapRapProvider.taoLapRap(
-            phongId: phongId,
-            thietBiId: nhom.thietBiId,
-            ghiChu: ghiChu,
-            ngayLap: ngayLap,
-          );
-          if (result == null) {
-            throw Exception("Thêm thiết bị thất bại ở lượt ${i + 1}");
-          }
-        }
-      } else if (soLuongMoi < soLuongHienTai) {
-        // GIẢM (hoặc về 0): xóa bớt các dòng dư ra.
-        // Ưu tiên xóa dòng "an toàn" (không đang sửa chữa, không hỏng) trước.
-        final soCanXoa = soLuongHienTai - soLuongMoi;
-        final danhSachSapXep = [...nhom.danhSach]
-          ..sort(
-            (a, b) => (a.soLuongDangSua + a.soLuongHong).compareTo(
-              b.soLuongDangSua + b.soLuongHong,
-            ),
-          );
-
-        final idsCanXoa = danhSachSapXep
-            .take(soCanXoa)
-            .map((e) => e.lapRap.id)
-            .whereType<int>()
-            .toList();
-
-        for (final id in idsCanXoa) {
-          // final thanhCong = await _lapRapProvider.xoaLapRap(id);
-          // if (!thanhCong) {
-          //   throw Exception("Xóa thiết bị (id: $id) thất bại");
-          // }
-        }
+      final thanhCong = await _lapRapProvider.capNhatLapRap(
+        id: id,
+        ghiChu: ghiChu,
+        // ngayLap: ngayLap,
+      );
+      if (thanhCong != true) {
+        throw Exception("Cập nhật thiết bị thất bại");
       }
-      // Nếu soLuongMoi == soLuongHienTai thì không cần làm gì thêm.
 
       await fetchThietBiByPhongId();
       return true;
     } catch (e) {
       if (kDebugMode) {
-        print("Lỗi LapRapPageViewModel.capNhatSoLuongThietBi: $e");
+        print("Lỗi LapRapPageViewModel.capNhatThietBi: $e");
       }
       _errorMessage = e.toString().replaceFirst('Exception: ', '');
       rethrow;
@@ -171,7 +124,33 @@ class LapRapPageViewModel extends ChangeNotifier {
     }
   }
 
-  //dùng để gọi api load lại dữ liệu mới trong quá trình thêm số lượng của thiết bị vào phòng
+  /// XÓA: gỡ đúng 1 thiết bị khỏi phòng (xóa mềm bản ghi lắp ráp).
+  // Future<bool> xoaThietBi(int id) async {
+  //   _isSubmitting = true;
+  //   _errorMessage = null;
+  //   notifyListeners();
+
+  //   try {
+  //     final thanhCong = await _lapRapProvider.xoaLapRap(id);
+  //     if (thanhCong != true) {
+  //       throw Exception("Xóa thiết bị thất bại");
+  //     }
+
+  //     await fetchThietBiByPhongId();
+  //     return true;
+  //   } catch (e) {
+  //     if (kDebugMode) {
+  //       print("Lỗi LapRapPageViewModel.xoaThietBi: $e");
+  //     }
+  //     _errorMessage = e.toString().replaceFirst('Exception: ', '');
+  //     rethrow;
+  //   } finally {
+  //     _isSubmitting = false;
+  //     notifyListeners();
+  //   }
+  // }
+
+  //dùng để gọi api load lại dữ liệu mới trong quá trình thêm/sửa/xóa thiết bị của phòng
   Future<void> reloadAll(BuildContext context) async {
     await fetchThietBiByPhongId();
     if (context.mounted) {

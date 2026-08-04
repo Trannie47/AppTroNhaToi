@@ -2,29 +2,29 @@ import 'package:AppTroNhaToi/Provider/lap_rap_provider.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/models/item_phong.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/ChiTietPhongPage/LapRapPage/LapRapPageViewModel.dart';
-import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/LapRapPage/NhomThietBiTrongPhongModel.dart';
+import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/ThietBiPhongPage/NhomThietBiTrongPhongModel.dart';
 import 'package:AppTroNhaToi/widgets/app_error.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'LapRapFormDialog.dart';
+import 'ThietBiPhongFormDialog.dart';
 
-class LapRapPage extends StatefulWidget {
+class ThietBiPhongPage extends StatefulWidget {
   final ItemPhong room;
 
-  const LapRapPage({super.key, required this.room});
+  const ThietBiPhongPage({super.key, required this.room});
 
   @override
-  State<LapRapPage> createState() => _LapRapPageState();
+  State<ThietBiPhongPage> createState() => _ThietBiPhongPageState();
 }
 
-class _LapRapPageState extends State<LapRapPage> {
-  late LapRapPageViewModel vm;
+class _ThietBiPhongPageState extends State<ThietBiPhongPage> {
+  late ThietBiPhongPageViewModel vm;
 
   @override
   void initState() {
     super.initState();
-    vm = LapRapPageViewModel(
+    vm = ThietBiPhongPageViewModel(
       context.read<LapRapProvider>(),
       widget.room.phongId,
     );
@@ -116,7 +116,7 @@ class _LapRapPageState extends State<LapRapPage> {
                   onPressed: () async {
                     final result = await showDialog<bool>(
                       context: context,
-                      builder: (dialogContext) => LapRapFormDialog(
+                      builder: (dialogContext) => ThietBiPhongFormDialog(
                         phongId: widget.room.phongId,
                         viewModel: vm,
                       ),
@@ -219,28 +219,28 @@ class _LapRapPageState extends State<LapRapPage> {
               final nhom = dsNhom[index];
               return InkWell(
                 borderRadius: BorderRadius.circular(20),
-                onTap: () async {
-                  final result = await showDialog<bool>(
-                    context: context,
-                    builder: (dialogContext) => LapRapFormDialog(
-                      phongId: widget.room.phongId,
-                      viewModel: vm,
-                      nhom: nhom, // Truyền nhóm để mở Form Sửa / Xóa
-                    ),
-                  );
+                // onTap: () async {
+                //   final result = await showDialog<bool>(
+                //     context: context,
+                //     builder: (dialogContext) => ThietBiPhongFormDialog(
+                //       phongId: widget.room.phongId,
+                //       viewModel: vm,
+                //       nhom: nhom., // Truyền nhóm để mở Form Sửa / Xóa
+                //     ),
+                //   );
 
-                  if (!mounted) return;
+                //   if (!mounted) return;
 
-                  if (result == true) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Cập nhật thiết bị phòng thành công!"),
-                        backgroundColor: Color(0xff2D7A3A),
-                      ),
-                    );
-                    await vm.reloadAll(context);
-                  }
-                },
+                //   if (result == true) {
+                //     ScaffoldMessenger.of(context).showSnackBar(
+                //       const SnackBar(
+                //         content: Text("Cập nhật thiết bị phòng thành công!"),
+                //         backgroundColor: Color(0xff2D7A3A),
+                //       ),
+                //     );
+                //     await vm.reloadAll(context);
+                //   }
+                // },
                 child: _buildItemThietBi(nhom),
               );
             },

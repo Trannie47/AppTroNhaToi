@@ -10,7 +10,7 @@ import '../../../../states/phong_save_state.dart';
 import '../../../../widgets/app_confirm_dialog.dart';
 import '../../../../widgets/app_error.dart';
 import '../FormPhong/FormPhong.dart';
-import 'LapRapPage/LapRapPage.dart';
+import 'ThietBiPhongPage/ThietBiPhongPage.dart';
 import 'TrangChucNang/GhiDienNuocPage/ghiDienNuocPage.dart';
 import 'TrangChucNang/LichSuThuePage/lichSuThuePage.dart';
 import 'TrangChucNang/TaoHoaDonPhongPage/taoHoaDonPhong.dart';
@@ -54,7 +54,7 @@ class _PhongChiTiet extends State<PhongChiTiet> {
   void _xemThietBiInPhong(ItemPhong room) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => LapRapPage(room: room)),
+      MaterialPageRoute(builder: (_) => ThietBiPhongPage(room: room)),
     );
   }
 

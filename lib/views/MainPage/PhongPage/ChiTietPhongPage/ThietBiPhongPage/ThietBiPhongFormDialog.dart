@@ -1,48 +1,57 @@
 import 'package:AppTroNhaToi/Provider/thiet_bi_provider.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
+import 'package:AppTroNhaToi/models/lap_rap.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/ChiTietPhongPage/LapRapPage/LapRapPageViewModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThietBiPage/thietBiPageModel.dart';
-import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/LapRapPage/NhomThietBiTrongPhongModel.dart';
+import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/ThietBiPhongPage/ThietBiPhongPageModel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class LapRapFormDialog extends StatefulWidget {
+class ThietBiPhongFormDialog extends StatefulWidget {
   final int phongId;
 
-  final NhomThietBiTrongPhong? nhom;
-  final LapRapPageViewModel viewModel;
+  final ThietBiPhongPageModel? item;
+  final ThietBiPhongPageViewModel viewModel;
 
-  const LapRapFormDialog({
+  const ThietBiPhongFormDialog({
     super.key,
     required this.phongId,
-    this.nhom,
+    this.item,
     required this.viewModel,
   });
 
   @override
-  State<LapRapFormDialog> createState() => _LapRapFormDialogState();
+  State<ThietBiPhongFormDialog> createState() => _ThietBiPhongFormDialogState();
 }
 
-class _LapRapFormDialogState extends State<LapRapFormDialog> {
+class _ThietBiPhongFormDialogState extends State<ThietBiPhongFormDialog> {
   ThietBiPageModel? _selectedThietBi;
-  late int _soLuong;
   late DateTime _selectedDate;
+  late TextEditingController _ghiChuController;
 
   bool _isSubmitting = false;
   String? _errorMessage;
 
-  bool get _isEditMode => widget.nhom != null;
+  bool get _isEditMode => widget.item != null;
 
   @override
   void initState() {
     super.initState();
 
-    _soLuong = widget.nhom?.soLuong ?? 1;
-    _selectedDate = widget.nhom?.ngayLapGanNhat ?? DateTime.now();
+    _selectedDate = widget.item?.lapRap.ngayLap ?? DateTime.now();
+    _ghiChuController = TextEditingController(
+      text: widget.item?.lapRap.ghiChu ?? '',
+    );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ThietBiProvider>().fetchAll();
     });
+  }
+
+  @override
+  void dispose() {
+    _ghiChuController.dispose();
+    super.dispose();
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -70,22 +79,6 @@ class _LapRapFormDialogState extends State<LapRapFormDialog> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<ThietBiProvider>();
-
-    ThietBiPageModel? matchingModel;
-    if (_isEditMode && widget.nhom?.thietBiId != null) {
-      try {
-        matchingModel = provider.list.firstWhere(
-          (e) => e.thietBi.thietBiID == widget.nhom!.thietBiId,
-        );
-      } catch (_) {}
-    }
-
-    // Số lượng tối đa có thể chọn = kho còn lại + số lượng đang có trong phòng
-    // (vì phần đang có trong phòng cũng được tính là "đã lấy ra khỏi kho" rồi)
-    final initialSoLuong = widget.nhom?.soLuong ?? 0;
-    final int maxSoLuong = _isEditMode
-        ? ((matchingModel?.soLuongConLai ?? 0) + initialSoLuong)
-        : (_selectedThietBi?.soLuongConLai ?? 999);
 
     final dsThietBiConHang = provider.list
         .where((item) => item.soLuongConLai > 0)
@@ -134,7 +127,7 @@ class _LapRapFormDialogState extends State<LapRapFormDialog> {
                   border: Border.all(color: const Color(0xffEFEFEF)),
                 ),
                 child: Text(
-                  widget.nhom?.thietBi?.tenThietBi ?? 'Chưa rõ tên',
+                  widget.item?.lapRap.thietBi?.tenThietBi ?? 'Chưa rõ tên',
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -197,82 +190,44 @@ class _LapRapFormDialogState extends State<LapRapFormDialog> {
 
             const SizedBox(height: 16),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  "Số lượng",
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xff1C1C1E),
-                  ),
-                ),
-                if (_isEditMode && matchingModel != null)
-                  Text(
-                    "(Kho còn: ${matchingModel.soLuongConLai})",
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: Color(0xff8E8E93),
-                    ),
-                  ),
-              ],
+            const Text(
+              "Ghi chú",
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: Color(0xff1C1C1E),
+              ),
             ),
             const SizedBox(height: 6),
-            Container(
-              height: 48,
-              decoration: BoxDecoration(
-                color: const Color(0xffF8F9FA),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: const Color(0xffEFEFEF)),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    onPressed:
-                        (_soLuong <= (_isEditMode ? 0 : 1) || _isSubmitting)
-                        ? null
-                        : () {
-                            setState(() {
-                              _soLuong--;
-                              _errorMessage = null;
-                            });
-                          },
-                    icon: Icon(
-                      Icons.remove_circle_outline_rounded,
-                      color: _soLuong <= (_isEditMode ? 0 : 1)
-                          ? Colors.grey.shade400
-                          : Colors.red.shade600,
-                    ),
-                  ),
-                  Text(
-                    "$_soLuong",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: _soLuong == 0
-                          ? Colors.red
-                          : const Color(0xff1C1C1E),
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: (_soLuong >= maxSoLuong || _isSubmitting)
-                        ? null
-                        : () {
-                            setState(() {
-                              _soLuong++;
-                              _errorMessage = null;
-                            });
-                          },
-                    icon: Icon(
-                      Icons.add_circle_outline_rounded,
-                      color: _soLuong >= maxSoLuong
-                          ? Colors.grey.shade400
-                          : const Color(0xff2D7A3A),
-                    ),
-                  ),
-                ],
+            TextField(
+              controller: _ghiChuController,
+              enabled: !_isSubmitting,
+              maxLines: 3,
+              onChanged: (_) => setState(() => _errorMessage = null),
+              decoration: InputDecoration(
+                hintText: "Nhập ghi chú (nếu có)",
+                hintStyle: const TextStyle(
+                  color: Color(0xff8E8E93),
+                  fontSize: 14,
+                ),
+                filled: true,
+                fillColor: const Color(0xffF8F9FA),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: const BorderSide(color: Color(0xffEFEFEF)),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: const BorderSide(color: Color(0xffEFEFEF)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: const BorderSide(color: Color(0xff2D7A3A)),
+                ),
               ),
             ),
 
@@ -393,9 +348,7 @@ class _LapRapFormDialogState extends State<LapRapFormDialog> {
                     child: ElevatedButton(
                       onPressed: _isSubmitting ? null : _handleAction,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: (_isEditMode && _soLuong == 0)
-                            ? Colors.red.shade700
-                            : const Color(0xff437648),
+                        backgroundColor: const Color(0xff437648),
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
@@ -411,11 +364,7 @@ class _LapRapFormDialogState extends State<LapRapFormDialog> {
                               ),
                             )
                           : Text(
-                              _isEditMode
-                                  ? (_soLuong == 0
-                                        ? "Xóa khỏi phòng"
-                                        : "Cập nhật")
-                                  : "Thêm",
+                              _isEditMode ? "Cập nhật" : "Thêm",
                               style: const TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w700,
@@ -434,7 +383,7 @@ class _LapRapFormDialogState extends State<LapRapFormDialog> {
   }
 
   Future<void> _handleAction() async {
-    // CHẾ ĐỘ SỬA (tăng/giảm số lượng hoặc xóa khỏi phòng)
+    // CHẾ ĐỘ SỬA (cập nhật ghi chú / ngày lắp)
     if (_isEditMode) {
       setState(() {
         _isSubmitting = true;
@@ -442,9 +391,9 @@ class _LapRapFormDialogState extends State<LapRapFormDialog> {
       });
 
       try {
-        await widget.viewModel.capNhatSoLuongThietBi(
-          nhom: widget.nhom!,
-          soLuongMoi: _soLuong,
+        await widget.viewModel.capNhatThietBi(
+          item: widget.item!,
+          ghiChu: _ghiChuController.text,
           ngayLap: _selectedDate,
         );
 
@@ -478,14 +427,6 @@ class _LapRapFormDialogState extends State<LapRapFormDialog> {
     final thietBiId = _selectedThietBi!.thietBi.thietBiID;
     if (thietBiId == null) return;
 
-    if (_soLuong > _selectedThietBi!.soLuongConLai) {
-      setState(() {
-        _errorMessage =
-            "Không đủ số lượng! Trong kho chỉ còn ${_selectedThietBi!.soLuongConLai} cái.";
-      });
-      return;
-    }
-
     setState(() {
       _isSubmitting = true;
       _errorMessage = null;
@@ -494,7 +435,7 @@ class _LapRapFormDialogState extends State<LapRapFormDialog> {
     try {
       final success = await widget.viewModel.themThietBi(
         thietBiId: thietBiId,
-        soLuong: _soLuong,
+        ghiChu: _ghiChuController.text,
         ngayLap: _selectedDate,
       );
 

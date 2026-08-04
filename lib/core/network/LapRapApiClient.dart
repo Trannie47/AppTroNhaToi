@@ -1,13 +1,13 @@
 import 'package:AppTroNhaToi/core/network/retrofit_client.dart';
 import 'package:AppTroNhaToi/models/lap_rap.dart';
-import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/LapRapPage/LapRapPageModel.dart';
+import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/ThietBiPhongPage/ThietBiPhongPageModel.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
 class LapRapApiClient {
   final Dio _dio = RetrofitClient().dio;
 
-  Future<List<LapRapPageModel>> getThietBiByPhongId(int phongId) async {
+  Future<List<ThietBiPhongPageModel>> getThietBiByPhongId(int phongId) async {
     try {
       final response = await _dio.get("thiet-bi/phong/$phongId");
 
@@ -15,7 +15,8 @@ class LapRapApiClient {
         final List<dynamic> data = response.data;
         return data
             .map(
-              (json) => LapRapPageModel.fromMap(json as Map<String, dynamic>),
+              (json) =>
+                  ThietBiPhongPageModel.fromMap(json as Map<String, dynamic>),
             )
             .toList();
       }
@@ -69,10 +70,7 @@ class LapRapApiClient {
     }
   }
 
-  Future<LapRap?> capNhatLapRap({
-    required int id,
-    required String ghiChu,
-  }) async {
+  Future<bool?> capNhatLapRap({required int id, required String ghiChu}) async {
     try {
       final response = await _dio.patch(
         "lap-rap/$id",
@@ -80,7 +78,7 @@ class LapRapApiClient {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return LapRap.fromMap(response.data as Map<String, dynamic>);
+        return true;
       }
       throw Exception("Không thể cập nhật thiết bị");
     } on DioException catch (e) {
@@ -113,6 +111,37 @@ class LapRapApiClient {
         return "Hệ thống đang gặp sự cố, vui lòng thử lại sau";
       default:
         return "Đã có lỗi xảy ra, vui lòng thử lại";
+    }
+  }
+
+  Future<LapRap?> findByPhongVaThietBi({
+    required int phongId,
+    required int thietBiId,
+  }) async {
+    try {
+      final response = await _dio.get(
+        "lap-rap/find-by-phong-thiet-bi",
+        queryParameters: {"phongId": phongId, "thietBiId": thietBiId},
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        if (response.data == null) return null;
+
+        return LapRap.fromMap(response.data as Map<String, dynamic>);
+      }
+
+      throw Exception("Không tìm thấy thiết bị trong phòng");
+    } on DioException catch (e) {
+      if (kDebugMode) {
+        print("Lỗi findByPhongVaThietBi Dio: $e");
+      }
+      throw Exception(_mapErrorToMessage(e));
+    } catch (e) {
+      if (kDebugMode) {
+        print("Lỗi findByPhongVaThietBi: $e");
+      }
+      if (e is Exception) rethrow;
+      throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
     }
   }
 }

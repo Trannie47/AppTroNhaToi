@@ -2,53 +2,26 @@ import 'package:AppTroNhaToi/models/lap_rap.dart';
 
 class LapRapPageModel {
   final LapRap lapRap;
+  final int trangThai; // 0: bình thường, 1: đang sửa, 2: hỏng
 
-  /// Số lượng đang sửa chữa (chưa có hóa đơn hoặc hóa đơn trangThai = 0)
-  final int soLuongDangSua;
-
-  /// Số lượng hỏng (hóa đơn sửa chữa có trangThai = 3)
-  final int soLuongHong;
-
-  LapRapPageModel({
-    required this.lapRap,
-    this.soLuongDangSua = 0,
-    this.soLuongHong = 0,
-  });
+  LapRapPageModel({required this.lapRap, this.trangThai = 0});
 
   factory LapRapPageModel.fromMap(Map<String, dynamic> map) {
     return LapRapPageModel(
       lapRap: LapRap.fromMap(map),
-      soLuongDangSua: (map['soLuongDangSua'] as num?)?.toInt() ?? 0,
-      soLuongHong: (map['soLuongHong'] as num?)?.toInt() ?? 0,
+      trangThai: map['trangThai'] as int? ?? 0,
     );
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      ...lapRap.toMap(),
-      'soLuongDangSua': soLuongDangSua,
-      'soLuongHong': soLuongHong,
-    };
-  }
-
-  LapRapPageModel copyWith({
-    LapRap? lapRap,
-    int? soLuongDangSua,
-    int? soLuongHong,
-  }) {
-    return LapRapPageModel(
-      lapRap: lapRap ?? this.lapRap,
-      soLuongDangSua: soLuongDangSua ?? this.soLuongDangSua,
-      soLuongHong: soLuongHong ?? this.soLuongHong,
-    );
+    return {...lapRap.toMap(), 'trangThai': trangThai};
   }
 
   @override
   String toString() {
-    return 'ChiTietThietBiPhongPageModel('
+    return 'LapRapPageModel('
         'lapRap: $lapRap, '
-        'soLuongDangSua: $soLuongDangSua, '
-        'soLuongHong: $soLuongHong'
+        'trangThai: $trangThai'
         ')';
   }
 }

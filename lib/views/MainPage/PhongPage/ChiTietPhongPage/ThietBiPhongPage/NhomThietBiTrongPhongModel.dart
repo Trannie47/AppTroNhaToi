@@ -1,10 +1,10 @@
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
-import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/LapRapPage/LapRapPageModel.dart';
+import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/ThietBiPhongPage/ThietBiPhongPageModel.dart';
 
 class NhomThietBiTrongPhong {
   final int thietBiId;
   final ThietBi? thietBi;
-  final List<LapRapPageModel> danhSach;
+  final List<ThietBiPhongPageModel> danhSach;
 
   NhomThietBiTrongPhong({
     required this.thietBiId,
@@ -33,8 +33,8 @@ class NhomThietBiTrongPhong {
       danhSach.map((e) => e.lapRap.id).whereType<int>().toList();
 }
 
-List<NhomThietBiTrongPhong> gomNhomTheoThietBi(List<LapRapPageModel> ds) {
-  final Map<int, List<LapRapPageModel>> map = {};
+List<NhomThietBiTrongPhong> gomNhomTheoThietBi(List<ThietBiPhongPageModel> ds) {
+  final Map<int, List<ThietBiPhongPageModel>> map = {};
   for (final item in ds) {
     final tbId = item.lapRap.thietBiID;
     if (tbId == null) continue;

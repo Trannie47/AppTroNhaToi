@@ -1,11 +1,11 @@
 import 'package:AppTroNhaToi/core/network/LapRapApiClient.dart';
 import 'package:AppTroNhaToi/models/lap_rap.dart';
-import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/LapRapPage/LapRapPageModel.dart';
+import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/ThietBiPhongPage/ThietBiPhongPageModel.dart';
 
 class LapRapRepository {
   final LapRapApiClient _lapRapApiClient = LapRapApiClient();
 
-  Future<List<LapRapPageModel>> getThietBiByPhongId(int phongId) async {
+  Future<List<ThietBiPhongPageModel>> getThietBiByPhongId(int phongId) async {
     return await _lapRapApiClient.getThietBiByPhongId(phongId);
   }
 
@@ -23,10 +23,7 @@ class LapRapRepository {
     );
   }
 
-  Future<LapRap?> capNhatLapRap({
-    required int id,
-    required String ghiChu,
-  }) async {
+  Future<bool?> capNhatLapRap({required int id, required String ghiChu}) async {
     return await _lapRapApiClient.capNhatLapRap(id: id, ghiChu: ghiChu);
   }
 }
