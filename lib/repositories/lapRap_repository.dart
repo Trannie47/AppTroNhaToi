@@ -1,5 +1,6 @@
 import 'package:AppTroNhaToi/core/network/LapRapApiClient.dart';
 import 'package:AppTroNhaToi/models/lap_rap.dart';
+import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/LapRapPage/LapRapPageModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/ThietBiPhongPage/ThietBiPhongPageModel.dart';
 
 class LapRapRepository {
@@ -25,5 +26,19 @@ class LapRapRepository {
 
   Future<bool?> capNhatLapRap({required int id, required String ghiChu}) async {
     return await _lapRapApiClient.capNhatLapRap(id: id, ghiChu: ghiChu);
+  }
+
+  Future<List<LapRapPageModel>> findByPhongVaThietBi({
+    required int phongId,
+    required int thietBiId,
+  }) async {
+    return await _lapRapApiClient.findByPhongVaThietBi(
+      phongId: phongId,
+      thietBiId: thietBiId,
+    );
+  }
+
+  Future<bool> xoaLapRap(int id) async {
+    return await _lapRapApiClient.xoaLapRap(id);
   }
 }

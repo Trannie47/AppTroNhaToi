@@ -1,23 +1,32 @@
 import 'package:AppTroNhaToi/Provider/thiet_bi_provider.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/models/lap_rap.dart';
-import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/ChiTietPhongPage/LapRapPage/LapRapPageViewModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThietBiPage/thietBiPageModel.dart';
-import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/ThietBiPhongPage/ThietBiPhongPageModel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ThietBiPhongFormDialog extends StatefulWidget {
   final int phongId;
 
-  final ThietBiPhongPageModel? item;
-  final ThietBiPhongPageViewModel viewModel;
+  final LapRap? item;
+
+  final int? thietBiIdCoDinh;
+  final String? tenThietBiCoDinh;
+
+  final Future<bool> Function(int thietBiId, DateTime ngayLap, String ghiChu)?
+  onCreate;
+
+  final Future<bool> Function(LapRap item, DateTime ngayLap, String ghiChu)?
+  onUpdate;
 
   const ThietBiPhongFormDialog({
     super.key,
     required this.phongId,
     this.item,
-    required this.viewModel,
+    this.thietBiIdCoDinh,
+    this.tenThietBiCoDinh,
+    this.onCreate,
+    this.onUpdate,
   });
 
   @override
@@ -34,14 +43,21 @@ class _ThietBiPhongFormDialogState extends State<ThietBiPhongFormDialog> {
 
   bool get _isEditMode => widget.item != null;
 
+  /// Khoá ô chọn thiết bị khi: đang SỬA, hoặc thiết bị đã được cố định
+  /// truyền từ ngoài vào (ví dụ mở từ LapRapPage).
+  bool get _isThietBiLocked => _isEditMode || widget.thietBiIdCoDinh != null;
+
+  String get _tenThietBiHienThi =>
+      widget.item?.thietBi?.tenThietBi ??
+      widget.tenThietBiCoDinh ??
+      'Chưa rõ tên';
+
   @override
   void initState() {
     super.initState();
 
-    _selectedDate = widget.item?.lapRap.ngayLap ?? DateTime.now();
-    _ghiChuController = TextEditingController(
-      text: widget.item?.lapRap.ghiChu ?? '',
-    );
+    _selectedDate = widget.item?.ngayLap ?? DateTime.now();
+    _ghiChuController = TextEditingController(text: widget.item?.ghiChu ?? '');
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ThietBiProvider>().fetchAll();
@@ -114,7 +130,7 @@ class _ThietBiPhongFormDialogState extends State<ThietBiPhongFormDialog> {
             ),
             const SizedBox(height: 6),
 
-            if (_isEditMode)
+            if (_isThietBiLocked)
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(
@@ -127,7 +143,7 @@ class _ThietBiPhongFormDialogState extends State<ThietBiPhongFormDialog> {
                   border: Border.all(color: const Color(0xffEFEFEF)),
                 ),
                 child: Text(
-                  widget.item?.lapRap.thietBi?.tenThietBi ?? 'Chưa rõ tên',
+                  _tenThietBiHienThi,
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -391,13 +407,15 @@ class _ThietBiPhongFormDialogState extends State<ThietBiPhongFormDialog> {
       });
 
       try {
-        await widget.viewModel.capNhatThietBi(
-          item: widget.item!,
-          ghiChu: _ghiChuController.text,
-          ngayLap: _selectedDate,
-        );
+        final success =
+            await widget.onUpdate?.call(
+              widget.item!,
+              _selectedDate,
+              _ghiChuController.text,
+            ) ??
+            false;
 
-        if (mounted) {
+        if (success && mounted) {
           Navigator.pop(context, true);
         }
       } catch (e) {
@@ -417,15 +435,15 @@ class _ThietBiPhongFormDialogState extends State<ThietBiPhongFormDialog> {
     }
 
     // CHẾ ĐỘ THÊM MỚI
-    if (_selectedThietBi == null) {
+    final thietBiId =
+        widget.thietBiIdCoDinh ?? _selectedThietBi?.thietBi.thietBiID;
+
+    if (thietBiId == null) {
       setState(() {
         _errorMessage = "Vui lòng chọn thiết bị!";
       });
       return;
     }
-
-    final thietBiId = _selectedThietBi!.thietBi.thietBiID;
-    if (thietBiId == null) return;
 
     setState(() {
       _isSubmitting = true;
@@ -433,11 +451,13 @@ class _ThietBiPhongFormDialogState extends State<ThietBiPhongFormDialog> {
     });
 
     try {
-      final success = await widget.viewModel.themThietBi(
-        thietBiId: thietBiId,
-        ghiChu: _ghiChuController.text,
-        ngayLap: _selectedDate,
-      );
+      final success =
+          await widget.onCreate?.call(
+            thietBiId,
+            _selectedDate,
+            _ghiChuController.text,
+          ) ??
+          false;
 
       if (success && mounted) {
         Navigator.pop(context, true);

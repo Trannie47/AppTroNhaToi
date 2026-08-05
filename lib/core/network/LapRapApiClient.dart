@@ -1,5 +1,6 @@
 import 'package:AppTroNhaToi/core/network/retrofit_client.dart';
 import 'package:AppTroNhaToi/models/lap_rap.dart';
+import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/LapRapPage/LapRapPageModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/ThietBiPhongPage/ThietBiPhongPageModel.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -114,7 +115,7 @@ class LapRapApiClient {
     }
   }
 
-  Future<LapRap?> findByPhongVaThietBi({
+  Future<List<LapRapPageModel>> findByPhongVaThietBi({
     required int phongId,
     required int thietBiId,
   }) async {
@@ -125,22 +126,46 @@ class LapRapApiClient {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        if (response.data == null) return null;
+        final List<dynamic> data = response.data;
 
-        return LapRap.fromMap(response.data as Map<String, dynamic>);
+        return data
+            .map((e) => LapRapPageModel.fromMap(e as Map<String, dynamic>))
+            .toList();
       }
 
-      throw Exception("Không tìm thấy thiết bị trong phòng");
+      throw Exception("Không tìm thấy lịch sử lắp ráp");
+    } on DioException catch (e) {
+      throw Exception(_mapErrorToMessage(e));
+    } catch (e) {
+      if (e is Exception) rethrow;
+      throw Exception("Đã có lỗi xảy ra");
+    }
+  }
+
+  Future<bool> xoaLapRap(int id) async {
+    try {
+      final response = await _dio.delete("lap-rap/$id");
+
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.statusCode == 204) {
+        return true;
+      }
+
+      throw Exception("Không thể xóa lịch sử lắp ráp");
     } on DioException catch (e) {
       if (kDebugMode) {
-        print("Lỗi findByPhongVaThietBi Dio: $e");
+        print("Lỗi xoaLapRap Dio: $e");
       }
+
       throw Exception(_mapErrorToMessage(e));
     } catch (e) {
       if (kDebugMode) {
-        print("Lỗi findByPhongVaThietBi: $e");
+        print("Lỗi xoaLapRap: $e");
       }
+
       if (e is Exception) rethrow;
+
       throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
     }
   }

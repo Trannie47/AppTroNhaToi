@@ -1,7 +1,8 @@
 import 'package:AppTroNhaToi/Provider/lap_rap_provider.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/models/item_phong.dart';
-import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/ChiTietPhongPage/LapRapPage/LapRapPageViewModel.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/ChiTietPhongPage/ThietBiPhongPage/ThietBiPhongPageViewModel.dart';
+import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/LapRapPage/LapRapPage.dart';
 import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/ThietBiPhongPage/NhomThietBiTrongPhongModel.dart';
 import 'package:AppTroNhaToi/widgets/app_error.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,22 @@ class ThietBiPhongPage extends StatefulWidget {
 
 class _ThietBiPhongPageState extends State<ThietBiPhongPage> {
   late ThietBiPhongPageViewModel vm;
+
+  Future<void> _moLichSuLapRap(NhomThietBiTrongPhong nhom) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => LapRapPage(
+          phongId: widget.room.phongId,
+          thietBiId: nhom.thietBi!.thietBiID!,
+        ),
+      ),
+    );
+
+    if (!mounted) return;
+
+    await vm.reloadAll(context);
+  }
 
   @override
   void initState() {
@@ -118,7 +135,17 @@ class _ThietBiPhongPageState extends State<ThietBiPhongPage> {
                       context: context,
                       builder: (dialogContext) => ThietBiPhongFormDialog(
                         phongId: widget.room.phongId,
-                        viewModel: vm,
+                        onCreate: (thietBiId, ngayLap, ghiChu) =>
+                            vm.themThietBi(
+                              thietBiId: thietBiId,
+                              ngayLap: ngayLap,
+                              ghiChu: ghiChu,
+                            ),
+                        onUpdate: (item, ngayLap, ghiChu) => vm.capNhatThietBi(
+                          item: item,
+                          ngayLap: ngayLap,
+                          ghiChu: ghiChu,
+                        ),
                       ),
                     );
 
@@ -219,28 +246,7 @@ class _ThietBiPhongPageState extends State<ThietBiPhongPage> {
               final nhom = dsNhom[index];
               return InkWell(
                 borderRadius: BorderRadius.circular(20),
-                // onTap: () async {
-                //   final result = await showDialog<bool>(
-                //     context: context,
-                //     builder: (dialogContext) => ThietBiPhongFormDialog(
-                //       phongId: widget.room.phongId,
-                //       viewModel: vm,
-                //       nhom: nhom., // Truyền nhóm để mở Form Sửa / Xóa
-                //     ),
-                //   );
-
-                //   if (!mounted) return;
-
-                //   if (result == true) {
-                //     ScaffoldMessenger.of(context).showSnackBar(
-                //       const SnackBar(
-                //         content: Text("Cập nhật thiết bị phòng thành công!"),
-                //         backgroundColor: Color(0xff2D7A3A),
-                //       ),
-                //     );
-                //     await vm.reloadAll(context);
-                //   }
-                // },
+                onTap: () => _moLichSuLapRap(nhom),
                 child: _buildItemThietBi(nhom),
               );
             },

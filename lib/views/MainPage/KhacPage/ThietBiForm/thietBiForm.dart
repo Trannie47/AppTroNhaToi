@@ -8,7 +8,6 @@ import 'package:AppTroNhaToi/widgets/customDropdownSearch.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:provider/provider.dart';
 
 class ThietBiForm extends StatefulWidget {
