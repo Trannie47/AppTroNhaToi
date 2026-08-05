@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:AppTroNhaToi/Provider/hop_dong_provider.dart';
 import 'package:AppTroNhaToi/Provider/nguoi_thue_provider.dart';
+import 'package:AppTroNhaToi/Provider/phong_provider.dart';
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/models/DTO/RoomAvailableDTO.dart';
@@ -18,14 +19,14 @@ import 'package:intl/intl.dart';
 import '../../../../core/utils/map_dio_error_to_message.dart';
 import '../../../../models/DTO/HopDongDTO.dart';
 import '../../../../models/DTO/ThanhVienFormItemDTO.dart';
-import '../../../../models/DTO/ThanhVienHopDongDTO.dart';
 import '../../../../states/hop_dong_update_state.dart';
 
 class HopDongFormViewModel extends ChangeNotifier {
   final HopDongProvider _hopDongProvider;
   final NguoiThueProvider _nguoiThueProvider;
+  final PhongProvider _phongProvider;
 
-  HopDongFormViewModel(this._hopDongProvider, this._nguoiThueProvider) {
+  HopDongFormViewModel(this._hopDongProvider, this._nguoiThueProvider, this._phongProvider) {
     txtGiaHopDong.addListener(() {
       if (errGiaHopDong != null) {
         errGiaHopDong = null;
@@ -183,6 +184,7 @@ class HopDongFormViewModel extends ChangeNotifier {
     try {
       final result = await _hopDongProvider.createHopDong(hopDongInfor, listImageContract);
       _createContractState = CreateContractSuccess(result);
+      await _phongProvider.getListPhong();
     } catch (e) {
       String loi = "Đã có lỗi xảy ra, vui lòng thử lại sau!";
       if (e is DioException) {
@@ -200,9 +202,8 @@ class HopDongFormViewModel extends ChangeNotifier {
     _updateContractState = HopDongUpdateLoading();
     notifyListeners();
     try {
-      final hopDongInforr = getInforContractPayload();
-      print('PAYLOAD: ${jsonEncode(hopDongInforr)}');
       final result = await _hopDongProvider.updateHopDong(hopDongInfor, listImageContract);
+      await _phongProvider.getListPhong();
       _updateContractState = HopDongUpdateSuccess(result);
     } catch (e) {
       String loi = "Đã có lỗi xảy ra, vui lòng thử lại sau!";

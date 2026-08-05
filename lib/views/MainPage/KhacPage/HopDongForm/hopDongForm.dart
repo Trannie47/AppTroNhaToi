@@ -35,7 +35,8 @@ class _TaoHopDongPageState extends State<HopDongForm> {
     super.initState();
     final globalHopDongProvider = Provider.of<HopDongProvider>(context, listen: false);
     final globalNguoiThueProvider = Provider.of<NguoiThueProvider>(context, listen: false);
-    vm = HopDongFormViewModel(globalHopDongProvider, globalNguoiThueProvider);
+    final globalPhongProvider = Provider.of<PhongProvider>(context, listen: false);
+    vm = HopDongFormViewModel(globalHopDongProvider, globalNguoiThueProvider,globalPhongProvider);
     vm.init(hopDong: widget.hopDong);
     vm.addListener(() {
       if (mounted) {

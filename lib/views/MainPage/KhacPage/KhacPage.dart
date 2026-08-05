@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../../Provider/cau_hinh_gia_provider.dart';
-import '../../../core/utils/currency_formatter.dart';
+import '../../../Provider/cau_hinh_gia_xe_provider.dart';
 import '../../../modelviews/MainPage/KhacPage/KhacPage.dart';
 
 class KhacPage extends StatefulWidget {
@@ -37,7 +37,15 @@ class _KhacPageState extends State<KhacPage> {
       context,
       listen: false,
     );
-    vm = KhacPageModelView(hopDongProvider, cauHinhGiaProvider);
+    final cauHinhGiaXeProvider = Provider.of<CauHinhGiaXeProvider>(
+      context,
+      listen: false,
+    );
+    vm = KhacPageModelView(
+      hopDongProvider,
+      cauHinhGiaProvider,
+      cauHinhGiaXeProvider,
+    );
     vm.addListener(() {
       if (mounted) {
         setState(() {});
@@ -57,15 +65,30 @@ class _KhacPageState extends State<KhacPage> {
     final hoaDonTapHoaProvider = context.watch<HoaDonTapHoaProvider>();
     final thongKeProvider = context.watch<ThongKeProvider>();
     final cauHinhGiaProvider = context.watch<CauHinhGiaProvider>();
+    final cauHinhGiaXeProvider = context.watch<CauHinhGiaXeProvider>();
 
     final soLuongSapHetHan = vm.soLuongSapHetHan;
 
     final giaDien = cauHinhGiaProvider.cauHinhGia?.giaDien;
     final giaNuoc = cauHinhGiaProvider.cauHinhGia?.giaNuoc;
+    final dsGiaXe = cauHinhGiaXeProvider.list;
 
-    final statusCauHinhGia = (giaDien != null && giaNuoc != null)
-        ? "Điện: ${formatMoney(giaDien)} | Nước: ${formatMoney(giaNuoc)}"
-        : "Chưa cấu hình đơn giá";
+
+    int soMucDaCauHinh = 0;
+    if (giaDien != null && giaDien > 0) soMucDaCauHinh++;
+    if (giaNuoc != null && giaNuoc > 0) soMucDaCauHinh++;
+    for (final loaiXe in [0, 1, 2]) {
+      final daCauHinhLoaiXeNay = dsGiaXe.any(
+        (e) => e.loaiXe == loaiXe && e.giaMacDinh > 0,
+      );
+      if (daCauHinhLoaiXeNay) soMucDaCauHinh++;
+    }
+
+    final statusCauHinhGia = soMucDaCauHinh == 0
+        ? "Chưa cấu hình đơn giá"
+        : soMucDaCauHinh == 5
+        ? "Đã cấu hình đầy đủ"
+        : "Đã cấu hình $soMucDaCauHinh/5 mục";
 
     return Scaffold(
       backgroundColor: const Color(0xFFF4F4F4),
@@ -142,7 +165,7 @@ class _KhacPageState extends State<KhacPage> {
                     iconBg: const Color(0xFFE3F2FD),
                     title: "Cấu hình giá",
                     subtitle:
-                        "Thiết lập đơn giá điện, nước\nmặc định cho toàn bộ hệ thống",
+                        "Thiết lập đơn giá điện, nước,\ngiá gửi xe mặc định cho hệ thống",
                     status: statusCauHinhGia,
                     statusColor: Colors.blue.shade700,
                     onTap: () {

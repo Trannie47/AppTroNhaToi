@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
+import 'Provider/cau_hinh_gia_xe_provider.dart';
 import 'Provider/hop_dong_provider.dart';
 import 'Provider/loai_phong_provider.dart';
 import 'Provider/phieu_thu_dien_nuoc_provider.dart';
@@ -41,6 +42,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => LapRapProvider()),
         ChangeNotifierProvider(create: (_) => NguoiLuuTruTamThoiProvider()),
         ChangeNotifierProvider(create: (_) => CauHinhGiaProvider()),
+        ChangeNotifierProvider(create: (_) => CauHinhGiaXeProvider()),
         ChangeNotifierProvider(create: (_) => HoadonPhongProvider()),
         ChangeNotifierProvider(create: (_) => PhieuThuHangThangProvider()),
         ChangeNotifierProvider(create: (_) => PhieuThuDienNuocProvider()),

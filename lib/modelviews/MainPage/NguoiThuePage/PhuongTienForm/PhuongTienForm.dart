@@ -1,3 +1,4 @@
+import 'package:AppTroNhaToi/Provider/cau_hinh_gia_xe_provider.dart';
 import 'package:AppTroNhaToi/Provider/phuong_tien_provider.dart';
 import 'package:AppTroNhaToi/models/phuong_tien.dart';
 import 'package:flutter/material.dart';
@@ -69,12 +70,28 @@ class PhuongTienFormViewModel extends ChangeNotifier {
     });
   }
 
-  void changeLoaiXe(int value) {
+  // Đổi loại xe và hiener thij lại giá gửi xe mặc định theo loại xe vừa chọn
+  Future<void> changeLoaiXe(
+    int value, {
+    required CauHinhGiaXeProvider provider,
+  }) async {
     loaiXe = value;
     if (loaiXe == 2 && errBienSo != null) {
       errBienSo = null;
     }
     notifyListeners();
+
+    final cauHinh = await provider.getByLoaiXe(value);
+    if (cauHinh != null) {
+      txtGiaGui.text = cauHinh.giaMacDinh > 0
+          ? NumberFormat(
+              '#,###',
+              'vi_VN',
+            ).format(cauHinh.giaMacDinh).replaceAll(',', '.')
+          : "";
+      errGiaGui = null;
+      notifyListeners();
+    }
   }
 
   void selectPhong(int? pId, String? tPhong) {

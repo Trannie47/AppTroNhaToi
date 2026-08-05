@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:AppTroNhaToi/Provider/cau_hinh_gia_provider.dart';
+import 'package:AppTroNhaToi/Provider/cau_hinh_gia_xe_provider.dart';
 
 import '../../../../core/utils/currency_formatter.dart';
 import '../../../../modelviews/MainPage/KhacPage/CauHinhGiaPage/CauHinhGiaPageViewModel.dart';
@@ -24,7 +25,8 @@ class _CauHinhGiaPageState extends State<CauHinhGiaPage> {
   void initState() {
     super.initState();
     final provider = context.read<CauHinhGiaProvider>();
-    _viewModel = CauHinhGiaPageViewModel(provider: provider);
+    final providerXe = context.read<CauHinhGiaXeProvider>();
+    _viewModel = CauHinhGiaPageViewModel(provider: provider, providerXe: providerXe);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _viewModel.loadData();
@@ -50,21 +52,28 @@ class _CauHinhGiaPageState extends State<CauHinhGiaPage> {
           behavior: SnackBarBehavior.floating,
         ),
       );
-    } else if (_viewModel.provider.errorMessage != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(_viewModel.provider.errorMessage!),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+    } else {
+      final loi =
+          _viewModel.provider.errorMessage ??
+          _viewModel.providerXe.errorMessage;
+      if (loi != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(loi),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<CauHinhGiaProvider>();
+    final providerXe = context.watch<CauHinhGiaXeProvider>();
     final cauHinhGia = provider.cauHinhGia;
+    final dangXuLy = provider.isLoading || providerXe.isLoading;
 
     return ChangeNotifierProvider<CauHinhGiaPageViewModel>.value(
       value: _viewModel,
@@ -92,7 +101,7 @@ class _CauHinhGiaPageState extends State<CauHinhGiaPage> {
                 onPressed: () => Navigator.pop(context),
               ),
             ),
-            body: (provider.isLoading && !vm.isInitLoaded)
+            body: (dangXuLy && !vm.isInitLoaded)
                 ? const Center(
                     child: CircularProgressIndicator(color: _primaryGreen),
                   )
@@ -202,14 +211,77 @@ class _CauHinhGiaPageState extends State<CauHinhGiaPage> {
 
                           const SizedBox(height: 24),
 
+                          //Cấu hình giá gửi xe
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  "Giá gửi xe mặc định",
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: _primaryGreen,
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+
+                                _buildPriceInputField(
+                                  controller: vm.giaXeControllers[0]!,
+                                  label: "Xe máy",
+                                  unit: "đ / tháng",
+                                  icon: Icons.two_wheeler_rounded,
+                                  iconColor: Colors.deepPurple,
+                                  iconBg: const Color(0xFFF1ECFA),
+                                  hint: "VD: 50.000",
+                                  validator: (v) =>
+                                      vm.validateGia(v, "Giá gửi xe máy"),
+                                ),
+
+                                const SizedBox(height: 16),
+
+                                _buildPriceInputField(
+                                  controller: vm.giaXeControllers[1]!,
+                                  label: "Ô tô",
+                                  unit: "đ / tháng",
+                                  icon: Icons.directions_car_filled_rounded,
+                                  iconColor: Colors.teal,
+                                  iconBg: const Color(0xFFE0F2F1),
+                                  hint: "VD: 300.000",
+                                  validator: (v) =>
+                                      vm.validateGia(v, "Giá gửi ô tô"),
+                                ),
+
+                                const SizedBox(height: 16),
+
+                                _buildPriceInputField(
+                                  controller: vm.giaXeControllers[2]!,
+                                  label: "Xe đạp",
+                                  unit: "đ / tháng",
+                                  icon: Icons.pedal_bike_rounded,
+                                  iconColor: Colors.orange,
+                                  iconBg: const Color(0xFFFFF3E0),
+                                  hint: "VD: 20.000",
+                                  validator: (v) =>
+                                      vm.validateGia(v, "Giá gửi xe đạp"),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          const SizedBox(height: 24),
+
                           // Nút Lưu Cấu Hình
                           SizedBox(
                             width: double.infinity,
                             height: 48,
                             child: ElevatedButton(
-                              onPressed: provider.isLoading
-                                  ? null
-                                  : _handleSave,
+                              onPressed: dangXuLy ? null : _handleSave,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: _primaryGreen,
                                 elevation: 0,
@@ -217,7 +289,7 @@ class _CauHinhGiaPageState extends State<CauHinhGiaPage> {
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                               ),
-                              child: provider.isLoading
+                              child: dangXuLy
                                   ? const SizedBox(
                                       width: 22,
                                       height: 22,

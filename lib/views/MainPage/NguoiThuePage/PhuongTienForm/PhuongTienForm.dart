@@ -1,3 +1,4 @@
+import 'package:AppTroNhaToi/Provider/cau_hinh_gia_xe_provider.dart';
 import 'package:AppTroNhaToi/Provider/phuong_tien_provider.dart';
 import 'package:AppTroNhaToi/core/network/retrofit_client.dart';
 import 'package:AppTroNhaToi/models/hop_dong.dart';
@@ -49,6 +50,10 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
       _listHopDong = widget.dsHopDong!;
     } else {
       _fetchDsPhongByNguoiThue();
+    }
+
+    if (!vm.isEditing) {
+      vm.changeLoaiXe(vm.loaiXe, provider: context.read<CauHinhGiaXeProvider>());
     }
   }
 
@@ -654,7 +659,10 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
 
     return Expanded(
       child: GestureDetector(
-        onTap: () => vm.changeLoaiXe(value),
+        onTap: () => vm.changeLoaiXe(
+          value,
+          provider: context.read<CauHinhGiaXeProvider>(),
+        ),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
           height: 50,
