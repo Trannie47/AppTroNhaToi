@@ -580,13 +580,16 @@ class _TaoHoaDonPageState extends State<TaoHoaDonPage> {
                                                         const SizedBox(
                                                           height: 4,
                                                         ),
-                                                        const Text(
-                                                          "Hợp đồng này đã được lập hóa đơn",
-                                                          style: TextStyle(
-                                                            fontSize: 12,
-                                                            color:
-                                                                Colors.black54,
+                                                        Text(
+                                                          _moTaHoaDonDaLap(
+                                                            hd.existingInvoice,
                                                           ),
+                                                          style:
+                                                              const TextStyle(
+                                                                fontSize: 12,
+                                                                color: Colors
+                                                                    .black54,
+                                                              ),
                                                         ),
                                                       ],
                                                     ),
@@ -699,6 +702,17 @@ class _TaoHoaDonPageState extends State<TaoHoaDonPage> {
                                                   ),
                                                 ],
                                               ),
+                                              if (hd.danhSachThanhVien
+                                                  .isNotEmpty) ...[
+                                                const SizedBox(height: 4),
+                                                Text(
+                                                  "Thu cho: ${hd.danhSachThanhVien.join(', ')}",
+                                                  style: TextStyle(
+                                                    fontSize: 11,
+                                                    color: Colors.grey.shade600,
+                                                  ),
+                                                ),
+                                              ],
                                               const SizedBox(height: 10),
 
                                               Row(
@@ -812,7 +826,7 @@ class _TaoHoaDonPageState extends State<TaoHoaDonPage> {
                                                           ),
                                                           Expanded(
                                                             child: Text(
-                                                              "${xe.hangXe} - BKS: ${xe.bienSo}",
+                                                              "${xe.hangXe} - BKS: ${xe.bienSo} (${xe.chuXe})",
                                                               style: TextStyle(
                                                                 fontSize: 12,
                                                                 color:
@@ -890,7 +904,8 @@ class _TaoHoaDonPageState extends State<TaoHoaDonPage> {
                                                   ),
                                                   Text(
                                                     formatMoney(
-                                                      hd.tamTinhCaNhan,
+                                                      hd.tamTinhCaNhan +
+                                                          vm.tienDichVuKhacValue,
                                                     ),
                                                     style: const TextStyle(
                                                       fontWeight:
@@ -1121,6 +1136,34 @@ class _TaoHoaDonPageState extends State<TaoHoaDonPage> {
         },
       ),
     );
+  }
+
+  String _moTaHoaDonDaLap(Map<String, dynamic>? existingInvoice) {
+    if (existingInvoice == null) return "Hợp đồng này đã được lập hóa đơn";
+
+    final maHoaDon = existingInvoice['maHoaDon']?.toString();
+    final soTien = (existingInvoice['soTien'] as num?)?.toDouble();
+    final trangThai = existingInvoice['trangThai'] as int?;
+
+    String trangThaiText;
+    switch (trangThai) {
+      case 2:
+        trangThaiText = "Đã thanh toán";
+        break;
+      case 1:
+        trangThaiText = "Thanh toán 1 phần";
+        break;
+      default:
+        trangThaiText = "Chưa thanh toán";
+    }
+
+    final parts = <String>[
+      if (maHoaDon != null && maHoaDon.isNotEmpty) "Mã HD: $maHoaDon",
+      if (soTien != null) formatMoney(soTien),
+      trangThaiText,
+    ];
+
+    return parts.join(" • ");
   }
 
   Widget _buildCardSection({

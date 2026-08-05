@@ -32,6 +32,8 @@ class HoaDonPhongApiClient {
     int? chiSoDienMoi,
     int? chiSoNuocCu,
     int? chiSoNuocMoi,
+    double? giaDienApDung,
+    double? giaNuocApDung,
     double tienDichVuKhac = 0,
     String? ghiChu,
     String? danhSachHopDongJson,
@@ -49,6 +51,8 @@ class HoaDonPhongApiClient {
         if (chiSoDienMoi != null) 'chiSoDienMoi': chiSoDienMoi,
         if (chiSoNuocCu != null) 'chiSoNuocCu': chiSoNuocCu,
         if (chiSoNuocMoi != null) 'chiSoNuocMoi': chiSoNuocMoi,
+        if (giaDienApDung != null) 'giaDienApDung': giaDienApDung,
+        if (giaNuocApDung != null) 'giaNuocApDung': giaNuocApDung,
         if (ghiChu != null) 'ghiChu': ghiChu,
         if (danhSachHopDongJson != null)
           'danhSachHopDongJson': danhSachHopDongJson,

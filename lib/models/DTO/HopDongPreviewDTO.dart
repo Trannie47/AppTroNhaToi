@@ -6,6 +6,7 @@ class HopDongPreviewDTO {
   final int idnt;
   final String hoTen;
   final String sdt;
+  final List<String> danhSachThanhVien;
   final double giaPhongGoc;
   final int soNgayO;
   final int soNgayTrongThang;
@@ -24,6 +25,7 @@ class HopDongPreviewDTO {
     required this.idnt,
     required this.hoTen,
     required this.sdt,
+    this.danhSachThanhVien = const [],
     required this.giaPhongGoc,
     required this.soNgayO,
     required this.soNgayTrongThang,
@@ -54,6 +56,11 @@ class HopDongPreviewDTO {
       idnt: map['idnt'] ?? 0,
       hoTen: map['hoTen'] ?? 'Khách thuê',
       sdt: map['sdt'] ?? '',
+      danhSachThanhVien: map['danhSachThanhVien'] is List
+          ? List<String>.from(
+              (map['danhSachThanhVien'] as List).map((e) => e.toString()),
+            )
+          : const [],
       giaPhongGoc: (map['giaPhongGoc'] as num?)?.toDouble() ?? 0,
       soNgayO: map['soNgayO'] ?? 0,
       soNgayTrongThang: map['soNgayTrongThang'] ?? 30,

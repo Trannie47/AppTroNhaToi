@@ -75,6 +75,12 @@ class TaoHoaDonPhongPageViewModel extends ChangeNotifier {
 
   double get tongTienDienNuocPhong => tienDienPhong + tienNuocPhong;
 
+  // Tiền dịch vụ thêm áp dụng cho mỗi hợp đồng đang tạo hóa đơn kỳ này
+  double get tienDichVuKhacValue {
+    if (!isTinhTienHopDong) return 0;
+    return double.tryParse(txtTienDichVuKhac.text.replaceAll('.', '')) ?? 0;
+  }
+
   bool get isAllContractsBilled {
     if (listContracts.isEmpty) return false;
     return listContracts.every((hd) => hd.isAlreadyBilled);
@@ -270,10 +276,14 @@ class TaoHoaDonPhongPageViewModel extends ChangeNotifier {
       chiSoDienMoi: int.tryParse(txtDienChiSoMoi.text) ?? 0,
       chiSoNuocCu: int.tryParse(txtNuocChiSoCu.text) ?? 0,
       chiSoNuocMoi: int.tryParse(txtNuocChiSoMoi.text) ?? 0,
+      giaDienApDung: isChotDienNuoc
+          ? (double.tryParse(txtDienDonGia.text.replaceAll('.', '')) ?? 0)
+          : null,
+      giaNuocApDung: isChotDienNuoc
+          ? (double.tryParse(txtNuocDonGia.text.replaceAll('.', '')) ?? 0)
+          : null,
       // Nếu tắt tính tiền hợp đồng thì tiền dịch vụ khác và danh sách hợp đồng gửi lên sẽ được coi như không tính
-      tienDichVuKhac: isTinhTienHopDong
-          ? (double.tryParse(txtTienDichVuKhac.text.replaceAll('.', '')) ?? 0)
-          : 0,
+      tienDichVuKhac: tienDichVuKhacValue,
       ghiChu: txtGhiChu.text,
       //Nếu tắt tính tiền hợp đồng thì truyền null để backend không tạo hóa đơn hợp đồng!
       danhSachHopDongJson: isTinhTienHopDong ? jsonPayloadStr : null,
