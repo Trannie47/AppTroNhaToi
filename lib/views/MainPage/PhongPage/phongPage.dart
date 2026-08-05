@@ -252,6 +252,7 @@ class _PhongPageState extends State<PhongPage> {
                                 return ItemPhong(
                                   phong: currentPhong,
                                   loaiPhong: currentLoaiPhong,
+                                  soNguoiHienTai: itemBackend.soNguoiHienTai,
                                   onTap: () {
                                     Navigator.push(
                                       context,

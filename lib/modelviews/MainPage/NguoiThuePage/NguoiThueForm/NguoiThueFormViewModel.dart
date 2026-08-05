@@ -73,9 +73,8 @@ class NguoiThueFormViewModel extends ChangeNotifier {
       errSDT = "Vui lòng nhập số điện thoại";
     } else if (!RegExp(r'^0\d{9}$').hasMatch(sdt)) {
       errSDT = "Số điện thoại phải gồm đúng 10 số";
-    } else if (checkTrungSDT()) {
-      errSDT = "Số điện thoại này đã tồn tại trong hệ thống";
     } else {
+
       errSDT = null;
     }
     final cccd = txtCCCD.text.trim();
@@ -123,13 +122,15 @@ class NguoiThueFormViewModel extends ChangeNotifier {
         return "Ngày sinh không hợp lệ";
       }
 
-      int tuoi = DateTime.now().year - ngaySinh.year;
-      if (DateTime.now().month < ngaySinh.month ||
-          (DateTime.now().month == ngaySinh.month &&
-              DateTime.now().day < ngaySinh.day)) {
+      final now = DateTime.now();
+      if (ngaySinh.isAfter(now)) return "Ngày sinh không được ở tương lai";
+
+      int tuoi = now.year - ngaySinh.year;
+      if (now.month < ngaySinh.month ||
+          (now.month == ngaySinh.month && now.day < ngaySinh.day)) {
         tuoi--;
       }
-      if (tuoi < 18 || tuoi > 120) return "Phải từ 18 tuổi trở lên";
+      if (tuoi > 120) return "Ngày sinh không hợp lệ";
     } catch (_) {
       return "Ngày sinh không hợp lệ";
     }
@@ -215,16 +216,6 @@ class NguoiThueFormViewModel extends ChangeNotifier {
     List<NguoiThue> ds = _service.list;
     return ds.any(
       (nt) => nt.cccd == cccd && (!isEdit || nt.idnt != _initialTenant?.idnt),
-    );
-  }
-
-  bool checkTrungSDT() {
-    String sdt = txtSDT.text.trim();
-    if (sdt.isEmpty) return false;
-
-    List<NguoiThue> ds = _service.list;
-    return ds.any(
-      (nt) => nt.sdt == sdt && (!isEdit || nt.idnt != _initialTenant?.idnt),
     );
   }
 

@@ -6,12 +6,14 @@ import 'package:flutter/material.dart';
 class ItemPhong extends StatelessWidget {
   final Phong phong;
   final LoaiPhong loaiPhong;
+  final int soNguoiHienTai;
   final Function()? onTap;
 
   const ItemPhong({
     super.key,
     required this.phong,
     required this.loaiPhong,
+    this.soNguoiHienTai = 0,
     this.onTap,
   });
 
@@ -168,7 +170,9 @@ class ItemPhong extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      "Tối đa ${loaiPhong.soNguoiToiDa} người",
+                      phong.trangThai == 1
+                          ? "$soNguoiHienTai/${loaiPhong.soNguoiToiDa} người"
+                          : "Tối đa ${loaiPhong.soNguoiToiDa} người",
                       style: const TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,

@@ -9,6 +9,7 @@ class ItemPhong {
   LoaiPhong loaiPhong;
   final List<hopDongTrongPhong> dsHopDong;
   final double giahientai;
+  final int soNguoiHienTai;
 
   ItemPhong({
     required this.phongId,
@@ -19,6 +20,7 @@ class ItemPhong {
     required this.loaiPhong,
     required this.dsHopDong,
     required this.giahientai,
+    this.soNguoiHienTai = 0,
   });
 
   factory ItemPhong.fromMap(Map<String, dynamic> map) {
@@ -50,6 +52,8 @@ class ItemPhong {
       giahientai: map['giahientai'] != null
           ? (double.tryParse(map['giahientai'].toString()) ?? 0.0)
           : 0.0,
+
+      soNguoiHienTai: map['soNguoiHienTai'] as int? ?? 0,
     );
   }
 
