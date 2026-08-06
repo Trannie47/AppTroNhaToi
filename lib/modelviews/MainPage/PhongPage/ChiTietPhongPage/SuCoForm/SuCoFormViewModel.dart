@@ -11,10 +11,16 @@ class SuCoFormViewModel extends ChangeNotifier {
   final PhongProvider _phongProvider;
 
   bool _isLoading = false;
+  bool daXacNhanThongTin = false;
 
   bool get isLoading => _isLoading;
 
   PhieuSuCo? _suCoDangSua;
+
+  /// Sự cố đã được lưu xuống DB
+  PhieuSuCo? suCoDaLuu;
+
+  int? phongMacDinhId;
 
   bool get isEditMode => _suCoDangSua != null;
 
@@ -22,6 +28,7 @@ class SuCoFormViewModel extends ChangeNotifier {
       this._service,
       this._phongProvider, {
         PhieuSuCo? suCoInput,
+        this.phongMacDinhId,
       }) {
     _phongProvider.addListener(_onPhongUpdate);
 
@@ -93,6 +100,7 @@ class SuCoFormViewModel extends ChangeNotifier {
 
   void loadDeSua(PhieuSuCo suCo) {
     _suCoDangSua = suCo;
+    suCoDaLuu = suCo;
 
     txtTenSuCo.text = suCo.tenSuCo ?? "";
 
@@ -190,6 +198,11 @@ class SuCoFormViewModel extends ChangeNotifier {
     return hopLe;
   }
 
+  void xacNhanThongTin() {
+    daXacNhanThongTin = true;
+    notifyListeners();
+  }
+
   Future<PhieuSuCo?> luu() async {
     if (!kiemTraDuLieu()) return null;
 
@@ -227,9 +240,25 @@ class SuCoFormViewModel extends ChangeNotifier {
       if (isEditMode) {
         final ok = await _service.capNhat(phieu);
 
-        return ok ? phieu : null;
+        if (ok) {
+          _suCoDangSua = phieu;
+          suCoDaLuu = phieu;
+
+          notifyListeners();
+
+          return phieu;
+        }
+
+        return null;
       } else {
-        return await _service.them(phieu);
+        final result = await _service.them(phieu);
+
+        if (result != null) {
+          suCoDaLuu = result;
+          notifyListeners();
+        }
+
+        return result;
       }
     } catch (_) {
       return null;
@@ -270,6 +299,14 @@ class SuCoFormViewModel extends ChangeNotifier {
       ),
     )
         .toList();
+
+    if (phong == null && phongMacDinhId != null) {
+      try {
+        phong = dsPhong.firstWhere(
+              (e) => e.phongID == phongMacDinhId,
+        );
+      } catch (_) {}
+    }
 
     notifyListeners();
   }

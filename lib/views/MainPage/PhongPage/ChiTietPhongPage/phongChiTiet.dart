@@ -1,5 +1,7 @@
 import 'package:AppTroNhaToi/core/utils/string_formatter.dart';
 import 'package:AppTroNhaToi/models/item_phong.dart';
+import 'package:AppTroNhaToi/models/phong.dart';
+import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/SuCoPage/SuCoPage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../Provider/phong_provider.dart';
@@ -57,6 +59,18 @@ class _PhongChiTiet extends State<PhongChiTiet> {
       MaterialPageRoute(builder: (_) => ThietBiPhongPage(room: room)),
     );
   }
+
+  void _xemSuCo(ItemPhong room) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SuCoPage(
+          phongId: room.phongId,
+        ),
+      )
+    );
+  }
+
 
   void _xuaLyXoaPhong(ItemPhong room) async {
     //Nếu phòng đang có hợp đồng liên kết -> Chặn lại không cho ẩn
@@ -170,6 +184,10 @@ class _PhongChiTiet extends State<PhongChiTiet> {
                     _xemThietBiInPhong(room);
                     break;
 
+                  case 'incident':
+                    _xemSuCo(room);
+                    break;
+
                   case 'delete':
                     _xuaLyXoaPhong(room);
                     break;
@@ -194,6 +212,16 @@ class _PhongChiTiet extends State<PhongChiTiet> {
                     "Danh sách máy lạnh, tủ lạnh...",
                   ),
                 ),
+                PopupMenuItem(
+                  value: 'incident',
+                  child: _menuItem(
+                    Icons.report_problem_rounded,
+                    Colors.orange,
+                    "Quản lý sự cố",
+                    "Xem và cập nhật sự cố của phòng",
+                  ),
+                ),
+
                 const PopupMenuDivider(),
                 PopupMenuItem(
                   value: 'delete',
@@ -204,6 +232,8 @@ class _PhongChiTiet extends State<PhongChiTiet> {
                     "Chỉ ẩn khi chưa có hợp đồng",
                   ),
                 ),
+
+
               ],
             ),
           ),

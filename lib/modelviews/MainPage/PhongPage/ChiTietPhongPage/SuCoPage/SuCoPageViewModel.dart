@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 class SuCoPageViewModel extends ChangeNotifier {
   final SuCoProvider _service;
+  final int? phongId;
 
   final TextEditingController txtSearch = TextEditingController();
 
@@ -13,12 +14,21 @@ class SuCoPageViewModel extends ChangeNotifier {
 
   bool get isLoading => _service.isLoading;
 
-  SuCoPageViewModel(this._service) {
+  SuCoPageViewModel(
+      this._service, {
+        this.phongId,
+      }) {
     _service.addListener(_onServiceUpdate);
 
     txtSearch.addListener(_onSearchChanged);
 
-    Future.microtask(() => _service.fetchAll());
+    Future.microtask(() async {
+      if (phongId != null) {
+        await _service.fetchByPhong(phongId!);
+      } else {
+        await _service.fetchAll();
+      }
+    });
   }
 
   void _onServiceUpdate() {
@@ -58,7 +68,13 @@ class SuCoPageViewModel extends ChangeNotifier {
   int get soHoanThanh =>
       _service.list.where((e) => e.trangThaiThongBao == 2).length;
 
-  Future<void> refresh() => _service.fetchAll();
+  Future<void> refresh() {
+    if (phongId != null) {
+      return _service.fetchByPhong(phongId!);
+    }
+
+    return _service.fetchAll();
+  }
 
   Future<bool> xoa(int id) async {
     final ok = await _service.xoa(id);

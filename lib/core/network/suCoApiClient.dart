@@ -8,7 +8,7 @@ class SuCoApiClient {
 
   Future<List<PhieuSuCo>> getListSuCo() async {
     try {
-      final response = await _dio.get("su-co/findall");
+      final response = await _dio.get("phieu-su-co/findall");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final List<dynamic> data = response.data;
@@ -28,15 +28,42 @@ class SuCoApiClient {
     }
   }
 
+  Future<List<PhieuSuCo>> getListSuCoTheoPhong(
+      int phongId,
+      ) async {
+    try {
+      final response = await _dio.get(
+        "phieu-su-co/findall",
+        queryParameters: {
+          "phongId": phongId,
+        },
+      );
+
+      if (response.statusCode == 200 ||
+          response.statusCode == 201) {
+        final List<dynamic> data =
+        response.data["data"];
+
+        return data
+            .map((e) => PhieuSuCo.fromMap(e))
+            .toList();
+      }
+
+      return [];
+    } catch (e) {
+      return [];
+    }
+  }
+
   Future<PhieuSuCo?> themSuCo(PhieuSuCo suCo) async {
     try {
       final response = await _dio.post(
-        "su-co",
+        "phieu-su-co",
         data: suCo.toMap(),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return PhieuSuCo.fromMap(response.data);
+        return PhieuSuCo.fromMap(response.data["data"]);
       }
 
       return null;
@@ -52,7 +79,7 @@ class SuCoApiClient {
   Future<bool> xoaSuCo(int suCoId) async {
     try {
       final response = await _dio.delete(
-        "su-co/$suCoId",
+        "phieu-su-co/$suCoId",
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -72,12 +99,12 @@ class SuCoApiClient {
   Future<PhieuSuCo?> capNhatSuCo(PhieuSuCo suCo) async {
     try {
       final response = await _dio.patch(
-        "su-co/${suCo.suCoId}",
+        "phieu-su-co/${suCo.suCoId}",
         data: suCo.toMap(),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return PhieuSuCo.fromMap(response.data);
+        return PhieuSuCo.fromMap(response.data["data"]);
       }
 
       return null;
@@ -118,6 +145,44 @@ class SuCoApiClient {
 
       default:
         return "Đã có lỗi xảy ra, vui lòng thử lại";
+    }
+  }
+
+  Future<Map<String, dynamic>> getLuanChuyen(int suCoId) async {
+    try {
+      final response = await _dio.get(
+        "phieu-su-co/$suCoId/luan-chuyen",
+      );
+
+      if (response.statusCode == 200 ||
+          response.statusCode == 201) {
+        return response.data["data"];
+      }
+
+      return {};
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+
+      return {};
+    }
+  }
+  Future<void> luuLuanChuyen(
+      Map<String, dynamic> body,
+      ) async {
+    try {
+      final response = await _dio.post(
+        "chi-tiet-luan-chuyen",
+        data: body,
+      );
+
+      debugPrint("Status: ${response.statusCode}");
+      debugPrint("Data: ${response.data}");
+    } on DioException catch (e) {
+      debugPrint("STATUS = ${e.response?.statusCode}");
+      debugPrint("BODY = ${e.response?.data}");
+      rethrow;
     }
   }
 }

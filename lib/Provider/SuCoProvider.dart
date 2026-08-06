@@ -34,6 +34,26 @@ class SuCoProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> fetchByPhong(int phongId) async {
+    if (_isLoading) return;
+
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      _list = await _repo.getListSuCoTheoPhong(phongId);
+
+      _list.sort(
+            (a, b) => (b.suCoId ?? 0).compareTo(a.suCoId ?? 0),
+      );
+    } catch (e) {
+      _list = [];
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<PhieuSuCo?> them(PhieuSuCo suCo) async {
     final result = await _repo.themSuCo(suCo);
 
@@ -64,5 +84,19 @@ class SuCoProvider extends ChangeNotifier {
     }
 
     return ok;
+  }
+
+  Future<Map<String, dynamic>> getLuanChuyen(
+      int suCoId,
+      ) async {
+    return await _repo.getLuanChuyen(
+      suCoId,
+    );
+  }
+
+  Future<void> luuLuanChuyen(
+      Map<String, dynamic> body,
+      ) async {
+    await _repo.luuLuanChuyen(body);
   }
 }

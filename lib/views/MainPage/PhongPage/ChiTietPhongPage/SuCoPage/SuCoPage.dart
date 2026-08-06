@@ -1,13 +1,19 @@
 import 'package:AppTroNhaToi/Provider/SuCoProvider.dart';
-import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/SuCoPage/SuCoPageViewModel.dart';
+import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/phieu_su_co.dart';
-import 'package:AppTroNhaToi/views/MainPage/KhacPage/SuCoForm/SuCoForm.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/ChiTietPhongPage/SuCoPage/SuCoPageViewModel.dart';
+import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/SuCoForm/SuCoForm.dart';
 import 'package:AppTroNhaToi/widgets/ItemSuCo.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class SuCoPage extends StatefulWidget {
-  const SuCoPage({super.key});
+  final int? phongId;
+
+  const SuCoPage({
+    super.key,
+    this.phongId,
+  });
 
   @override
   State<SuCoPage> createState() => _SuCoPageState();
@@ -22,6 +28,7 @@ class _SuCoPageState extends State<SuCoPage> {
 
     vm = SuCoPageViewModel(
       context.read<SuCoProvider>(),
+      phongId: widget.phongId,
     );
   }
 
@@ -43,11 +50,11 @@ class _SuCoPageState extends State<SuCoPage> {
             appBar: AppBar(
               backgroundColor: Colors.white,
               elevation: 0,
-              centerTitle: true,
+              centerTitle: false,
               title: const Text(
                 "Quản lý sự cố",
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 20,
                   fontWeight: FontWeight.w700,
                   color: Colors.black,
                 ),
@@ -71,7 +78,9 @@ class _SuCoPageState extends State<SuCoPage> {
                 await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => const SuCoForm(),
+                    builder: (_) => SuCoForm(
+                      phongId: widget.phongId,
+                    ),
                   ),
                 );
 

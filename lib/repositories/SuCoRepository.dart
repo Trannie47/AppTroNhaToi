@@ -9,6 +9,16 @@ class SuCoRepository {
     return result;
   }
 
+  Future<List<PhieuSuCo>> getListSuCoTheoPhong(
+      int phongId,
+      ) async {
+    final result = await suCoApiClient.getListSuCoTheoPhong(
+      phongId,
+    );
+
+    return result;
+  }
+
   Future<PhieuSuCo?> themSuCo(PhieuSuCo suCo) async {
     return await suCoApiClient.themSuCo(suCo);
   }
@@ -19,5 +29,18 @@ class SuCoRepository {
 
   Future<PhieuSuCo?> capNhatSuCo(PhieuSuCo suCo) async {
     return await suCoApiClient.capNhatSuCo(suCo);
+  }
+
+  Future<Map<String, dynamic>> getLuanChuyen(
+      int suCoId,
+      ) async {
+    return await suCoApiClient.getLuanChuyen(
+      suCoId,
+    );
+  }
+  Future<void> luuLuanChuyen(
+      Map<String, dynamic> body,
+      ) async {
+    await suCoApiClient.luuLuanChuyen(body);
   }
 }
