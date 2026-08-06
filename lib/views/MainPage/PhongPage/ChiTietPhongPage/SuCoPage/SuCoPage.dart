@@ -358,7 +358,7 @@ class _SuCoPageState extends State<SuCoPage> {
             title,
             textAlign: TextAlign.center,
             style: const TextStyle(
-              fontSize: 11,
+              fontSize: 14,
               color: Color(0xff777777),
             ),
           ),

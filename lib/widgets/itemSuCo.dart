@@ -56,7 +56,7 @@ class ItemSuCo extends StatelessWidget {
                     Text(
                       suCo.tenSuCo ?? "",
                       style: const TextStyle(
-                        fontSize: 15,
+                        fontSize: 18,
                         fontWeight: FontWeight.w700,
                         color: Color(0xff1C1C1E),
                       ),
@@ -67,7 +67,7 @@ class ItemSuCo extends StatelessWidget {
                     Text(
                       suCo.phong?.tenPhong ?? "",
                       style: const TextStyle(
-                        fontSize: 12,
+                        fontSize: 14,
                         color: Color(0xff8F8F8F),
                       ),
                     ),
@@ -89,7 +89,7 @@ class ItemSuCo extends StatelessWidget {
                   style: TextStyle(
                     color: _statusColor(),
                     fontWeight: FontWeight.w600,
-                    fontSize: 11,
+                    fontSize: 14,
                   ),
                 ),
               ),
@@ -119,7 +119,7 @@ class ItemSuCo extends StatelessWidget {
                 child: Text(
                   formatDate(suCo.ngayBatDau),
                   style: const TextStyle(
-                    fontSize: 12,
+                    fontSize: 14,
                     color: Color(0xff4F4F4F),
                   ),
                 ),
@@ -130,7 +130,7 @@ class ItemSuCo extends StatelessWidget {
                 style: const TextStyle(
                   color: Colors.red,
                   fontWeight: FontWeight.w700,
-                  fontSize: 13,
+                  fontSize: 14,
                 ),
               ),
             ],
@@ -174,7 +174,7 @@ class ItemSuCo extends StatelessWidget {
                         Text(
                           "Sửa",
                           style: TextStyle(
-                            fontSize: 11,
+                            fontSize: 14,
                             color: Color(0xffF08A24),
                             fontWeight: FontWeight.w500,
                           ),
@@ -200,7 +200,7 @@ class ItemSuCo extends StatelessWidget {
                         Text(
                           "Xóa",
                           style: TextStyle(
-                            fontSize: 11,
+                            fontSize: 14,
                             color: Colors.red,
                             fontWeight: FontWeight.w500,
                           ),
