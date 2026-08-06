@@ -1,4 +1,5 @@
 import 'package:AppTroNhaToi/Provider/SuCoProvider.dart';
+import 'package:AppTroNhaToi/Provider/chi_tiet_luan_chuyen_provider.dart';
 import 'package:AppTroNhaToi/Provider/phong_provider.dart';
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/models/item_phong.dart';
@@ -7,6 +8,7 @@ import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/ChiTietPhongPage/SuCoForm/SuCoFormViewModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/LuanChuyenPage/luanChuyenPage.dart';
 import 'package:AppTroNhaToi/widgets/ItemLuanChuyen.dart';
+import 'package:AppTroNhaToi/widgets/itemChiTietLuanChuyen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -31,6 +33,7 @@ class _SuCoFormState extends State<SuCoForm> {
     vm = SuCoFormViewModel(
       context.read<SuCoProvider>(),
       context.read<PhongProvider>(),
+      context.read<ChiTietLuanChuyenProvider>(),
       suCoInput: widget.suCo,
       phongMacDinhId: widget.phongId,
     );
@@ -449,7 +452,9 @@ class _SuCoFormState extends State<SuCoForm> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: const Color(0xff2D7A3A),
                                     elevation: 0,
-                                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                    ),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12),
                                     ),
@@ -478,7 +483,41 @@ class _SuCoFormState extends State<SuCoForm> {
 
                           const SizedBox(height: 18),
 
-                          if ((vm.suCoDaLuu?.chiTietLuanChuyen ?? []).isEmpty)
+                          // if ((vm.suCoDaLuu?.chiTietLuanChuyen ?? []).isEmpty)
+                          //   Container(
+                          //     width: double.infinity,
+                          //     padding: const EdgeInsets.symmetric(vertical: 40),
+                          //     alignment: Alignment.center,
+                          //     child: const Column(
+                          //       children: [
+                          //         Icon(
+                          //           Icons.swap_horizontal_circle_outlined,
+                          //           size: 55,
+                          //           color: Colors.grey,
+                          //         ),
+                          //         SizedBox(height: 10),
+                          //         Text(
+                          //           "Chưa có lịch sử luân chuyển",
+                          //           style: TextStyle(color: Colors.grey),
+                          //         ),
+                          //       ],
+                          //     ),
+                          //   )
+                          // else
+                          //   ListView.separated(
+                          //   shrinkWrap: true,
+                          //   physics: const NeverScrollableScrollPhysics(),
+                          //   itemCount:
+                          //       vm.suCoDaLuu?.chiTietLuanChuyen?.length ?? 0,
+                          //   separatorBuilder: (_, __) =>
+                          //       const SizedBox(height: 12),
+                          //   itemBuilder: (_, index) {
+                          //     return ItemLuanChuyen(
+                          //       item: vm.suCoDaLuu!.chiTietLuanChuyen![index],
+                          //     );
+                          //   },
+                          // ),
+                          if ((vm.dsPhongCoTheChuyen).isEmpty)
                             Container(
                               width: double.infinity,
                               padding: const EdgeInsets.symmetric(vertical: 40),
@@ -502,13 +541,12 @@ class _SuCoFormState extends State<SuCoForm> {
                             ListView.separated(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
-                              itemCount:
-                                  vm.suCoDaLuu?.chiTietLuanChuyen?.length ?? 0,
+                              itemCount: vm.dsPhongCoTheChuyen.length,
                               separatorBuilder: (_, __) =>
                                   const SizedBox(height: 12),
                               itemBuilder: (_, index) {
-                                return ItemLuanChuyen(
-                                  item: vm.suCoDaLuu!.chiTietLuanChuyen![index],
+                                return ItemChiTietLuanChuyen(
+                                  item: vm.dsPhongCoTheChuyen[index],
                                 );
                               },
                             ),

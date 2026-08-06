@@ -1,14 +1,19 @@
+import 'package:AppTroNhaToi/Provider/chi_tiet_luan_chuyen_provider.dart';
 import 'package:AppTroNhaToi/Provider/phong_provider.dart';
 import 'package:AppTroNhaToi/Provider/SuCoProvider.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/model_formatter.dart';
+import 'package:AppTroNhaToi/models/chi_tiet_luan_chuyen.dart';
 import 'package:AppTroNhaToi/models/phieu_su_co.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/ChiTietPhongPage/LuanChuyenPage/HopDongLuanChuyenVM.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/ChiTietPhongPage/LuanChuyenPage/PhongHopDongVM.dart';
 import 'package:flutter/material.dart';
 
 class SuCoFormViewModel extends ChangeNotifier {
   final SuCoProvider _service;
   final PhongProvider _phongProvider;
+  final ChiTietLuanChuyenProvider _luanChuyenProvider;
 
   bool _isLoading = false;
   bool daXacNhanThongTin = false;
@@ -25,11 +30,12 @@ class SuCoFormViewModel extends ChangeNotifier {
   bool get isEditMode => _suCoDangSua != null;
 
   SuCoFormViewModel(
-      this._service,
-      this._phongProvider, {
-        PhieuSuCo? suCoInput,
-        this.phongMacDinhId,
-      }) {
+    this._service,
+    this._phongProvider,
+    this._luanChuyenProvider, {
+    PhieuSuCo? suCoInput,
+    this.phongMacDinhId,
+  }) {
     _phongProvider.addListener(_onPhongUpdate);
 
     Future.microtask(() async {
@@ -66,19 +72,23 @@ class SuCoFormViewModel extends ChangeNotifier {
   int? trangThaiThongBao = 0;
 
   final List<Map<String, dynamic>> dsTrangThai = [
-    {
-      "value": 0,
-      "text": "Chưa xử lý",
-    },
-    {
-      "value": 1,
-      "text": "Đang xử lý",
-    },
-    {
-      "value": 2,
-      "text": "Hoàn thành",
-    },
+    {"value": 0, "text": "Chưa xử lý"},
+    {"value": 1, "text": "Đang xử lý"},
+    {"value": 2, "text": "Hoàn thành"},
   ];
+
+  ///==========================
+  /// Luân chuyển
+  ///==========================
+
+  String? hopDongIdChon;
+
+  PhongHopDongVM? phongMoiDaChon;
+
+  List<HopDongLuanChuyenVM> get dsPhongCoTheChuyen =>
+      _luanChuyenProvider.listBySuCo;
+
+  bool get dangTaiDsPhongLuanChuyen => _luanChuyenProvider.isLoading;
 
   ///==========================
   /// Error
@@ -112,9 +122,7 @@ class SuCoFormViewModel extends ChangeNotifier {
         ? formatDate(suCo.ngayHoanThanh)
         : "";
 
-    txtChiPhi.text = suCo.chiPhi != null
-        ? suCo.chiPhi!.toStringAsFixed(0)
-        : "";
+    txtChiPhi.text = suCo.chiPhi != null ? suCo.chiPhi!.toStringAsFixed(0) : "";
 
     txtGhiChu.text = suCo.ghiChu ?? "";
 
@@ -122,15 +130,15 @@ class SuCoFormViewModel extends ChangeNotifier {
 
     if (suCo.phongId != null) {
       try {
-        phong = dsPhong.firstWhere(
-              (e) => e.phongID == suCo.phongId,
-        );
+        phong = dsPhong.firstWhere((e) => e.phongID == suCo.phongId);
       } catch (_) {
         phong = null;
       }
     }
 
     notifyListeners();
+
+    taiDanhSachPhongLuanChuyen();
   }
 
   bool kiemTraDuLieu() {
@@ -154,9 +162,7 @@ class SuCoFormViewModel extends ChangeNotifier {
       hopLe = false;
     }
 
-    errNgayBatDau = kiemTraNgay(
-      txtNgayBatDau.text,
-    );
+    errNgayBatDau = kiemTraNgay(txtNgayBatDau.text);
 
     if (errNgayBatDau != null) {
       hopLe = false;
@@ -169,9 +175,7 @@ class SuCoFormViewModel extends ChangeNotifier {
 
     if (txtChiPhi.text.trim().isNotEmpty) {
       final value = numOf(
-        txtChiPhi.text
-            .replaceAll(",", "")
-            .replaceAll(".", ""),
+        txtChiPhi.text.replaceAll(",", "").replaceAll(".", ""),
       );
 
       if (value < 0) {
@@ -180,14 +184,13 @@ class SuCoFormViewModel extends ChangeNotifier {
       }
     }
 
-    if (txtNgayBatDau.text.isNotEmpty &&
-        txtNgayHoanThanh.text.isNotEmpty) {
+    if (txtNgayBatDau.text.isNotEmpty && txtNgayHoanThanh.text.isNotEmpty) {
       final ngayBatDau = chuyenNgay(txtNgayBatDau.text);
       final ngayHoanThanh = chuyenNgay(txtNgayHoanThanh.text);
 
       if (ngayHoanThanh.isBefore(ngayBatDau)) {
         errNgayHoanThanh =
-        "Ngày hoàn thành phải lớn hơn hoặc bằng ngày bắt đầu";
+            "Ngày hoàn thành phải lớn hơn hoặc bằng ngày bắt đầu";
 
         hopLe = false;
       }
@@ -216,9 +219,7 @@ class SuCoFormViewModel extends ChangeNotifier {
         suCoId: _suCoDangSua?.suCoId,
         phongId: phong?.phongID,
         tenSuCo: txtTenSuCo.text.trim(),
-        ghiChu: txtGhiChu.text.trim().isEmpty
-            ? null
-            : txtGhiChu.text.trim(),
+        ghiChu: txtGhiChu.text.trim().isEmpty ? null : txtGhiChu.text.trim(),
         ngayBatDau: txtNgayBatDau.text.trim().isEmpty
             ? null
             : chuyenNgay(txtNgayBatDau.text.trim()),
@@ -230,11 +231,7 @@ class SuCoFormViewModel extends ChangeNotifier {
         trangThaiThongBao: trangThaiThongBao,
         chiPhi: txtChiPhi.text.trim().isEmpty
             ? 0
-            : numOf(
-          txtChiPhi.text
-              .replaceAll(".", "")
-              .replaceAll(",", ""),
-        ),
+            : numOf(txtChiPhi.text.replaceAll(".", "").replaceAll(",", "")),
       );
 
       if (isEditMode) {
@@ -290,28 +287,106 @@ class SuCoFormViewModel extends ChangeNotifier {
     dsPhong = _phongProvider.listPhong
         .map(
           (e) => Phong(
-        phongID: e.phongId,
-        tenPhong: e.tenPhong,
-        trangThai: e.trangThai,
-        moTa: e.moTa,
-        maLoaiPhong: e.maLoaiPhong,
-        loaiPhong: e.loaiPhong,
-      ),
-    )
+            phongID: e.phongId,
+            tenPhong: e.tenPhong,
+            trangThai: e.trangThai,
+            moTa: e.moTa,
+            maLoaiPhong: e.maLoaiPhong,
+            loaiPhong: e.loaiPhong,
+          ),
+        )
         .toList();
 
     if (phong == null && phongMacDinhId != null) {
       try {
-        phong = dsPhong.firstWhere(
-              (e) => e.phongID == phongMacDinhId,
-        );
+        phong = dsPhong.firstWhere((e) => e.phongID == phongMacDinhId);
       } catch (_) {}
     }
 
     notifyListeners();
   }
 
+  Future<void> taiDanhSachPhongLuanChuyen() async {
+    if (_suCoDangSua?.suCoId == null) return;
 
+    await _luanChuyenProvider.fetchBySuCo(_suCoDangSua!.suCoId!);
+
+    notifyListeners();
+  }
+
+  void chonHopDong(String hopDongId) {
+    hopDongIdChon = hopDongId;
+    phongMoiDaChon = null;
+
+    notifyListeners();
+  }
+
+  void chonPhongMoi(PhongHopDongVM phongMoi) {
+    if (phongMoi.daCoHopDong == true) return;
+
+    phongMoiDaChon = phongMoi;
+
+    notifyListeners();
+  }
+
+  Future<bool> luuLuanChuyen() async {
+    if (_suCoDangSua?.suCoId == null) return false;
+
+    if (hopDongIdChon == null || phongMoiDaChon?.phongId == null) return false;
+
+    if (_isLoading) return false;
+
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final chiTiet = ChiTietLuanChuyen(
+        suCoId: _suCoDangSua!.suCoId,
+        hopDongId: hopDongIdChon,
+        phongMoiId: phongMoiDaChon!.phongId,
+        ngayLuanChuyen: DateTime.now(),
+        trangThaiLuanChuyen: 0,
+      );
+
+      final result = await _luanChuyenProvider.them(chiTiet);
+
+      if (result != null) {
+        phongMoiDaChon = null;
+
+        notifyListeners();
+
+        return true;
+      }
+
+      return false;
+    } catch (_) {
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> xoaLuanChuyen(int chiTietLuanChuyenId) async {
+    if (_suCoDangSua?.suCoId == null) return false;
+
+    if (_isLoading) return false;
+
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      return await _luanChuyenProvider.xoa(
+        chiTietLuanChuyenId,
+        _suCoDangSua!.suCoId!,
+      );
+    } catch (_) {
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 
   void clear() {
     _suCoDangSua = null;
@@ -334,13 +409,17 @@ class SuCoFormViewModel extends ChangeNotifier {
     errTrangThai = null;
     errGhiChu = null;
 
+    hopDongIdChon = null;
+    phongMoiDaChon = null;
+    _luanChuyenProvider.clear();
+
     notifyListeners();
   }
 
   Future<void> chonNgay(
-      BuildContext context,
-      TextEditingController controller,
-      ) async {
+    BuildContext context,
+    TextEditingController controller,
+  ) async {
     DateTime initialDate = DateTime.now();
 
     DateTime? current;
@@ -353,10 +432,7 @@ class SuCoFormViewModel extends ChangeNotifier {
       initialDate = current;
     }
 
-    final picked = await chonNgayChuan(
-      context,
-      initialDate: initialDate,
-    );
+    final picked = await chonNgayChuan(context, initialDate: initialDate);
 
     if (picked != null) {
       controller.text = formatDate(picked);
@@ -377,4 +453,3 @@ class SuCoFormViewModel extends ChangeNotifier {
     super.dispose();
   }
 }
-

@@ -10,10 +10,7 @@ import 'package:provider/provider.dart';
 class SuCoPage extends StatefulWidget {
   final int? phongId;
 
-  const SuCoPage({
-    super.key,
-    this.phongId,
-  });
+  const SuCoPage({super.key, this.phongId});
 
   @override
   State<SuCoPage> createState() => _SuCoPageState();
@@ -63,10 +60,7 @@ class _SuCoPageState extends State<SuCoPage> {
 
             floatingActionButton: FloatingActionButton.extended(
               backgroundColor: const Color(0xff2D7A3A),
-              icon: const Icon(
-                Icons.add,
-                color: Colors.white,
-              ),
+              icon: const Icon(Icons.add, color: Colors.white),
               label: const Text(
                 "Thêm sự cố",
                 style: TextStyle(
@@ -78,9 +72,7 @@ class _SuCoPageState extends State<SuCoPage> {
                 await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => SuCoForm(
-                      phongId: widget.phongId,
-                    ),
+                    builder: (_) => SuCoForm(phongId: widget.phongId),
                   ),
                 );
 
@@ -94,12 +86,7 @@ class _SuCoPageState extends State<SuCoPage> {
                 children: [
                   Container(
                     color: Colors.white,
-                    padding: const EdgeInsets.fromLTRB(
-                      16,
-                      10,
-                      16,
-                      16,
-                    ),
+                    padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
                     child: Column(
                       children: [
                         TextField(
@@ -168,128 +155,105 @@ class _SuCoPageState extends State<SuCoPage> {
                       ],
                     ),
                   ),
-                     Expanded(
+                  Expanded(
                     child: vm.isLoading
-                        ? const Center(
-                            child: CircularProgressIndicator(),
-                          )
+                        ? const Center(child: CircularProgressIndicator())
                         : vm.dsHienThi.isEmpty
-                            ? ListView(
-                                physics:
-                                    const AlwaysScrollableScrollPhysics(),
-                                children: const [
-                                  SizedBox(height: 120),
-                                  Icon(
-                                    Icons.assignment_late_outlined,
-                                    size: 70,
-                                    color: Color(0xffBDBDBD),
+                        ? ListView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            children: const [
+                              SizedBox(height: 120),
+                              Icon(
+                                Icons.assignment_late_outlined,
+                                size: 70,
+                                color: Color(0xffBDBDBD),
+                              ),
+                              SizedBox(height: 12),
+                              Center(
+                                child: Text(
+                                  "Chưa có sự cố nào",
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xff757575),
                                   ),
-                                  SizedBox(height: 12),
-                                  Center(
-                                    child: Text(
-                                      "Chưa có sự cố nào",
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600,
-                                        color: Color(0xff757575),
+                                ),
+                              ),
+                            ],
+                          )
+                        : ListView.separated(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            padding: const EdgeInsets.all(16),
+                            itemCount: vm.dsHienThi.length,
+                            separatorBuilder: (_, __) =>
+                                const SizedBox(height: 12),
+                            itemBuilder: (_, index) {
+                              final PhieuSuCo item = vm.dsHienThi[index];
+
+                              return ItemSuCo(
+                                suCo: item,
+                                edit: () async {
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => SuCoForm(suCo: item),
+                                    ),
+                                  );
+
+                                  await vm.refresh();
+                                },
+                                delete: () async {
+                                  final xoa =
+                                      await showDialog<bool>(
+                                        context: context,
+                                        builder: (_) => AlertDialog(
+                                          title: const Text("Xóa sự cố"),
+                                          content: const Text(
+                                            "Bạn có chắc muốn xóa sự cố này?",
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(context, false);
+                                              },
+                                              child: const Text("Hủy"),
+                                            ),
+                                            ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.red,
+                                              ),
+                                              onPressed: () {
+                                                Navigator.pop(context, true);
+                                              },
+                                              child: const Text("Xóa"),
+                                            ),
+                                          ],
+                                        ),
+                                      ) ??
+                                      false;
+
+                                  if (!xoa) return;
+
+                                  final ok = await vm.xoa(item.suCoId!);
+
+                                  if (!mounted) return;
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      backgroundColor: ok
+                                          ? const Color(0xff2D7A3A)
+                                          : Colors.red,
+                                      content: Text(
+                                        ok
+                                            ? "Đã xóa sự cố"
+                                            : "Không thể xóa sự cố",
                                       ),
                                     ),
-                                  ),
-                                ],
-                              )
-                            : ListView.separated(
-                                physics:
-                                    const AlwaysScrollableScrollPhysics(),
-                                padding: const EdgeInsets.all(16),
-                                itemCount: vm.dsHienThi.length,
-                                separatorBuilder: (_, __) =>
-                                    const SizedBox(height: 12),
-                                itemBuilder: (_, index) {
-                                  final PhieuSuCo item =
-                                      vm.dsHienThi[index];
-
-                                  return ItemSuCo(
-                                    suCo: item,
-                                    edit: () async {
-                                      await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => SuCoForm(
-                                            suCo: item,
-                                          ),
-                                        ),
-                                      );
-
-                                      await vm.refresh();
-                                    },
-                                    delete: () async {
-                                      final xoa = await showDialog<bool>(
-                                            context: context,
-                                            builder: (_) => AlertDialog(
-                                              title: const Text(
-                                                "Xóa sự cố",
-                                              ),
-                                              content: const Text(
-                                                "Bạn có chắc muốn xóa sự cố này?",
-                                              ),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () {
-                                                    Navigator.pop(
-                                                      context,
-                                                      false,
-                                                    );
-                                                  },
-                                                  child: const Text(
-                                                    "Hủy",
-                                                  ),
-                                                ),
-                                                ElevatedButton(
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    backgroundColor:
-                                                        Colors.red,
-                                                  ),
-                                                  onPressed: () {
-                                                    Navigator.pop(
-                                                      context,
-                                                      true,
-                                                    );
-                                                  },
-                                                  child: const Text(
-                                                    "Xóa",
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ) ??
-                                          false;
-
-                                      if (!xoa) return;
-
-                                      final ok = await vm.xoa(
-                                        item.suCoId!,
-                                      );
-
-                                      if (!mounted) return;
-
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          backgroundColor: ok
-                                              ? const Color(0xff2D7A3A)
-                                              : Colors.red,
-                                          content: Text(
-                                            ok
-                                                ? "Đã xóa sự cố"
-                                                : "Không thể xóa sự cố",
-                                          ),
-                                        ),
-                                      );
-                                    },
                                   );
                                 },
-                              ),
+                              );
+                            },
+                          ),
                   ),
                 ],
               ),
@@ -300,22 +264,13 @@ class _SuCoPageState extends State<SuCoPage> {
     );
   }
 
-  Widget _itemThongKe(
-    String title,
-    String value,
-    Color color,
-    IconData icon,
-  ) {    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 10,
-        vertical: 12,
-      ),
+  Widget _itemThongKe(String title, String value, Color color, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xffEEEEEE),
-        ),
+        border: Border.all(color: const Color(0xffEEEEEE)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(.03),
@@ -334,11 +289,7 @@ class _SuCoPageState extends State<SuCoPage> {
               color: color.withOpacity(.12),
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              icon,
-              color: color,
-              size: 22,
-            ),
+            child: Icon(icon, color: color, size: 22),
           ),
 
           const SizedBox(height: 10),
@@ -357,10 +308,7 @@ class _SuCoPageState extends State<SuCoPage> {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Color(0xff777777),
-            ),
+            style: const TextStyle(fontSize: 14, color: Color(0xff777777)),
           ),
         ],
       ),

@@ -1,5 +1,6 @@
 import 'package:AppTroNhaToi/Provider/SuCoProvider.dart';
 import 'package:AppTroNhaToi/Provider/cau_hinh_gia_provider.dart';
+import 'package:AppTroNhaToi/Provider/chi_tiet_luan_chuyen_provider.dart';
 import 'package:AppTroNhaToi/Provider/dien_nuoc_provider.dart';
 import 'package:AppTroNhaToi/Provider/hoa_don_gui_xe_provider.dart';
 import 'package:AppTroNhaToi/Provider/hoa_don_phong_provider.dart';
@@ -66,6 +67,7 @@ void main() {
         ),
 
         ChangeNotifierProvider(create: (_) => SuCoProvider()),
+        ChangeNotifierProvider(create: (_) => ChiTietLuanChuyenProvider()),
       ],
       child: const MyApp(),
     ),

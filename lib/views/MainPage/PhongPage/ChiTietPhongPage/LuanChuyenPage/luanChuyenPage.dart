@@ -1,5 +1,7 @@
 import 'package:AppTroNhaToi/Provider/SuCoProvider.dart';
+import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/ChiTietPhongPage/LuanChuyenPage/PhongHopDongVM.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/ChiTietPhongPage/LuanChuyenPage/luanChuyenPageModelViews.dart';
+import 'package:AppTroNhaToi/widgets/itemChiTietLuanChuyen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -224,7 +226,7 @@ class _LuanChuyenPageState extends State<LuanChuyenPage> {
                               borderRadius: BorderRadius.circular(14),
                             ),
                             child: Text(
-                              item.maHopDong,
+                              item.maHopDong ?? "",
                               style: const TextStyle(
                                 color: Color(0xff2D7A3A),
                                 fontWeight: FontWeight.bold,
@@ -240,7 +242,7 @@ class _LuanChuyenPageState extends State<LuanChuyenPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  item.tenNguoiDaiDien,
+                                  item.tenNguoiDaiDien ?? "",
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 15,
@@ -270,7 +272,7 @@ class _LuanChuyenPageState extends State<LuanChuyenPage> {
                               borderRadius: BorderRadius.circular(30),
                             ),
                             child: Text(
-                              item.trangThaiText,
+                              item.trangThaiText ?? "",
                               style: const TextStyle(
                                 color: Color(0xff2D7A3A),
                                 fontWeight: FontWeight.bold,
@@ -299,7 +301,7 @@ class _LuanChuyenPageState extends State<LuanChuyenPage> {
                             const SizedBox(width: 8),
                             const Expanded(child: Text("Phòng hiện tại")),
                             Text(
-                              item.phongCuText,
+                              item.phongCuText ?? "",
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                               ),
@@ -318,10 +320,10 @@ class _LuanChuyenPageState extends State<LuanChuyenPage> {
                           color: Color(0xff2D7A3A),
                         ),
                         title: Text(
-                          "Danh sách thành viên (${item.dsThanhVien.length})",
+                          "Danh sách thành viên (${item.dsThanhVien!.length})",
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        children: item.dsThanhVien
+                        children: item.dsThanhVien!
                             .map(
                               (e) => ListTile(
                                 dense: true,
@@ -346,7 +348,7 @@ class _LuanChuyenPageState extends State<LuanChuyenPage> {
                         isExpanded: true,
                         itemHeight: 60,
 
-                        value: item.phongMoiText.isEmpty
+                        value: item.phongMoiText!.isEmpty
                             ? null
                             : vm.dsPhong.firstWhere(
                                 (e) => e.tenPhong == item.phongMoiText,
@@ -357,7 +359,7 @@ class _LuanChuyenPageState extends State<LuanChuyenPage> {
                             return Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                e.tenPhong,
+                                e.tenPhong ?? "",
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -398,7 +400,7 @@ class _LuanChuyenPageState extends State<LuanChuyenPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  e.tenPhong,
+                                  e.tenPhong ?? "",
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -447,7 +449,7 @@ class _LuanChuyenPageState extends State<LuanChuyenPage> {
                               Expanded(
                                 child: Text(
                                   "Người thuê đang có hợp đồng tại: "
-                                  "${item.dsPhongHopDong.map((e) => e.tenPhong).join(", ")}.\n",
+                                  "${item.dsPhongHopDong!.map((e) => e.tenPhong).join(", ")}.\n",
 
                                   style: const TextStyle(fontSize: 13),
                                 ),
@@ -484,7 +486,7 @@ class _LuanChuyenPageState extends State<LuanChuyenPage> {
                               children: [
                                 const Expanded(child: Text("Đang ở")),
                                 Text(
-                                "${item.soNguoiDangO} người",
+                                  "${item.soNguoiDangO} người",
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -558,9 +560,7 @@ class _LuanChuyenPageState extends State<LuanChuyenPage> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(
-                    color: const Color(0xffDDDDDD),
-                  ),
+                  border: Border.all(color: const Color(0xffDDDDDD)),
                 ),
                 child: Row(
                   children: [
@@ -670,115 +670,7 @@ class _LuanChuyenPageState extends State<LuanChuyenPage> {
               itemCount: vm.dsHopDong.length,
               separatorBuilder: (_, __) => const SizedBox(height: 12),
               itemBuilder: (context, index) {
-                final item = vm.dsHopDong[index];
-
-                return Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: const Color(0xffF8F9FA),
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              item.maHopDong,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          Text(
-                            item.tenNguoiDaiDien,
-                            style: const TextStyle(
-                              color: Colors.grey,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 14),
-
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Column(
-                                children: [
-                                  const Text(
-                                    "Từ phòng",
-                                    style: TextStyle(
-                                      // color: Colors.grey,
-                                      color: Color(0xFF514D4D),
-                                      fontSize: 13,
-                                    ),
-                                  ),
-
-                                  const SizedBox(height: 4),
-
-                                  Text(
-                                    item.phongCuText,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 12),
-                            child: Icon(
-                              Icons.arrow_forward,
-                              color: Color(0xff2D7A3A),
-                              size: 28,
-                            ),
-                          ),
-
-                          Expanded(
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              decoration: BoxDecoration(
-                                color: const Color(0xffEAF5EC),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Column(
-                                children: [
-                                  const Text(
-                                    "Đến phòng",
-                                    style: TextStyle(
-                                      color: Color(0xFF514D4D),
-                                      fontSize: 12,
-                                    ),
-                                  ),
-
-                                  const SizedBox(height: 4),
-
-                                  Text(
-                                    item.phongMoiText,
-                                    style: const TextStyle(
-                                      color: Color(0xff2D7A3A),
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                );
+                return ItemChiTietLuanChuyen(item: vm.dsHopDong[index]);
               },
             ),
           ],
