@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import '../models/cau_hinh_gia.dart';
 import '../repositories/cauhinhgia_repository.dart';
 
@@ -30,13 +30,25 @@ class CauHinhGiaProvider extends ChangeNotifier {
     }
   }
 
-  Future<CauHinhGia?> updateGia(double giaDien, double giaNuoc) async {
+  Future<CauHinhGia?> updateGia({
+    required double giaDien,
+    required double giaNuoc,
+    double? giaXeMay,
+    double? giaXeHoi,
+    double? giaXeDap,
+  }) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      _cauHinhGia = await _repository.updateGia(giaDien, giaNuoc);
+      _cauHinhGia = await _repository.updateGia(
+        giaDien: giaDien,
+        giaNuoc: giaNuoc,
+        giaXeMay: giaXeMay,
+        giaXeHoi: giaXeHoi,
+        giaXeDap: giaXeDap,
+      );
       return _cauHinhGia;
     } catch (e) {
       _errorMessage = e.toString().replaceAll('Exception: ', '');
@@ -44,6 +56,14 @@ class CauHinhGiaProvider extends ChangeNotifier {
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+  Future<double?> getGiaXeMacDinh(int loaiXe) async {
+    try {
+      return await _repository.getGiaXeMacDinh(loaiXe);
+    } catch (e) {
+      if (kDebugMode) print("Lỗi lấy giá mặc định theo loại xe: $e");
+      return null;
     }
   }
 }
