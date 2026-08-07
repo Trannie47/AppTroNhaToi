@@ -2,7 +2,7 @@ import 'package:AppTroNhaToi/core/utils/model_formatter.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/hop_dong.dart';
 
-class ChiTietLuanChuyen {
+class PhieuLuanChuyen {
   final int? chiTietLuanChuyenID;
   final String? hopDongId;
   final int? phongMoiId;
@@ -14,7 +14,7 @@ class ChiTietLuanChuyen {
   final Phong? phongMoi;
   final HopDong? hopDong;
 
-  ChiTietLuanChuyen({
+  PhieuLuanChuyen({
     this.chiTietLuanChuyenID,
     this.hopDongId,
     this.phongMoiId,
@@ -27,8 +27,8 @@ class ChiTietLuanChuyen {
     this.hopDong,
   });
 
-  factory ChiTietLuanChuyen.fromMap(Map<String, dynamic> map) {
-    return ChiTietLuanChuyen(
+  factory PhieuLuanChuyen.fromMap(Map<String, dynamic> map) {
+    return PhieuLuanChuyen(
       chiTietLuanChuyenID: map['chiTietLuanChuyenID'] != null
           ? intOf(map['chiTietLuanChuyenID'])
           : null,
@@ -65,7 +65,7 @@ class ChiTietLuanChuyen {
     };
   }
 
-  ChiTietLuanChuyen copyWith({
+  PhieuLuanChuyen copyWith({
     int? chiTietLuanChuyenID,
     String? hopDongId,
     int? phongMoiId,
@@ -77,7 +77,7 @@ class ChiTietLuanChuyen {
     Phong? phongMoi,
     HopDong? hopDong,
   }) {
-    return ChiTietLuanChuyen(
+    return PhieuLuanChuyen(
       chiTietLuanChuyenID: chiTietLuanChuyenID ?? this.chiTietLuanChuyenID,
       hopDongId: hopDongId ?? this.hopDongId,
       phongMoiId: phongMoiId ?? this.phongMoiId,

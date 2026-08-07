@@ -1,13 +1,13 @@
-import 'package:AppTroNhaToi/core/network/ChiTietLuanChuyenApiClient.dart';
-import 'package:AppTroNhaToi/models/chi_tiet_luan_chuyen.dart';
+import 'package:AppTroNhaToi/core/network/PhieuLuanChuyenApiClient.dart';
+import 'package:AppTroNhaToi/models/phieu_luan_chuyen.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/ChiTietPhongPage/LuanChuyenPage/HopDongLuanChuyenVM.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/ChiTietPhongPage/LuanChuyenPage/PhongHopDongVM.dart';
 
-class ChiTietLuanChuyenRepository {
-  final ChiTietLuanChuyenApiClient chiTietLuanChuyenApiClient =
-      ChiTietLuanChuyenApiClient();
+class PhieuLuanChuyenRepository {
+  final PhieuLuanChuyenApiClient chiTietLuanChuyenApiClient =
+      PhieuLuanChuyenApiClient();
 
-  Future<List<ChiTietLuanChuyen>> getAll() async {
+  Future<List<PhieuLuanChuyen>> getAll() async {
     return await chiTietLuanChuyenApiClient.getAll();
   }
 
@@ -15,8 +15,8 @@ class ChiTietLuanChuyenRepository {
     return await chiTietLuanChuyenApiClient.getBySuCo(suCoId);
   }
 
-  Future<ChiTietLuanChuyen?> themChiTietLuanChuyen(
-    ChiTietLuanChuyen chiTiet,
+  Future<PhieuLuanChuyen?> themChiTietLuanChuyen(
+    PhieuLuanChuyen chiTiet,
   ) async {
     return await chiTietLuanChuyenApiClient.themChiTietLuanChuyen(chiTiet);
   }
@@ -25,8 +25,8 @@ class ChiTietLuanChuyenRepository {
     return await chiTietLuanChuyenApiClient.xoaChiTietLuanChuyen(id);
   }
 
-  Future<ChiTietLuanChuyen?> capNhatChiTietLuanChuyen(
-    ChiTietLuanChuyen chiTiet,
+  Future<PhieuLuanChuyen?> capNhatChiTietLuanChuyen(
+    PhieuLuanChuyen chiTiet,
   ) async {
     return await chiTietLuanChuyenApiClient.capNhatChiTietLuanChuyen(chiTiet);
   }

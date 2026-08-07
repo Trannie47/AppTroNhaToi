@@ -1,20 +1,15 @@
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
-import 'package:AppTroNhaToi/models/chi_tiet_luan_chuyen.dart';
+import 'package:AppTroNhaToi/models/phieu_luan_chuyen.dart';
 import 'package:flutter/material.dart';
 
 class ItemLuanChuyen extends StatelessWidget {
-  final ChiTietLuanChuyen item;
+  final PhieuLuanChuyen item;
 
   final VoidCallback? edit;
 
   final VoidCallback? delete;
 
-  const ItemLuanChuyen({
-    super.key,
-    required this.item,
-    this.edit,
-    this.delete,
-  });
+  const ItemLuanChuyen({super.key, required this.item, this.edit, this.delete});
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +18,7 @@ class ItemLuanChuyen extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: const Color(0xffEEEEEE),
-        ),
+        border: Border.all(color: const Color(0xffEEEEEE)),
       ),
       child: Column(
         children: [
@@ -38,10 +31,7 @@ class ItemLuanChuyen extends StatelessWidget {
                   color: _backgroundColor(),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
-                  Icons.swap_horiz_rounded,
-                  color: _statusColor(),
-                ),
+                child: Icon(Icons.swap_horiz_rounded, color: _statusColor()),
               ),
 
               const SizedBox(width: 12),
@@ -62,10 +52,7 @@ class ItemLuanChuyen extends StatelessWidget {
 
                     Text(
                       "Phòng hiện tại: ${item.hopDong?.phong?.tenPhong ?? "--"}",
-                      style: const TextStyle(
-                        color: Colors.grey,
-                        fontSize: 12,
-                      ),
+                      style: const TextStyle(color: Colors.grey, fontSize: 12),
                     ),
                   ],
                 ),
@@ -128,11 +115,7 @@ class ItemLuanChuyen extends StatelessWidget {
 
               const SizedBox(width: 8),
 
-              Expanded(
-                child: Text(
-                  formatDate(item.ngayLuanChuyen),
-                ),
-              ),
+              Expanded(child: Text(formatDate(item.ngayLuanChuyen))),
             ],
           ),
 
@@ -143,9 +126,7 @@ class ItemLuanChuyen extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: Text(
                 item.ghiChu!,
-                style: const TextStyle(
-                  color: Colors.black87,
-                ),
+                style: const TextStyle(color: Colors.black87),
               ),
             ),
           ],
@@ -168,36 +149,21 @@ class ItemLuanChuyen extends StatelessWidget {
                           color: Colors.orange,
                         ),
                         SizedBox(width: 4),
-                        Text(
-                          "Sửa",
-                          style: TextStyle(
-                            color: Colors.orange,
-                          ),
-                        ),
+                        Text("Sửa", style: TextStyle(color: Colors.orange)),
                       ],
                     ),
                   ),
 
-                if (edit != null && delete != null)
-                  const SizedBox(width: 18),
+                if (edit != null && delete != null) const SizedBox(width: 18),
 
                 if (delete != null)
                   InkWell(
                     onTap: delete,
                     child: const Row(
                       children: [
-                        Icon(
-                          Icons.delete_outline,
-                          size: 16,
-                          color: Colors.red,
-                        ),
+                        Icon(Icons.delete_outline, size: 16, color: Colors.red),
                         SizedBox(width: 4),
-                        Text(
-                          "Xóa",
-                          style: TextStyle(
-                            color: Colors.red,
-                          ),
-                        ),
+                        Text("Xóa", style: TextStyle(color: Colors.red)),
                       ],
                     ),
                   ),

@@ -61,16 +61,15 @@ class _PhongChiTiet extends State<PhongChiTiet> {
   }
 
   void _xemSuCo(ItemPhong room) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => SuCoPage(
-          phongId: room.phongId,
-        ),
-      )
-    );
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (_) => SuCoPage(
+    //       phongId: room.phongId,
+    //     ),
+    //   )
+    // );
   }
-
 
   void _xuaLyXoaPhong(ItemPhong room) async {
     //Nếu phòng đang có hợp đồng liên kết -> Chặn lại không cho ẩn
@@ -232,8 +231,6 @@ class _PhongChiTiet extends State<PhongChiTiet> {
                     "Chỉ ẩn khi chưa có hợp đồng",
                   ),
                 ),
-
-
               ],
             ),
           ),

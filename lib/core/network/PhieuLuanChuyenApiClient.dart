@@ -1,21 +1,21 @@
 import 'package:AppTroNhaToi/core/network/retrofit_client.dart';
-import 'package:AppTroNhaToi/models/chi_tiet_luan_chuyen.dart';
+import 'package:AppTroNhaToi/models/phieu_luan_chuyen.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/ChiTietPhongPage/LuanChuyenPage/HopDongLuanChuyenVM.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/ChiTietPhongPage/LuanChuyenPage/PhongHopDongVM.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
-class ChiTietLuanChuyenApiClient {
+class PhieuLuanChuyenApiClient {
   final Dio _dio = RetrofitClient().dio;
 
-  Future<List<ChiTietLuanChuyen>> getAll() async {
+  Future<List<PhieuLuanChuyen>> getAll() async {
     try {
-      final response = await _dio.get("chi-tiet-luan-chuyen/findall");
+      final response = await _dio.get("phieu-luan-chuyen/findall");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final List<dynamic> data = response.data;
 
-        return data.map((json) => ChiTietLuanChuyen.fromMap(json)).toList();
+        return data.map((json) => PhieuLuanChuyen.fromMap(json)).toList();
       }
 
       return [];
@@ -37,7 +37,7 @@ class ChiTietLuanChuyenApiClient {
   Future<List<HopDongLuanChuyenVM>> getBySuCo(int suCoId) async {
     try {
       final response = await _dio.get(
-        "chi-tiet-luan-chuyen/find-by-su-co",
+        "phieu-luan-chuyen/find-by-su-co",
         queryParameters: {"suCoId": suCoId},
       );
 
@@ -63,17 +63,17 @@ class ChiTietLuanChuyenApiClient {
     }
   }
 
-  Future<ChiTietLuanChuyen?> themChiTietLuanChuyen(
-    ChiTietLuanChuyen chiTiet,
+  Future<PhieuLuanChuyen?> themChiTietLuanChuyen(
+    PhieuLuanChuyen chiTiet,
   ) async {
     try {
       final response = await _dio.post(
-        "chi-tiet-luan-chuyen",
+        "phieu-luan-chuyen",
         data: chiTiet.toMap(),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return ChiTietLuanChuyen.fromMap(response.data);
+        return PhieuLuanChuyen.fromMap(response.data);
       }
 
       return null;
@@ -82,17 +82,17 @@ class ChiTietLuanChuyenApiClient {
     }
   }
 
-  Future<ChiTietLuanChuyen?> capNhatChiTietLuanChuyen(
-    ChiTietLuanChuyen chiTiet,
+  Future<PhieuLuanChuyen?> capNhatChiTietLuanChuyen(
+    PhieuLuanChuyen chiTiet,
   ) async {
     try {
       final response = await _dio.patch(
-        "chi-tiet-luan-chuyen/${chiTiet.chiTietLuanChuyenID}",
+        "phieu-luan-chuyen/${chiTiet.chiTietLuanChuyenID}",
         data: chiTiet.toMap(),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return ChiTietLuanChuyen.fromMap(response.data);
+        return PhieuLuanChuyen.fromMap(response.data);
       }
 
       return null;
@@ -103,7 +103,7 @@ class ChiTietLuanChuyenApiClient {
 
   Future<bool> xoaChiTietLuanChuyen(int id) async {
     try {
-      final response = await _dio.delete("chi-tiet-luan-chuyen/$id");
+      final response = await _dio.delete("phieu-luan-chuyen/$id");
 
       return response.statusCode == 200 || response.statusCode == 201;
     } on DioException catch (e) {

@@ -1,13 +1,13 @@
-import 'package:AppTroNhaToi/models/chi_tiet_luan_chuyen.dart';
+import 'package:AppTroNhaToi/models/phieu_luan_chuyen.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/ChiTietPhongPage/LuanChuyenPage/HopDongLuanChuyenVM.dart';
-import 'package:AppTroNhaToi/repositories/ChiTietLuanChuyen_reponsitory.dart';
+import 'package:AppTroNhaToi/repositories/PhieuLuanChuyen_reponsitory.dart';
 import 'package:flutter/foundation.dart';
 
-class ChiTietLuanChuyenProvider extends ChangeNotifier {
-  final ChiTietLuanChuyenRepository _repo = ChiTietLuanChuyenRepository();
+class PhieuLuanChuyenProvider extends ChangeNotifier {
+  final PhieuLuanChuyenRepository _repo = PhieuLuanChuyenRepository();
 
-  List<ChiTietLuanChuyen> _list = [];
-  List<ChiTietLuanChuyen> get list => List.unmodifiable(_list);
+  List<PhieuLuanChuyen> _list = [];
+  List<PhieuLuanChuyen> get list => List.unmodifiable(_list);
 
   List<HopDongLuanChuyenVM> _listBySuCo = [];
   List<HopDongLuanChuyenVM> get listBySuCo => List.unmodifiable(_listBySuCo);
@@ -55,25 +55,25 @@ class ChiTietLuanChuyenProvider extends ChangeNotifier {
     }
   }
 
-  Future<ChiTietLuanChuyen?> them(ChiTietLuanChuyen chiTiet) async {
-    final result = await _repo.themChiTietLuanChuyen(chiTiet);
+  Future<PhieuLuanChuyen?> them(PhieuLuanChuyen chiTiet) async {
+    // final result = await _repo.themChiTietLuanChuyen(chiTiet);
 
-    if (result != null) {
-      await fetchAll();
-      await fetchBySuCo(result.suCoId!);
-    }
+    // if (result != null) {
+    //   await fetchAll();
+    //   await fetchBySuCo(result.suCoId!);
+    // }
 
-    return result;
+    // return result;
   }
 
-  Future<bool> capNhat(ChiTietLuanChuyen chiTiet) async {
-    final result = await _repo.capNhatChiTietLuanChuyen(chiTiet);
+  Future<bool> capNhat(PhieuLuanChuyen chiTiet) async {
+    // final result = await _repo.capNhatChiTietLuanChuyen(chiTiet);
 
-    if (result != null) {
-      await fetchAll();
-      await fetchBySuCo(result.suCoId!);
-      return true;
-    }
+    // if (result != null) {
+    //   await fetchAll();
+    //   await fetchBySuCo(result.suCoId!);
+    //   return true;
+    // }
 
     return false;
   }
