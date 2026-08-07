@@ -243,6 +243,17 @@ class TaoHoaDonPhongPageViewModel extends ChangeNotifier {
     }
     localErrorMessage = null;
 
+    final gioPhutGiayThucTe = DateTime.now();
+    final ngayLapKemGio = DateTime(
+      ngayLapSelected.year,
+      ngayLapSelected.month,
+      ngayLapSelected.day,
+      gioPhutGiayThucTe.hour,
+      gioPhutGiayThucTe.minute,
+      gioPhutGiayThucTe.second,
+      gioPhutGiayThucTe.millisecond,
+    );
+
     final customContractsPayload = listContracts.map((hd) {
       return {
         'hopDongId': hd.hopDongId,
@@ -270,7 +281,7 @@ class TaoHoaDonPhongPageViewModel extends ChangeNotifier {
     bool success = await _hoaDonProvider.createHoaDonBatch(
       phongId: phongId,
       thangNam: thangNam,
-      ngayLap: ngayLapSelected.toIso8601String(),
+      ngayLap: ngayLapKemGio.toIso8601String(),
       isChotDienNuoc: isChotDienNuoc, // Truyền trạng thái công tắc điện nước
       chiSoDienCu: int.tryParse(txtDienChiSoCu.text) ?? 0,
       chiSoDienMoi: int.tryParse(txtDienChiSoMoi.text) ?? 0,

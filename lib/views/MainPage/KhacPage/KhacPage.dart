@@ -13,7 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../../Provider/cau_hinh_gia_provider.dart';
-import '../../../Provider/cau_hinh_gia_xe_provider.dart';
 import '../../../modelviews/MainPage/KhacPage/KhacPage.dart';
 
 class KhacPage extends StatefulWidget {
@@ -37,15 +36,7 @@ class _KhacPageState extends State<KhacPage> {
       context,
       listen: false,
     );
-    final cauHinhGiaXeProvider = Provider.of<CauHinhGiaXeProvider>(
-      context,
-      listen: false,
-    );
-    vm = KhacPageModelView(
-      hopDongProvider,
-      cauHinhGiaProvider,
-      cauHinhGiaXeProvider,
-    );
+    vm = KhacPageModelView(hopDongProvider, cauHinhGiaProvider);
     vm.addListener(() {
       if (mounted) {
         setState(() {});
@@ -65,23 +56,19 @@ class _KhacPageState extends State<KhacPage> {
     final hoaDonTapHoaProvider = context.watch<HoaDonTapHoaProvider>();
     final thongKeProvider = context.watch<ThongKeProvider>();
     final cauHinhGiaProvider = context.watch<CauHinhGiaProvider>();
-    final cauHinhGiaXeProvider = context.watch<CauHinhGiaXeProvider>();
 
     final soLuongSapHetHan = vm.soLuongSapHetHan;
 
-    final giaDien = cauHinhGiaProvider.cauHinhGia?.giaDien;
-    final giaNuoc = cauHinhGiaProvider.cauHinhGia?.giaNuoc;
-    final dsGiaXe = cauHinhGiaXeProvider.list;
+    final cauHinhGia = cauHinhGiaProvider.cauHinhGia;
 
 
     int soMucDaCauHinh = 0;
-    if (giaDien != null && giaDien > 0) soMucDaCauHinh++;
-    if (giaNuoc != null && giaNuoc > 0) soMucDaCauHinh++;
-    for (final loaiXe in [0, 1, 2]) {
-      final daCauHinhLoaiXeNay = dsGiaXe.any(
-        (e) => e.loaiXe == loaiXe && e.giaMacDinh > 0,
-      );
-      if (daCauHinhLoaiXeNay) soMucDaCauHinh++;
+    if (cauHinhGia != null) {
+      if (cauHinhGia.giaDien > 0) soMucDaCauHinh++;
+      if (cauHinhGia.giaNuoc > 0) soMucDaCauHinh++;
+      if (cauHinhGia.giaXeMay > 0) soMucDaCauHinh++;
+      if (cauHinhGia.giaXeHoi > 0) soMucDaCauHinh++;
+      if (cauHinhGia.giaXeDap > 0) soMucDaCauHinh++;
     }
 
     final statusCauHinhGia = soMucDaCauHinh == 0

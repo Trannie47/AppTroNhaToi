@@ -1,4 +1,4 @@
-import 'package:AppTroNhaToi/Provider/cau_hinh_gia_xe_provider.dart';
+import 'package:AppTroNhaToi/Provider/cau_hinh_gia_provider.dart';
 import 'package:AppTroNhaToi/Provider/phuong_tien_provider.dart';
 import 'package:AppTroNhaToi/core/network/retrofit_client.dart';
 import 'package:AppTroNhaToi/models/hop_dong.dart';
@@ -53,7 +53,7 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
     }
 
     if (!vm.isEditing) {
-      vm.changeLoaiXe(vm.loaiXe, provider: context.read<CauHinhGiaXeProvider>());
+      vm.changeLoaiXe(vm.loaiXe, provider: context.read<CauHinhGiaProvider>());
     }
   }
 
@@ -661,7 +661,7 @@ class _PhuongTienFormState extends State<PhuongTienForm> {
       child: GestureDetector(
         onTap: () => vm.changeLoaiXe(
           value,
-          provider: context.read<CauHinhGiaXeProvider>(),
+          provider: context.read<CauHinhGiaProvider>(),
         ),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),

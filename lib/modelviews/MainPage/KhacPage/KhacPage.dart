@@ -1,20 +1,14 @@
 import 'package:flutter/material.dart';
 
 import '../../../Provider/cau_hinh_gia_provider.dart';
-import '../../../Provider/cau_hinh_gia_xe_provider.dart';
 import '../../../Provider/hop_dong_provider.dart';
 
 class KhacPageModelView extends ChangeNotifier {
   final HopDongProvider _hopDongProvider;
   final CauHinhGiaProvider _cauHinhGiaProvider;
-  final CauHinhGiaXeProvider _cauHinhGiaXeProvider;
   bool isLoading = false;
 
-  KhacPageModelView(
-    this._hopDongProvider,
-    this._cauHinhGiaProvider,
-    this._cauHinhGiaXeProvider,
-  ) {
+  KhacPageModelView(this._hopDongProvider, this._cauHinhGiaProvider) {
     _hopDongProvider.addListener(_onHopDongChanged);
     loadData();
   }
@@ -29,7 +23,6 @@ class KhacPageModelView extends ChangeNotifier {
     try {
       await _hopDongProvider.getListHD();
       await _cauHinhGiaProvider.getGiaHienTai();
-      await _cauHinhGiaXeProvider.getAll();
     } catch (e) {
       debugPrint("Lỗi tải dữ liệu ở KhacPage: $e");
     } finally {

@@ -185,6 +185,7 @@ class HopDongFormViewModel extends ChangeNotifier {
       final result = await _hopDongProvider.createHopDong(hopDongInfor, listImageContract);
       _createContractState = CreateContractSuccess(result);
       await _phongProvider.getListPhong();
+      await _nguoiThueProvider.fetchAll();
     } catch (e) {
       String loi = "Đã có lỗi xảy ra, vui lòng thử lại sau!";
       if (e is DioException) {
@@ -205,6 +206,7 @@ class HopDongFormViewModel extends ChangeNotifier {
       final result = await _hopDongProvider.updateHopDong(hopDongInfor, listImageContract);
       await _phongProvider.getListPhong();
       _updateContractState = HopDongUpdateSuccess(result);
+      await _nguoiThueProvider.fetchAll();
     } catch (e) {
       String loi = "Đã có lỗi xảy ra, vui lòng thử lại sau!";
       if (e is DioException) {

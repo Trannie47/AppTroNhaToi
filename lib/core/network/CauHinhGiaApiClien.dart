@@ -14,13 +14,35 @@ class CauHinhGiaApiClient {
     }
   }
 
-  Future<CauHinhGia> updateGia(double giaDien, double giaNuoc) async {
+
+  Future<CauHinhGia> updateGia({
+    required double giaDien,
+    required double giaNuoc,
+    double? giaXeMay,
+    double? giaXeHoi,
+    double? giaXeDap,
+  }) async {
     try {
       final response = await _dio.post(
         '/cau-hinh-gia',
-        data: {'giaDien': giaDien, 'giaNuoc': giaNuoc},
+        data: {
+          'giaDien': giaDien,
+          'giaNuoc': giaNuoc,
+          if (giaXeMay != null) 'giaXeMay': giaXeMay,
+          if (giaXeHoi != null) 'giaXeHoi': giaXeHoi,
+          if (giaXeDap != null) 'giaXeDap': giaXeDap,
+        },
       );
       return CauHinhGia.fromMap(response.data);
+    } on DioException catch (e) {
+      throw Exception(_mapErrorToMessage(e));
+    }
+  }
+  Future<double> getGiaXeMacDinh(int loaiXe) async {
+    try {
+      final response = await _dio.get('/cau-hinh-gia/xe/$loaiXe');
+      final data = response.data as Map<String, dynamic>;
+      return (data['giaMacDinh'] as num?)?.toDouble() ?? 0.0;
     } on DioException catch (e) {
       throw Exception(_mapErrorToMessage(e));
     }

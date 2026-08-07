@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:AppTroNhaToi/Provider/cau_hinh_gia_provider.dart';
-import 'package:AppTroNhaToi/Provider/cau_hinh_gia_xe_provider.dart';
 
 import '../../../../core/utils/currency_formatter.dart';
 import '../../../../modelviews/MainPage/KhacPage/CauHinhGiaPage/CauHinhGiaPageViewModel.dart';
@@ -25,8 +24,7 @@ class _CauHinhGiaPageState extends State<CauHinhGiaPage> {
   void initState() {
     super.initState();
     final provider = context.read<CauHinhGiaProvider>();
-    final providerXe = context.read<CauHinhGiaXeProvider>();
-    _viewModel = CauHinhGiaPageViewModel(provider: provider, providerXe: providerXe);
+    _viewModel = CauHinhGiaPageViewModel(provider: provider);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _viewModel.loadData();
@@ -53,9 +51,7 @@ class _CauHinhGiaPageState extends State<CauHinhGiaPage> {
         ),
       );
     } else {
-      final loi =
-          _viewModel.provider.errorMessage ??
-          _viewModel.providerXe.errorMessage;
+      final loi = _viewModel.provider.errorMessage;
       if (loi != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -71,9 +67,8 @@ class _CauHinhGiaPageState extends State<CauHinhGiaPage> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<CauHinhGiaProvider>();
-    final providerXe = context.watch<CauHinhGiaXeProvider>();
     final cauHinhGia = provider.cauHinhGia;
-    final dangXuLy = provider.isLoading || providerXe.isLoading;
+    final dangXuLy = provider.isLoading;
 
     return ChangeNotifierProvider<CauHinhGiaPageViewModel>.value(
       value: _viewModel,

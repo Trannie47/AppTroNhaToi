@@ -8,7 +8,23 @@ class CauHinhGiaRepository {
     return await _apiClient.getGiaHienTai();
   }
 
-  Future<CauHinhGia> updateGia(double giaDien, double giaNuoc) async {
-    return await _apiClient.updateGia(giaDien, giaNuoc);
+  Future<CauHinhGia> updateGia({
+    required double giaDien,
+    required double giaNuoc,
+    double? giaXeMay,
+    double? giaXeHoi,
+    double? giaXeDap,
+  }) async {
+    return await _apiClient.updateGia(
+      giaDien: giaDien,
+      giaNuoc: giaNuoc,
+      giaXeMay: giaXeMay,
+      giaXeHoi: giaXeHoi,
+      giaXeDap: giaXeDap,
+    );
+  }
+
+  Future<double> getGiaXeMacDinh(int loaiXe) async {
+    return await _apiClient.getGiaXeMacDinh(loaiXe);
   }
 }
