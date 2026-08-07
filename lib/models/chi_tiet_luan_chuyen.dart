@@ -4,23 +4,24 @@ import 'package:AppTroNhaToi/models/hop_dong.dart';
 
 class ChiTietLuanChuyen {
   final int? chiTietLuanChuyenID;
-  final int? suCoId;
   final String? hopDongId;
   final int? phongMoiId;
-  final DateTime? ngayLuanChuyen;
-  final int?
-  trangThaiLuanChuyen; // 0 = Chưa chuyển, 1 = Đang chuyển, 2 = Đã hoàn tất
+  final DateTime? tuNgay;
+  final DateTime? denNgay;
+  final String? lyDoLuanChuyen;
+  final double? chiPhi;
   final String? ghiChu;
   final Phong? phongMoi;
   final HopDong? hopDong;
 
   ChiTietLuanChuyen({
     this.chiTietLuanChuyenID,
-    this.suCoId,
     this.hopDongId,
     this.phongMoiId,
-    this.ngayLuanChuyen,
-    this.trangThaiLuanChuyen,
+    this.tuNgay,
+    this.denNgay,
+    this.lyDoLuanChuyen,
+    this.chiPhi,
     this.ghiChu,
     this.phongMoi,
     this.hopDong,
@@ -31,13 +32,12 @@ class ChiTietLuanChuyen {
       chiTietLuanChuyenID: map['chiTietLuanChuyenID'] != null
           ? intOf(map['chiTietLuanChuyenID'])
           : null,
-      suCoId: map['suCoId'] != null ? intOf(map['suCoId']) : null,
       hopDongId: strOf(map['hopDongId']),
       phongMoiId: map['phongMoiId'] != null ? intOf(map['phongMoiId']) : null,
-      ngayLuanChuyen: dateOf(map['ngayLuanChuyen']),
-      trangThaiLuanChuyen: map['trangThaiLuanChuyen'] != null
-          ? intOf(map['trangThaiLuanChuyen'])
-          : null,
+      tuNgay: dateOf(map['tuNgay']),
+      denNgay: dateOf(map['denNgay']),
+      lyDoLuanChuyen: strOf(map['lyDoLuanChuyen']),
+      chiPhi: map['chiPhi'] != null ? (map['chiPhi'] as num).toDouble() : null,
       ghiChu: strOf(map['ghiChu']),
       phongMoi: map['phongMoi'] != null
           ? Phong.fromMap(map['phongMoi'] as Map<String, dynamic>)
@@ -54,34 +54,37 @@ class ChiTietLuanChuyen {
     return {
       if (chiTietLuanChuyenID != null)
         'chiTietLuanChuyenID': chiTietLuanChuyenID,
-      'suCoId': suCoId,
       'hopDongId': hopDongId,
       'phongMoiId': phongMoiId,
-      if (ngayLuanChuyen != null)
-        'ngayLuanChuyen': ngayLuanChuyen!.toIso8601String().split('T').first,
-      'trangThaiLuanChuyen': trangThaiLuanChuyen,
+      if (tuNgay != null) 'tuNgay': tuNgay!.toIso8601String().split('T').first,
+      if (denNgay != null)
+        'denNgay': denNgay!.toIso8601String().split('T').first,
+      'lyDoLuanChuyen': lyDoLuanChuyen,
+      'chiPhi': chiPhi,
       'ghiChu': ghiChu,
     };
   }
 
   ChiTietLuanChuyen copyWith({
     int? chiTietLuanChuyenID,
-    int? suCoId,
     String? hopDongId,
     int? phongMoiId,
-    DateTime? ngayLuanChuyen,
-    int? trangThaiLuanChuyen,
+    DateTime? tuNgay,
+    DateTime? denNgay,
+    String? lyDoLuanChuyen,
+    double? chiPhi,
     String? ghiChu,
     Phong? phongMoi,
     HopDong? hopDong,
   }) {
     return ChiTietLuanChuyen(
       chiTietLuanChuyenID: chiTietLuanChuyenID ?? this.chiTietLuanChuyenID,
-      suCoId: suCoId ?? this.suCoId,
       hopDongId: hopDongId ?? this.hopDongId,
       phongMoiId: phongMoiId ?? this.phongMoiId,
-      ngayLuanChuyen: ngayLuanChuyen ?? this.ngayLuanChuyen,
-      trangThaiLuanChuyen: trangThaiLuanChuyen ?? this.trangThaiLuanChuyen,
+      tuNgay: tuNgay ?? this.tuNgay,
+      denNgay: denNgay ?? this.denNgay,
+      lyDoLuanChuyen: lyDoLuanChuyen ?? this.lyDoLuanChuyen,
+      chiPhi: chiPhi ?? this.chiPhi,
       ghiChu: ghiChu ?? this.ghiChu,
       phongMoi: phongMoi ?? this.phongMoi,
       hopDong: hopDong ?? this.hopDong,
@@ -92,11 +95,12 @@ class ChiTietLuanChuyen {
   String toString() {
     return 'ChiTietLuanChuyen('
         'chiTietLuanChuyenID: $chiTietLuanChuyenID, '
-        'suCoId: $suCoId, '
         'hopDongId: $hopDongId, '
         'phongMoiId: $phongMoiId, '
-        'ngayLuanChuyen: $ngayLuanChuyen, '
-        'trangThaiLuanChuyen: $trangThaiLuanChuyen, '
+        'tuNgay: $tuNgay, '
+        'denNgay: $denNgay, '
+        'lyDoLuanChuyen: $lyDoLuanChuyen, '
+        'chiPhi: $chiPhi, '
         'ghiChu: $ghiChu, '
         'phongMoi: $phongMoi, '
         'hopDong: $hopDong'
