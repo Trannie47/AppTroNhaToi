@@ -40,13 +40,15 @@ List<NhomThietBiTrongPhong> gomNhomTheoThietBi(List<ThietBiPhongPageModel> ds) {
     if (tbId == null) continue;
     map.putIfAbsent(tbId, () => []).add(item);
   }
-  return map.entries
-      .map(
-        (e) => NhomThietBiTrongPhong(
-          thietBiId: e.key,
-          thietBi: e.value.first.lapRap.thietBi,
-          danhSach: e.value,
-        ),
-      )
-      .toList();
+  return map.entries.map((e) {
+    final thietBi = e.value
+        .map((item) => item.lapRap.thietBi)
+        .firstWhere((tb) => tb != null, orElse: () => null);
+
+    return NhomThietBiTrongPhong(
+      thietBiId: e.key,
+      thietBi: thietBi,
+      danhSach: e.value,
+    );
+  }).toList();
 }

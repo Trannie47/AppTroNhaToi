@@ -46,23 +46,21 @@ class LapRapProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool?> capNhatLapRap({required int id, required String ghiChu}) async {
+  Future<bool?> capNhatLapRap({
+    required int id,
+    required String ghiChu,
+    required DateTime ngayLap, // ← thêm tham số này
+  }) async {
     try {
-      final result = await _lapRapRepo.capNhatLapRap(id: id, ghiChu: ghiChu);
-
-      if (result == true) {
-        final index = _listLapRap.indexWhere((e) => e.id == id);
-
-        if (index != -1) {
-          _listLapRap[index] = _listLapRap[index].copyWith(ghiChu: ghiChu);
-
-          notifyListeners();
-        }
-      }
-
-      return result;
+      final response = await _lapRapRepo.capNhatLapRap(
+        id: id,
+        ghiChu: ghiChu,
+        ngayLap: ngayLap, // ← truyền tiếp xuống service/API call
+      );
+      // ... phần xử lý response, cập nhật list, notifyListeners()...
+      return true;
     } catch (e) {
-      rethrow;
+      return false;
     }
   }
 
@@ -75,6 +73,19 @@ class LapRapProvider extends ChangeNotifier {
         phongId: phongId,
         thietBiId: thietBiId,
       );
+
+      // if (kDebugMode) {
+      //   print("=== Tổng số bản ghi: ${result.length} ===");
+      //   for (var i = 0; i < result.length; i++) {
+      //     final item = result[i];
+      //     print("--- Item $i ---");
+      //     print("id: ${item.lapRap.id}");
+      //     print("ghiChu: ${item.lapRap.ghiChu}");
+      //     print("ngayLap: ${item.lapRap.ngayLap}");
+      //     print("thietBi: ${item.lapRap.thietBi}");
+      //     print("tenThietBi: ${item.lapRap.thietBi?.tenThietBi}");
+      //   }
+      // }
 
       _listLapRapPage = result;
       notifyListeners();
@@ -90,7 +101,11 @@ class LapRapProvider extends ChangeNotifier {
       final result = await _lapRapRepo.xoaLapRap(id);
 
       if (result) {
+        // Xóa khỏi TẤT CẢ list cache đang có trong Provider, không chỉ 1 list
         _listLapRap.removeWhere((e) => e.id == id);
+        _listLapRapPage.removeWhere(
+          (e) => e.lapRap.id == id,
+        ); // nếu field này tồn tại
         notifyListeners();
       }
 

@@ -1,3 +1,4 @@
+import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 
 class LapRap {
@@ -7,6 +8,7 @@ class LapRap {
   final DateTime? ngayLap;
   final String? ghiChu;
   final ThietBi? thietBi;
+  final Phong? phong;
 
   LapRap({
     this.id,
@@ -15,6 +17,7 @@ class LapRap {
     this.ngayLap,
     this.ghiChu,
     this.thietBi,
+    this.phong,
   });
 
   factory LapRap.fromMap(Map<String, dynamic> map) {
@@ -26,8 +29,10 @@ class LapRap {
           ? DateTime.tryParse(map['ngayLap'] as String)
           : null,
       ghiChu: map['ghiChu'] as String?,
-      thietBi: map['thietBi'] != null
-          ? ThietBi.fromMap(map['thietBi'] as Map<String, dynamic>)
+      thietBi: (map['thietbi'] ?? map['thietBi']) != null
+          ? ThietBi.fromMap(
+              (map['thietbi'] ?? map['thietBi']) as Map<String, dynamic>,
+            )
           : null,
     );
   }

@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:AppTroNhaToi/Provider/sua_chua_provider.dart';
+import 'package:AppTroNhaToi/models/lap_rap.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/LichSuSuaChuaPage/LichSuSuaChuaPageViewModel.dart';
@@ -13,8 +14,8 @@ import 'package:provider/provider.dart';
 
 class LichSuSuaChuaPage extends StatefulWidget {
   final ThietBi thietBi;
-
-  const LichSuSuaChuaPage({super.key, required this.thietBi});
+  final LapRap? lapRap;
+  const LichSuSuaChuaPage({super.key, required this.thietBi, this.lapRap});
 
   @override
   State<LichSuSuaChuaPage> createState() => _LichSuSuaChuaPageState();
@@ -26,9 +27,10 @@ class _LichSuSuaChuaPageState extends State<LichSuSuaChuaPage> {
   @override
   void initState() {
     super.initState();
-
+    print(widget.lapRap);
     vm = LichSuSuaChuaPageViewModel(
       thietBi: widget.thietBi,
+      lapRap: widget.lapRap,
       suaChuaProvider: context.read<SuaChuaProvider>(),
     );
 
@@ -52,7 +54,7 @@ class _LichSuSuaChuaPageState extends State<LichSuSuaChuaPage> {
       MaterialPageRoute(
         builder: (_) => ChangeNotifierProvider.value(
           value: context.read<SuaChuaProvider>(),
-          child: PhieuSuaChuaForm(thietBi: vm.thietBi),
+          child: PhieuSuaChuaForm(thietBi: vm.thietBi, lapRap: widget.lapRap),
         ),
       ),
     );
@@ -70,6 +72,7 @@ class _LichSuSuaChuaPageState extends State<LichSuSuaChuaPage> {
             hoaDonSuaChua: item.hoaDonSuaChua,
             thietBi: widget.thietBi,
             tenPhong: item.tenPhong,
+            lapRap: widget.lapRap,
           ),
         ),
       ),
@@ -127,7 +130,9 @@ class _LichSuSuaChuaPageState extends State<LichSuSuaChuaPage> {
             ),
 
             Text(
-              "${widget.thietBi.tenThietBi}",
+              widget.lapRap != null
+                  ? "${widget.thietBi.tenThietBi} - Phòng ${widget.lapRap!.phongID} - #${widget.lapRap!.id}"
+                  : "${widget.thietBi.tenThietBi}",
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,

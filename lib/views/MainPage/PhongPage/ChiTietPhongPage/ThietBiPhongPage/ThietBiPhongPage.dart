@@ -23,6 +23,7 @@ class _ThietBiPhongPageState extends State<ThietBiPhongPage> {
   late ThietBiPhongPageViewModel vm;
 
   Future<void> _moLichSuLapRap(NhomThietBiTrongPhong nhom) async {
+    print(nhom);
     await Navigator.push(
       context,
       MaterialPageRoute(

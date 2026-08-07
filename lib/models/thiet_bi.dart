@@ -8,7 +8,7 @@ class ThietBi {
 
   factory ThietBi.fromMap(Map<String, dynamic> map) {
     return ThietBi(
-      thietBiID: map['thietBiID'] as int?,
+      thietBiID: (map['thietBiId'] ?? map['thietBiID']) as int?,
       tenThietBi: map['tenThietBi'] as String?,
       loai: map['loai'] as String?,
       trangThai: map['trangThai'] as int?,

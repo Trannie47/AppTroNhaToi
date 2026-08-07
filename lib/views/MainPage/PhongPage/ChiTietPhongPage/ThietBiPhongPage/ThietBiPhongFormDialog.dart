@@ -55,7 +55,7 @@ class _ThietBiPhongFormDialogState extends State<ThietBiPhongFormDialog> {
   @override
   void initState() {
     super.initState();
-
+    print('widget.item: ${widget.thietBiIdCoDinh}');
     _selectedDate = widget.item?.ngayLap ?? DateTime.now();
     _ghiChuController = TextEditingController(text: widget.item?.ghiChu ?? '');
 

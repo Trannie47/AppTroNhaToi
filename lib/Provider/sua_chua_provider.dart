@@ -31,6 +31,24 @@ class SuaChuaProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> fetchByThietBiVaLapRap(int thietBiID, int lapRapId) async {
+    if (_isLoading) return;
+
+    _isLoading = true;
+    _list = [];
+    notifyListeners();
+
+    try {
+      _list = await _repo.getTheoThietBiVaLapRap(thietBiID, lapRapId);
+    } catch (e) {
+      _list = [];
+      if (kDebugMode) print("Lỗi SuaChuaProvider: $e");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<SuaChuaDTO?> them(SuaChuaDTO suaChua) async {
     final result = await _repo.themSuaChua(suaChua);
 

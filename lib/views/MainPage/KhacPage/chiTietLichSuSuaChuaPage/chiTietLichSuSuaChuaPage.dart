@@ -3,6 +3,7 @@ import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/models/DTO/SuaChuaDTO.dart';
 import 'package:AppTroNhaToi/models/hoa_don_sua_chua.dart';
+import 'package:AppTroNhaToi/models/lap_rap.dart';
 import 'package:AppTroNhaToi/models/sua_chua.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/chiTietLichSuSuaChuaPage/chiTietLichSuSuaChuaPageViewModel.dart';
@@ -14,6 +15,7 @@ class ChiTietLichSuSuaChuaPage extends StatefulWidget {
   final SuaChua suaChua;
   final HoaDonSuaChua? hoaDonSuaChua;
   final String? tenPhong;
+  final LapRap? lapRap;
   final ThietBi thietBi;
 
   const ChiTietLichSuSuaChuaPage({
@@ -22,6 +24,7 @@ class ChiTietLichSuSuaChuaPage extends StatefulWidget {
     this.hoaDonSuaChua,
     required this.thietBi,
     this.tenPhong,
+    this.lapRap,
   });
 
   @override
@@ -43,6 +46,7 @@ class _ChiTietLichSuSuaChuaPageState extends State<ChiTietLichSuSuaChuaPage> {
       widget.hoaDonSuaChua,
       widget.thietBi,
       context.read<SuaChuaProvider>(),
+      widget.lapRap,
     );
 
     vm.addListener(() {
@@ -67,6 +71,7 @@ class _ChiTietLichSuSuaChuaPageState extends State<ChiTietLichSuSuaChuaPage> {
             suaChua: widget.suaChua,
             hoaDonSuaChua: widget.hoaDonSuaChua,
             thietBi: widget.thietBi,
+            lapRap: widget.lapRap,
           ),
         ),
       ),

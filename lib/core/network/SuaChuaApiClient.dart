@@ -73,6 +73,34 @@ class SuaChuaApiClient {
     }
   }
 
+  /// Lấy danh sách sửa chữa theo thiết bị và lắp ráp cụ thể
+  Future<List<LichSuSuaChuaPageModel>> getTheoThietBiVaLapRap(
+    int thietBiID,
+    int lapRapId,
+  ) async {
+    try {
+      final response = await _dio.get(
+        "sua-chua/thiet-bi/$thietBiID/lap-rap/$lapRapId",
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final List<dynamic> data = response.data;
+
+        return data
+            .map((json) => LichSuSuaChuaPageModel.fromMap(json))
+            .toList();
+      }
+
+      return [];
+    } on DioException catch (e) {
+      if (kDebugMode) {
+        print("Lỗi SuaChuaApiClient: $e");
+      }
+
+      throw Exception(_mapErrorToMessage(e));
+    }
+  }
+
   /// Thêm sửa chữa
   Future<SuaChuaDTO?> themSuaChua(SuaChuaDTO suaChua) async {
     try {
