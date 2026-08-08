@@ -219,7 +219,57 @@ class _PhongPageState extends State<PhongPage> {
                         horizontal: 16,
                         vertical: 8,
                       ),
-                      child: vm.listPhongHienThi.isEmpty
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (vm.dangTimKiem)
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xffEAF3EB).withOpacity(0.7),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: const Color(0xff2D7A3A).withOpacity(0.2)),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        const Icon(Icons.search_rounded, size: 16, color: Color(0xff2D7A3A)),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          "Kết quả cho \"${vm.searchController.text}\"",
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.black87,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xff2D7A3A),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: Text(
+                                        "${vm.listPhongHienThi.length} phòng",
+                                        style: const TextStyle(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          Expanded(
+                            child: vm.listPhongHienThi.isEmpty
                           ? const Center(
                               child: Text(
                                 "Không có phòng trọ nào thuộc trạng thái này",
@@ -265,6 +315,9 @@ class _PhongPageState extends State<PhongPage> {
                                 );
                               },
                             ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],

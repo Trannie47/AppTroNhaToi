@@ -56,6 +56,18 @@ class PhongPageViewModel extends ChangeNotifier {
     }).toList();
   }
 
+  bool get dangTimKiem => _searchQuery.isNotEmpty;
+
+  // Số lượng phòng theo từng loại phòng, tính trên đúng danh sách đang hiển thị
+  Map<String, int> get soLuongTheoLoaiPhong {
+    final Map<String, int> ketQua = {};
+    for (final phong in listPhongHienThi) {
+      final ten = phong.loaiPhong.tenLoaiPhong;
+      ketQua[ten] = (ketQua[ten] ?? 0) + 1;
+    }
+    return ketQua;
+  }
+
   void setFilter(int filterValue) {
     if (_currentFilter == filterValue) return;
     _currentFilter = filterValue;

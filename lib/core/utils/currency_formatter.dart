@@ -31,6 +31,14 @@ String formatMoney(num? value) {
   return "${value.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}đ";
 }
 
+String formatSoTienNhap(num value) {
+  if (value <= 0) return "";
+  return NumberFormat(
+    '#,###',
+    'vi_VN',
+  ).format(value.toInt()).replaceAll(',', '.');
+}
+
 class DinhDangGiaVN extends TextInputFormatter {
   final NumberFormat formatter = NumberFormat('#,###', 'vi_VN');
 
