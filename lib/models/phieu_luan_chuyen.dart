@@ -37,7 +37,7 @@ class PhieuLuanChuyen {
       tuNgay: dateOf(map['tuNgay']),
       denNgay: dateOf(map['denNgay']),
       lyDoLuanChuyen: strOf(map['lyDoLuanChuyen']),
-      chiPhi: map['chiPhi'] != null ? (map['chiPhi'] as num).toDouble() : null,
+      chiPhi: map['chiPhi'] != null ? numOf(map['chiPhi']) : null,
       ghiChu: strOf(map['ghiChu']),
       phongMoi: map['phongMoi'] != null
           ? Phong.fromMap(map['phongMoi'] as Map<String, dynamic>)

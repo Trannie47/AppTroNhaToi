@@ -158,4 +158,28 @@ class PhongApiClient {
       throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
     }
   }
+
+  /// Danh sách phòng có thể luân chuyển tới cho 1 hợp đồng (đã lọc còn chỗ trống).
+  Future<List<ItemPhong>> getCoTheLuanChuyenByHopDong(String hopDongId) async {
+    try {
+      final response = await _dio.get("phong/co-the-luan-chuyen/$hopDongId");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final List<dynamic> data = response.data;
+        return data.map((json) => ItemPhong.fromMap(json)).toList();
+      }
+
+      return [];
+    } on DioException catch (e) {
+      if (kDebugMode) {
+        print("Lỗi getCoTheLuanChuyenByHopDong: $e");
+      }
+      throw Exception(_mapErrorToMessage(e));
+    } catch (e) {
+      if (kDebugMode) {
+        print("Lỗi không xác định getCoTheLuanChuyenByHopDong: $e");
+      }
+      throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
+    }
+  }
 }

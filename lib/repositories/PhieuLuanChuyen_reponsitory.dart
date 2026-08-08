@@ -1,7 +1,5 @@
 import 'package:AppTroNhaToi/core/network/PhieuLuanChuyenApiClient.dart';
 import 'package:AppTroNhaToi/models/phieu_luan_chuyen.dart';
-import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/ChiTietPhongPage/LuanChuyenPage/HopDongLuanChuyenVM.dart';
-import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/ChiTietPhongPage/LuanChuyenPage/PhongHopDongVM.dart';
 
 class PhieuLuanChuyenRepository {
   final PhieuLuanChuyenApiClient chiTietLuanChuyenApiClient =
@@ -11,23 +9,20 @@ class PhieuLuanChuyenRepository {
     return await chiTietLuanChuyenApiClient.getAll();
   }
 
-  Future<List<HopDongLuanChuyenVM>> getBySuCo(int suCoId) async {
-    return await chiTietLuanChuyenApiClient.getBySuCo(suCoId);
+  /// Lấy danh sách phiếu luân chuyển theo phòng cũ (phòng gắn trên hợp đồng).
+  Future<List<PhieuLuanChuyen>> getLuanChuyenTheoPhong(int phongId) async {
+    return await chiTietLuanChuyenApiClient.getLuanChuyenTheoPhong(phongId);
   }
 
-  Future<PhieuLuanChuyen?> themChiTietLuanChuyen(
-    PhieuLuanChuyen chiTiet,
-  ) async {
+  Future<PhieuLuanChuyen?> them(PhieuLuanChuyen chiTiet) async {
     return await chiTietLuanChuyenApiClient.themChiTietLuanChuyen(chiTiet);
   }
 
-  Future<bool> xoaChiTietLuanChuyen(int id) async {
+  Future<bool> xoa(int id) async {
     return await chiTietLuanChuyenApiClient.xoaChiTietLuanChuyen(id);
   }
 
-  Future<PhieuLuanChuyen?> capNhatChiTietLuanChuyen(
-    PhieuLuanChuyen chiTiet,
-  ) async {
+  Future<bool?> capNhat(PhieuLuanChuyen chiTiet) async {
     return await chiTietLuanChuyenApiClient.capNhatChiTietLuanChuyen(chiTiet);
   }
 }

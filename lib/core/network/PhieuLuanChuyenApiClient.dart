@@ -1,7 +1,5 @@
 import 'package:AppTroNhaToi/core/network/retrofit_client.dart';
 import 'package:AppTroNhaToi/models/phieu_luan_chuyen.dart';
-import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/ChiTietPhongPage/LuanChuyenPage/HopDongLuanChuyenVM.dart';
-import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/ChiTietPhongPage/LuanChuyenPage/PhongHopDongVM.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
@@ -34,29 +32,29 @@ class PhieuLuanChuyenApiClient {
     }
   }
 
-  Future<List<HopDongLuanChuyenVM>> getBySuCo(int suCoId) async {
+  /// Lấy danh sách phiếu luân chuyển theo phòng cũ (phòng đang gắn trên hợp đồng).
+  Future<List<PhieuLuanChuyen>> getLuanChuyenTheoPhong(int phongId) async {
     try {
       final response = await _dio.get(
-        "phieu-luan-chuyen/find-by-su-co",
-        queryParameters: {"suCoId": suCoId},
+        "phieu-luan-chuyen/phong-hop-dong/$phongId",
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final List<dynamic> data = response.data;
 
-        return data.map((json) => HopDongLuanChuyenVM.fromMap(json)).toList();
+        return data.map((json) => PhieuLuanChuyen.fromMap(json)).toList();
       }
 
       return [];
     } on DioException catch (e) {
       if (kDebugMode) {
-        print("Lỗi ChiTietLuanChuyenApiClient $e");
+        print("Lỗi getLuanChuyenTheoPhong $e");
       }
 
       throw Exception(_mapErrorToMessage(e));
     } catch (e) {
       if (kDebugMode) {
-        print("Lỗi không xác định ChiTietLuanChuyenApiClient: $e");
+        print("Lỗi không xác định getLuanChuyenTheoPhong: $e");
       }
 
       throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
@@ -82,20 +80,14 @@ class PhieuLuanChuyenApiClient {
     }
   }
 
-  Future<PhieuLuanChuyen?> capNhatChiTietLuanChuyen(
-    PhieuLuanChuyen chiTiet,
-  ) async {
+  Future<bool> capNhatChiTietLuanChuyen(PhieuLuanChuyen chiTiet) async {
     try {
       final response = await _dio.patch(
         "phieu-luan-chuyen/${chiTiet.chiTietLuanChuyenID}",
         data: chiTiet.toMap(),
       );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        return PhieuLuanChuyen.fromMap(response.data);
-      }
-
-      return null;
+      return response.statusCode == 200 || response.statusCode == 201;
     } on DioException catch (e) {
       throw Exception(_mapErrorToMessage(e));
     }

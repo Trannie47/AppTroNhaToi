@@ -1,7 +1,8 @@
 import 'package:AppTroNhaToi/core/utils/string_formatter.dart';
 import 'package:AppTroNhaToi/models/item_phong.dart';
+import 'package:AppTroNhaToi/models/phieu_luan_chuyen.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
-import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/SuCoPage/SuCoPage.dart';
+import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/PhieuLuanChuyenPage/phieuLuanChuyenPage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../Provider/phong_provider.dart';
@@ -61,14 +62,10 @@ class _PhongChiTiet extends State<PhongChiTiet> {
   }
 
   void _xemSuCo(ItemPhong room) {
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (_) => SuCoPage(
-    //       phongId: room.phongId,
-    //     ),
-    //   )
-    // );
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => PhieuLuanChuyenPage(phong: room)),
+    );
   }
 
   void _xuaLyXoaPhong(ItemPhong room) async {
@@ -216,8 +213,8 @@ class _PhongChiTiet extends State<PhongChiTiet> {
                   child: _menuItem(
                     Icons.report_problem_rounded,
                     Colors.orange,
-                    "Quản lý sự cố",
-                    "Xem và cập nhật sự cố của phòng",
+                    "Quản lý luân chuyển",
+                    "Xem và cập nhật luân chuyển của phòng",
                   ),
                 ),
 

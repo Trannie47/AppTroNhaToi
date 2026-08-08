@@ -8,7 +8,6 @@ import 'package:AppTroNhaToi/views/MainPage/KhacPage/TapHoaPage/TapHoaPage.dart'
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThietBiPage/thietBiPage.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThongKePage/thongKePage.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/hopDongPage/hopDongPage.dart';
-import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/SuCoPage/SuCoPage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';

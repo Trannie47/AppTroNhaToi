@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 
 import '../models/hop_dong.dart';
+import '../views/MainPage/PhongPage/ChiTietPhongPage/PhieuLuanChuyenForm/ItemHopDong.dart';
 
 class HopDongProvider extends ChangeNotifier {
   final HopdongRepository hopdongRepository = HopdongRepository();
@@ -18,6 +19,20 @@ class HopDongProvider extends ChangeNotifier {
     try {
       final list = await hopdongRepository.getListHopDong();
       _listHD = list;
+      notifyListeners();
+      return list;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  List<ItemHopDong> _dsHopDongTheoPhong = [];
+  List<ItemHopDong> get dsHopDongTheoPhong => _dsHopDongTheoPhong;
+
+  Future<List<ItemHopDong>> getHopDongByPhong(int phongId) async {
+    try {
+      final list = await hopdongRepository.getHopDongByPhong(phongId);
+      _dsHopDongTheoPhong = list;
       notifyListeners();
       return list;
     } catch (e) {

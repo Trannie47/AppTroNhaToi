@@ -19,6 +19,9 @@ class PhongProvider extends ChangeNotifier {
   List<ItemPhong> _listPhongByThietBi = [];
   List<ItemPhong> get listPhongByThietBi => _listPhongByThietBi;
 
+  List<ItemPhong> _dsPhongCoTheLuanChuyen = [];
+  List<ItemPhong> get dsPhongCoTheLuanChuyen => _dsPhongCoTheLuanChuyen;
+
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
@@ -120,6 +123,27 @@ class PhongProvider extends ChangeNotifier {
       _listPhongByThietBi = [];
       if (kDebugMode) {
         print("Lỗi getListByThietBi tại Provider: $e");
+      }
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  /// Danh sách phòng có thể luân chuyển tới cho 1 hợp đồng (đã lọc còn chỗ trống).
+  Future<void> getCoTheLuanChuyenByHopDong(String hopDongId) async {
+    if (_isLoading) return;
+
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      _dsPhongCoTheLuanChuyen = await phongRepository
+          .getCoTheLuanChuyenByHopDong(hopDongId);
+    } catch (e) {
+      _dsPhongCoTheLuanChuyen = [];
+      if (kDebugMode) {
+        print("Lỗi getCoTheLuanChuyenByHopDong tại Provider: $e");
       }
     } finally {
       _isLoading = false;

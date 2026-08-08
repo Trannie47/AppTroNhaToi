@@ -29,4 +29,9 @@ class PhongRepository {
   Future<List<ItemPhong>> getListByThietBi(int thietBiId) async {
     return await _phongApiClient.getListByThietBi(thietBiId);
   }
+
+  /// Danh sách phòng có thể luân chuyển tới cho 1 hợp đồng (đã lọc còn chỗ trống).
+  Future<List<ItemPhong>> getCoTheLuanChuyenByHopDong(String hopDongId) async {
+    return await _phongApiClient.getCoTheLuanChuyenByHopDong(hopDongId);
+  }
 }

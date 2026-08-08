@@ -4,6 +4,7 @@ import 'package:AppTroNhaToi/core/network/HopDongApiClient.dart';
 import 'package:AppTroNhaToi/models/DTO/HopDongDTO.dart';
 import 'package:AppTroNhaToi/models/DTO/RoomAvailableDTO.dart';
 import 'package:AppTroNhaToi/models/hop_dong.dart';
+import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/PhieuLuanChuyenForm/ItemHopDong.dart';
 
 class HopdongRepository {
   final HopDongApiClient hopDongApiClient = HopDongApiClient();
@@ -70,6 +71,16 @@ class HopdongRepository {
     }
   }
 
+  /// Danh sách hợp đồng theo phòng (kèm người đại diện + người ở ghép),
+  /// dùng cho dropdown chọn hợp đồng ở form Phiếu luân chuyển.
+  Future<List<ItemHopDong>> getHopDongByPhong(int phongId) async {
+    try {
+      return await hopDongApiClient.getHopDongByPhong(phongId);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<Map<String, dynamic>> getNguoiOGhep(String hopDongId) {
     return hopDongApiClient.getNguoiOGhep(hopDongId);
   }
@@ -84,5 +95,4 @@ class HopdongRepository {
   Future<void> removeNguoiOGhep(String hopDongId, String cccd) {
     return hopDongApiClient.removeNguoiOGhep(hopDongId, cccd);
   }
-
 }
