@@ -10,7 +10,7 @@ import 'package:AppTroNhaToi/views/MainPage/KhacPage/chiTietHopDongPage/xemAnhHo
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../models/DTO/ThanhVienHopDongDTO.dart';
+import '../../../../models/DTO/NguoiOGhepDTO.dart';
 import '../../../../models/hop_dong.dart';
 import '../../../../widgets/app_confirm_dialog.dart';
 import '../../PhongPage/ChiTietPhongPage/phongChiTiet.dart';
@@ -115,8 +115,8 @@ class _ChiTietHopDongPageState extends State<ChiTietHopDongPage> {
                   const SizedBox(height: 16),
                   _thongTinThuePhong(vm.hopDong),
                   const SizedBox(height: 16),
-                  // Hiển thị danh sách thành viên trong phòng
-                  _danhSachThanhVienSection(vm.hopDong.hopDongNguoiThue),
+                  // Hiển thị đại diện + danh sách người ở ghép trong phòng
+                  _danhSachThanhVienSection(vm.hopDong),
                   const SizedBox(height: 16),
                   _anhHopDong(context, vm.hopDong.dsAnhHopDong),
                   const SizedBox(height: 24),
@@ -450,7 +450,10 @@ Widget _thongTinThuePhong(HopDongDTO hopDong) {
   );
 }
 
-Widget _danhSachThanhVienSection(List<ThanhVienHopDongDTO> danhSachThanhVien) {
+Widget _danhSachThanhVienSection(HopDongDTO hopDong) {
+  final danhSachNguoiOGhep = hopDong.nguoiOGhepConHieuLuc;
+  final tongSoNguoi = 1 + danhSachNguoiOGhep.length;
+
   return Container(
     width: double.infinity,
     padding: const EdgeInsets.all(18),
@@ -479,7 +482,7 @@ Widget _danhSachThanhVienSection(List<ThanhVienHopDongDTO> danhSachThanhVien) {
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Text(
-                "${danhSachThanhVien.length} người",
+                "$tongSoNguoi người",
                 style: const TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
@@ -490,102 +493,102 @@ Widget _danhSachThanhVienSection(List<ThanhVienHopDongDTO> danhSachThanhVien) {
           ],
         ),
         const SizedBox(height: 14),
-        ...danhSachThanhVien.map((tv) {
-          final isDaiDien = tv.laDaiDien;
-          final tenThanhVien = tv.nguoiThue?.hoTen ?? "Không rõ";
-          final sdtThanhVien = tv.nguoiThue?.soDienThoai ?? "Không rõ";
+        _nguoiORow(
+          ten: hopDong.nguoiDaiDien.hoTen,
+          moTa: "Đứng tên ký hợp đồng",
+          isDaiDien: true,
+        ),
+        ...danhSachNguoiOGhep.map(
+          (ng) => _nguoiORow(
+            ten: ng.hoTen ?? "Chưa rõ tên",
+            moTa: "CCCD: ${ng.cccd} · Quan hệ: ${ng.quanHeVoiDaiDien ?? 'Chưa rõ'}",
+            isDaiDien: false,
+          ),
+        ),
+      ],
+    ),
+  );
+}
 
-          return Container(
-            margin: const EdgeInsets.only(bottom: 10),
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: isDaiDien
-                  ? const Color(0xffF2F9F5)
-                  : const Color(0xffF9F9F9),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: isDaiDien ? Colors.green.shade200 : Colors.grey.shade200,
-              ),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 38,
-                  height: 38,
-                  decoration: BoxDecoration(
-                    color: isDaiDien
-                        ? const Color(0xffE8F5E9)
-                        : Colors.grey.shade200,
-                    shape: BoxShape.circle,
-                  ),
-                  alignment: Alignment.center,
-                  child: Icon(
-                    isDaiDien
-                        ? Icons.verified_user_outlined
-                        : Icons.person_outline,
-                    size: 18,
-                    color: isDaiDien
-                        ? const Color(0xff2E7D32)
-                        : Colors.grey.shade700,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              tenThanhVien,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xff111111),
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          if (isDaiDien)
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 6,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.green.shade100,
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: const Text(
-                                "Đại diện",
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xff2E7D32),
-                                ),
-                              ),
-                            ),
-                        ],
+Widget _nguoiORow({
+  required String ten,
+  required String moTa,
+  required bool isDaiDien,
+}) {
+  return Container(
+    margin: const EdgeInsets.only(bottom: 10),
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+      color: isDaiDien ? const Color(0xffF2F9F5) : const Color(0xffF9F9F9),
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(
+        color: isDaiDien ? Colors.green.shade200 : Colors.grey.shade200,
+      ),
+    ),
+    child: Row(
+      children: [
+        Container(
+          width: 38,
+          height: 38,
+          decoration: BoxDecoration(
+            color: isDaiDien ? const Color(0xffE8F5E9) : Colors.grey.shade200,
+            shape: BoxShape.circle,
+          ),
+          alignment: Alignment.center,
+          child: Icon(
+            isDaiDien ? Icons.verified_user_outlined : Icons.person_outline,
+            size: 18,
+            color: isDaiDien ? const Color(0xff2E7D32) : Colors.grey.shade700,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      ten,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xff111111),
                       ),
-                      const SizedBox(height: 3),
-                      Text(
-                        isDaiDien
-                            ? "Đứng tên ký hợp đồng"
-                            : "Quan hệ: ${tv.quanHeVoiDaiDien ?? 'Thành viên'}",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  if (isDaiDien)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.green.shade100,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: const Text(
+                        "Đại diện",
                         style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey.shade600,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xff2E7D32),
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        }).toList(),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 3),
+              Text(
+                moTa,
+                style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+              ),
+            ],
+          ),
+        ),
       ],
     ),
   );
@@ -870,8 +873,8 @@ Widget _menu(BuildContext context, ChiTietHopDongViewModel vm) {
           );
 
           if (result != null) {
-            if (result is HopDong) {
-              vm.updateHopDongData(result);
+            if (result is (HopDong, List<NguoiOGhepDTO>)) {
+              vm.updateHopDongData(result.$1, result.$2);
             } else if (result == true) {
               if (context.mounted) {
                 Navigator.pop(context, true);

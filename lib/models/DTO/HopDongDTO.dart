@@ -1,4 +1,4 @@
-import 'ThanhVienHopDongDTO.dart';
+import 'NguoiOGhepDTO.dart';
 
 class HopDongDTO {
   final String hopDongID;
@@ -12,7 +12,9 @@ class HopDongDTO {
   final PhongHD phong;
   final String? ghiChu;
   final List<String> dsAnhHopDong;
-  final List<ThanhVienHopDongDTO> hopDongNguoiThue;
+  final int idntDaiDien;
+  final NguoiThueHD nguoiDaiDien;
+  final List<NguoiOGhepDTO> nguoiOGhep;
   HopDongDTO({
     required this.hopDongID,
     required this.phongID,
@@ -24,20 +26,20 @@ class HopDongDTO {
     required this.trangThai,
     required this.phong,
     required this.dsAnhHopDong,
-    required this.hopDongNguoiThue,
+    required this.idntDaiDien,
+    required this.nguoiDaiDien,
+    required this.nguoiOGhep,
   });
-  ThanhVienHopDongDTO? get daiDienChinh {
-    try {
-      return hopDongNguoiThue.firstWhere((tv) => tv.laDaiDien);
-    } catch (_) {
-      return hopDongNguoiThue.isNotEmpty ? hopDongNguoiThue.first : null;
-    }
-  }
 
-  int get idnt => daiDienChinh?.idnt ?? 0;
-  NguoiThueHD get nguoithue =>
-      daiDienChinh?.nguoiThue ??
-      NguoiThueHD(hoTen: 'Không rõ', soDienThoai: 'Không rõ');
+  // Giữ tên cũ để các chỗ hiển thị (danh sách hợp đồng, chi tiết...) không
+  // phải đổi tên biến, chỉ đổi nguồn dữ liệu bên trong.
+  int get idnt => idntDaiDien;
+  NguoiThueHD get nguoithue => nguoiDaiDien;
+
+  // Danh sách người ở ghép còn hiệu lực (đã lọc isDelete)
+  List<NguoiOGhepDTO> get nguoiOGhepConHieuLuc =>
+      nguoiOGhep.where((ng) => !ng.isDelete).toList();
+
   factory HopDongDTO.fromMap(Map<String, dynamic> json) {
     return HopDongDTO(
       hopDongID: json['hopDongId'] ?? '',
@@ -56,11 +58,14 @@ class HopDongDTO {
           ? List<String>.from(json['anhHopDong'])
           : (json['anhHopDong'] != null ? [json['anhHopDong'].toString()] : []),
       phong: PhongHD.fromMap(json['phong'] ?? {}),
-      hopDongNguoiThue: json['hopDongNguoiThue'] is List
-          ? (json['hopDongNguoiThue'] as List)
+      idntDaiDien: json['idntDaiDien'] ?? 0,
+      nguoiDaiDien: json['nguoiDaiDien'] != null
+          ? NguoiThueHD.fromMap(json['nguoiDaiDien'] as Map<String, dynamic>)
+          : NguoiThueHD(hoTen: 'Không rõ', soDienThoai: 'Không rõ'),
+      nguoiOGhep: json['nguoiOGhep'] is List
+          ? (json['nguoiOGhep'] as List)
                 .map(
-                  (item) =>
-                      ThanhVienHopDongDTO.fromMap(item as Map<String, dynamic>),
+                  (item) => NguoiOGhepDTO.fromMap(item as Map<String, dynamic>),
                 )
                 .toList()
           : [],
@@ -68,7 +73,7 @@ class HopDongDTO {
   }
   @override
   String toString() {
-    return 'HopDongDTO(hopDongID: $hopDongID, phongID: $phongID, ngayKy: $ngayKy, ngayHetHan: $ngayHetHan, tienCoc: $tienCoc, giaPhongThucTe: $giaPhongThucTe, trangThai: $trangThai, phong: ${phong.tenPhong}, ghiChu: $ghiChu, nguoithue: ${nguoithue.hoTen}, dsAnhHopDong: $dsAnhHopDong giaGocCuaPhong: ${phong.giaPhongGoc})';
+    return 'HopDongDTO(hopDongID: $hopDongID, phongID: $phongID, ngayKy: $ngayKy, ngayHetHan: $ngayHetHan, tienCoc: $tienCoc, giaPhongThucTe: $giaPhongThucTe, trangThai: $trangThai, phong: ${phong.tenPhong}, ghiChu: $ghiChu, nguoiDaiDien: ${nguoiDaiDien.hoTen}, dsAnhHopDong: $dsAnhHopDong giaGocCuaPhong: ${phong.giaPhongGoc})';
   }
 }
 

@@ -18,7 +18,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/utils/map_dio_error_to_message.dart';
 import '../../../../models/DTO/HopDongDTO.dart';
-import '../../../../models/DTO/ThanhVienFormItemDTO.dart';
+import '../../../../models/DTO/NguoiOGhepDTO.dart';
 import '../../../../states/hop_dong_update_state.dart';
 
 class HopDongFormViewModel extends ChangeNotifier {
@@ -85,23 +85,48 @@ class HopDongFormViewModel extends ChangeNotifier {
   CreateContractState _createContractState = CreateContractInitial();
   CreateContractState get createContractState => _createContractState;
 
-  // Quản lý danh sách thành viên ở chung
-  List<ThanhVienFormItemDTO> listThanhVienOChung = [];
-  void addThanhVienOChung(
-      NguoiThueAvailableDTO nguoiThue,
-      String quanHe,
-      ) {
-    listThanhVienOChung.add(
-      ThanhVienFormItemDTO(
-        nguoiThue: nguoiThue,
-        quanHe: quanHe,
+  List<NguoiOGhepDTO> listNguoiOGhep = [];
+  String? errNguoiOGhep;
+
+  String? addNguoiOGhep({
+    required String cccd,
+    String? hoTen,
+    String? sdt,
+    String? quanHeVoiDaiDien,
+  }) {
+    final cccdTrim = cccd.trim();
+    if (cccdTrim.isEmpty) {
+      return "Vui lòng nhập CCCD";
+    }
+    if (!RegExp(r'^\d{12}$').hasMatch(cccdTrim)) {
+      return "CCCD phải gồm đúng 12 số";
+    }
+    if (listNguoiOGhep.any((ng) => ng.cccd == cccdTrim)) {
+      return "CCCD này đã có trong danh sách người ở ghép";
+    }
+    final sdtTrim = sdt?.trim();
+    if (sdtTrim != null &&
+        sdtTrim.isNotEmpty &&
+        !RegExp(r'^0\d{9}$').hasMatch(sdtTrim)) {
+      return "Số điện thoại phải gồm đúng 10 số";
+    }
+
+    listNguoiOGhep.add(
+      NguoiOGhepDTO(
+        cccd: cccdTrim,
+        hoTen: hoTen?.trim().isNotEmpty == true ? hoTen!.trim() : null,
+        sdt: sdtTrim?.isNotEmpty == true ? sdtTrim : null,
+        quanHeVoiDaiDien: quanHeVoiDaiDien?.trim().isNotEmpty == true
+            ? quanHeVoiDaiDien!.trim()
+            : null,
       ),
     );
     notifyListeners();
+    return null;
   }
 
-  void removeThanhVienOChung(int index) {
-    listThanhVienOChung.removeAt(index);
+  void removeNguoiOGhep(int index) {
+    listNguoiOGhep.removeAt(index);
     notifyListeners();
   }
 
@@ -148,31 +173,6 @@ class HopDongFormViewModel extends ChangeNotifier {
       );
     } finally {
       notifyListeners();
-    }
-  }
-
-  // Lấy danh sách thành viên ở cùng (loại trừ đại diện đang chọn và những người đã được thêm vào danh sách ở chung)
-  Future<List<NguoiThueAvailableDTO>> getAvailableMembers() async {
-    try {
-      //Tổng hợp các IDNT cần loại bỏ (gồm người đại diện và các thành viên đã chọn ở chung)
-      final List<int> excludedIds = [];
-      if (selectedNguoiThue?.idnt != null) {
-        excludedIds.add(selectedNguoiThue!.idnt!);
-      }
-      for (final tv in listThanhVienOChung) {
-        excludedIds.add(tv.idnt);
-      }
-
-      //Gọi API lấy danh sách những người chưa có phòng
-      final result = await _nguoiThueProvider.getAvailableMembers(
-        excludeIdnt: selectedNguoiThue?.idnt,
-      );
-
-      //Lọc bỏ hoàn toàn những ai đã có mặt trong danh sách ở cùng hiện tại
-      return result.where((e) => !excludedIds.contains(e.idnt)).toList();
-    } catch (e) {
-      if (kDebugMode) print("Lỗi lấy danh sách thành viên: $e");
-      return [];
     }
   }
 
@@ -283,31 +283,14 @@ class HopDongFormViewModel extends ChangeNotifier {
       );
       txtTongGiaPhong.text = formatMoney(hopDong.phong.giaPhongGoc);
 
-      final daiDien = hopDong.daiDienChinh;
-      if (daiDien != null) {
-        selectedNguoiThue = NguoiThueAvailableDTO(
-          idnt: daiDien.idnt,
-          hoTen: daiDien.nguoiThue?.hoTen ?? 'Không rõ',
-          tuoi: 18,
-          coTheLamDaiDien: true,
-        );
-      }
+      selectedNguoiThue = NguoiThueAvailableDTO(
+        idnt: hopDong.idntDaiDien,
+        hoTen: hopDong.nguoiDaiDien.hoTen,
+        tuoi: 18,
+        coTheLamDaiDien: true,
+      );
 
-      listThanhVienOChung = hopDong.hopDongNguoiThue
-          .where((tv) => !tv.laDaiDien)
-          .map(
-            (tv) => ThanhVienFormItemDTO(
-          nguoiThue: NguoiThueAvailableDTO(
-            idnt: tv.idnt,
-            hoTen: tv.nguoiThue?.hoTen ?? 'Không rõ',
-            tuoi: 18,
-            coTheLamThanhVien: true,
-          ),
-          quanHe: tv.quanHeVoiDaiDien ?? 'Thành viên',
-        ),
-      )
-          .toList();
-
+      listNguoiOGhep = List.of(hopDong.nguoiOGhepConHieuLuc);
     } else {
       txtNgayKy.text = formatDate(DateTime.now());
     }
@@ -335,37 +318,17 @@ class HopDongFormViewModel extends ChangeNotifier {
     double tienCocParsed = double.tryParse(txtTienCoc.text.replaceAll('.', '')) ?? 0.0;
     double giaHopDongParsed = double.tryParse(txtGiaHopDong.text.replaceAll('.', '')) ?? 0.0;
 
-    final Set<int> addedIdnts = {};
-    List<Map<String, dynamic>> danhSachThanhVien = [];
-
-    int? daiDienIdnt = selectedNguoiThue!.idnt;
-
-    addedIdnts.add(daiDienIdnt);
-    danhSachThanhVien.add({
-      'idnt': daiDienIdnt,
-      'laDaiDien': true,
-      'quanHeVoiDaiDien': null,
-    });
-
-    for (final tv in listThanhVienOChung) {
-      if (!addedIdnts.contains(tv.idnt)) {
-        addedIdnts.add(tv.idnt);
-        danhSachThanhVien.add(
-          tv.toJson(),
-        );
-      }
-    }
-
     return {
       "hopDongId": hdDTO?.hopDongID,
       "trangThai": hdDTO?.trangThai,
       "phongId": selectedPhong?.id,
+      "idntDaiDien": selectedNguoiThue!.idnt,
       "ngayKy": _formatDateOnly(ngayKyParsed),
       "ngayHetHan": _formatDateOnly(ngayHetHanParsed),
       "tienCoc": tienCocParsed,
       "giaPhongThucTe": giaHopDongParsed,
       "ghiChu": txtGhiChu.text.toString(),
-      "danhSachThanhVien": danhSachThanhVien,
+      "danhSachNguoiOGhep": listNguoiOGhep.map((e) => e.toJson()).toList(),
     };
   }
 
@@ -420,7 +383,7 @@ class HopDongFormViewModel extends ChangeNotifier {
           txtTienCoc.text.isNotEmpty ||
           txtGhiChu.text.isNotEmpty ||
           listImageContract.isNotEmpty ||
-          listThanhVienOChung.isNotEmpty;
+          listNguoiOGhep.isNotEmpty;
 
   bool kiemTraDuLieu() {
     errPhong = null;

@@ -138,4 +138,19 @@ class HopDongProvider extends ChangeNotifier {
       rethrow;
     }
   }
+
+  Future<Map<String, dynamic>> getNguoiOGhep(String hopDongId) {
+    return hopdongRepository.getNguoiOGhep(hopDongId);
+  }
+
+  Future<void> addNguoiOGhep(
+    String hopDongId,
+    List<Map<String, dynamic>> danhSachNguoiOGhep,
+  ) {
+    return hopdongRepository.addNguoiOGhep(hopDongId, danhSachNguoiOGhep);
+  }
+
+  Future<void> removeNguoiOGhep(String hopDongId, String cccd) {
+    return hopdongRepository.removeNguoiOGhep(hopDongId, cccd);
+  }
 }

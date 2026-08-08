@@ -9,6 +9,7 @@ import 'package:AppTroNhaToi/Provider/nguoi_thue_provider.dart';
 import 'package:AppTroNhaToi/Provider/phong_provider.dart';
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/models/DTO/HopDongDTO.dart';
+import 'package:AppTroNhaToi/models/DTO/NguoiOGhepDTO.dart';
 import 'package:AppTroNhaToi/models/DTO/RoomAvailableDTO.dart';
 import 'package:AppTroNhaToi/models/DTO/NguoiThueAvailableDTO.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/hopDongForm/HopDongFormViewModel.dart';
@@ -51,61 +52,71 @@ class _TaoHopDongPageState extends State<HopDongForm> {
     super.dispose();
   }
 
-  void _showThemThanhVienDialog() async {
-    NguoiThueAvailableDTO? selectedThanhVien;
+  void _showThemNguoiOGhepDialog() async {
+    final cccdController = TextEditingController();
+    final hoTenController = TextEditingController();
+    final sdtController = TextEditingController();
     final quanHeController = TextEditingController();
-
-    List<NguoiThueAvailableDTO> availableMembers = await vm.getAvailableMembers();
-
-    if (!mounted) return;
 
     await showDialog(
       context: context,
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setDialogState) {
+            String? loi;
             return AlertDialog(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-              title: const Text("Thêm thành viên ở chung", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+              title: const Text("Thêm người ở ghép", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
               content: SizedBox(
                 width: MediaQuery.of(context).size.width * 0.8,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text("Chọn người ở cùng", style: TextStyle(fontSize: 13, color: Colors.black87)),
-                    const SizedBox(height: 6),
-                    CustomDropdownSearch<NguoiThueAvailableDTO>(
-                      hintText: "Chọn khách thuê",
-                      asyncItems: (filter) async {
-                        final f = filter.toLowerCase();
-                        if (f.isEmpty) return availableMembers;
-                        return availableMembers.where((e) => e.hoTen!.toLowerCase().contains(f)).toList();
-                      },
-                      selectedItem: selectedThanhVien,
-                      itemAsString: (item) => item.hoTen ?? '',                      onChanged: (value) {
-                        setDialogState(() {
-                          selectedThanhVien = value;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    const Text("Mối quan hệ với đại diện", style: TextStyle(fontSize: 13, color: Colors.black87)),
-                    const SizedBox(height: 6),
-                    TextField(
-                      controller: quanHeController,
-                      decoration: InputDecoration(
-                        hintText: "VD: Vợ, Con, Bạn ở cùng...",
-                        hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 13),
-                        filled: true,
-                        fillColor: const Color(0xffF7F7F7),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.grey.shade300)),
-                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.grey.shade300)),
-                        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xff2D7A3A), width: 1.2)),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text("CCCD (bắt buộc)", style: TextStyle(fontSize: 13, color: Colors.black87)),
+                      const SizedBox(height: 6),
+                      TextField(
+                        controller: cccdController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(12),
+                        ],
+                        decoration: _dialogInputDecoration(hint: "Nhập đúng 12 số CCCD"),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 16),
+                      const Text("Họ tên", style: TextStyle(fontSize: 13, color: Colors.black87)),
+                      const SizedBox(height: 6),
+                      TextField(
+                        controller: hoTenController,
+                        decoration: _dialogInputDecoration(hint: "VD: Nguyễn Thị B"),
+                      ),
+                      const SizedBox(height: 16),
+                      const Text("Số điện thoại", style: TextStyle(fontSize: 13, color: Colors.black87)),
+                      const SizedBox(height: 6),
+                      TextField(
+                        controller: sdtController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(10),
+                        ],
+                        decoration: _dialogInputDecoration(hint: "VD: 0901234567"),
+                      ),
+                      const SizedBox(height: 16),
+                      const Text("Mối quan hệ với đại diện", style: TextStyle(fontSize: 13, color: Colors.black87)),
+                      const SizedBox(height: 6),
+                      TextField(
+                        controller: quanHeController,
+                        decoration: _dialogInputDecoration(hint: "VD: Vợ, Con, Bạn ở cùng..."),
+                      ),
+                      if (loi != null) ...[
+                        const SizedBox(height: 10),
+                        Text(loi!, style: const TextStyle(color: Colors.red, fontSize: 12)),
+                      ],
+                    ],
+                  ),
                 ),
               ),
               actions: [
@@ -119,11 +130,15 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   ),
                   onPressed: () {
-                    if (selectedThanhVien != null) {
-                      vm.addThanhVienOChung(
-                        selectedThanhVien!,
-                        quanHeController.text.trim().isEmpty ? 'Thành viên' : quanHeController.text.trim(),
-                      );
+                    final ketQua = vm.addNguoiOGhep(
+                      cccd: cccdController.text,
+                      hoTen: hoTenController.text,
+                      sdt: sdtController.text,
+                      quanHeVoiDaiDien: quanHeController.text,
+                    );
+                    if (ketQua != null) {
+                      setDialogState(() => loi = ketQua);
+                    } else {
                       Navigator.pop(context);
                     }
                   },
@@ -134,6 +149,19 @@ class _TaoHopDongPageState extends State<HopDongForm> {
           },
         );
       },
+    );
+  }
+
+  InputDecoration _dialogInputDecoration({required String hint}) {
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 13),
+      filled: true,
+      fillColor: const Color(0xffF7F7F7),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.grey.shade300)),
+      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.grey.shade300)),
+      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xff2D7A3A), width: 1.2)),
     );
   }
 
@@ -308,15 +336,15 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          _label("Thành viên ở cùng (Gia đình / Ở ghép)"),
+                          _label("Người ở ghép (Gia đình / Ở ghép)"),
                           InkWell(
-                            onTap: () => _showThemThanhVienDialog(),
+                            onTap: () => _showThemNguoiOGhepDialog(),
                             child: Row(
                               children: const [
                                 Icon(Icons.add, size: 16, color: Color(0xff2E7D32)),
                                 SizedBox(width: 2),
                                 Text(
-                                  "Thêm thành viên",
+                                  "Thêm người ở ghép",
                                   style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xff2E7D32)),
                                 ),
                               ],
@@ -325,7 +353,7 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                         ],
                       ),
                       const SizedBox(height: 6),
-                      if (vm.listThanhVienOChung.isEmpty)
+                      if (vm.listNguoiOGhep.isEmpty)
                         Container(
                           width: double.infinity,
                           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
@@ -335,7 +363,7 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                             border: Border.all(color: Colors.grey.shade300),
                           ),
                           child: Text(
-                            "Chưa có thành viên nào ở cùng ngoài người đại diện.",
+                            "Chưa có người ở ghép nào ngoài người đại diện.",
                             style: TextStyle(fontSize: 12, color: Colors.grey.shade500, fontStyle: FontStyle.italic),
                           ),
                         )
@@ -343,11 +371,9 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                         ListView.builder(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
-                          itemCount: vm.listThanhVienOChung.length,
+                          itemCount: vm.listNguoiOGhep.length,
                           itemBuilder: (context, index) {
-                            final tv = vm.listThanhVienOChung[index];
-                            final nguoiThueObj = tv.nguoiThue;
-                            final quanHe = tv.quanHe;
+                            final ng = vm.listNguoiOGhep[index];
                             return Container(
                               margin: const EdgeInsets.only(bottom: 6),
                               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -364,13 +390,15 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text(nguoiThueObj.hoTen ?? '', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                                        Text("Quan hệ: $quanHe", style: TextStyle(fontSize: 11, color: Colors.grey.shade700)),                                      ],
+                                        Text(ng.hoTen ?? 'Chưa rõ tên', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                                        Text("CCCD: ${ng.cccd}", style: TextStyle(fontSize: 11, color: Colors.grey.shade700)),
+                                        Text("Quan hệ: ${ng.quanHeVoiDaiDien ?? 'Chưa rõ'}", style: TextStyle(fontSize: 11, color: Colors.grey.shade700)),
+                                      ],
                                     ),
                                   ),
                                   InkWell(
                                     onTap: () {
-                                      vm.removeThanhVienOChung(index);
+                                      vm.removeNguoiOGhep(index);
                                     },
                                     child: const Icon(Icons.delete_outline, size: 18, color: Colors.red),
                                   ),
@@ -629,7 +657,10 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                           );
                           final updatedData = (vm.updateContractState as HopDongUpdateSuccess).data;
                           if (vm.hdDTO?.trangThai == 0) {
-                            Navigator.pop(context, updatedData);
+                            Navigator.pop(
+                              context,
+                              (updatedData, List<NguoiOGhepDTO>.of(vm.listNguoiOGhep)),
+                            );
                           } else {
                             Navigator.pop(context, true);
                           }

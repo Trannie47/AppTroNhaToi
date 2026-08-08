@@ -31,7 +31,7 @@ class HopDong {
   factory HopDong.fromMap(Map<String, dynamic> map) {
     return HopDong(
       hopDongID: map['hopDongId'] as String?,
-      idnt: map['idnt'] as int?,
+      idnt: map['idntDaiDien'] as int? ?? map['idnt'] as int?,
       phongID: map['phongId'] as int?,
 
       ngayKy: map['ngayKy'] != null

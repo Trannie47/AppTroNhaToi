@@ -37,12 +37,13 @@ class HopDongApiClient {
   ) async {
     final formData = FormData.fromMap({
       'phongId': hopDongPayload['phongId'],
+      'idntDaiDien': hopDongPayload['idntDaiDien'],
       'ngayKy': hopDongPayload['ngayKy'],
       'ngayHetHan': hopDongPayload['ngayHetHan'],
       'tienCoc': hopDongPayload['tienCoc'],
       'giaPhongThucTe': hopDongPayload['giaPhongThucTe'],
       'ghiChu': hopDongPayload['ghiChu'],
-      'danhSachThanhVien': jsonEncode(hopDongPayload['danhSachThanhVien']),
+      'danhSachNguoiOGhep': jsonEncode(hopDongPayload['danhSachNguoiOGhep']),
 
       // Danh sách file ảnh thật (binary)
       'files': [
@@ -77,12 +78,13 @@ class HopDongApiClient {
   ) async {
     final formData = FormData.fromMap({
       'phongId': hopDongPayload['phongId'],
+      'idntDaiDien': hopDongPayload['idntDaiDien'],
       'ngayKy': hopDongPayload['ngayKy'],
       'ngayHetHan': hopDongPayload['ngayHetHan'],
       'tienCoc': hopDongPayload['tienCoc'],
       'giaPhongThucTe': hopDongPayload['giaPhongThucTe'],
       'ghiChu': hopDongPayload['ghiChu'],
-      'danhSachThanhVien': jsonEncode(hopDongPayload['danhSachThanhVien']),
+      'danhSachNguoiOGhep': jsonEncode(hopDongPayload['danhSachNguoiOGhep']),
 
       // Danh sách file ảnh thật (binary)
       'files': [
@@ -259,6 +261,63 @@ class HopDongApiClient {
       );
     } catch (e) {
       print("Loi HopDongApiCline $e");
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> getNguoiOGhep(String hopDongId) async {
+    try {
+      final request = await _dio.get("hop-dong/$hopDongId/nguoi-o-ghep");
+      if (request.statusCode == 200 || request.statusCode == 201) {
+        return (request.data['data'] ?? request.data) as Map<String, dynamic>;
+      }
+      throw Exception(
+        "Lấy danh sách người ở ghép thất bại! (Mã lỗi: ${request.statusCode})",
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        print("Lỗi getNguoiOGhep HopDongApiClient: $e");
+      }
+      rethrow;
+    }
+  }
+
+  Future<void> addNguoiOGhep(
+    String hopDongId,
+    List<Map<String, dynamic>> danhSachNguoiOGhep,
+  ) async {
+    try {
+      final request = await _dio.post(
+        "hop-dong/$hopDongId/nguoi-o-ghep",
+        data: {'danhSachNguoiOGhep': danhSachNguoiOGhep},
+      );
+      if (request.statusCode != 200 && request.statusCode != 201) {
+        throw Exception(
+          "Thêm người ở ghép thất bại! (Mã lỗi: ${request.statusCode})",
+        );
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("Lỗi addNguoiOGhep HopDongApiClient: $e");
+      }
+      rethrow;
+    }
+  }
+
+  Future<void> removeNguoiOGhep(String hopDongId, String cccd) async {
+    try {
+      final request = await _dio.delete(
+        "hop-dong/$hopDongId/nguoi-o-ghep/$cccd",
+      );
+      if (request.statusCode != 200 && request.statusCode != 201) {
+        throw Exception(
+          "Gỡ người ở ghép thất bại! (Mã lỗi: ${request.statusCode})",
+        );
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("Lỗi removeNguoiOGhep HopDongApiClient: $e");
+      }
       rethrow;
     }
   }
