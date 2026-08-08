@@ -71,11 +71,21 @@ class LapRapApiClient {
     }
   }
 
-  Future<bool?> capNhatLapRap({required int id, required String ghiChu}) async {
+  Future<bool?> capNhatLapRap({
+    required int id,
+    required String ghiChu,
+    required DateTime ngayLap,
+  }) async {
     try {
       final response = await _dio.patch(
         "lap-rap/$id",
-        data: {"ghiChu": ghiChu},
+        data: {
+          "ghiChu": ghiChu,
+          "ngayLap": ngayLap
+              .toIso8601String()
+              .split('T')
+              .first, // gửi dạng "yyyy-MM-dd"
+        },
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {

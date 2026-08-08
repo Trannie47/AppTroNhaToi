@@ -24,8 +24,16 @@ class LapRapRepository {
     );
   }
 
-  Future<bool?> capNhatLapRap({required int id, required String ghiChu}) async {
-    return await _lapRapApiClient.capNhatLapRap(id: id, ghiChu: ghiChu);
+  Future<bool?> capNhatLapRap({
+    required int id,
+    required String ghiChu,
+    required DateTime ngayLap,
+  }) async {
+    return await _lapRapApiClient.capNhatLapRap(
+      id: id,
+      ghiChu: ghiChu,
+      ngayLap: ngayLap,
+    );
   }
 
   Future<List<LapRapPageModel>> findByPhongVaThietBi({

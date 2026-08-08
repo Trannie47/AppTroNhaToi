@@ -105,7 +105,7 @@ class ThietBiPhongPageViewModel extends ChangeNotifier {
       final thanhCong = await _lapRapProvider.capNhatLapRap(
         id: id,
         ghiChu: ghiChu,
-        // ngayLap: ngayLap,
+        ngayLap: ngayLap,
       );
       if (thanhCong != true) {
         throw Exception("Cập nhật thiết bị thất bại");

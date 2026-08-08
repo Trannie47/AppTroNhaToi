@@ -18,6 +18,13 @@ class SuaChuaRepository {
     return await suaChuaApiClient.getTheoThietBi(thietBiID);
   }
 
+  Future<List<LichSuSuaChuaPageModel>> getTheoThietBiVaLapRap(
+    int thietBiID,
+    int lapRapId,
+  ) async {
+    return await suaChuaApiClient.getTheoThietBiVaLapRap(thietBiID, lapRapId);
+  }
+
   Future<SuaChuaDTO?> themSuaChua(SuaChuaDTO suaChua) async {
     return await suaChuaApiClient.themSuaChua(suaChua);
   }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../Provider/hop_dong_provider.dart';
 import '../../../../models/DTO/HopDongDTO.dart';
+import '../../../../models/DTO/NguoiOGhepDTO.dart';
 import '../../../../models/hop_dong.dart';
 import '../../../../models/item_phong.dart';
 
@@ -104,8 +105,7 @@ class ChiTietHopDongViewModel extends ChangeNotifier {
     }
   }
 
-  // Hàm update lại dữ liệu trên màn chi tiết sau khi sửa thành công mà không cần load lại API
-  void updateHopDongData(HopDong hd) {
+  void updateHopDongData(HopDong hd, List<NguoiOGhepDTO> nguoiOGhep) {
     _hopDong = HopDongDTO(
       hopDongID: hd.hopDongID ?? _hopDong.hopDongID,
       phongID: hd.phongID ?? _hopDong.phongID,
@@ -116,10 +116,12 @@ class ChiTietHopDongViewModel extends ChangeNotifier {
       ghiChu: hd.ghiChu,
       dsAnhHopDong: (hd.dsAnhHopDong != null && hd.dsAnhHopDong!.isNotEmpty)
           ? hd.dsAnhHopDong!
-          : _hopDong!.dsAnhHopDong,
+          : _hopDong.dsAnhHopDong,
       trangThai: hd.trangThai ?? _hopDong.trangThai,
       phong: _hopDong.phong,
-      hopDongNguoiThue: [],
+      idntDaiDien: _hopDong.idntDaiDien,
+      nguoiDaiDien: _hopDong.nguoiDaiDien,
+      nguoiOGhep: nguoiOGhep,
     );
     isUpdated = true;
     notifyListeners();

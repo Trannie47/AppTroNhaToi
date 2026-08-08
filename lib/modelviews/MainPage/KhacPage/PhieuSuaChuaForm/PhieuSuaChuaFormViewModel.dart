@@ -1,14 +1,16 @@
-import 'dart:ffi';
-
+import 'package:AppTroNhaToi/Provider/lap_rap_provider.dart';
 import 'package:AppTroNhaToi/Provider/phong_provider.dart';
 import 'package:AppTroNhaToi/Provider/sua_chua_provider.dart';
+import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart' as DateFormate;
 import 'package:AppTroNhaToi/models/DTO/SuaChuaDTO.dart';
 import 'package:AppTroNhaToi/models/hoa_don_sua_chua.dart';
 import 'package:AppTroNhaToi/models/item_phong.dart';
+import 'package:AppTroNhaToi/models/lap_rap.dart';
 import 'package:AppTroNhaToi/models/sua_chua.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
+import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/LapRapPage/LapRapPageModel.dart';
 import 'package:flutter/material.dart';
 
 class PhieuSuaChuaViewModel extends ChangeNotifier {
@@ -30,20 +32,39 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
   String? errPhong;
   int? loaiSua = 0;
   int? trangThai = 0;
-  int? lapRapID;
+
+  /// ID phòng đang được chọn ở dropdown "Phòng lắp đặt"
+  int? phongDaChonId;
+
+  /// ID bản ghi lắp ráp (LapRap) đang được chọn ở dropdown "Lắp đặt"
+  int? lapRapDaChonId;
+  String? get tenPhongCoDinh => lapRapCoDinh?.phong?.tenPhong;
+  LapRap? lapRapCoDinh;
+  bool get lapDatBiKhoa => lapRapCoDinh != null;
+
   late ThietBi thietBi;
   final PhongProvider _phongProvider;
   final SuaChuaProvider _suaChuaProvider;
+  final LapRapProvider _lapRapProvider;
 
   List<ItemPhong> get dsPhong => _phongProvider.listPhongByThietBi;
   bool get isLoadingPhong => _phongProvider.isLoading;
 
+  /// Danh sách lắp ráp thuộc phòng + thiết bị đang chọn
+  List<LapRapPageModel> get dsLapRapTheoPhong => _lapRapProvider.listLapRapPage;
+
+  /// Chỉ cho chọn "Lắp đặt" khi đã chọn phòng
+  bool get coThePhongLapDat => phongDaChonId != null;
+
   PhieuSuaChuaViewModel({
     required PhongProvider phongProvider,
     required SuaChuaProvider suaChuaProvider,
+    required LapRapProvider lapRapProvider,
   }) : _phongProvider = phongProvider,
-       _suaChuaProvider = suaChuaProvider {
+       _suaChuaProvider = suaChuaProvider,
+       _lapRapProvider = lapRapProvider {
     _phongProvider.addListener(_onProviderUpdate);
+    _lapRapProvider.addListener(_onProviderUpdate);
   }
 
   void _onProviderUpdate() {
@@ -97,6 +118,28 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
     }
   }
 
+  /// Chọn phòng lắp đặt -> load lại danh sách lắp ráp theo phòng + thiết bị,
+  /// và reset lựa chọn "Lắp đặt" cũ (vì đổi phòng thì lắp đặt cũ không còn hợp lệ).
+  Future<void> chonPhong(int? phongId) async {
+    phongDaChonId = phongId;
+    lapRapDaChonId = null;
+    errPhong = null;
+    notifyListeners();
+
+    if (phongId != null && thietBi.thietBiID != null) {
+      await _lapRapProvider.findByPhongVaThietBi(
+        phongId: phongId,
+        thietBiId: thietBi.thietBiID!,
+      );
+    }
+  }
+
+  void chonLapRap(int? lapRapId) {
+    lapRapDaChonId = lapRapId;
+    errPhong = null;
+    notifyListeners();
+  }
+
   void setLoaiSua(int value) {
     loaiSua = value;
 
@@ -118,16 +161,18 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
     errNgayHoaDon = null;
     errPhong = null;
 
+    if (phongDaChonId == null) {
+      errPhong = "Vui lòng chọn phòng";
+      hopLe = false;
+    } else if (lapRapDaChonId == null) {
+      errPhong = "Vui lòng chọn lắp đặt";
+      hopLe = false;
+    }
+
     if (taoHoaDon) {
       DateTime? ngaySua = chuyenNgay(txtNgaySuaChua.text);
 
       DateTime? ngayHoaDon = chuyenNgay(txtNgayHoaDon.text);
-
-      if (lapRapID == null || lapRapID == 0) {
-        errPhong = "Vui lòng chọn phòng";
-
-        hopLe = false;
-      }
 
       if (ngaySua != null &&
           ngayHoaDon != null &&
@@ -206,25 +251,33 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
     ThietBi thietBiData, {
     SuaChua? suaChuaData,
     HoaDonSuaChua? hoaDonData,
+    LapRap? lapRapCoDinhData, // ← thêm tham số mới
   }) {
     thietBi = thietBiData;
 
     suaChua = suaChuaData;
     hoaDonSuaChua = hoaDonData;
-    lapRapID = suaChua?.lapRapID;
+    lapRapCoDinh = lapRapCoDinhData;
+    print('Test');
+    print(lapRapCoDinh);
+    if (lapRapCoDinh != null) {
+      // Gán cứng luôn, không cho chọn lại
+      phongDaChonId = lapRapCoDinh!.phongID;
+
+      lapRapDaChonId = lapRapCoDinh!.id;
+    } else {
+      lapRapDaChonId = suaChua?.lapRapID;
+    }
+
     if (suaChua == null) {
       txtNgaySuaChua.text = formatDate(DateTime.now());
-
       ngaySua = DateTime.now();
-
       txtNgayHoaDon.text = txtNgaySuaChua.text;
-
       ngayLapHoaDon = ngaySua;
     } else {
       maSuaChua = suaChua!.id;
       ngaySua = suaChua!.ngaySuaChua!;
       txtNgaySuaChua.text = formatDate(ngaySua);
-
       txtNguyenNhan.text = suaChua!.nguyenNhan ?? "";
     }
 
@@ -232,17 +285,13 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
       taoHoaDon = true;
       daTaoHoaDon = true;
       maHoaDon = hoaDonSuaChua!.maHoaDonSC?.toString() ?? "";
-
       ngayLapHoaDon = hoaDonSuaChua!.ngayLapHoaDonSC!;
-
       txtNgayHoaDon.text = formatDate(hoaDonSuaChua!.ngayLapHoaDonSC);
-
       txtChiPhi.text = (hoaDonSuaChua!.giaTien ?? 0).toInt().toString();
-
       loaiSua = hoaDonSuaChua!.loaiSua ?? 0;
-
       trangThai = hoaDonSuaChua!.trangThai ?? 0;
     }
+
     Future.microtask(() async {
       await _phongProvider.getListByThietBi(thietBiData.thietBiID!);
     });
@@ -253,7 +302,7 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
 
     final dto = SuaChuaDTO(
       id: maSuaChua,
-      lapRapId: lapRapID,
+      lapRapId: lapRapDaChonId,
       thietBiId: thietBi.thietBiID,
       nguyenNhan: txtNguyenNhan.text.trim(),
       ngaySuaChua: DateFormate.chuyenNgay(txtNgaySuaChua.text)!,
@@ -280,6 +329,7 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
   @override
   void dispose() {
     _phongProvider.removeListener(_onProviderUpdate);
+    _lapRapProvider.removeListener(_onProviderUpdate);
 
     txtNgaySuaChua.dispose();
     txtNguyenNhan.dispose();

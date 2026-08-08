@@ -52,7 +52,11 @@ class LapRapPageViewModel extends ChangeNotifier {
     required String ghiChu,
     required DateTime ngayLap,
   }) async {
-    final result = await _provider.capNhatLapRap(id: item.id!, ghiChu: ghiChu);
+    final result = await _provider.capNhatLapRap(
+      id: item.id!,
+      ghiChu: ghiChu,
+      ngayLap: ngayLap, // ← thêm dòng này
+    );
 
     return result ?? false;
   }
@@ -60,7 +64,15 @@ class LapRapPageViewModel extends ChangeNotifier {
   Future<bool> xoaThietBi(LapRap item) async {
     if (item.id == null) return false;
 
-    return await _provider.xoaLapRap(item.id!);
+    try {
+      final thanhCong = await _provider.xoaLapRap(item.id!);
+      if (thanhCong) {
+        await refresh(); // ← thêm dòng này để load lại danh sách mới nhất từ server
+      }
+      return thanhCong;
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<void> refresh() async {

@@ -43,7 +43,7 @@ class ItemNTHopDong extends StatelessWidget {
 
     // Lấy thông tin tên đại diện và tổng số thành viên trong hợp đồng
     final tenDaiDien = hopDong.nguoithue.hoTen;
-    final soLuongThanhVien = hopDong.hopDongNguoiThue.length;
+    final soLuongThanhVien = 1 + hopDong.nguoiOGhepConHieuLuc.length;
 
     return GestureDetector(
       onTap: onTap,

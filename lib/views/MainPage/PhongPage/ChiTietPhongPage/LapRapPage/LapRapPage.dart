@@ -1,5 +1,8 @@
 import 'package:AppTroNhaToi/Provider/lap_rap_provider.dart';
+import 'package:AppTroNhaToi/Provider/sua_chua_provider.dart';
+import 'package:AppTroNhaToi/models/lap_rap.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/ChiTietPhongPage/LapRapPage/LapRapPageViewModel.dart';
+import 'package:AppTroNhaToi/views/MainPage/KhacPage/LichSuSuaChuaPage/LichSuSuaChuaPage.dart';
 import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/ThietBiPhongPage/ThietBiPhongFormDialog.dart';
 import 'package:AppTroNhaToi/widgets/ItemLapRap.dart';
 import 'package:flutter/material.dart';
@@ -43,7 +46,6 @@ class _LapRapPageState extends State<LapRapPage> {
     final tenThietBi = vm.dsLapRap.isNotEmpty
         ? vm.dsLapRap.first.lapRap.thietBi?.tenThietBi
         : null;
-
     final result = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => ThietBiPhongFormDialog(
@@ -70,13 +72,53 @@ class _LapRapPageState extends State<LapRapPage> {
     }
   }
 
+  Future<void> _moDialogSuaThietBi(LapRap item) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => ThietBiPhongFormDialog(
+        phongId: widget.phongId,
+        item: item,
+        onUpdate: (item, ngayLap, ghiChu) =>
+            vm.capNhatThietBi(item: item, ghiChu: ghiChu, ngayLap: ngayLap),
+      ),
+    );
+
+    if (!mounted) return;
+
+    if (result == true) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Cập nhật thiết bị thành công!"),
+          backgroundColor: Color(0xff2D7A3A),
+        ),
+      );
+      await vm.refresh();
+    }
+  }
+
+  Future<void> _moLichSuSuaChua(LapRap item) async {
+    if (item.thietBi == null) return;
+
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MultiProvider(
+          providers: [ChangeNotifierProvider(create: (_) => SuaChuaProvider())],
+          child: LichSuSuaChuaPage(thietBi: item.thietBi!, lapRap: item),
+        ),
+      ),
+    );
+
+    if (!mounted) return;
+    await vm.refresh();
+  }
+
   @override
   void dispose() {
     vm.dispose();
     super.dispose();
   }
 
-  @override
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -158,11 +200,11 @@ class _LapRapPageState extends State<LapRapPage> {
 
                   trangThai: item.trangThai ?? 0,
 
-                  onClick: () {},
+                  onClick: () => _moLichSuSuaChua(item.lapRap),
 
-                  // edit: () {
-                  //   vm.sua(item.lapRap);
-                  // },
+                  edit: () {
+                    _moDialogSuaThietBi(item.lapRap);
+                  },
                   delete: () {
                     vm.xoaThietBi(item.lapRap);
                   },

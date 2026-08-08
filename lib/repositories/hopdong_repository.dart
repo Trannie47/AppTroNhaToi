@@ -69,4 +69,20 @@ class HopdongRepository {
       rethrow;
     }
   }
+
+  Future<Map<String, dynamic>> getNguoiOGhep(String hopDongId) {
+    return hopDongApiClient.getNguoiOGhep(hopDongId);
+  }
+
+  Future<void> addNguoiOGhep(
+    String hopDongId,
+    List<Map<String, dynamic>> danhSachNguoiOGhep,
+  ) {
+    return hopDongApiClient.addNguoiOGhep(hopDongId, danhSachNguoiOGhep);
+  }
+
+  Future<void> removeNguoiOGhep(String hopDongId, String cccd) {
+    return hopDongApiClient.removeNguoiOGhep(hopDongId, cccd);
+  }
+
 }

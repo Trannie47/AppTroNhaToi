@@ -1,12 +1,17 @@
+import 'package:AppTroNhaToi/Provider/lap_rap_provider.dart';
 import 'package:AppTroNhaToi/Provider/phong_provider.dart';
 import 'package:AppTroNhaToi/Provider/sua_chua_provider.dart';
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
+import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/models/hoa_don_sua_chua.dart';
 import 'package:AppTroNhaToi/models/item_phong.dart';
+import 'package:AppTroNhaToi/models/lap_rap.dart';
+import 'package:AppTroNhaToi/models/loai_phong.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/models/sua_chua.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/KhacPage/PhieuSuaChuaForm/PhieuSuaChuaFormViewModel.dart';
+import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/LapRapPage/LapRapPageModel.dart';
 import 'package:AppTroNhaToi/widgets/customDropdownSearch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,12 +23,14 @@ class PhieuSuaChuaForm extends StatefulWidget {
   final ThietBi thietBi;
   final SuaChua? suaChua;
   final HoaDonSuaChua? hoaDonSuaChua;
+  final LapRap? lapRap;
 
   const PhieuSuaChuaForm({
     super.key,
     required this.thietBi,
     this.suaChua,
     this.hoaDonSuaChua,
+    this.lapRap,
   });
 
   @override
@@ -40,12 +47,14 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
     vm = PhieuSuaChuaViewModel(
       phongProvider: context.read<PhongProvider>(),
       suaChuaProvider: context.read<SuaChuaProvider>(),
+      lapRapProvider: context.read<LapRapProvider>(),
     );
 
     vm.init(
       widget.thietBi,
       suaChuaData: widget.suaChua,
       hoaDonData: widget.hoaDonSuaChua,
+      lapRapCoDinhData: widget.lapRap,
     );
 
     vm.addListener(() {
@@ -62,24 +71,91 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
   }
 
   Widget _dropDownPhong() {
+    final ItemPhong? itemPhongCoDinh =
+        vm.lapDatBiKhoa && vm.phongDaChonId != null
+        ? ItemPhong(
+            phongId: vm.phongDaChonId!,
+            tenPhong: vm.tenPhongCoDinh ?? "Phòng #${vm.phongDaChonId}",
+            trangThai: 1,
+            moTa: '',
+            maLoaiPhong: 0,
+            loaiPhong: LoaiPhong(
+              maLoaiPhong: 0,
+              tenLoaiPhong: 'Chưa rõ',
+              dienTich: 0,
+              soNguoiToiDa: 0,
+              giaTien: 0,
+            ),
+            dsHopDong: [],
+            giahientai: 0.0,
+          )
+        : null;
+
+    final danhSachHienThi = vm.lapDatBiKhoa && itemPhongCoDinh != null
+        ? [itemPhongCoDinh]
+        : vm.dsPhong;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CustomDropdownSearch<ItemPhong>(
           label: "Phòng lắp đặt",
           hintText: "-- Chọn phòng --",
-          items: vm.dsPhong,
-          selectedItem: vm.dsPhong
-              .where((e) => e.phongId == vm.lapRapID)
-              .cast<ItemPhong?>()
-              .firstOrNull,
+          items: danhSachHienThi,
+          selectedItem: vm.lapDatBiKhoa
+              ? itemPhongCoDinh
+              : vm.dsPhong
+                    .where((e) => e.phongId == vm.phongDaChonId)
+                    .cast<ItemPhong?>()
+                    .firstOrNull,
+          enabled: !vm.lapDatBiKhoa,
           itemAsString: (item) => item.tenPhong,
           onChanged: (value) {
-            setState(() {
-              vm.lapRapID = value?.phongId;
-              vm.errPhong = null;
-            });
+            vm.chonPhong(value?.phongId);
           },
+        ),
+
+        if (vm.errPhong != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 6, left: 12),
+            child: Text(
+              vm.errPhong!,
+              style: const TextStyle(color: Colors.red, fontSize: 12),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _dropDownLapDat() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 8,
+      children: [
+        const Text(
+          "Lắp đặt",
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+        ),
+
+        IgnorePointer(
+          ignoring: !vm.coThePhongLapDat,
+          child: Opacity(
+            opacity: vm.coThePhongLapDat ? 1 : 0.5,
+            child: CustomDropdownSearch<LapRapPageModel>(
+              hintText: "-- Chọn lắp đặt --",
+              items: vm.dsLapRapTheoPhong,
+              enabled: !vm.lapDatBiKhoa,
+              selectedItem: vm.dsLapRapTheoPhong
+                  .where((e) => e.lapRap.id == vm.lapRapDaChonId)
+                  .cast<LapRapPageModel?>()
+                  .firstOrNull,
+              itemAsString: (item) =>
+                  "#${item.lapRap.id} - ${formatDate(item.lapRap.ngayLap)}",
+              onChanged: (value) {
+                vm.chonLapRap(value?.lapRap.id);
+              },
+            ),
+          ),
         ),
 
         if (vm.errPhong != null)
@@ -174,6 +250,8 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
 
                   const SizedBox(height: 18),
                   _dropDownPhong(),
+                  const SizedBox(height: 18),
+                  _dropDownLapDat(),
                   const SizedBox(height: 18),
                   _input(
                     title: "Ngày sửa chữa",

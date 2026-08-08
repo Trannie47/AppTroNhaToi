@@ -120,22 +120,6 @@ class NguoiThueApiClient {
     );
   }
 
-  Future<List<NguoiThueAvailableDTO>> getAvailableMembers({
-    int? excludeIdnt,
-  }) async {
-    final response = await _dio.get(
-      "nguoi-thue/available-members",
-      queryParameters: {if (excludeIdnt != null) 'excludeIdnt': excludeIdnt},
-    );
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      final List<dynamic> data = response.data;
-      return data.map((json) => NguoiThueAvailableDTO.fromJson(json)).toList();
-    }
-    throw Exception(
-      "Lấy ds thành viên thất bại (Mã lỗi: ${response.statusCode})",
-    );
-  }
-
   // Gọi API backend để lấy danh sách người thuê còn công nợ tạp hóa.
   Future<List<ThuCongNoFormModel>> getNguoiThueCongNoTapHoa() async {
     try {

@@ -1,5 +1,6 @@
 import 'package:AppTroNhaToi/Provider/sua_chua_provider.dart';
 import 'package:AppTroNhaToi/models/hoa_don_sua_chua.dart';
+import 'package:AppTroNhaToi/models/lap_rap.dart';
 import 'package:AppTroNhaToi/models/sua_chua.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:flutter/material.dart';
@@ -10,16 +11,19 @@ class ChiTietLichSuSuaChuaPageViewModel extends ChangeNotifier {
   late SuaChuaProvider _provider;
 
   late ThietBi thietBi;
+  late LapRap? lapRap;
 
   void init(
     SuaChua suaChuaData,
     HoaDonSuaChua? hoaDonSuaChuaData,
     ThietBi thietBiData,
     SuaChuaProvider provider,
+    LapRap? lapRapCoDinhData,
   ) {
     suaChua = suaChuaData;
     hoaDonSuaChua = hoaDonSuaChuaData;
     thietBi = thietBiData;
+    lapRap = lapRapCoDinhData;
     _provider = provider;
   }
 

@@ -37,10 +37,6 @@ class NguoithueRepository {
     return nguoiThueApiClient.getAvailableRepresentatives(ngayKy: ngayKy);
   }
 
-  Future<List<NguoiThueAvailableDTO>> getAvailableMembers({int? excludeIdnt}) {
-    return nguoiThueApiClient.getAvailableMembers(excludeIdnt: excludeIdnt);
-  }
-
   Future<List<ThuCongNoFormModel>> getNguoiThueCongNoTapHoa() async {
     return await nguoiThueApiClient.getNguoiThueCongNoTapHoa();
   }
