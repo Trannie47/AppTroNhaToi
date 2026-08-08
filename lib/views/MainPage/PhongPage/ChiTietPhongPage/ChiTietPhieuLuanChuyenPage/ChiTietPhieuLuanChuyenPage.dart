@@ -1,8 +1,11 @@
 import 'package:AppTroNhaToi/Provider/hop_dong_provider.dart';
+import 'package:AppTroNhaToi/Provider/phieu_luan_chuyen_provider.dart';
+import 'package:AppTroNhaToi/Provider/phong_provider.dart';
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/models/phieu_luan_chuyen.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/ChiTietPhongPage/ChiTietPhieuLuanChuyenPage/ChiTietPhieuLuanChuyenPageViewModel.dart';
+import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/PhieuLuanChuyenForm/phieuLuanChuyenForm.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -19,14 +22,18 @@ class ChiTietPhieuLuanChuyenPage extends StatefulWidget {
 class _ChiTietPhieuLuanChuyenPageState
     extends State<ChiTietPhieuLuanChuyenPage> {
   late ChiTietPhieuLuanChuyenViewModel vm;
+  late PhieuLuanChuyen item;
 
   @override
   void initState() {
     super.initState();
 
+    item = widget.item;
+
     vm = ChiTietPhieuLuanChuyenViewModel(
+      phongProvider: context.read<PhongProvider>(),
       hopDongProvider: context.read<HopDongProvider>(),
-      item: widget.item,
+      item: item,
     );
 
     vm.addListener(() {
@@ -38,10 +45,93 @@ class _ChiTietPhieuLuanChuyenPageState
     });
   }
 
+  bool get _hienNutHanhDong {
+    if (item.denNgay == null) return true;
+
+    final homNay = DateTime.now();
+    final ngayHomNay = DateTime(homNay.year, homNay.month, homNay.day);
+    final denNgay = DateTime(
+      item.denNgay!.year,
+      item.denNgay!.month,
+      item.denNgay!.day,
+    );
+
+    return !denNgay.isBefore(ngayHomNay);
+  }
+
+  Future<void> _suaPhieu() async {
+    final result = await Navigator.push<PhieuLuanChuyen>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => PhieuLuanChuyenForm(
+          item: item,
+          phongCuIdCoDinh: item.hopDong?.phongID,
+        ),
+      ),
+    );
+
+    if (!mounted) return;
+
+    if (result != null) {
+      setState(() {
+        item = result;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Cập nhật phiếu luân chuyển thành công!"),
+          backgroundColor: Color(0xff2D7A3A),
+        ),
+      );
+    }
+  }
+
+  Future<void> _xoaPhieu() async {
+    if (item.chiTietLuanChuyenID == null) return;
+
+    final xacNhan = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text("Xác nhận"),
+        content: const Text("Bạn có chắc muốn ẩn phiếu luân chuyển này?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text("Hủy"),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text("Ẩn", style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (xacNhan != true) return;
+
+    try {
+      final provider = context.read<PhieuLuanChuyenProvider>();
+      final ok = await provider.xoa(item.chiTietLuanChuyenID!);
+
+      if (!mounted) return;
+
+      if (ok) {
+        Navigator.of(context).pop(true);
+        return;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Ẩn phiếu luân chuyển thất bại")),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final item = widget.item;
-
     return Scaffold(
       backgroundColor: const Color(0xffF5F6FA),
 
@@ -77,6 +167,56 @@ class _ChiTietPhieuLuanChuyenPageState
             color: Colors.black,
           ),
         ),
+
+        actions: [
+          if (_hienNutHanhDong)
+            PopupMenuButton<String>(
+              color: Colors.white,
+              elevation: 8,
+              offset: const Offset(0, 48),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              icon: const Icon(Icons.more_vert, color: Colors.black),
+              onSelected: (value) {
+                switch (value) {
+                  case "update":
+                    _suaPhieu();
+                    break;
+                  case "delete":
+                    _xoaPhieu();
+                    break;
+                }
+              },
+              itemBuilder: (context) => [
+                PopupMenuItem<String>(
+                  value: "update",
+                  child: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(
+                      Icons.edit_outlined,
+                      color: Color(0xff2D7A3A),
+                    ),
+                    title: const Text("Sửa phiếu luân chuyển"),
+                  ),
+                ),
+                PopupMenuItem<String>(
+                  value: "delete",
+                  child: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(
+                      Icons.delete_outline,
+                      color: Colors.red,
+                    ),
+                    title: const Text(
+                      "Ẩn phiếu luân chuyển",
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+        ],
       ),
 
       body: ListView(
@@ -120,18 +260,26 @@ class _ChiTietPhieuLuanChuyenPageState
                             ),
                           ),
                           const SizedBox(height: 6),
-                          Text(
-                            item.hopDong?.phong?.tenPhong ?? "--",
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          vm.isLoading
+                              ? const SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : Text(
+                                  vm.phongCu?.tenPhong ?? "--",
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                         ],
                       ),
                     ),
-
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(

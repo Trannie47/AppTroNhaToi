@@ -1,8 +1,9 @@
+import 'package:AppTroNhaToi/Provider/phieu_luan_chuyen_provider.dart';
 import 'package:AppTroNhaToi/core/utils/string_formatter.dart';
 import 'package:AppTroNhaToi/models/item_phong.dart';
-import 'package:AppTroNhaToi/models/phieu_luan_chuyen.dart';
-import 'package:AppTroNhaToi/models/phong.dart';
+import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/ChiTietPhieuLuanChuyenPage/ChiTietPhieuLuanChuyenPage.dart';
 import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/PhieuLuanChuyenPage/phieuLuanChuyenPage.dart';
+import 'package:AppTroNhaToi/widgets/ItemNguoiLuanChuyen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../Provider/phong_provider.dart';
@@ -35,6 +36,7 @@ class _PhongChiTiet extends State<PhongChiTiet> {
     vm = ChiTietPhongViewModel(
       context.read<PhongProvider>(),
       context.read<NguoiThueProvider>(),
+      context.read<PhieuLuanChuyenProvider>(),
       widget.room.phongId,
     );
     vm.addListener(() {
@@ -44,6 +46,7 @@ class _PhongChiTiet extends State<PhongChiTiet> {
     });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       vm.getListNguoiThueFromIdPhong(widget.room.phongId);
+      vm.getDsNguoiLuanChuyen(widget.room.phongId);
     });
   }
 
@@ -400,6 +403,87 @@ class _PhongChiTiet extends State<PhongChiTiet> {
                         ),
                     ],
                   },
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            // Người luân chuyển tới phòng này
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Text(
+                        "Người luân chuyển",
+                        style: TextStyle(
+                          color: Color(0xFF2D7A3A),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  if (vm.phieuLuanChuyenProvider.isLoadingPhongMoi)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 20),
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Color(0xFF2D7A3A),
+                          ),
+                        ),
+                      ),
+                    )
+                  else if (vm
+                      .phieuLuanChuyenProvider
+                      .listNguoiLuanChuyenPhongMoi
+                      .isEmpty)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      child: Text(
+                        "Chưa có ai luân chuyển tới phòng này.",
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 13,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    )
+                  else
+                    Column(
+                      children: vm
+                          .phieuLuanChuyenProvider
+                          .listNguoiLuanChuyenPhongMoi
+                          .take(3)
+                          .map(
+                            (item) => ItemNguoiLuanChuyen(
+                              item: item,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => ChiTietPhieuLuanChuyenPage(
+                                      item: item.phieuLuanChuyen,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          )
+                          .toList(),
+                    ),
                 ],
               ),
             ),

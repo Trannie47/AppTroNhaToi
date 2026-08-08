@@ -1,3 +1,4 @@
+import 'package:AppTroNhaToi/Provider/phieu_luan_chuyen_provider.dart';
 import 'package:AppTroNhaToi/states/phong_save_state.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import '../../../../states/NguoiThueState.dart';
 class ChiTietPhongViewModel extends ChangeNotifier {
   final PhongProvider _phongService;
   final NguoiThueProvider _nguoiThueService;
+  final PhieuLuanChuyenProvider phieuLuanChuyenProvider;
   final int _phongId;
   NguoiThueState _nguoiThueState = NguoiThueLoading();
   NguoiThueState get nguoiThueState => _nguoiThueState;
@@ -19,9 +21,11 @@ class ChiTietPhongViewModel extends ChangeNotifier {
   ChiTietPhongViewModel(
     this._phongService,
     this._nguoiThueService,
+    this.phieuLuanChuyenProvider,
     this._phongId,
   ) {
     _phongService.addListener(_onProviderUpdate);
+    phieuLuanChuyenProvider.addListener(_onProviderUpdate);
   }
 
   Future<void> getListNguoiThueFromIdPhong(int idPhong) async {
@@ -41,6 +45,16 @@ class ChiTietPhongViewModel extends ChangeNotifier {
       );
     } finally {
       notifyListeners();
+    }
+  }
+
+  Future<void> getDsNguoiLuanChuyen(int idPhong) async {
+    try {
+      await phieuLuanChuyenProvider.getLuanChuyenPhongMoi(idPhong);
+    } catch (e) {
+      if (kDebugMode) {
+        print("Lỗi getDsNguoiLuanChuyen ChiTietPhongViewModel: $e");
+      }
     }
   }
 
@@ -70,6 +84,7 @@ class ChiTietPhongViewModel extends ChangeNotifier {
   @override
   void dispose() {
     _phongService.removeListener(_onProviderUpdate);
+    phieuLuanChuyenProvider.removeListener(_onProviderUpdate);
     super.dispose();
   }
 }

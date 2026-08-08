@@ -1,5 +1,6 @@
 import 'package:AppTroNhaToi/core/network/retrofit_client.dart';
 import 'package:AppTroNhaToi/models/phieu_luan_chuyen.dart';
+import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/ItemNguoiLuanChuyenModel.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
@@ -55,6 +56,38 @@ class PhieuLuanChuyenApiClient {
     } catch (e) {
       if (kDebugMode) {
         print("Lỗi không xác định getLuanChuyenTheoPhong: $e");
+      }
+
+      throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
+    }
+  }
+
+  /// Lấy danh sách người đã luân chuyển tới phòng mới (mỗi người 1 dòng,
+  /// kèm cờ isNguoiThueChinh — đại diện hay ở ghép).
+  Future<List<ItemNguoiLuanChuyenModel>> getLuanChuyenPhongMoi(
+    int phongId,
+  ) async {
+    try {
+      final response = await _dio.get("phieu-luan-chuyen/phong-moi/$phongId");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final List<dynamic> data = response.data;
+
+        return data
+            .map((json) => ItemNguoiLuanChuyenModel.fromMap(json))
+            .toList();
+      }
+
+      return [];
+    } on DioException catch (e) {
+      if (kDebugMode) {
+        print("Lỗi getLuanChuyenPhongMoi $e");
+      }
+
+      throw Exception(_mapErrorToMessage(e));
+    } catch (e) {
+      if (kDebugMode) {
+        print("Lỗi không xác định getLuanChuyenPhongMoi: $e");
       }
 
       throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");

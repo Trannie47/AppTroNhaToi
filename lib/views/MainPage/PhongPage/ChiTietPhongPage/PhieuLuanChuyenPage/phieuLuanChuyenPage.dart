@@ -84,11 +84,12 @@ class _PhieuLuanChuyenPageState extends State<PhieuLuanChuyenPage> {
     }
   }
 
-  void _xemChiTiet(PhieuLuanChuyen item) {
+  void _xemChiTiet(PhieuLuanChuyen item) async {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => ChiTietPhieuLuanChuyenPage(item: item)),
     );
+    await vm.refesh();
   }
 
   Future<void> _anPhieu(PhieuLuanChuyen item) async {

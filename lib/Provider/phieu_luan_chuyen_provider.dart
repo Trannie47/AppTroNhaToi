@@ -1,5 +1,6 @@
 import 'package:AppTroNhaToi/models/phieu_luan_chuyen.dart';
 import 'package:AppTroNhaToi/repositories/PhieuLuanChuyen_reponsitory.dart';
+import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/ItemNguoiLuanChuyenModel.dart';
 import 'package:flutter/foundation.dart';
 
 class PhieuLuanChuyenProvider extends ChangeNotifier {
@@ -12,8 +13,19 @@ class PhieuLuanChuyenProvider extends ChangeNotifier {
   List<PhieuLuanChuyen> get listByPhongHopDong =>
       List.unmodifiable(_listByPhongHopDong);
 
+  List<ItemNguoiLuanChuyenModel> _listNguoiLuanChuyenPhongMoi = [];
+  List<ItemNguoiLuanChuyenModel> get listNguoiLuanChuyenPhongMoi =>
+      List.unmodifiable(_listNguoiLuanChuyenPhongMoi);
+
+  // Ghi nhớ phòng đang được xem, để refresh đúng list sau khi thêm/sửa/xóa.
+  int? _phongIdDangXemHopDong;
+  int? _phongIdDangXemPhongMoi;
+
   bool _isLoading = false;
   bool get isLoading => _isLoading;
+
+  bool _isLoadingPhongMoi = false;
+  bool get isLoadingPhongMoi => _isLoadingPhongMoi;
 
   Future<void> fetchAll() async {
     if (_isLoading) return;
@@ -39,6 +51,7 @@ class PhieuLuanChuyenProvider extends ChangeNotifier {
   Future<void> find(int phongId) async {
     if (_isLoading) return;
 
+    _phongIdDangXemHopDong = phongId;
     _isLoading = true;
     _listByPhongHopDong = [];
     notifyListeners();
@@ -57,11 +70,65 @@ class PhieuLuanChuyenProvider extends ChangeNotifier {
     }
   }
 
+  /// Lấy danh sách người đã luân chuyển tới phòng mới.
+  Future<void> getLuanChuyenPhongMoi(int phongId) async {
+    if (_isLoadingPhongMoi) return;
+
+    _phongIdDangXemPhongMoi = phongId;
+    _isLoadingPhongMoi = true;
+    _listNguoiLuanChuyenPhongMoi = [];
+    notifyListeners();
+
+    try {
+      _listNguoiLuanChuyenPhongMoi = await _repo.getLuanChuyenPhongMoi(phongId);
+    } catch (e) {
+      _listNguoiLuanChuyenPhongMoi = [];
+      if (kDebugMode) {
+        print("Lỗi PhieuLuanChuyenProvider.getLuanChuyenPhongMoi: $e");
+      }
+      rethrow;
+    } finally {
+      _isLoadingPhongMoi = false;
+      notifyListeners();
+    }
+  }
+
+  /// Refresh lại đúng các danh sách đang được xem (nếu có), sau khi thêm/sửa/xóa.
+  Future<void> _refreshCacDanhSachDangXem() async {
+    await fetchAll();
+
+    if (_phongIdDangXemHopDong != null) {
+      try {
+        _listByPhongHopDong = await _repo.getLuanChuyenTheoPhong(
+          _phongIdDangXemHopDong!,
+        );
+      } catch (e) {
+        if (kDebugMode) {
+          print("Lỗi refresh listByPhongHopDong: $e");
+        }
+      }
+    }
+
+    if (_phongIdDangXemPhongMoi != null) {
+      try {
+        _listNguoiLuanChuyenPhongMoi = await _repo.getLuanChuyenPhongMoi(
+          _phongIdDangXemPhongMoi!,
+        );
+      } catch (e) {
+        if (kDebugMode) {
+          print("Lỗi refresh listNguoiLuanChuyenPhongMoi: $e");
+        }
+      }
+    }
+
+    notifyListeners();
+  }
+
   Future<PhieuLuanChuyen?> them(PhieuLuanChuyen item) async {
     final result = await _repo.them(item);
 
     if (result != null) {
-      await fetchAll();
+      await _refreshCacDanhSachDangXem();
     }
 
     return result;
@@ -71,7 +138,7 @@ class PhieuLuanChuyenProvider extends ChangeNotifier {
     final ok = await _repo.capNhat(item);
 
     if (ok == true) {
-      await fetchAll();
+      await _refreshCacDanhSachDangXem();
       return true;
     }
 
@@ -82,7 +149,7 @@ class PhieuLuanChuyenProvider extends ChangeNotifier {
     final ok = await _repo.xoa(id);
 
     if (ok) {
-      await fetchAll();
+      await _refreshCacDanhSachDangXem();
     }
 
     return ok;
@@ -91,6 +158,9 @@ class PhieuLuanChuyenProvider extends ChangeNotifier {
   void clear() {
     _list.clear();
     _listByPhongHopDong.clear();
+    _listNguoiLuanChuyenPhongMoi.clear();
+    _phongIdDangXemHopDong = null;
+    _phongIdDangXemPhongMoi = null;
     notifyListeners();
   }
 }

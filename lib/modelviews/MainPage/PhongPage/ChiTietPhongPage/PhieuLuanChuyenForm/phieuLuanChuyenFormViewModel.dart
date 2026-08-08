@@ -32,6 +32,10 @@ class PhieuLuanChuyenFormViewModel extends ChangeNotifier {
   String? hopDongDaChonId;
   int? phongMoiDaChonId;
 
+  /// Phòng mới hiện tại của phiếu đang sửa, dùng để bổ sung vào dropdown
+  /// nếu nó không còn nằm trong danh sách "còn chỗ trống" trả về từ backend.
+  ItemPhong? _phongMoiHienTaiCoDinh;
+
   final txtTuNgay = TextEditingController();
   final txtDenNgay = TextEditingController();
   final txtLyDo = TextEditingController();
@@ -51,7 +55,18 @@ class PhieuLuanChuyenFormViewModel extends ChangeNotifier {
       hopDongProvider.dsHopDongTheoPhong; // backend đã lọc còn hạn
 
   /// Danh sách phòng có thể chuyển tới, phụ thuộc hợp đồng đã chọn.
-  List<ItemPhong> get dsPhongCoTheChon => phongProvider.dsPhongCoTheLuanChuyen;
+  /// Nếu đang sửa phiếu và phòng mới hiện tại không nằm trong danh sách
+  /// backend trả về (do đã hết chỗ), tự bổ sung nó vào để dropdown chọn được.
+  List<ItemPhong> get dsPhongCoTheChon {
+    final list = phongProvider.dsPhongCoTheLuanChuyen;
+
+    if (_phongMoiHienTaiCoDinh != null &&
+        !list.any((p) => p.phongId == _phongMoiHienTaiCoDinh!.phongId)) {
+      return [_phongMoiHienTaiCoDinh!, ...list];
+    }
+
+    return list;
+  }
 
   ItemHopDong? get hopDongDaChon => dsHopDong
       .where((hd) => hd.hopDongId == hopDongDaChonId)
@@ -87,6 +102,21 @@ class PhieuLuanChuyenFormViewModel extends ChangeNotifier {
         if (hopDongDaChonId != null) {
           await phongProvider.getCoTheLuanChuyenByHopDong(hopDongDaChonId!);
         }
+
+        // Nếu phòng mới hiện tại của phiếu không còn trong ds "còn chỗ trống"
+        // (do đã đầy/đã bị luân chuyển đi chỗ khác) -> fetch riêng để bổ sung vào dropdown
+        if (item.phongMoiId != null &&
+            !phongProvider.dsPhongCoTheLuanChuyen.any(
+              (p) => p.phongId == item.phongMoiId,
+            )) {
+          try {
+            _phongMoiHienTaiCoDinh = await phongProvider.getInforPhong(
+              item.phongMoiId!,
+            );
+          } catch (_) {
+            _phongMoiHienTaiCoDinh = null;
+          }
+        }
       }
     } finally {
       _isLoading = false;
@@ -98,6 +128,8 @@ class PhieuLuanChuyenFormViewModel extends ChangeNotifier {
     hopDongDaChonId = hopDongId;
     phongMoiDaChonId =
         null; // đổi hợp đồng -> danh sách phòng khả dụng đổi theo
+    _phongMoiHienTaiCoDinh =
+        null; // đổi hợp đồng -> phòng cố định cũ không còn liên quan
     errHopDong = null;
     errPhongMoi = null;
     notifyListeners();
@@ -136,7 +168,6 @@ class PhieuLuanChuyenFormViewModel extends ChangeNotifier {
     if (ngayChon != null) {
       controller.text = formatDate(ngayChon);
 
-      // Nếu ngày kết thúc đang có và nhỏ hơn ngày bắt đầu mới chọn -> đồng bộ lại
       final ngayKetThucHienTai = chuyenNgay(txtDenNgay.text);
       if (ngayKetThucHienTai != null && ngayKetThucHienTai.isBefore(ngayChon)) {
         txtDenNgay.text = formatDate(ngayChon);
@@ -150,7 +181,6 @@ class PhieuLuanChuyenFormViewModel extends ChangeNotifier {
     BuildContext context,
     TextEditingController controller,
   ) async {
-    // Mốc tối thiểu = ngày bắt đầu đã chọn (nếu có), ngược lại không giới hạn
     final ngayBatDau = chuyenNgay(txtTuNgay.text);
     final minDate = ngayBatDau ?? DateTime(2000);
 
@@ -170,7 +200,7 @@ class PhieuLuanChuyenFormViewModel extends ChangeNotifier {
     final ngayChon = await showDatePicker(
       context: context,
       initialDate: ngayHienTai,
-      firstDate: minDate, // khóa không cho chọn trước ngày bắt đầu
+      firstDate: minDate,
       lastDate: DateTime(2100),
     );
 
