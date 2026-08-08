@@ -63,7 +63,7 @@ void main() {
           create: (_) => ThongBaoProvider()..startPolling(),
         ),
 
-        ChangeNotifierProvider(create: (_) => PhieuLuanChuyenProvider()),
+        // ChangeNotifierProvider(create: (_) => PhieuLuanChuyenProvider()),
       ],
       child: const MyApp(),
     ),

@@ -1,3 +1,4 @@
+import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/models/phieu_luan_chuyen.dart';
 import 'package:flutter/material.dart';
@@ -25,13 +26,17 @@ class ItemLuanChuyen extends StatelessWidget {
           Row(
             children: [
               Container(
-                width: 46,
-                height: 46,
+                width: 50,
+                height: 50,
                 decoration: BoxDecoration(
-                  color: _backgroundColor(),
-                  borderRadius: BorderRadius.circular(12),
+                  color: const Color(0xffE8F3FF),
+                  borderRadius: BorderRadius.circular(14),
                 ),
-                child: Icon(Icons.swap_horiz_rounded, color: _statusColor()),
+                child: const Icon(
+                  Icons.swap_horiz_rounded,
+                  color: Color(0xff1976D2),
+                  size: 28,
+                ),
               ),
 
               const SizedBox(width: 12),
@@ -50,32 +55,18 @@ class ItemLuanChuyen extends StatelessWidget {
 
                     const SizedBox(height: 4),
 
-                    Text(
-                      "Phòng hiện tại: ${item.hopDong?.phong?.tenPhong ?? "--"}",
-                      style: const TextStyle(color: Colors.grey, fontSize: 12),
+                Text(
+                  item.hopDong?.phong?.tenPhong ?? "",
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 13,
+                      ),
                     ),
                   ],
                 ),
               ),
 
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 5,
-                ),
-                decoration: BoxDecoration(
-                  color: _backgroundColor(),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: Text(
-                  _statusText(),
-                  style: TextStyle(
-                    color: _statusColor(),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 11,
-                  ),
-                ),
-              ),
+
             ],
           ),
 
@@ -85,22 +76,70 @@ class ItemLuanChuyen extends StatelessWidget {
 
           const SizedBox(height: 12),
 
-          Row(
-            children: [
-              const Icon(
-                Icons.home_work_outlined,
-                size: 18,
-                color: Colors.grey,
-              ),
-
-              const SizedBox(width: 8),
-
-              Expanded(
-                child: Text(
-                  "Phòng chuyển đến: ${item.phongMoi?.tenPhong ?? "--"}",
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: const Color(0xffF8F9FA),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Phòng cũ",
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        item.hopDong?.phong?.tenPhong ?? "--",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: Icon(
+                    Icons.arrow_forward_rounded,
+                    size: 26,
+                    color: Color(0xff1976D2),
+                  ),
+                ),
+
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Phòng mới",
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        item.phongMoi?.tenPhong ?? "--",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
 
           const SizedBox(height: 10),
@@ -115,18 +154,95 @@ class ItemLuanChuyen extends StatelessWidget {
 
               const SizedBox(width: 8),
 
-              Expanded(child: Text(formatDate(item.ngayLuanChuyen))),
+              Expanded(
+                child: Text(
+                  item.denNgay != null
+                      ? "${formatDate(item.tuNgay)} - ${formatDate(
+                      item.denNgay)}"
+                      : formatDate(item.tuNgay),
+                ),
+              ),
             ],
           ),
+
+          const SizedBox(height: 10),
+
+          Row(
+            children: [
+              const Icon(
+                Icons.payments_outlined,
+                size: 18,
+                color: Colors.grey,
+              ),
+
+              const SizedBox(width: 8),
+
+              Expanded(
+                child: Text(
+                    "Chi phí: ${formatMoney(item.chiPhi ?? 0)}"
+                ),
+              ),
+            ],
+          ),
+
+          if ((item.lyDoLuanChuyen ?? "").isNotEmpty) ...[
+            const SizedBox(height: 10),
+
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(
+                  Icons.info_outline,
+                  size: 18,
+                  color: Colors.grey,
+                ),
+
+                const SizedBox(width: 8),
+
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Lý do",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(item.lyDoLuanChuyen!),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
 
           if ((item.ghiChu ?? "").isNotEmpty) ...[
             const SizedBox(height: 12),
 
-            Align(
+            Container(
               alignment: Alignment.centerLeft,
-              child: Text(
-                item.ghiChu!,
-                style: const TextStyle(color: Colors.black87),
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xffF8F9FA),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Ghi chú",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(item.ghiChu!),
+                ],
               ),
             ),
           ],
@@ -175,42 +291,4 @@ class ItemLuanChuyen extends StatelessWidget {
     );
   }
 
-  String _statusText() {
-    switch (item.trangThaiLuanChuyen) {
-      case 0:
-        return "Chưa chuyển";
-      case 1:
-        return "Đang chuyển";
-      case 2:
-        return "Hoàn tất";
-      default:
-        return "Không xác định";
-    }
-  }
-
-  Color _statusColor() {
-    switch (item.trangThaiLuanChuyen) {
-      case 0:
-        return Colors.orange;
-      case 1:
-        return Colors.blue;
-      case 2:
-        return const Color(0xff2D7A3A);
-      default:
-        return Colors.grey;
-    }
-  }
-
-  Color _backgroundColor() {
-    switch (item.trangThaiLuanChuyen) {
-      case 0:
-        return const Color(0xffFFF5E9);
-      case 1:
-        return const Color(0xffEEF6FF);
-      case 2:
-        return const Color(0xffEDF8F0);
-      default:
-        return const Color(0xffF4F4F4);
-    }
-  }
 }
