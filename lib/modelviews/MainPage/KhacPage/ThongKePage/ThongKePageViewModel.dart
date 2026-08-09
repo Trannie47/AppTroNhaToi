@@ -74,9 +74,13 @@ class ThongKePageViewModel extends ChangeNotifier {
 
   double get chiPhiMuaThietBi => data?.chiPhi.tongTienMuaThietBi ?? 0;
 
+  double get chiPhiLuanChuyen => data?.chiPhi.tongTienLuanChuyen ?? 0;
+
   double get phanTramSuaChua => data?.chiPhi.tyLeSuaChua ?? 0;
 
   double get phanTramMuaThietBi => data?.chiPhi.tyLeMuaThietBi ?? 0;
+
+  double get phanTramLuanChuyen => data?.chiPhi.tyLeLuanChuyen ?? 0;
 
   ///================ ROOM ==================
 

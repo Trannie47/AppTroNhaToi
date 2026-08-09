@@ -1,4 +1,6 @@
+import 'package:AppTroNhaToi/Provider/phong_provider.dart';
 import 'package:AppTroNhaToi/Provider/sua_chua_provider.dart';
+import 'package:AppTroNhaToi/models/item_phong.dart';
 import 'package:AppTroNhaToi/models/lap_rap.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/LichSuSuaChuaPage/LichSuSuaChuaPageModel.dart';
@@ -8,6 +10,7 @@ class LichSuSuaChuaPageViewModel extends ChangeNotifier {
   final ThietBi thietBi;
   final LapRap? lapRap;
   final SuaChuaProvider _suaChuaProvider;
+  final PhongProvider _phongProvider;
 
   final txtSearch = TextEditingController();
 
@@ -16,17 +19,25 @@ class LichSuSuaChuaPageViewModel extends ChangeNotifier {
 
   bool get isLoading => _suaChuaProvider.isLoading;
 
+  /// Thông tin phòng thật (lấy từ provider), dùng để hiển thị tên phòng
+  /// khi mở trang từ 1 LapRap cụ thể.
+  ItemPhong? phongCuaLapRap;
+  bool isLoadingPhong = false;
+
   LichSuSuaChuaPageViewModel({
     required this.thietBi,
     this.lapRap,
     required SuaChuaProvider suaChuaProvider,
-  }) : _suaChuaProvider = suaChuaProvider {
+    required PhongProvider phongProvider,
+  }) : _suaChuaProvider = suaChuaProvider,
+       _phongProvider = phongProvider {
     _suaChuaProvider.addListener(_onProviderUpdate);
 
     txtSearch.addListener(timKiem);
 
     Future.microtask(() async {
       await _fetch();
+      await _fetchPhong();
 
       dsGoc = List.from(_suaChuaProvider.list);
       lichSuSuaChua = List.from(dsGoc);
@@ -46,6 +57,22 @@ class LichSuSuaChuaPageViewModel extends ChangeNotifier {
     }
   }
 
+  Future<void> _fetchPhong() async {
+    if (lapRap?.phongID == null) return;
+
+    isLoadingPhong = true;
+    notifyListeners();
+
+    try {
+      phongCuaLapRap = await _phongProvider.getInforPhong(lapRap!.phongID!);
+    } catch (_) {
+      phongCuaLapRap = null;
+    } finally {
+      isLoadingPhong = false;
+      notifyListeners();
+    }
+  }
+
   void _onProviderUpdate() {
     dsGoc = List.from(_suaChuaProvider.list);
     timKiem();
@@ -58,7 +85,7 @@ class LichSuSuaChuaPageViewModel extends ChangeNotifier {
       lichSuSuaChua = List.from(dsGoc);
     } else {
       lichSuSuaChua = dsGoc.where((e) {
-        return (e.suaChua.nguyenNhan ?? '').toLowerCase().contains(keyword);
+        return (e.suaChua?.nguyenNhan ?? '').toLowerCase().contains(keyword);
       }).toList();
     }
 

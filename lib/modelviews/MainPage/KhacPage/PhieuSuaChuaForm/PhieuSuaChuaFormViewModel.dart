@@ -2,7 +2,6 @@ import 'package:AppTroNhaToi/Provider/lap_rap_provider.dart';
 import 'package:AppTroNhaToi/Provider/phong_provider.dart';
 import 'package:AppTroNhaToi/Provider/sua_chua_provider.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
-import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart' as DateFormate;
 import 'package:AppTroNhaToi/models/DTO/SuaChuaDTO.dart';
 import 'package:AppTroNhaToi/models/hoa_don_sua_chua.dart';
@@ -38,9 +37,14 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
 
   /// ID bản ghi lắp ráp (LapRap) đang được chọn ở dropdown "Lắp đặt"
   int? lapRapDaChonId;
-  String? get tenPhongCoDinh => lapRapCoDinh?.phong?.tenPhong;
+
   LapRap? lapRapCoDinh;
   bool get lapDatBiKhoa => lapRapCoDinh != null;
+
+  /// Thông tin đầy đủ của phòng cố định (khi lapDatBiKhoa), lấy thật từ provider
+  /// thay vì tạo object giả với dữ liệu mặc định.
+  ItemPhong? phongCoDinh;
+  bool isLoadingPhongCoDinh = false;
 
   late ThietBi thietBi;
   final PhongProvider _phongProvider;
@@ -251,15 +255,14 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
     ThietBi thietBiData, {
     SuaChua? suaChuaData,
     HoaDonSuaChua? hoaDonData,
-    LapRap? lapRapCoDinhData, // ← thêm tham số mới
+    LapRap? lapRapCoDinhData,
   }) {
     thietBi = thietBiData;
 
     suaChua = suaChuaData;
     hoaDonSuaChua = hoaDonData;
     lapRapCoDinh = lapRapCoDinhData;
-    print('Test');
-    print(lapRapCoDinh);
+
     if (lapRapCoDinh != null) {
       // Gán cứng luôn, không cho chọn lại
       phongDaChonId = lapRapCoDinh!.phongID;
@@ -294,6 +297,22 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
 
     Future.microtask(() async {
       await _phongProvider.getListByThietBi(thietBiData.thietBiID!);
+
+      // Nếu phòng bị khóa cứng (đến từ 1 LapRap cụ thể) -> lấy đúng thông tin
+      // phòng thật từ provider, thay vì tạo object giả với dữ liệu mặc định.
+      if (lapRapCoDinh != null && phongDaChonId != null) {
+        isLoadingPhongCoDinh = true;
+        notifyListeners();
+
+        try {
+          phongCoDinh = await _phongProvider.getInforPhong(phongDaChonId!);
+        } catch (_) {
+          phongCoDinh = null;
+        } finally {
+          isLoadingPhongCoDinh = false;
+          notifyListeners();
+        }
+      }
     });
   }
 

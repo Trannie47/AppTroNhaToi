@@ -140,6 +140,7 @@ class PhongProvider extends ChangeNotifier {
     try {
       _dsPhongCoTheLuanChuyen = await phongRepository
           .getCoTheLuanChuyenByHopDong(hopDongId);
+      notifyListeners();
     } catch (e) {
       _dsPhongCoTheLuanChuyen = [];
       if (kDebugMode) {

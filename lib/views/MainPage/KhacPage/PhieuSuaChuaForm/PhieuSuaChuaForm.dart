@@ -71,28 +71,8 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
   }
 
   Widget _dropDownPhong() {
-    final ItemPhong? itemPhongCoDinh =
-        vm.lapDatBiKhoa && vm.phongDaChonId != null
-        ? ItemPhong(
-            phongId: vm.phongDaChonId!,
-            tenPhong: vm.tenPhongCoDinh ?? "Phòng #${vm.phongDaChonId}",
-            trangThai: 1,
-            moTa: '',
-            maLoaiPhong: 0,
-            loaiPhong: LoaiPhong(
-              maLoaiPhong: 0,
-              tenLoaiPhong: 'Chưa rõ',
-              dienTich: 0,
-              soNguoiToiDa: 0,
-              giaTien: 0,
-            ),
-            dsHopDong: [],
-            giahientai: 0.0,
-          )
-        : null;
-
-    final danhSachHienThi = vm.lapDatBiKhoa && itemPhongCoDinh != null
-        ? [itemPhongCoDinh]
+    final danhSachHienThi = vm.lapDatBiKhoa && vm.phongCoDinh != null
+        ? [vm.phongCoDinh!]
         : vm.dsPhong;
 
     return Column(
@@ -103,7 +83,7 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
           hintText: "-- Chọn phòng --",
           items: danhSachHienThi,
           selectedItem: vm.lapDatBiKhoa
-              ? itemPhongCoDinh
+              ? vm.phongCoDinh
               : vm.dsPhong
                     .where((e) => e.phongId == vm.phongDaChonId)
                     .cast<ItemPhong?>()
@@ -114,6 +94,15 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
             vm.chonPhong(value?.phongId);
           },
         ),
+
+        if (vm.lapDatBiKhoa && vm.isLoadingPhongCoDinh)
+          const Padding(
+            padding: EdgeInsets.only(top: 6, left: 12),
+            child: Text(
+              "Đang tải thông tin phòng...",
+              style: TextStyle(color: Colors.grey, fontSize: 12),
+            ),
+          ),
 
         if (vm.errPhong != null)
           Padding(

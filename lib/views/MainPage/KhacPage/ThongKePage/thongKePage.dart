@@ -1064,9 +1064,6 @@ class _ThongKePageState extends State<ThongKePage> {
     );
   }
 
-  // EXPENSE
-  // TODO: cần biết field chi tiết chi phí (sửa chữa/mua thiết bị/khác) trong
-  // model để thay các giá trị cứng bên dưới bằng vm.tongChiPhi chi tiết.
   Widget _buildExpenseSection(ThongKePageViewModel vm) {
     return Container(
       child: Padding(
@@ -1113,6 +1110,14 @@ class _ThongKePageState extends State<ThongKePage> {
                 value: formatMoney(vm.data!.chiPhi.tongTienMuaThietBi),
                 percent: vm.data!.chiPhi.tyLeMuaThietBi,
                 color: Colors.orange,
+              ),
+              const SizedBox(height: 16),
+
+              _buildExpenseItem(
+                title: "Luân chuyển",
+                value: formatMoney(vm.data!.chiPhi.tongTienLuanChuyen),
+                percent: vm.data!.chiPhi.tyLeLuanChuyen,
+                color: Colors.blue,
               ),
 
               const Divider(height: 36),
@@ -1169,6 +1174,11 @@ class _ThongKePageState extends State<ThongKePage> {
                       "Mua TB",
                       vm.data!.chiPhi.tyLeMuaThietBi,
                       Colors.orange,
+                    ),
+                    _buildExpenseBar(
+                      "Luân chuyển",
+                      vm.data!.chiPhi.tyLeLuanChuyen,
+                      Colors.blue,
                     ),
                     _buildExpenseBar("Tổng", 1, const Color(0xFF7C4DFF)),
                   ],

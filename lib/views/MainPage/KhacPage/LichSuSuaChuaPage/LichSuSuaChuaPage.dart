@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:AppTroNhaToi/Provider/phong_provider.dart';
 import 'package:AppTroNhaToi/Provider/sua_chua_provider.dart';
 import 'package:AppTroNhaToi/models/lap_rap.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
@@ -32,6 +33,7 @@ class _LichSuSuaChuaPageState extends State<LichSuSuaChuaPage> {
       thietBi: widget.thietBi,
       lapRap: widget.lapRap,
       suaChuaProvider: context.read<SuaChuaProvider>(),
+      phongProvider: context.read<PhongProvider>(),
     );
 
     vm.addListener(() {
@@ -131,7 +133,7 @@ class _LichSuSuaChuaPageState extends State<LichSuSuaChuaPage> {
 
             Text(
               widget.lapRap != null
-                  ? "${widget.thietBi.tenThietBi} - Phòng ${widget.lapRap!.phongID} - #${widget.lapRap!.id}"
+                  ? "${widget.thietBi.tenThietBi} - Phòng ${vm.phongCuaLapRap?.tenPhong ?? widget.lapRap!.phongID} - #${widget.lapRap!.id}"
                   : "${widget.thietBi.tenThietBi}",
               style: TextStyle(
                 fontSize: 13,
