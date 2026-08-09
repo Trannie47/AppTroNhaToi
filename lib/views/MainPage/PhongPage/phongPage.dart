@@ -57,7 +57,7 @@ class _PhongPageState extends State<PhongPage> {
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.white,
         elevation: 0,
-        toolbarHeight: 90,
+        toolbarHeight: 60,
         automaticallyImplyLeading: false,
         titleSpacing: 16,
         title: Row(
@@ -67,26 +67,36 @@ class _PhongPageState extends State<PhongPage> {
               "Phòng trọ",
               style: TextStyle(
                 color: Colors.black,
-                fontSize: 22,
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
             ElevatedButton.icon(
               onPressed: themPhong,
-              icon: const Icon(Icons.add, color: Colors.white, size: 13),
+              icon: const Icon(
+                Icons.add_rounded,
+                color: Colors.white,
+                size: 18,
+              ),
               label: const Text(
                 "Thêm phòng",
-                style: TextStyle(color: Colors.white, fontSize: 13),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xff2D7A3A),
+                foregroundColor: Colors.white,
                 elevation: 0,
+                minimumSize: const Size(0, 38),
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 10.25,
-                  vertical: 14,
+                  horizontal: 14,
+                  vertical: 0,
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
+                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
             ),
