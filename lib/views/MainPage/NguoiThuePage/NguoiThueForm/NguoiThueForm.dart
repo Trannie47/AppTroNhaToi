@@ -418,6 +418,7 @@ class _NguoiThueFormState extends State<NguoiThueForm> {
                                     fontSize: 13,
                                   ),
                                   errorText: vm.errNgaySinh,
+                                  errorMaxLines: 2,
                                   errorStyle: const TextStyle(
                                     color: Colors.red,
                                     fontSize: 11,
