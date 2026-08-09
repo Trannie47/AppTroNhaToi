@@ -88,41 +88,54 @@ class HopDongFormViewModel extends ChangeNotifier {
   List<NguoiOGhepDTO> listNguoiOGhep = [];
   String? errNguoiOGhep;
 
-  String? addNguoiOGhep({
+  Map<String, String> addNguoiOGhep({
     required String cccd,
     String? hoTen,
     String? sdt,
     String? quanHeVoiDaiDien,
   }) {
+    final Map<String, String> loi = {};
+
     final cccdTrim = cccd.trim();
     if (cccdTrim.isEmpty) {
-      return "Vui lòng nhập CCCD";
+      loi['cccd'] = "Vui lòng nhập CCCD";
+    } else if (!RegExp(r'^\d{12}$').hasMatch(cccdTrim)) {
+      loi['cccd'] = "CCCD phải gồm đúng 12 số";
+    } else if (listNguoiOGhep.any((ng) => ng.cccd == cccdTrim)) {
+      loi['cccd'] = "CCCD này đã có trong danh sách người ở ghép";
     }
-    if (!RegExp(r'^\d{12}$').hasMatch(cccdTrim)) {
-      return "CCCD phải gồm đúng 12 số";
+
+    final hoTenTrim = hoTen?.trim() ?? '';
+    if (hoTenTrim.isEmpty) {
+      loi['hoTen'] = "Vui lòng nhập họ tên";
     }
-    if (listNguoiOGhep.any((ng) => ng.cccd == cccdTrim)) {
-      return "CCCD này đã có trong danh sách người ở ghép";
+
+    final sdtTrim = sdt?.trim() ?? '';
+    if (sdtTrim.isEmpty) {
+      loi['sdt'] = "Vui lòng nhập số điện thoại";
+    } else if (!RegExp(r'^0\d{9}$').hasMatch(sdtTrim)) {
+      loi['sdt'] = "Số điện thoại phải gồm đúng 10 số";
     }
-    final sdtTrim = sdt?.trim();
-    if (sdtTrim != null &&
-        sdtTrim.isNotEmpty &&
-        !RegExp(r'^0\d{9}$').hasMatch(sdtTrim)) {
-      return "Số điện thoại phải gồm đúng 10 số";
+
+    final quanHeTrim = quanHeVoiDaiDien?.trim() ?? '';
+    if (quanHeTrim.isEmpty) {
+      loi['quanHe'] = "Vui lòng nhập mối quan hệ với đại diện";
+    }
+
+    if (loi.isNotEmpty) {
+      return loi;
     }
 
     listNguoiOGhep.add(
       NguoiOGhepDTO(
         cccd: cccdTrim,
-        hoTen: hoTen?.trim().isNotEmpty == true ? hoTen!.trim() : null,
-        sdt: sdtTrim?.isNotEmpty == true ? sdtTrim : null,
-        quanHeVoiDaiDien: quanHeVoiDaiDien?.trim().isNotEmpty == true
-            ? quanHeVoiDaiDien!.trim()
-            : null,
+        hoTen: hoTenTrim,
+        sdt: sdtTrim,
+        quanHeVoiDaiDien: quanHeTrim,
       ),
     );
     notifyListeners();
-    return null;
+    return {};
   }
 
   void removeNguoiOGhep(int index) {

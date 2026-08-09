@@ -18,6 +18,7 @@ import 'package:AppTroNhaToi/states/create_contract_state.dart';
 import 'package:AppTroNhaToi/states/hop_dong_update_state.dart';
 import 'package:AppTroNhaToi/widgets/customDropdownSearch.dart';
 import 'package:AppTroNhaToi/widgets/app_confirm_dialog.dart';
+import 'ThemNguoiOGhepDialog.dart';
 
 class HopDongForm extends StatefulWidget {
   final HopDongDTO? hopDong;
@@ -52,116 +53,10 @@ class _TaoHopDongPageState extends State<HopDongForm> {
     super.dispose();
   }
 
-  void _showThemNguoiOGhepDialog() async {
-    final cccdController = TextEditingController();
-    final hoTenController = TextEditingController();
-    final sdtController = TextEditingController();
-    final quanHeController = TextEditingController();
-
-    await showDialog(
+  void _showThemNguoiOGhepDialog() {
+    showDialog(
       context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setDialogState) {
-            String? loi;
-            return AlertDialog(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-              title: const Text("Thêm người ở ghép", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
-              content: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.8,
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text("CCCD (bắt buộc)", style: TextStyle(fontSize: 13, color: Colors.black87)),
-                      const SizedBox(height: 6),
-                      TextField(
-                        controller: cccdController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(12),
-                        ],
-                        decoration: _dialogInputDecoration(hint: "Nhập đúng 12 số CCCD"),
-                      ),
-                      const SizedBox(height: 16),
-                      const Text("Họ tên", style: TextStyle(fontSize: 13, color: Colors.black87)),
-                      const SizedBox(height: 6),
-                      TextField(
-                        controller: hoTenController,
-                        decoration: _dialogInputDecoration(hint: "VD: Nguyễn Thị B"),
-                      ),
-                      const SizedBox(height: 16),
-                      const Text("Số điện thoại", style: TextStyle(fontSize: 13, color: Colors.black87)),
-                      const SizedBox(height: 6),
-                      TextField(
-                        controller: sdtController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(10),
-                        ],
-                        decoration: _dialogInputDecoration(hint: "VD: 0901234567"),
-                      ),
-                      const SizedBox(height: 16),
-                      const Text("Mối quan hệ với đại diện", style: TextStyle(fontSize: 13, color: Colors.black87)),
-                      const SizedBox(height: 6),
-                      TextField(
-                        controller: quanHeController,
-                        decoration: _dialogInputDecoration(hint: "VD: Vợ, Con, Bạn ở cùng..."),
-                      ),
-                      if (loi != null) ...[
-                        const SizedBox(height: 10),
-                        Text(loi!, style: const TextStyle(color: Colors.red, fontSize: 12)),
-                      ],
-                    ],
-                  ),
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text("Hủy", style: TextStyle(color: Colors.grey)),
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xff2E7D32),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  ),
-                  onPressed: () {
-                    final ketQua = vm.addNguoiOGhep(
-                      cccd: cccdController.text,
-                      hoTen: hoTenController.text,
-                      sdt: sdtController.text,
-                      quanHeVoiDaiDien: quanHeController.text,
-                    );
-                    if (ketQua != null) {
-                      setDialogState(() => loi = ketQua);
-                    } else {
-                      Navigator.pop(context);
-                    }
-                  },
-                  child: const Text("Thêm", style: TextStyle(color: Colors.white)),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
-
-  InputDecoration _dialogInputDecoration({required String hint}) {
-    return InputDecoration(
-      hintText: hint,
-      hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 13),
-      filled: true,
-      fillColor: const Color(0xffF7F7F7),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.grey.shade300)),
-      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.grey.shade300)),
-      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xff2D7A3A), width: 1.2)),
+      builder: (_) => ThemNguoiOGhepDialog(formViewModel: vm),
     );
   }
 
