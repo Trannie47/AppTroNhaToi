@@ -58,7 +58,7 @@ class _PhieuLuanChuyenFormState extends State<PhieuLuanChuyenForm> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text(
           "Người thuê trong hợp đồng",
-          style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+          style: TextStyle(fontWeight: FontWeight.w700, fontSize: 19),
         ),
         content: SizedBox(
           width: double.maxFinite,
@@ -70,15 +70,29 @@ class _PhieuLuanChuyenFormState extends State<PhieuLuanChuyenForm> {
                 dense: true,
                 contentPadding: EdgeInsets.zero,
                 leading: const Icon(Icons.star, color: Color(0xff2D7A3A)),
-                title: Text(hopDong.tenDaiDien ?? "Chưa rõ"),
-                subtitle: const Text("Người thuê đại diện"),
+                title: Text(
+                  hopDong.tenDaiDien ?? "Chưa rõ",
+                  style: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                subtitle: const Text(
+                  "Người thuê đại diện",
+                  style: TextStyle(
+                    fontSize: 14,
+                  ),
+                ),
               ),
               if (hopDong.dsNguoiOGhep.isEmpty)
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 8),
                   child: Text(
                     "Không có người ở ghép",
-                    style: TextStyle(color: Colors.grey),
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 15,
+                    ),
                   ),
                 )
               else
@@ -87,8 +101,19 @@ class _PhieuLuanChuyenFormState extends State<PhieuLuanChuyenForm> {
                     dense: true,
                     contentPadding: EdgeInsets.zero,
                     leading: const Icon(Icons.person_outline),
-                    title: Text(nt.hoTen ?? "Chưa rõ"),
-                    subtitle: Text(nt.quanHeVoiDaiDien ?? ""),
+                    title: Text(
+                      nt.hoTen ?? "Chưa rõ",
+                      style: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    subtitle: Text(
+                      nt.quanHeVoiDaiDien ?? "",
+                      style: const TextStyle(
+                        fontSize: 14,
+                      ),
+                    ),
                   ),
                 ),
             ],
@@ -97,7 +122,13 @@ class _PhieuLuanChuyenFormState extends State<PhieuLuanChuyenForm> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
-            child: const Text("Đóng"),
+            child: const Text(
+              "Đóng",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
         ],
       ),
