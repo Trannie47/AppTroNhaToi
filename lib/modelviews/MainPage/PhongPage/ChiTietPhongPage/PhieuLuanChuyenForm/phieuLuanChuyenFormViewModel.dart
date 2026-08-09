@@ -50,6 +50,7 @@ class PhieuLuanChuyenFormViewModel extends ChangeNotifier {
   String? errLyDo;
   String? errChiPhi;
   String? errGhiChu;
+  String? errLuu;
 
   List<ItemHopDong> get dsHopDong =>
       hopDongProvider.dsHopDongTheoPhong; // backend đã lọc còn hạn
@@ -220,8 +221,9 @@ class PhieuLuanChuyenFormViewModel extends ChangeNotifier {
     errLyDo = null;
     errChiPhi = null;
     errGhiChu = null;
+    errLuu = null;
 
-    if (hopDongDaChonId == null || hopDongDaChonId!.isEmpty) {
+    if (hopDongDaChonId == null || hopDongDaChonId!.trim().isEmpty) {
       errHopDong = "Vui lòng chọn hợp đồng";
       hopLe = false;
     }
@@ -234,32 +236,82 @@ class PhieuLuanChuyenFormViewModel extends ChangeNotifier {
       hopLe = false;
     }
 
-    final tuNgay = chuyenNgay(txtTuNgay.text);
-    final denNgay = chuyenNgay(txtDenNgay.text);
+    DateTime? tuNgay;
 
-    if (txtTuNgay.text.isNotEmpty && tuNgay == null) {
-      errTuNgay = "Ngày không hợp lệ";
+    if (txtTuNgay.text.trim().isEmpty) {
+      errTuNgay = "Vui lòng chọn ngày bắt đầu";
+      hopLe = false;
+    } else {
+      try {
+        tuNgay = chuyenNgay(txtTuNgay.text);
+
+        if (tuNgay == null) {
+          errTuNgay = "Ngày bắt đầu không hợp lệ";
+          hopLe = false;
+        }
+      } catch (_) {
+        errTuNgay = "Ngày bắt đầu không hợp lệ";
+        hopLe = false;
+      }
+    }
+
+    DateTime? denNgay;
+
+    if (txtDenNgay.text.trim().isNotEmpty) {
+      try {
+        denNgay = chuyenNgay(txtDenNgay.text);
+
+        if (denNgay == null) {
+          errDenNgay = "Ngày kết thúc không hợp lệ";
+          hopLe = false;
+        }
+      } catch (_) {
+        errDenNgay = "Ngày kết thúc không hợp lệ";
+        hopLe = false;
+      }
+    }
+
+    if (tuNgay != null &&
+        denNgay != null &&
+        denNgay.isBefore(tuNgay)) {
+      errDenNgay = "Ngày kết thúc phải sau hoặc bằng ngày bắt đầu";
       hopLe = false;
     }
 
-    if (txtDenNgay.text.isNotEmpty && denNgay == null) {
-      errDenNgay = "Ngày không hợp lệ";
+    if (txtLyDo.text.trim().isEmpty) {
+      errLyDo = "Vui lòng nhập lý do luân chuyển";
       hopLe = false;
     }
 
-    if (tuNgay != null && denNgay != null && denNgay.isBefore(tuNgay)) {
-      errDenNgay = "Ngày kết thúc phải sau ngày bắt đầu";
-      hopLe = false;
+    final chiPhiText = txtChiPhi.text
+        .replaceAll('.', '')
+        .replaceAll(',', '')
+        .trim();
+
+    if (chiPhiText.isNotEmpty) {
+      final chiPhi = num.tryParse(chiPhiText);
+
+      if (chiPhi == null) {
+        errChiPhi = "Chi phí không hợp lệ";
+        hopLe = false;
+      } else if (chiPhi < 0) {
+        errChiPhi = "Chi phí không được nhỏ hơn 0";
+        hopLe = false;
+      }
     }
 
     notifyListeners();
+
     return hopLe;
   }
 
   Future<PhieuLuanChuyen?> luu() async {
-    if (!_validate()) return null;
+    if (!_validate()) {
+      return null;
+    }
 
     _isSaving = true;
+    errLuu = null;
     notifyListeners();
 
     try {
@@ -268,18 +320,43 @@ class PhieuLuanChuyenFormViewModel extends ChangeNotifier {
         hopDongId: hopDongDaChonId,
         phongMoiId: phongMoiDaChonId,
         tuNgay: chuyenNgay(txtTuNgay.text),
-        denNgay: chuyenNgay(txtDenNgay.text),
+        denNgay: txtDenNgay.text.trim().isEmpty
+            ? null
+            : chuyenNgay(txtDenNgay.text),
         lyDoLuanChuyen: strOf(txtLyDo.text.trim()),
-        chiPhi: numOf(txtChiPhi.text.replaceAll('.', '').replaceAll(',', '')),
+        chiPhi: numOf(
+          txtChiPhi.text
+              .replaceAll('.', '')
+              .replaceAll(',', ''),
+        ),
         ghiChu: strOf(txtGhiChu.text.trim()),
       );
 
       if (isEdit) {
         final ok = await phieuLuanChuyenProvider.capNhat(data);
-        return ok ? data : null;
-      } else {
-        return await phieuLuanChuyenProvider.them(data);
+
+        if (!ok) {
+          errLuu = "Không thể cập nhật phiếu luân chuyển";
+          notifyListeners();
+          return null;
+        }
+
+        return data;
       }
+
+      final result = await phieuLuanChuyenProvider.them(data);
+
+      if (result == null) {
+        errLuu = "Không thể lưu phiếu luân chuyển";
+        notifyListeners();
+        return null;
+      }
+
+      return result;
+    } catch (e) {
+      errLuu = "Đã xảy ra lỗi khi lưu phiếu luân chuyển";
+      notifyListeners();
+      return null;
     } finally {
       _isSaving = false;
       notifyListeners();

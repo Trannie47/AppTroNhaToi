@@ -42,8 +42,10 @@ class _PhieuLuanChuyenPageState extends State<PhieuLuanChuyenPage> {
     final result = await Navigator.push<PhieuLuanChuyen>(
       context,
       MaterialPageRoute(
-        builder: (_) =>
-            PhieuLuanChuyenForm(phongCuIdCoDinh: widget.phong.phongId),
+        builder: (_) => PhieuLuanChuyenForm(
+          phongCuIdCoDinh: widget.phong.phongId,
+          tenPhongCu: widget.phong.tenPhong,
+        ),
       ),
     );
 
@@ -67,6 +69,7 @@ class _PhieuLuanChuyenPageState extends State<PhieuLuanChuyenPage> {
         builder: (_) => PhieuLuanChuyenForm(
           item: item,
           phongCuIdCoDinh: item.hopDong?.phongID ?? widget.phong.phongId,
+          tenPhongCu: widget.phong.tenPhong,
         ),
       ),
     );

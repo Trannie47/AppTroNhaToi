@@ -15,9 +15,14 @@ import 'package:provider/provider.dart';
 class PhieuLuanChuyenForm extends StatefulWidget {
   final PhieuLuanChuyen? item;
   final int? phongCuIdCoDinh;
+  final String? tenPhongCu;
 
-  const PhieuLuanChuyenForm({super.key, this.item, this.phongCuIdCoDinh});
-
+  const PhieuLuanChuyenForm({
+    super.key,
+    this.item,
+    this.phongCuIdCoDinh,
+    this.tenPhongCu,
+  });
   @override
   State<PhieuLuanChuyenForm> createState() => _PhieuLuanChuyenFormState();
 }
@@ -56,9 +61,18 @@ class _PhieuLuanChuyenFormState extends State<PhieuLuanChuyenForm> {
       context: context,
       builder: (dialogContext) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text(
-          "Người thuê trong hợp đồng",
-          style: TextStyle(fontWeight: FontWeight.w700, fontSize: 19),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Người thuê trong hợp đồng",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: Colors.black,
+              ),
+            ),
+          ],
         ),
         content: SizedBox(
           width: double.maxFinite,
@@ -250,13 +264,28 @@ class _PhieuLuanChuyenFormState extends State<PhieuLuanChuyenForm> {
         ),
 
         titleSpacing: 12,
-        title: const Text(
-          "Phiếu luân chuyển",
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-            color: Colors.black,
-          ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              "Phiếu luân chuyển",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: Colors.black,
+              ),
+            ),
+            if (widget.tenPhongCu != null)
+              Text(
+                widget.tenPhongCu!,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey,
+                ),
+              ),
+          ],
         ),
       ),
 
@@ -386,12 +415,30 @@ class _PhieuLuanChuyenFormState extends State<PhieuLuanChuyenForm> {
             onPressed: vm.isSaving
                 ? null
                 : () async {
-                    final result = await vm.luu();
+              final result = await vm.luu();
 
-                    if (result != null && mounted) {
-                      Navigator.pop(context, result);
-                    }
-                  },
+              if (!mounted) return;
+
+              if (result != null) {
+                Navigator.pop(context, result);
+                return;
+              }
+
+              if (vm.errLuu != null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(vm.errLuu!),
+                    backgroundColor: Colors.red,
+                    behavior: SnackBarBehavior.floating,
+                    margin: const EdgeInsets.all(16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                );
+              }
+            },
+
             child: vm.isSaving
                 ? const SizedBox(
                     width: 22,
