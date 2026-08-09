@@ -12,8 +12,13 @@ class HoaDonHomePageViewModel extends ChangeNotifier {
 
   // Mặc định kỳ hóa đơn là tháng hiện tại
   late String selectedThangNam;
-  int selectedFilter = -1; // -1: Tất cả, 0: Chưa thu, 2: Đã thu
+  // -2: Chưa thanh toán xong (gộp cả "chưa thu" + "1 phần", chỉ dùng khi
+  // bấm banner cảnh báo nợ kỳ khác), -1: Tất cả, 0: Chưa thu, 1: 1 phần, 2: Đã thu
+  int selectedFilter = -1;
   String searchQuery = "";
+
+  // Số hóa đơn chưa thanh toán xong (trangThai != 2) thuộc các kỳ KHÁC kỳ
+  int soHoaDonNoKyKhac = 0;
 
   Future<void> initData() async {
     final now = DateTime.now();
@@ -24,6 +29,25 @@ class HoaDonHomePageViewModel extends ChangeNotifier {
   Future<void> loadData() async {
     await _hoaDonProvider.fetchTatCaHoaDonQuanLy(thangNam: selectedThangNam);
     notifyListeners();
+    _capNhatCanhBaoNoKyKhac();
+  }
+
+  Future<void> _capNhatCanhBaoNoKyKhac() async {
+    final tatCa = await _hoaDonProvider.getAllHoaDonKhongLuu();
+    soHoaDonNoKyKhac = tatCa.where((inv) {
+      final trangThai = inv['trangThai'] ?? 0;
+      final thangNam = inv['thangNam']?.toString() ?? '';
+      return trangThai != 2 &&
+          thangNam.isNotEmpty &&
+          thangNam != selectedThangNam;
+    }).length;
+    notifyListeners();
+  }
+
+  void xemNoTuKyKhac() {
+    selectedThangNam = "Tất cả";
+    selectedFilter = -2;
+    loadData();
   }
 
   void setThangNam(String thang) {
@@ -42,10 +66,16 @@ class HoaDonHomePageViewModel extends ChangeNotifier {
   }
 
   Future<void> chonKyHoaDon(BuildContext context) async {
-    // Tách tháng và năm hiện tại từ string đang chọn (VD: "07/2026")
+    // Tách tháng và năm hiện tại từ string đang chọn (VD: "07/2026"). Khi
+    // đang ở chế độ "Tất cả" (bấm từ banner cảnh báo nợ) thì không parse
+    // được -> mặc định về tháng/năm hiện tại.
     List<String> parts = selectedThangNam.split('/');
-    int initialMonth = int.tryParse(parts[0]) ?? DateTime.now().month;
-    int initialYear = int.tryParse(parts[1]) ?? DateTime.now().year;
+    int initialMonth = parts.length > 1
+        ? int.tryParse(parts[0]) ?? DateTime.now().month
+        : DateTime.now().month;
+    int initialYear = parts.length > 1
+        ? int.tryParse(parts[1]) ?? DateTime.now().year
+        : DateTime.now().year;
 
     DateTime? picked = await showDatePicker(
       context: context,
@@ -61,6 +91,7 @@ class HoaDonHomePageViewModel extends ChangeNotifier {
           "${picked.month.toString().padLeft(2, '0')}/${picked.year}";
       if (formattedThangNam != selectedThangNam) {
         selectedThangNam = formattedThangNam;
+        if (selectedFilter == -2) selectedFilter = -1;
         loadData();
       }
     }
@@ -70,8 +101,11 @@ class HoaDonHomePageViewModel extends ChangeNotifier {
     final list = _hoaDonProvider.danhSachTatCaHoaDon;
     return list.where((inv) {
       final int trangThai = inv['trangThai'] ?? 0;
-      final bool matchStatus =
-          selectedFilter == -1 || trangThai == selectedFilter;
+      final bool matchStatus = selectedFilter == -1
+          ? true
+          : selectedFilter == -2
+          ? trangThai != 2
+          : trangThai == selectedFilter;
 
       final String tenPhong = (inv['tenPhong'] ?? '').toString().toLowerCase();
       final String hoTen = (inv['hoTenKhach'] ?? '').toString().toLowerCase();

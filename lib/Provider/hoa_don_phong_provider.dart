@@ -134,6 +134,15 @@ class HoadonPhongProvider extends ChangeNotifier {
     }
   }
 
+  // Lấy toàn bộ hóa đơn (mọi kỳ) chỉ để đếm/kiểm tra công nợ ở màn quản lý hóa đơn
+  Future<List<Map<String, dynamic>>> getAllHoaDonKhongLuu() async {
+    try {
+      return await _repository.getTatCaHoaDonQuanLy(thangNam: "Tất cả");
+    } catch (_) {
+      return [];
+    }
+  }
+
   Future<bool> deleteHoaDon({required String maHoaDon}) async {
     _isLoading = true;
     _errorMessage = null;

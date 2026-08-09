@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:AppTroNhaToi/Provider/hoa_don_phong_provider.dart';
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
+import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import '../../../../modelviews/MainPage/HomePage/HoaDonHomePage/HoaDonHomePageViewModel.dart';
 import '../../PhongPage/ChiTietPhongPage/TrangChucNang/TaoHoaDonPhongPage/CapNhatThanhToanDialog.dart';
 import '../../PhongPage/ChiTietPhongPage/TrangChucNang/TaoHoaDonPhongPage/CapNhatThanhToanDienNuocDialog.dart';
@@ -47,7 +48,7 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
           ),
           titleSpacing: 0,
           title: const Text(
-            "Quản lý tất cả hóa đơn",
+            "Quản lý hóa đơn",
             style: TextStyle(
               color: Colors.black,
               fontSize: 18,
@@ -59,21 +60,20 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
           builder: (context, vm, child) {
             final filteredList = vm.filteredList;
 
-            // Tính toán tổng tiền thực tế từ dữ liệu trả về của backend
-            double tongDaThu = filteredList
-                .where((e) => (e['trangThai'] ?? 0) == 2)
-                .fold(
-                  0,
-                  (sum, item) =>
-                      sum + ((item['soTien'] as num?)?.toDouble() ?? 0),
-                );
-            double tongChuaThu = filteredList
-                .where((e) => (e['trangThai'] ?? 0) != 2)
-                .fold(
-                  0,
-                  (sum, item) =>
-                      sum + ((item['soTien'] as num?)?.toDouble() ?? 0),
-                );
+            double tongDaThu = filteredList.fold(0, (sum, item) {
+              final soTien = (item['soTien'] as num?)?.toDouble() ?? 0;
+              final daThu = (item['tongDaThu'] as num?)?.toDouble() ??
+                  ((item['trangThai'] ?? 0) == 2 ? soTien : 0);
+              return sum + daThu;
+            });
+            double tongChuaThu = filteredList.fold(0, (sum, item) {
+              final soTien = (item['soTien'] as num?)?.toDouble() ?? 0;
+              final daThu = (item['tongDaThu'] as num?)?.toDouble() ??
+                  ((item['trangThai'] ?? 0) == 2 ? soTien : 0);
+              final conNo = (item['conNo'] as num?)?.toDouble() ??
+                  (soTien - daThu > 0 ? soTien - daThu : 0);
+              return sum + conNo;
+            });
 
             return Column(
               children: [
@@ -175,7 +175,7 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
                                 onChanged: (val) => vm.setSearchQuery(val),
                                 decoration: const InputDecoration(
                                   hintText:
-                                      "Tìm theo số phòng, tên người thuê, mã HĐ...",
+                                  "Tìm theo số phòng, tên người thuê, mã HĐ...",
                                   hintStyle: TextStyle(
                                     fontSize: 12,
                                     color: Colors.grey,
@@ -189,6 +189,10 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
                           ],
                         ),
                       ),
+                      if (vm.soHoaDonNoKyKhac > 0) ...[
+                        const SizedBox(height: 10),
+                        _bannerNoKyKhac(vm),
+                      ],
                       const SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -224,7 +228,9 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
                                   ),
                                   const SizedBox(width: 6),
                                   Text(
-                                    "Tháng ${vm.selectedThangNam}",
+                                    vm.selectedThangNam == "Tất cả"
+                                        ? "Tất cả các kỳ"
+                                        : "Tháng ${vm.selectedThangNam}",
                                     style: const TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
@@ -254,9 +260,11 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
                     children: [
                       _buildFilterTab(vm, "Tất cả", -1),
                       const SizedBox(width: 8),
-                      _buildFilterTab(vm, "Chưa thanh toán", 0),
+                      _buildFilterTab(vm, "Chưa thu", 0),
                       const SizedBox(width: 8),
-                      _buildFilterTab(vm, "Đã thanh toán", 2),
+                      _buildFilterTab(vm, "1 phần", 1),
+                      const SizedBox(width: 8),
+                      _buildFilterTab(vm, "Đã thu", 2),
                     ],
                   ),
                 ),
@@ -266,28 +274,28 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
                 Expanded(
                   child: vm.isLoading
                       ? const Center(
-                          child: CircularProgressIndicator(
-                            color: Color(0xff2D7A3A),
-                          ),
-                        )
+                    child: CircularProgressIndicator(
+                      color: Color(0xff2D7A3A),
+                    ),
+                  )
                       : filteredList.isEmpty
                       ? const Center(
-                          child: Text(
-                            "Không tìm thấy hóa đơn nào phù hợp",
-                            style: TextStyle(color: Colors.grey, fontSize: 13),
-                          ),
-                        )
+                    child: Text(
+                      "Không tìm thấy hóa đơn nào phù hợp",
+                      style: TextStyle(color: Colors.grey, fontSize: 13),
+                    ),
+                  )
                       : ListView.builder(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 4,
-                          ),
-                          itemCount: filteredList.length,
-                          itemBuilder: (context, index) {
-                            final item = filteredList[index];
-                            return _buildItemHoaDon(context, item, vm);
-                          },
-                        ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 4,
+                    ),
+                    itemCount: filteredList.length,
+                    itemBuilder: (context, index) {
+                      final item = filteredList[index];
+                      return _buildItemHoaDon(context, item, vm);
+                    },
+                  ),
                 ),
               ],
             );
@@ -297,11 +305,52 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
     );
   }
 
+  Widget _bannerNoKyKhac(HoaDonHomePageViewModel vm) {
+    return InkWell(
+      onTap: vm.xemNoTuKyKhac,
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: const Color(0xffFFF4E5),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xffFFD79A)),
+        ),
+        child: Row(
+          children: [
+            const Icon(
+              Icons.warning_amber_rounded,
+              size: 18,
+              color: Color(0xffFF8A00),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                "Có ${vm.soHoaDonNoKyKhac} hóa đơn từ các kỳ khác chưa thanh toán xong. Bấm để xem ngay.",
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xff8A5300),
+                ),
+              ),
+            ),
+            const Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 14,
+              color: Color(0xffFF8A00),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildFilterTab(
-    HoaDonHomePageViewModel vm,
-    String title,
-    int filterValue,
-  ) {
+      HoaDonHomePageViewModel vm,
+      String title,
+      int filterValue,
+      ) {
     bool isSelected = vm.selectedFilter == filterValue;
     return Expanded(
       child: GestureDetector(
@@ -329,310 +378,364 @@ class _HoaDonHomePageState extends State<HoaDonHomePage> {
   }
 
   Widget _buildItemHoaDon(
-    BuildContext context,
-    Map<String, dynamic> item,
-    HoaDonHomePageViewModel vm,
-  ) {
+      BuildContext context,
+      Map<String, dynamic> item,
+      HoaDonHomePageViewModel vm,
+      ) {
     final bool isDienNuoc =
         item['chiTietJson'] != null &&
-        item['chiTietJson'].toString().contains('"type":"DIEN_NUOC"');
+            item['chiTietJson'].toString().contains('"type":"DIEN_NUOC"');
 
     final int trangThai = item['trangThai'] ?? 0;
-    bool isPaid = trangThai == 2;
+    final bool isPaid = trangThai == 2;
+    final bool isPartial = trangThai == 1;
 
     final String tenPhong = item['tenPhong'] ?? '';
     final String hoTenKhach = item['hoTenKhach'] ?? 'Khách thuê';
     final String thangNam = item['thangNam'] ?? '';
     final String maHoaDon = item['maHoaDon'] ?? '';
     final double soTien = (item['soTien'] as num?)?.toDouble() ?? 0;
-    final double tongDaThu = (item['tongDaThu'] as num?)?.toDouble() ?? 0;
+    final double tongDaThu = (item['tongDaThu'] as num?)?.toDouble() ??
+        (isPaid ? soTien : 0);
+    double conNo = (item['conNo'] as num?)?.toDouble() ??
+        (soTien - tongDaThu > 0 ? soTien - tongDaThu : 0);
+    if (isPaid) conNo = 0;
 
-    String? ghiChuThu;
-    if (item['phieuThuHangThang'] != null && item['phieuThuHangThang'] is Map) {
-      ghiChuThu = item['phieuThuHangThang']['ghiChu']?.toString();
+    final rawPhieuThu = item['phieuThuHangThang'];
+    Map<String, dynamic>? phieuThuGanNhat;
+    if (rawPhieuThu is List && rawPhieuThu.isNotEmpty) {
+      final danhSach = rawPhieuThu.cast<Map<String, dynamic>>().toList()
+        ..sort((a, b) {
+          final ngayA = DateTime.tryParse(a['ngayThu']?.toString() ?? '');
+          final ngayB = DateTime.tryParse(b['ngayThu']?.toString() ?? '');
+          if (ngayA != null && ngayB != null && ngayA != ngayB) {
+            return ngayB.compareTo(ngayA);
+          }
+          final idA = (a['maPhieuThu'] as num?)?.toInt() ?? 0;
+          final idB = (b['maPhieuThu'] as num?)?.toInt() ?? 0;
+          return idB.compareTo(idA);
+        });
+      phieuThuGanNhat = danhSach.first;
+    } else if (rawPhieuThu is Map) {
+      phieuThuGanNhat = rawPhieuThu as Map<String, dynamic>;
     }
-    ghiChuThu ??= item['ghiChuThu']?.toString();
+
+    String? ghiChuThu =
+        phieuThuGanNhat?['ghiChu']?.toString() ?? item['ghiChuThu']?.toString();
     String? ngayThuStr;
-    if (item['phieuThuHangThang'] != null && item['phieuThuHangThang'] is Map) {
-      final rawNgayThu = item['phieuThuHangThang']['ngayThu']?.toString();
-      if (rawNgayThu != null && rawNgayThu.isNotEmpty) {
-        try {
-          final parsedDate = DateTime.parse(rawNgayThu);
-          ngayThuStr =
-              "${parsedDate.day.toString().padLeft(2, '0')}/${parsedDate.month.toString().padLeft(2, '0')}/${parsedDate.year}";
-        } catch (_) {
-          ngayThuStr = rawNgayThu.substring(0, 10);
-        }
-      }
+    final rawNgayThu = phieuThuGanNhat?['ngayThu']?.toString();
+    if (rawNgayThu != null && rawNgayThu.isNotEmpty) {
+      final parsedDate = DateTime.tryParse(rawNgayThu);
+      ngayThuStr = parsedDate != null
+          ? formatDate(parsedDate)
+          : (rawNgayThu.length >= 10 ? rawNgayThu.substring(0, 10) : rawNgayThu);
     }
+
+    // Màu sắc chủ đạo theo trạng thái
+    Color statusColor = isPaid
+        ? const Color(0xff2D7A3A)
+        : isPartial
+        ? const Color(0xffFF8A00)
+        : Colors.red;
+
+    Color statusBgColor = isPaid
+        ? const Color(0xffEAF3EB)
+        : isPartial
+        ? const Color(0xffFFF1E1)
+        : const Color(0xffFFEAEA);
+
+    String statusText = isPaid ? "Đã thu" : isPartial ? "Thu 1 phần" : "Chưa thu";
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(14),
+      margin: const EdgeInsets.only(bottom: 14),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xffECECEC)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+        border: Border.all(color: const Color(0xffEEEEEE)),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: isDienNuoc
-                          ? const Color(0xffEAF3EB)
-                          : const Color(0xffFFF1E1),
-                      borderRadius: BorderRadius.circular(10),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: isDienNuoc
+                            ? const Color(0xffEAF3EB)
+                            : const Color(0xffFFF1E1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(
+                        isDienNuoc ? Icons.bolt : Icons.receipt_long_rounded,
+                        color: isDienNuoc
+                            ? const Color(0xff2D7A3A)
+                            : const Color(0xffFF8A00),
+                        size: 20,
+                      ),
                     ),
-                    child: Icon(
-                      isDienNuoc ? Icons.bolt : Icons.receipt_long,
-                      color: isDienNuoc
-                          ? const Color(0xff2D7A3A)
-                          : const Color(0xffFF8A00),
-                      size: 18,
+                    const SizedBox(width: 12),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          isDienNuoc ? "Điện nước - Phòng $tenPhong" : hoTenKhach,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          isDienNuoc
+                              ? "Kỳ: $thangNam"
+                              : "Phòng $tenPhong · Kỳ: $thangNam",
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: statusBgColor,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    statusText,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      color: statusColor,
                     ),
                   ),
-                  const SizedBox(width: 10),
-                  Column(
+                ),
+              ],
+            ),
+
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 12),
+              child: Divider(height: 1, color: Color(0xffF1F3F2)),
+            ),
+
+            // Số tiền & Nút thu tiền
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Text(
+                        isPaid ? "Đã thanh toán" : "Còn phải thu",
+                        style: const TextStyle(fontSize: 11, color: Colors.grey),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        formatMoney(isPaid ? soTien : conNo),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: statusColor,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
                       Row(
                         children: [
                           Text(
-                            isDienNuoc
-                                ? "Điện nước - Phòng $tenPhong"
-                                : hoTenKhach,
+                            "Tổng: ${formatMoney(soTien)}",
                             style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
+                              fontSize: 11,
+                              color: Colors.black54,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
-                          const SizedBox(width: 6),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(0xffF1F3F2),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Text(
-                              isDienNuoc ? "Điện nước" : "Tiền phòng",
+                          if (isPartial) ...[
+                            const Text(" · ", style: TextStyle(color: Colors.grey)),
+                            Text(
+                              "Đã thu: ${formatMoney(tongDaThu)}",
                               style: const TextStyle(
-                                fontSize: 10,
-                                color: Colors.grey,
+                                fontSize: 11,
+                                color: Color(0xff2D7A3A),
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                if (!isPaid)
+                  ElevatedButton(
+                    onPressed: () async {
+                      bool? reloaded = false;
+
+                      if (isDienNuoc) {
+                        int lanGhi = 1;
+                        try {
+                          if (maHoaDon.contains('L')) {
+                            final parts = maHoaDon.split('L');
+                            if (parts.length > 1) {
+                              lanGhi = int.tryParse(parts.last) ?? 1;
+                            }
+                          } else if (item['chiTietJson'] != null) {
+                            final parsed = item['chiTietJson'] is String
+                                ? jsonDecode(item['chiTietJson'])
+                                : item['chiTietJson'];
+                            lanGhi =
+                                int.tryParse(parsed['lanGhi'].toString()) ?? 1;
+                          }
+                        } catch (_) {}
+
+                        int pId = 1;
+                        try {
+                          final parts = maHoaDon.split('-');
+                          if (parts.length >= 3) {
+                            pId = int.tryParse(parts[2]) ?? 1;
+                          }
+                        } catch (_) {}
+
+                        reloaded = await showDialog<bool>(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (ctx) => CapNhatThanhToanDienNuocDialog(
+                            phongId: pId,
+                            thangNam: thangNam,
+                            lanGhi: lanGhi,
+                            tenPhong: "Phòng $tenPhong",
+                            tongTienDN: soTien,
+                            trangThaiHienTai: trangThai,
+                          ),
+                        );
+                      } else {
+                        reloaded = await showDialog<bool>(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (ctx) => CapNhatThanhToanDialog(
+                            maHoaDon: maHoaDon,
+                            hoTenKhach: hoTenKhach,
+                            tenPhong: "Phòng $tenPhong",
+                            tongTienHD: soTien,
+                            tongDaThu: tongDaThu,
+                            trangThaiHienTai: trangThai,
+                          ),
+                        );
+                      }
+
+                      if (reloaded == true && context.mounted) {
+                        vm.loadData();
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xff2D7A3A),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 10,
+                      ),
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: const Text(
+                      "Thu tiền",
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+
+            // Ngày thu gần nhất & Ghi chú (Nếu có)
+            if ((ngayThuStr != null && ngayThuStr.isNotEmpty) ||
+                (ghiChuThu != null && ghiChuThu.isNotEmpty)) ...[
+              const SizedBox(height: 12),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: const Color(0xffF9F9F9),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: const Color(0xffF1F1F1)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (ngayThuStr != null && ngayThuStr.isNotEmpty)
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.calendar_today_rounded,
+                            size: 12,
+                            color: Colors.grey,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            "Thu gần nhất: $ngayThuStr",
+                            style: const TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                    if (ngayThuStr != null &&
+                        ngayThuStr.isNotEmpty &&
+                        ghiChuThu != null &&
+                        ghiChuThu.isNotEmpty)
+                      const SizedBox(height: 4),
+                    if (ghiChuThu != null && ghiChuThu.isNotEmpty)
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Icon(
+                            Icons.note_alt_outlined,
+                            size: 12,
+                            color: Colors.grey,
+                          ),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              "Ghi chú: $ghiChuThu",
+                              style: const TextStyle(
+                                fontSize: 11,
+                                color: Colors.black54,
+                                fontStyle: FontStyle.italic,
                               ),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        isDienNuoc
-                            ? "Kỳ: $thangNam · Chi phí chung phòng"
-                            : "Phòng $tenPhong · Kỳ: $thangNam · Mã: $maHoaDon",
-                        style: const TextStyle(
-                          fontSize: 11,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: isPaid
-                      ? const Color(0xffEAF3EB)
-                      : const Color(0xffFFEAEA),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  isPaid ? "Đã thu" : "Chưa thu",
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                    color: isPaid ? const Color(0xff2D7A3A) : Colors.red,
-                  ),
+                  ],
                 ),
               ),
             ],
-          ),
-          const Divider(height: 16, color: Color(0xffF1F1F1)),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                isDienNuoc
-                    ? "Khoản thu chung của phòng"
-                    : "Hợp đồng thuê phòng",
-                style: const TextStyle(fontSize: 12, color: Colors.black54),
-              ),
-              Row(
-                children: [
-                  Text(
-                    formatMoney(soTien),
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: isPaid ? const Color(0xff2D7A3A) : Colors.red,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  if (!isPaid)
-                    SizedBox(
-                      height: 28,
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          bool? reloaded = false;
-
-                          if (isDienNuoc) {
-                            int lanGhi = 1;
-                            try {
-                              if (maHoaDon.contains('L')) {
-                                final parts = maHoaDon.split('L');
-                                if (parts.length > 1) {
-                                  lanGhi = int.tryParse(parts.last) ?? 1;
-                                }
-                              } else if (item['chiTietJson'] != null) {
-                                final parsed = item['chiTietJson'] is String
-                                    ? jsonDecode(item['chiTietJson'])
-                                    : item['chiTietJson'];
-                                lanGhi =
-                                    int.tryParse(parsed['lanGhi'].toString()) ??
-                                    1;
-                              }
-                            } catch (_) {}
-
-                            int pId = 1;
-                            try {
-                              final parts = maHoaDon.split('-');
-                              if (parts.length >= 3) {
-                                pId = int.tryParse(parts[2]) ?? 1;
-                              }
-                            } catch (_) {}
-
-                            reloaded = await showDialog<bool>(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (ctx) => CapNhatThanhToanDienNuocDialog(
-                                phongId: pId,
-                                thangNam: thangNam,
-                                lanGhi: lanGhi,
-                                tenPhong: "Phòng $tenPhong",
-                                tongTienDN: soTien,
-                                trangThaiHienTai: trangThai,
-                              ),
-                            );
-                          } else {
-                            reloaded = await showDialog<bool>(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (ctx) => CapNhatThanhToanDialog(
-                                maHoaDon: maHoaDon,
-                                hoTenKhach: hoTenKhach,
-                                tenPhong: "Phòng $tenPhong",
-                                tongTienHD: soTien,
-                                tongDaThu: tongDaThu,
-                                trangThaiHienTai: trangThai,
-                              ),
-                            );
-                          }
-
-                          if (reloaded == true && context.mounted) {
-                            vm.loadData();
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xff2D7A3A),
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: const Text(
-                          "Thu tiền",
-                          style: TextStyle(fontSize: 11, color: Colors.white),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ],
-          ),
-
-          if ((ngayThuStr != null && ngayThuStr.isNotEmpty) ||
-              (ghiChuThu != null && ghiChuThu.isNotEmpty)) ...[
-            const SizedBox(height: 8),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              decoration: BoxDecoration(
-                color: const Color(0xffF9F9F9),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: const Color(0xffEEEEEE)),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (ngayThuStr != null && ngayThuStr.isNotEmpty) ...[
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.calendar_today,
-                          size: 13,
-                          color: Color(0xff616161),
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          "Ngày thu: $ngayThuStr",
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey.shade700,
-                          ),
-                        ),
-                      ],
-                    ),
-                    if (ghiChuThu != null && ghiChuThu.isNotEmpty)
-                      const SizedBox(height: 4),
-                  ],
-                  if (ghiChuThu != null && ghiChuThu.isNotEmpty) ...[
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.note_alt_outlined,
-                          size: 13,
-                          color: Colors.grey,
-                        ),
-                        const SizedBox(width: 6),
-                        Expanded(
-                          child: Text(
-                            "Ghi chú: $ghiChuThu",
-                            style: const TextStyle(
-                              fontSize: 11,
-                              color: Colors.black87,
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ],
-              ),
-            ),
           ],
-        ],
+        ),
       ),
     );
   }
