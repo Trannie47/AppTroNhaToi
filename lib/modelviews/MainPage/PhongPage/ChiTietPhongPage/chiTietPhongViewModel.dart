@@ -55,7 +55,10 @@ class ChiTietPhongViewModel extends ChangeNotifier {
       if (kDebugMode) {
         print("Lỗi getDsNguoiLuanChuyen ChiTietPhongViewModel: $e");
       }
+    }finally {
+      notifyListeners();
     }
+
   }
 
   Future<void> removePhong(int idPhong) async {

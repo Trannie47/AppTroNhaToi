@@ -125,19 +125,22 @@ class PhieuLuanChuyenFormViewModel extends ChangeNotifier {
     }
   }
 
-  void chonHopDong(String? hopDongId) {
+  Future<void> chonHopDong(String? hopDongId) async {
     hopDongDaChonId = hopDongId;
-    phongMoiDaChonId =
-        null; // đổi hợp đồng -> danh sách phòng khả dụng đổi theo
-    _phongMoiHienTaiCoDinh =
-        null; // đổi hợp đồng -> phòng cố định cũ không còn liên quan
+    phongMoiDaChonId = null;
+    _phongMoiHienTaiCoDinh = null;
     errHopDong = null;
     errPhongMoi = null;
+
     notifyListeners();
 
-    if (hopDongId != null) {
-      phongProvider.getCoTheLuanChuyenByHopDong(hopDongId);
+    if (hopDongId == null) {
+      return;
     }
+
+    await phongProvider.getCoTheLuanChuyenByHopDong(hopDongId);
+
+    notifyListeners();
   }
 
   void chonPhongMoi(int? phongId) {
@@ -271,9 +274,7 @@ class PhieuLuanChuyenFormViewModel extends ChangeNotifier {
       }
     }
 
-    if (tuNgay != null &&
-        denNgay != null &&
-        denNgay.isBefore(tuNgay)) {
+    if (tuNgay != null && denNgay != null && denNgay.isBefore(tuNgay)) {
       errDenNgay = "Ngày kết thúc phải sau hoặc bằng ngày bắt đầu";
       hopLe = false;
     }
@@ -324,11 +325,7 @@ class PhieuLuanChuyenFormViewModel extends ChangeNotifier {
             ? null
             : chuyenNgay(txtDenNgay.text),
         lyDoLuanChuyen: strOf(txtLyDo.text.trim()),
-        chiPhi: numOf(
-          txtChiPhi.text
-              .replaceAll('.', '')
-              .replaceAll(',', ''),
-        ),
+        chiPhi: numOf(txtChiPhi.text.replaceAll('.', '').replaceAll(',', '')),
         ghiChu: strOf(txtGhiChu.text.trim()),
       );
 
@@ -353,8 +350,12 @@ class PhieuLuanChuyenFormViewModel extends ChangeNotifier {
       }
 
       return result;
+      // } catch (e) {
+      //   errLuu = "Đã xảy ra lỗi khi lưu phiếu luân chuyển";
+      //   notifyListeners();
+      //   return null;
     } catch (e) {
-      errLuu = "Đã xảy ra lỗi khi lưu phiếu luân chuyển";
+      errLuu = e.toString().replaceFirst('Exception: ', '');
       notifyListeners();
       return null;
     } finally {

@@ -173,9 +173,9 @@ class _PhieuLuanChuyenFormState extends State<PhieuLuanChuyenForm> {
                     .firstOrNull,
                 itemAsString: (item) =>
                     "${item.hopDongId} - ${item.tenDaiDien ?? ''}",
-                onChanged: (value) {
-                  vm.chonHopDong(value?.hopDongId);
-                },
+                onChanged: (value) async {
+  await vm.chonHopDong(value?.hopDongId);
+},
               ),
             ),
 

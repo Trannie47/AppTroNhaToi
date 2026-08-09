@@ -1,4 +1,5 @@
 import 'package:AppTroNhaToi/Provider/phieu_luan_chuyen_provider.dart';
+import 'package:AppTroNhaToi/Provider/phong_provider.dart';
 import 'package:AppTroNhaToi/models/item_phong.dart';
 import 'package:AppTroNhaToi/models/phieu_luan_chuyen.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/ChiTietPhongPage/LuanChuyenPage/luanChuyenPageViewModel.dart';
@@ -59,6 +60,7 @@ class _PhieuLuanChuyenPageState extends State<PhieuLuanChuyenPage> {
         ),
       );
       await vm.refesh();
+      await context.read<PhongProvider>().getListPhong();
     }
   }
 

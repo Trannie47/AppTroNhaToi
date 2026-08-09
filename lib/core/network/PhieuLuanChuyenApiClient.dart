@@ -12,9 +12,16 @@ class PhieuLuanChuyenApiClient {
       final response = await _dio.get("phieu-luan-chuyen/findall");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final List<dynamic> data = response.data;
+        final body = response.data;
 
-        return data.map((json) => PhieuLuanChuyen.fromMap(json)).toList();
+        final List<dynamic> data =
+        body is Map<String, dynamic>
+            ? (body['data'] ?? [])
+            : body;
+
+        return data
+            .map((json) => PhieuLuanChuyen.fromMap(json))
+            .toList();
       }
 
       return [];
@@ -94,9 +101,28 @@ class PhieuLuanChuyenApiClient {
     }
   }
 
+  // Future<PhieuLuanChuyen?> themChiTietLuanChuyen(
+  //   PhieuLuanChuyen chiTiet,
+  // ) async {
+  //   try {
+  //     final response = await _dio.post(
+  //       "phieu-luan-chuyen",
+  //       data: chiTiet.toMap(),
+  //     );
+  //
+  //     if (response.statusCode == 200 || response.statusCode == 201) {
+  //       return PhieuLuanChuyen.fromMap(response.data);
+  //     }
+  //
+  //     return null;
+  //   } on DioException catch (e) {
+  //     throw Exception(_mapErrorToMessage(e));
+  //   }
+  // }
+
   Future<PhieuLuanChuyen?> themChiTietLuanChuyen(
-    PhieuLuanChuyen chiTiet,
-  ) async {
+      PhieuLuanChuyen chiTiet,
+      ) async {
     try {
       final response = await _dio.post(
         "phieu-luan-chuyen",
@@ -104,7 +130,15 @@ class PhieuLuanChuyenApiClient {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return PhieuLuanChuyen.fromMap(response.data);
+        final body = response.data;
+
+        if (body is Map<String, dynamic> && body['data'] != null) {
+          return PhieuLuanChuyen.fromMap(
+            Map<String, dynamic>.from(body['data']),
+          );
+        }
+
+        return null;
       }
 
       return null;
@@ -136,6 +170,24 @@ class PhieuLuanChuyenApiClient {
     }
   }
 
+  // String _mapErrorToMessage(DioException e) {
+  //   if (e.type == DioExceptionType.connectionError ||
+  //       e.type == DioExceptionType.connectionTimeout ||
+  //       e.type == DioExceptionType.receiveTimeout ||
+  //       e.type == DioExceptionType.sendTimeout) {
+  //     return "Không có kết nối mạng, vui lòng thử lại";
+  //   }
+  //
+  //   switch (e.response?.statusCode) {
+  //     case 404:
+  //       return "Không tìm thấy dữ liệu";
+  //     case 500:
+  //       return "Hệ thống đang gặp sự cố, vui lòng thử lại sau";
+  //     default:
+  //       return "Đã có lỗi xảy ra, vui lòng thử lại";
+  //   }
+  // }
+
   String _mapErrorToMessage(DioException e) {
     if (e.type == DioExceptionType.connectionError ||
         e.type == DioExceptionType.connectionTimeout ||
@@ -144,11 +196,34 @@ class PhieuLuanChuyenApiClient {
       return "Không có kết nối mạng, vui lòng thử lại";
     }
 
-    switch (e.response?.statusCode) {
+    final statusCode = e.response?.statusCode;
+    final responseData = e.response?.data;
+
+    if (responseData is Map<String, dynamic>) {
+      final message = responseData['message'];
+
+      if (message is String && message.isNotEmpty) {
+        return message;
+      }
+
+      if (message is List && message.isNotEmpty) {
+        return message.join(', ');
+      }
+    }
+
+    switch (statusCode) {
+      case 400:
+        return "Dữ liệu không hợp lệ";
+
       case 404:
         return "Không tìm thấy dữ liệu";
+
+      case 409:
+        return "Không thể thực hiện thao tác này";
+
       case 500:
         return "Hệ thống đang gặp sự cố, vui lòng thử lại sau";
+
       default:
         return "Đã có lỗi xảy ra, vui lòng thử lại";
     }
