@@ -460,7 +460,7 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
                         "Phòng đang thuê (${list.length})",
                       _ => "Phòng đang thuê (...)",
                     },
-                    action: "Xem thêm",
+                    action: "",
                     child: switch (vm.chiTietNguoiThueState) {
                       ChiTietNguoiThueLoading() => const Center(
                         child: Padding(
@@ -753,7 +753,7 @@ class _ChiTietNguoiThuePageState extends State<ChiTietNguoiThuePage> {
               ],
             ),
           ),
-          const Icon(Icons.chevron_right_rounded, color: Color(0xffC7C7CC)),
+
         ],
       ),
     );

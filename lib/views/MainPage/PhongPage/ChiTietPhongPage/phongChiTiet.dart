@@ -1,15 +1,20 @@
+import 'package:AppTroNhaToi/Provider/hop_dong_provider.dart';
 import 'package:AppTroNhaToi/Provider/phieu_luan_chuyen_provider.dart';
 import 'package:AppTroNhaToi/core/utils/string_formatter.dart';
+import 'package:AppTroNhaToi/models/DTO/HopDongDTO.dart';
+import 'package:AppTroNhaToi/models/DTO/NguoiOGhepDTO.dart';
 import 'package:AppTroNhaToi/models/item_phong.dart';
+import 'package:AppTroNhaToi/models/nguoi_thue.dart';
+import 'package:AppTroNhaToi/views/MainPage/NguoiThuePage/ChiTietNguoiThuePage/chiTietNguoiThuePage.dart';
 import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/ChiTietPhieuLuanChuyenPage/ChiTietPhieuLuanChuyenPage.dart';
 import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/PhieuLuanChuyenPage/phieuLuanChuyenPage.dart';
 import 'package:AppTroNhaToi/widgets/ItemNguoiLuanChuyen.dart';
+import 'package:AppTroNhaToi/widgets/chiTietNguoiOGhepDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../Provider/phong_provider.dart';
 import '../../../../Provider/nguoi_thue_provider.dart';
 import '../../../../modelviews/MainPage/PhongPage/ChiTietPhongPage/chiTietPhongViewModel.dart';
-import '../../../../states/NguoiThueState.dart';
 import '../../../../states/phong_save_state.dart';
 import '../../../../widgets/app_confirm_dialog.dart';
 import '../../../../widgets/app_error.dart';
@@ -35,7 +40,7 @@ class _PhongChiTiet extends State<PhongChiTiet> {
     super.initState();
     vm = ChiTietPhongViewModel(
       context.read<PhongProvider>(),
-      context.read<NguoiThueProvider>(),
+      context.read<HopDongProvider>(),
       context.read<PhieuLuanChuyenProvider>(),
       widget.room.phongId,
     );
@@ -45,7 +50,7 @@ class _PhongChiTiet extends State<PhongChiTiet> {
       }
     });
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      vm.getListNguoiThueFromIdPhong(widget.room.phongId);
+      vm.getHopDongHienTaiCuaPhong(widget.room.phongId);
       vm.getDsNguoiLuanChuyen(widget.room.phongId);
     });
   }
@@ -339,70 +344,75 @@ class _PhongChiTiet extends State<PhongChiTiet> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    vm.nguoiThueState is NguoiThueSuccess
-                        ? "Người thuê hiện tại (${(vm.nguoiThueState as NguoiThueSuccess).listNguoithue.length})"
-                        : "Người thuê hiện tại (...)",
+                    vm.isLoadingHopDongHienTai
+                        ? "Người thuê hiện tại (...)"
+                        : "Người thuê hiện tại (${vm.hopDongHienTai == null ? 0 : 1 + vm.hopDongHienTai!.nguoiOGhepConHieuLuc.length})",
                     style: const TextStyle(
                       color: Color(0xFF2D7A3A),
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
                     ),
                   ),
-                  ...switch (vm.nguoiThueState) {
-                    NguoiThueLoading() => [
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 24),
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              Color(0xFF2D7A3A),
-                            ),
+                  if (vm.isLoadingHopDongHienTai)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 24),
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Color(0xFF2D7A3A),
                           ),
                         ),
                       ),
-                    ],
-
-                    NguoiThueError(errorMessage: final msg) => [
-                      AppErrorWidget(
-                        message: msg,
-                        onRetry: () {
-                          vm.getListNguoiThueFromIdPhong(room.phongId);
-                        },
-                      ),
-                    ],
-                    NguoiThueSuccess(listNguoithue: final dsKhach) => [
-                      const SizedBox(height: 16),
-                      if (dsKhach.isEmpty)
-                        const Center(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(vertical: 12),
-                            child: Text(
-                              "Phòng hiện đang trống, chưa có người thuê.",
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 13,
-                                fontStyle: FontStyle.italic,
-                              ),
+                    )
+                  else if (vm.errorHopDongHienTai != null)
+                    AppErrorWidget(
+                      message: vm.errorHopDongHienTai!,
+                      onRetry: () {
+                        vm.getHopDongHienTaiCuaPhong(room.phongId);
+                      },
+                    )
+                  else ...[
+                    const SizedBox(height: 16),
+                    if (vm.hopDongHienTai == null)
+                      const Center(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          child: Text(
+                            "Phòng hiện đang trống, chưa có người thuê.",
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 13,
+                              fontStyle: FontStyle.italic,
                             ),
                           ),
-                        )
-                      else
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: dsKhach.length,
-                          itemBuilder: (context, index) {
-                            final khach = dsKhach[index];
-                            final isLastItem = index == dsKhach.length - 1;
+                        ),
+                      )
+                    else
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount:
+                            1 + vm.hopDongHienTai!.nguoiOGhepConHieuLuc.length,
+                        itemBuilder: (context, index) {
+                          final hd = vm.hopDongHienTai!;
+                          final isLastItem =
+                              index == hd.nguoiOGhepConHieuLuc.length;
 
-                            return _itemNguoiThue(
-                              khach: khach,
+                          if (index == 0) {
+                            return _itemNguoiDaiDien(
+                              hopDong: hd,
                               isLastItem: isLastItem,
                             );
-                          },
-                        ),
-                    ],
-                  },
+                          }
+
+                          final nguoiOGhep = hd.nguoiOGhepConHieuLuc[index - 1];
+                          return _itemNguoiOGhep(
+                            nguoiOGhep: nguoiOGhep,
+                            isLastItem: isLastItem,
+                          );
+                        },
+                      ),
+                  ],
                 ],
               ),
             ),
@@ -704,54 +714,160 @@ class _PhongChiTiet extends State<PhongChiTiet> {
     return buffer.toString();
   }
 
-  Widget _itemNguoiThue({required dynamic khach, required bool isLastItem}) {
-    String initials = vietTat(khach.hoTen);
+  Widget _itemNguoiDaiDien({
+    required HopDongDTO hopDong,
+    required bool isLastItem,
+  }) {
+    return _itemNguoiORow(
+      ten: hopDong.nguoiDaiDien.hoTen,
+      sdt: hopDong.nguoiDaiDien.soDienThoai,
+      isDaiDien: true,
+      isLastItem: isLastItem,
+      onTap: () => _xemChiTietDaiDien(hopDong.idntDaiDien),
+    );
+  }
+
+  Widget _itemNguoiOGhep({
+    required NguoiOGhepDTO nguoiOGhep,
+    required bool isLastItem,
+  }) {
+    return _itemNguoiORow(
+      ten: nguoiOGhep.hoTen ?? 'Chưa rõ họ tên',
+      sdt: nguoiOGhep.sdt,
+      isDaiDien: false,
+      isLastItem: isLastItem,
+      onTap: () => showDialog(
+        context: context,
+        builder: (_) => ChiTietNguoiOGhepDialog(nguoiOGhep: nguoiOGhep),
+      ),
+    );
+  }
+
+  void _xemChiTietDaiDien(int idntDaiDien) {
+    final ds = context.read<NguoiThueProvider>().list;
+    NguoiThue? nguoiThue;
+    for (final nt in ds) {
+      if (nt.idnt == idntDaiDien) {
+        nguoiThue = nt;
+        break;
+      }
+    }
+    if (nguoiThue == null) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Không tìm thấy thông tin chi tiết người đại diện!"),
+        ),
+      );
+      return;
+    }
+    final nguoiThueDaTim = nguoiThue;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ChiTietNguoiThuePage(nguoiThue: nguoiThueDaTim),
+      ),
+    );
+  }
+
+  Widget _itemNguoiORow({
+    required String ten,
+    String? sdt,
+    required bool isDaiDien,
+    required bool isLastItem,
+    required VoidCallback onTap,
+  }) {
+    String initials = vietTat(ten);
 
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          child: Row(
-            children: [
-              CircleAvatar(
-                radius: 24,
-                backgroundColor: const Color(0xFFE2ECFF),
-                child: Text(
-                  initials,
-                  style: const TextStyle(
-                    color: const Color(0xFF2563EB),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
+        InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(10),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 24,
+                  backgroundColor: isDaiDien
+                      ? const Color(0xFFE2ECFF)
+                      : Colors.grey.shade200,
+                  child: Text(
+                    initials,
+                    style: TextStyle(
+                      color: isDaiDien
+                          ? const Color(0xFF2563EB)
+                          : Colors.grey.shade700,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 14),
+                const SizedBox(width: 14),
 
-              // Thông tin chữ
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      khach.hoTen ?? 'Chưa rõ họ tên',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                        color: Colors.black87,
+                // Thông tin chữ
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              ten,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                                color: Colors.black87,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isDaiDien
+                                  ? Colors.green.shade100
+                                  : Colors.grey.shade200,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              isDaiDien ? "Đại diện" : "Người ở ghép",
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: isDaiDien
+                                    ? const Color(0xff2E7D32)
+                                    : Colors.grey.shade700,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      "${khach.sdt ?? 'Không có SĐT'}",
-                      style: TextStyle(
-                        color: Colors.grey.shade600,
-                        fontSize: 13,
+                      const SizedBox(height: 4),
+                      Text(
+                        sdt ?? 'Không có SĐT',
+                        style: TextStyle(
+                          color: Colors.grey.shade600,
+                          fontSize: 13,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+                Icon(
+                  Icons.chevron_right_rounded,
+                  size: 20,
+                  color: Colors.grey.shade400,
+                ),
+              ],
+            ),
           ),
         ),
         if (!isLastItem)

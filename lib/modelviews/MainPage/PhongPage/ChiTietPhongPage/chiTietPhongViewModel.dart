@@ -1,26 +1,28 @@
+import 'package:AppTroNhaToi/Provider/hop_dong_provider.dart';
 import 'package:AppTroNhaToi/Provider/phieu_luan_chuyen_provider.dart';
+import 'package:AppTroNhaToi/models/DTO/HopDongDTO.dart';
 import 'package:AppTroNhaToi/states/phong_save_state.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 
 import '../../../../Provider/phong_provider.dart';
-import '../../../../Provider/nguoi_thue_provider.dart';
-import '../../../../states/NguoiThueState.dart';
 
 class ChiTietPhongViewModel extends ChangeNotifier {
   final PhongProvider _phongService;
-  final NguoiThueProvider _nguoiThueService;
+  final HopDongProvider _hopDongProvider;
   final PhieuLuanChuyenProvider phieuLuanChuyenProvider;
   final int _phongId;
-  NguoiThueState _nguoiThueState = NguoiThueLoading();
-  NguoiThueState get nguoiThueState => _nguoiThueState;
+
+  bool isLoadingHopDongHienTai = true;
+  String? errorHopDongHienTai;
+  // null nếu phòng hiện đang trống, không có hợp đồng nào hiệu lực
+  HopDongDTO? hopDongHienTai;
 
   PhongSaveState _phongSaveState = PhongSaveInitial();
   PhongSaveState get phongSaveState => _phongSaveState;
 
   ChiTietPhongViewModel(
     this._phongService,
-    this._nguoiThueService,
+    this._hopDongProvider,
     this.phieuLuanChuyenProvider,
     this._phongId,
   ) {
@@ -28,22 +30,25 @@ class ChiTietPhongViewModel extends ChangeNotifier {
     phieuLuanChuyenProvider.addListener(_onProviderUpdate);
   }
 
-  Future<void> getListNguoiThueFromIdPhong(int idPhong) async {
-    _nguoiThueState = NguoiThueLoading();
+  Future<void> getHopDongHienTaiCuaPhong(int idPhong) async {
+    isLoadingHopDongHienTai = true;
+    errorHopDongHienTai = null;
     notifyListeners();
     try {
-      final result = await _nguoiThueService.getListNguoiThueFromIdPhong(
-        idPhong,
+      final tatCaHopDong = await _hopDongProvider.getListHD();
+      final hopDongHieuLuc = tatCaHopDong.where(
+        (hd) => hd.phongID == idPhong && hd.trangThai == 1,
       );
-      _nguoiThueState = NguoiThueSuccess(result);
+      hopDongHienTai = hopDongHieuLuc.isNotEmpty
+          ? hopDongHieuLuc.first
+          : null;
     } catch (e) {
       if (kDebugMode) {
-        print("Lỗi NguoiThueViewModel $e");
+        print("Lỗi getHopDongHienTaiCuaPhong ChiTietPhongViewModel: $e");
       }
-      _nguoiThueState = NguoiThueError(
-        e.toString().replaceFirst('Exception: ', ''),
-      );
+      errorHopDongHienTai = e.toString().replaceFirst('Exception: ', '');
     } finally {
+      isLoadingHopDongHienTai = false;
       notifyListeners();
     }
   }
