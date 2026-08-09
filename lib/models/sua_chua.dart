@@ -7,6 +7,7 @@ class SuaChua {
   final int? lapRapID;
   final String? nguyenNhan;
   final DateTime? ngaySuaChua;
+  final int? trangThaiThongBao;
 
   SuaChua({
     this.id,
@@ -14,6 +15,7 @@ class SuaChua {
     this.lapRapID,
     this.nguyenNhan,
     this.ngaySuaChua,
+    this.trangThaiThongBao,
   });
 
   factory SuaChua.fromMap(Map<String, dynamic> map) {
@@ -25,6 +27,7 @@ class SuaChua {
       ngaySuaChua: map['ngaySuaChua'] != null
           ? DateTime.tryParse(map['ngaySuaChua'] as String)
           : null,
+      trangThaiThongBao: map['trangThaiThongBao'] as int?,
     );
   }
 
@@ -35,8 +38,12 @@ class SuaChua {
       'lapRapId': lapRapID,
       'nguyenNhan': nguyenNhan,
       'ngaySuaChua': ngaySuaChua?.toIso8601String().split('T').first,
+      if (trangThaiThongBao != null) 'trangThaiThongBao': trangThaiThongBao,
     };
   }
+
+  /// 1 = Gấp (còn ≤ 7 ngày phải xử lý), 0 = Bình thường
+  bool get laKhanCap => trangThaiThongBao == 1;
 
   SuaChua copyWith({
     int? id,
@@ -44,6 +51,7 @@ class SuaChua {
     int? lapRapID,
     String? nguyenNhan,
     DateTime? ngaySuaChua,
+    int? trangThaiThongBao,
   }) {
     return SuaChua(
       id: id ?? this.id,
@@ -51,6 +59,7 @@ class SuaChua {
       lapRapID: lapRapID ?? this.lapRapID,
       nguyenNhan: nguyenNhan ?? this.nguyenNhan,
       ngaySuaChua: ngaySuaChua ?? this.ngaySuaChua,
+      trangThaiThongBao: trangThaiThongBao ?? this.trangThaiThongBao,
     );
   }
 
@@ -58,6 +67,7 @@ class SuaChua {
   String toString() {
     return 'SuaChua(id: $id, thietBiID: $thietBiID, lapRapID: $lapRapID, '
         'nguyenNhan: $nguyenNhan, ngaySuaChua: $ngaySuaChua, '
+        'trangThaiThongBao: $trangThaiThongBao'
         ')';
   }
 }

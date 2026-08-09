@@ -85,6 +85,7 @@ class _ChiTietLichSuSuaChuaPageState extends State<ChiTietLichSuSuaChuaPage> {
           thietBiID: result.thietBiId,
           nguyenNhan: result.nguyenNhan,
           ngaySuaChua: result.ngaySuaChua,
+          trangThaiThongBao: result.trangThaiThongBao,
         );
         vm.hoaDonSuaChua = result.hoaDonSuaChua;
       });
@@ -115,6 +116,44 @@ class _ChiTietLichSuSuaChuaPageState extends State<ChiTietLichSuSuaChuaPage> {
           Text(
             value,
             style: TextStyle(fontWeight: FontWeight.w600, color: color),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Hiện dòng "Mức độ xử lý" kèm badge màu theo trangThaiThongBao
+  /// (0 = Bình thường, 1 = Gấp).
+  Widget _rowMucDoXuLy({bool isLast = false}) {
+    final laGap = vm.suaChua.trangThaiThongBao == 1;
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: isLast ? 0 : 18),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              "Mức độ xử lý",
+              style: TextStyle(color: Colors.grey.shade500),
+            ),
+          ),
+
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: laGap
+                  ? Colors.red.withOpacity(0.1)
+                  : const Color(0xff2D7A3A).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              laGap ? "Gấp (≤ 7 ngày)" : "Bình thường",
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: laGap ? Colors.red : const Color(0xff2D7A3A),
+              ),
+            ),
           ),
         ],
       ),
@@ -276,11 +315,9 @@ class _ChiTietLichSuSuaChuaPageState extends State<ChiTietLichSuSuaChuaPage> {
                 children: [
                   _infoRow("Nguyên nhân", vm.suaChua.nguyenNhan ?? ""),
 
-                  _infoRow(
-                    "Ngày sửa",
-                    formatDate(vm.suaChua.ngaySuaChua),
-                    isLast: true,
-                  ),
+                  _infoRow("Ngày sửa", formatDate(vm.suaChua.ngaySuaChua)),
+
+                  _rowMucDoXuLy(isLast: true),
                 ],
               ),
             ),

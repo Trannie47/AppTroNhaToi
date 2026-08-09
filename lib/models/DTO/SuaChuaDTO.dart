@@ -6,6 +6,7 @@ class SuaChuaDTO {
   final int? thietBiId;
   final String? nguyenNhan;
   final DateTime ngaySuaChua;
+  final int? trangThaiThongBao;
   final HoaDonSuaChua? hoaDonSuaChua;
 
   SuaChuaDTO({
@@ -14,6 +15,7 @@ class SuaChuaDTO {
     this.thietBiId,
     this.nguyenNhan,
     required this.ngaySuaChua,
+    this.trangThaiThongBao,
     this.hoaDonSuaChua,
   });
 
@@ -26,6 +28,7 @@ class SuaChuaDTO {
       ngaySuaChua:
           DateTime.tryParse(map['ngaySuaChua']?.toString() ?? '') ??
           DateTime.now(),
+      trangThaiThongBao: map['trangThaiThongBao'] as int?,
       hoaDonSuaChua: map['hoaDonSuaChua'] != null
           ? HoaDonSuaChua.fromMap(map['hoaDonSuaChua'])
           : map['hoadonsuachua'] != null
@@ -41,6 +44,7 @@ class SuaChuaDTO {
       if (thietBiId != null) 'thietBiId': thietBiId,
       'nguyenNhan': nguyenNhan,
       'ngaySuaChua': ngaySuaChua.toUtc().toIso8601String(),
+      if (trangThaiThongBao != null) 'trangThaiThongBao': trangThaiThongBao,
 
       if (hoaDonSuaChua != null)
         'hoaDonSuaChua': {
@@ -64,6 +68,7 @@ class SuaChuaDTO {
         'thietBiId: $thietBiId, '
         'nguyenNhan: $nguyenNhan, '
         'ngaySuaChua: $ngaySuaChua, '
+        'trangThaiThongBao: $trangThaiThongBao, '
         'hoaDonSuaChua: $hoaDonSuaChua'
         ')';
   }

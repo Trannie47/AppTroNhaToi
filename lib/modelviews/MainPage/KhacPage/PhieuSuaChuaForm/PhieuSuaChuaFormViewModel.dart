@@ -32,6 +32,9 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
   int? loaiSua = 0;
   int? trangThai = 0;
 
+  /// Mức độ xử lý sự cố: 0 = Bình thường, 1 = Gấp (còn ≤ 7 ngày phải xử lý)
+  int trangThaiThongBao = 0;
+
   /// ID phòng đang được chọn ở dropdown "Phòng lắp đặt"
   int? phongDaChonId;
 
@@ -45,6 +48,14 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
   /// thay vì tạo object giả với dữ liệu mặc định.
   ItemPhong? phongCoDinh;
   bool isLoadingPhongCoDinh = false;
+
+  /// Thông tin phòng của bản ghi lắp ráp đã lưu (khi sửa mà KHÔNG có lapRapCoDinh),
+  /// lấy trực tiếp từ lắp đặt để không phụ thuộc dsPhong có chứa phòng đó hay không
+  /// (dsPhong có thể không chứa phòng này nếu đã hết chỗ trống).
+  ItemPhong? phongDaLuu;
+
+  /// Đang tải lại phòng/lắp đặt cũ khi mở form SỬA mà không có LapRap cố định
+  bool isLoadingDuLieuCu = false;
 
   late ThietBi thietBi;
   final PhongProvider _phongProvider;
@@ -152,6 +163,12 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
 
   void setTrangThai(int value) {
     trangThai = value;
+
+    notifyListeners();
+  }
+
+  void setTrangThaiThongBao(int value) {
+    trangThaiThongBao = value;
 
     notifyListeners();
   }
@@ -282,6 +299,7 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
       ngaySua = suaChua!.ngaySuaChua!;
       txtNgaySuaChua.text = formatDate(ngaySua);
       txtNguyenNhan.text = suaChua!.nguyenNhan ?? "";
+      trangThaiThongBao = suaChua!.trangThaiThongBao ?? 0;
     }
 
     if (hoaDonSuaChua != null) {
@@ -298,9 +316,9 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
     Future.microtask(() async {
       await _phongProvider.getListByThietBi(thietBiData.thietBiID!);
 
-      // Nếu phòng bị khóa cứng (đến từ 1 LapRap cụ thể) -> lấy đúng thông tin
-      // phòng thật từ provider, thay vì tạo object giả với dữ liệu mặc định.
       if (lapRapCoDinh != null && phongDaChonId != null) {
+        // Nếu phòng bị khóa cứng (đến từ 1 LapRap cụ thể) -> lấy đúng thông tin
+        // phòng thật từ provider, thay vì tạo object giả với dữ liệu mặc định.
         isLoadingPhongCoDinh = true;
         notifyListeners();
 
@@ -310,6 +328,40 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
           phongCoDinh = null;
         } finally {
           isLoadingPhongCoDinh = false;
+          notifyListeners();
+        }
+      } else if (suaChua != null && suaChua!.lapRapID != null) {
+        // Đang SỬA 1 sự cố có sẵn nhưng KHÔNG mở kèm LapRap cố định
+        // -> cần tự tìm phòng của bản ghi lắp ráp đã gắn, để 2 dropdown
+        // (Phòng lắp đặt / Lắp đặt) hiện đúng dữ liệu cũ, không bị trống.
+        isLoadingDuLieuCu = true;
+        notifyListeners();
+
+        try {
+          final lapRapDaGan = await _lapRapProvider.getById(suaChua!.lapRapID!);
+
+          if (lapRapDaGan?.phongID != null) {
+            phongDaChonId = lapRapDaGan!.phongID;
+            notifyListeners();
+
+            // Lấy thông tin phòng trực tiếp từ lắp đặt, không phụ thuộc
+            // dsPhong (dsPhong có thể không chứa phòng này nếu đã hết chỗ trống).
+            try {
+              phongDaLuu = await _phongProvider.getInforPhong(phongDaChonId!);
+            } catch (_) {
+              phongDaLuu = null;
+            }
+
+            await _lapRapProvider.findByPhongVaThietBi(
+              phongId: phongDaChonId!,
+              thietBiId: thietBi.thietBiID!,
+            );
+          }
+        } catch (_) {
+          // Không tìm được dữ liệu cũ -> giữ nguyên dropdown trống,
+          // không làm crash màn hình.
+        } finally {
+          isLoadingDuLieuCu = false;
           notifyListeners();
         }
       }
@@ -325,6 +377,7 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
       thietBiId: thietBi.thietBiID,
       nguyenNhan: txtNguyenNhan.text.trim(),
       ngaySuaChua: DateFormate.chuyenNgay(txtNgaySuaChua.text)!,
+      trangThaiThongBao: trangThaiThongBao,
       hoaDonSuaChua: taoHoaDon
           ? HoaDonSuaChua(
               maHoaDonSC: daTaoHoaDon ? maHoaDon : null,

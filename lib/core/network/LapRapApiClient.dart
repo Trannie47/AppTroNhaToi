@@ -36,6 +36,29 @@ class LapRapApiClient {
     }
   }
 
+  /// Lấy 1 bản ghi lắp ráp theo id.
+  Future<LapRap> getById(int id) async {
+    try {
+      final response = await _dio.get("lap-rap/$id");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return LapRap.fromMap(response.data as Map<String, dynamic>);
+      }
+      throw Exception("Không thể lấy thông tin lắp ráp");
+    } on DioException catch (e) {
+      if (kDebugMode) {
+        print("Lỗi Dio getById LapRap: $e");
+      }
+      throw Exception(_mapErrorToMessage(e));
+    } catch (e) {
+      if (kDebugMode) {
+        print("Lỗi không xác định getById LapRap: $e");
+      }
+      if (e is Exception) rethrow;
+      throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
+    }
+  }
+
   Future<LapRap?> taoLapRap({
     required int phongId,
     required int thietBiId,

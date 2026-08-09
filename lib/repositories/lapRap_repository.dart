@@ -10,6 +10,11 @@ class LapRapRepository {
     return await _lapRapApiClient.getThietBiByPhongId(phongId);
   }
 
+  /// Lấy 1 bản ghi lắp ráp theo id.
+  Future<LapRap> getById(int id) async {
+    return await _lapRapApiClient.getById(id);
+  }
+
   Future<LapRap?> taoLapRap({
     required int phongId,
     required int thietBiId,

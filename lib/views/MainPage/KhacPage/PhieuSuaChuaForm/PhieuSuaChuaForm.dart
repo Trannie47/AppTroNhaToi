@@ -71,8 +71,19 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
   }
 
   Widget _dropDownPhong() {
+    final phongTuDsPhong = vm.dsPhong
+        .where((e) => e.phongId == vm.phongDaChonId)
+        .cast<ItemPhong?>()
+        .firstOrNull;
+
+    final phongDangChon = vm.lapDatBiKhoa
+        ? vm.phongCoDinh
+        : (phongTuDsPhong ?? vm.phongDaLuu);
+
     final danhSachHienThi = vm.lapDatBiKhoa && vm.phongCoDinh != null
         ? [vm.phongCoDinh!]
+        : (phongTuDsPhong == null && vm.phongDaLuu != null)
+        ? [vm.phongDaLuu!, ...vm.dsPhong]
         : vm.dsPhong;
 
     return Column(
@@ -82,13 +93,8 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
           label: "Phòng lắp đặt",
           hintText: "-- Chọn phòng --",
           items: danhSachHienThi,
-          selectedItem: vm.lapDatBiKhoa
-              ? vm.phongCoDinh
-              : vm.dsPhong
-                    .where((e) => e.phongId == vm.phongDaChonId)
-                    .cast<ItemPhong?>()
-                    .firstOrNull,
-          enabled: !vm.lapDatBiKhoa,
+          selectedItem: phongDangChon,
+          enabled: !vm.lapDatBiKhoa && !vm.isLoadingDuLieuCu,
           itemAsString: (item) => item.tenPhong,
           onChanged: (value) {
             vm.chonPhong(value?.phongId);
@@ -100,6 +106,15 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
             padding: EdgeInsets.only(top: 6, left: 12),
             child: Text(
               "Đang tải thông tin phòng...",
+              style: TextStyle(color: Colors.grey, fontSize: 12),
+            ),
+          ),
+
+        if (!vm.lapDatBiKhoa && vm.isLoadingDuLieuCu)
+          const Padding(
+            padding: EdgeInsets.only(top: 6, left: 12),
+            child: Text(
+              "Đang tải lại phòng và lắp đặt đã lưu...",
               style: TextStyle(color: Colors.grey, fontSize: 12),
             ),
           ),
@@ -117,6 +132,8 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
   }
 
   Widget _dropDownLapDat() {
+    final coTheChon = vm.coThePhongLapDat && !vm.isLoadingDuLieuCu;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 8,
@@ -127,9 +144,9 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
         ),
 
         IgnorePointer(
-          ignoring: !vm.coThePhongLapDat,
+          ignoring: !coTheChon,
           child: Opacity(
-            opacity: vm.coThePhongLapDat ? 1 : 0.5,
+            opacity: coTheChon ? 1 : 0.5,
             child: CustomDropdownSearch<LapRapPageModel>(
               hintText: "-- Chọn lắp đặt --",
               items: vm.dsLapRapTheoPhong,
@@ -156,6 +173,77 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
             ),
           ),
       ],
+    );
+  }
+
+  /// Chọn mức độ khẩn cấp của sự cố: Bình thường / Gấp
+  Widget _chonTrangThaiThongBao() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 8,
+      children: [
+        const Text(
+          "Mức độ xử lý",
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+        ),
+
+        Row(
+          children: [
+            Expanded(
+              child: _chipMucDo(
+                label: "Bình thường",
+                isSelected: vm.trangThaiThongBao == 0,
+                color: const Color(0xff2D7A3A),
+                onTap: () => vm.setTrangThaiThongBao(0),
+              ),
+            ),
+
+            const SizedBox(width: 10),
+
+            Expanded(
+              child: _chipMucDo(
+                label: "Gấp (≤ 7 ngày)",
+                isSelected: vm.trangThaiThongBao == 1,
+                color: Colors.red,
+                onTap: () => vm.setTrangThaiThongBao(1),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _chipMucDo({
+    required String label,
+    required bool isSelected,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        decoration: BoxDecoration(
+          color: isSelected ? color.withOpacity(0.1) : const Color(0xffF7F7F7),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected ? color : const Color(0xffE5E5E5),
+            width: isSelected ? 1.4 : 1,
+          ),
+        ),
+        child: Center(
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: isSelected ? color : Colors.grey.shade600,
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -266,6 +354,10 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
                     errorText: vm.errNguyenNhan,
                     maxLines: 2,
                   ),
+
+                  const SizedBox(height: 18),
+
+                  _chonTrangThaiThongBao(),
                 ],
               ),
             ),
@@ -454,7 +546,6 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
     );
   }
 
-  @override
   Widget _input({
     required String title,
     String? hint,

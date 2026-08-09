@@ -21,6 +21,19 @@ class LapRapProvider extends ChangeNotifier {
     }
   }
 
+  /// Lấy 1 bản ghi lắp ráp theo id (dùng để khôi phục phòng/lắp đặt
+  /// khi sửa 1 sự cố sửa chữa mà không mở kèm LapRap cố định).
+  Future<LapRap?> getById(int id) async {
+    try {
+      return await _lapRapRepo.getById(id);
+    } catch (e) {
+      if (kDebugMode) {
+        print("Lỗi getById LapRapProvider: $e");
+      }
+      rethrow;
+    }
+  }
+
   Future<LapRap?> taoLapRap({
     required int phongId,
     required int thietBiId,
@@ -73,19 +86,6 @@ class LapRapProvider extends ChangeNotifier {
         phongId: phongId,
         thietBiId: thietBiId,
       );
-
-      // if (kDebugMode) {
-      //   print("=== Tổng số bản ghi: ${result.length} ===");
-      //   for (var i = 0; i < result.length; i++) {
-      //     final item = result[i];
-      //     print("--- Item $i ---");
-      //     print("id: ${item.lapRap.id}");
-      //     print("ghiChu: ${item.lapRap.ghiChu}");
-      //     print("ngayLap: ${item.lapRap.ngayLap}");
-      //     print("thietBi: ${item.lapRap.thietBi}");
-      //     print("tenThietBi: ${item.lapRap.thietBi?.tenThietBi}");
-      //   }
-      // }
 
       _listLapRapPage = result;
       notifyListeners();
