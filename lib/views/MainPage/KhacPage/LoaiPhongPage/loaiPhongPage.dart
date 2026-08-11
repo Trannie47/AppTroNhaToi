@@ -161,76 +161,101 @@ class _LoaiPhongPageState extends State<LoaiPhongPage> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade200, width: 1),
+        borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 8,
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
+        border: Border.all(color: Colors.grey.shade100, width: 1),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Phần thông tin
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        item.tenLoaiPhong,
-                        style: const TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
+                Expanded(
+                  child: Text(
+                    item.tenLoaiPhong,
+                    style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
                     ),
-                    Text(
-                      currencyFormat.format(item.giaTien),
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF2D7A3A),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-                const SizedBox(height: 6),
                 Text(
-                  "${item.dienTich.toInt()} m²  •  Tối đa ${item.soNguoiToiDa} người  •  ${item.isMayLanh ? 'Có máy lạnh' : 'Không máy lạnh'}",
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.grey.shade600,
-                    fontWeight: FontWeight.w400,
+                  currencyFormat.format(item.giaTien),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF2D7A3A),
                   ),
                 ),
               ],
             ),
-          ),
+            const SizedBox(height: 10),
 
-          Divider(height: 1, thickness: 1, color: Colors.grey.shade100),
-
-          // Thanh xám chức năng ở đáy card
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            decoration: const BoxDecoration(
-              color: Color(0xFFF9FAFB),
-              borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),
+            Row(
+              children: [
+                _infoBadge(Icons.square_foot_rounded, "${item.dienTich.toInt()} m²"),
+                const SizedBox(width: 14),
+                _infoBadge(Icons.people_outline_rounded, "Tối đa ${item.soNguoiToiDa} người"),
+                const SizedBox(width: 14),
+                _infoBadge(
+                  item.isMayLanh ? Icons.ac_unit_rounded : Icons.air_rounded,
+                  item.isMayLanh ? 'Có máy lạnh' : 'Không máy lạnh',
+                ),
+              ],
             ),
-            child: Row(
+            const SizedBox(height: 16),
+
+            Row(
+              children: [
+                _miniThongKe(
+                  label: "Tổng",
+                  value: item.tongSoPhong,
+                  bg: const Color(0xffF3F4F6),
+                  color: Colors.black87,
+                ),
+                const SizedBox(width: 8),
+                _miniThongKe(
+                  label: "Trống",
+                  value: item.soPhongTrong,
+                  bg: const Color(0xffEAF3EB),
+                  color: const Color(0xFF2D7A3A),
+                ),
+                const SizedBox(width: 8),
+                _miniThongKe(
+                  label: "Đang thuê",
+                  value: item.soPhongDangThue,
+                  bg: const Color(0xffFFF7ED),
+                  color: const Color(0xffFF8A00),
+                ),
+                const SizedBox(width: 8),
+                _miniThongKe(
+                  label: "Đang sửa",
+                  value: item.soPhongDangSua,
+                  bg: const Color(0xffFEF2F2),
+                  color: Colors.red.shade600,
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            const Divider(height: 1, color: Color(0xFFF1F3F2)),
+            const SizedBox(height: 12),
+
+            Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                GestureDetector(
-                  onTap: () async {
+                TextButton.icon(
+                  onPressed: () async {
                     await Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -239,32 +264,38 @@ class _LoaiPhongPageState extends State<LoaiPhongPage> {
                     );
                     await vm.loadDataInitial();
                   },
-                  child: const Text(
-                    "Sửa",
+                  icon: const Icon(Icons.edit_outlined, size: 15, color: Color(0xFF2D7A3A)),
+                  label: const Text(
+                    "Chỉnh sửa",
                     style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
                       color: Color(0xFF2D7A3A),
                     ),
                   ),
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    backgroundColor: const Color(0xFFEAF3EB),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                 ),
-                const SizedBox(width: 24),
-                GestureDetector(
-                  onTap: () {
+                const SizedBox(width: 8),
+                TextButton.icon(
+                  onPressed: () {
                     showDialog(
                       context: context,
                       builder: (BuildContext dialogContext) {
                         return AppConfirmDialog(
                           title: "Ẩn loại phòng",
                           content:
-                              "Bạn có chắc chắn muốn ẩn loại phòng '${item.tenLoaiPhong}' này không?",
+                          "Bạn có chắc chắn muốn ẩn loại phòng '${item.tenLoaiPhong}' này không?",
                           textConfirm: "Ẩn đi",
                           textCancel: "Hủy",
                           isDangerous: true,
                           onConfirm: () async {
-                            Navigator.pop(
-                              dialogContext,
-                            ); // Đóng dialog xác nhận trước
+                            Navigator.pop(dialogContext);
 
                             final errorMsg = await vm.deleteLoaiPhongProcess(
                               item.maLoaiPhong,
@@ -273,7 +304,6 @@ class _LoaiPhongPageState extends State<LoaiPhongPage> {
                             if (!mounted) return;
 
                             if (errorMsg != null) {
-                              // Neus Có phòng liên kết -> Backend trả lỗi -> Hiện SnackBar đỏ báo lỗi ngay lập tức
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(errorMsg),
@@ -281,7 +311,6 @@ class _LoaiPhongPageState extends State<LoaiPhongPage> {
                                 ),
                               );
                             } else {
-                              //Neeus Thành công -> Hiện SnackBar xanh thông báo
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text("Ẩn loại phòng thành công!"),
@@ -294,19 +323,83 @@ class _LoaiPhongPageState extends State<LoaiPhongPage> {
                       },
                     );
                   },
-                  child: const Text(
+                  icon: const Icon(Icons.visibility_off_outlined, size: 15, color: Colors.red),
+                  label: const Text(
                     "Ẩn",
                     style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
                       color: Colors.red,
+                    ),
+                  ),
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    backgroundColor: const Color(0xffFEF2F2),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                 ),
               ],
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _infoBadge(IconData icon, String text) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 14, color: Colors.grey.shade500),
+        const SizedBox(width: 4),
+        Text(
+          text,
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey.shade600,
+            fontWeight: FontWeight.w500,
           ),
-        ],
+        ),
+      ],
+    );
+  }
+
+  Widget _miniThongKe({
+    required String label,
+    required int value,
+    required Color bg,
+    required Color color,
+  }) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        decoration: BoxDecoration(
+          color: bg,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          children: [
+            Text(
+              "$value",
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w800,
+                color: color,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                color: color.withOpacity(0.8),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
