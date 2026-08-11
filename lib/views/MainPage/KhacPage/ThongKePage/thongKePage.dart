@@ -291,16 +291,16 @@ class _ThongKePageState extends State<ThongKePage> {
                 ),
               ),
 
-              const PopupMenuItem(
-                value: "activity",
-                child: Row(
-                  children: [
-                    Icon(Icons.history, color: Colors.deepPurple),
-                    SizedBox(width: 12),
-                    Text("Hoạt động"),
-                  ],
-                ),
-              ),
+              // const PopupMenuItem(
+              //   value: "activity",
+              //   child: Row(
+              //     children: [
+              //       Icon(Icons.history, color: Colors.deepPurple),
+              //       SizedBox(width: 12),
+              //       Text("Hoạt động"),
+              //     ],
+              //   ),
+              // ),
             ],
           ),
         ],
@@ -309,80 +309,6 @@ class _ThongKePageState extends State<ThongKePage> {
   }
 
   // FILTER
-
-  // Widget _buildFilter(ThongKePageViewModel vm) {
-  //   return Container(
-  //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-  //     color: Colors.white,
-  //     child: Row(
-  //       children: [
-  //         Expanded(
-  //           child: SizedBox(
-  //             height: 46,
-  //             child: ListView.separated(
-  //               scrollDirection: Axis.horizontal,
-  //               itemCount: vm.filters.length,
-  //               separatorBuilder: (_, __) => const SizedBox(width: 10),
-  //               itemBuilder: (_, index) {
-  //                 final selected = vm.selectedFilter == index;
-  //                 return InkWell(
-  //                   borderRadius: BorderRadius.circular(14),
-  //                   onTap: () {
-  //                     vm.changeFilter(index);
-  //                   },
-  //                   child: AnimatedContainer(
-  //                     duration: const Duration(milliseconds: 250),
-  //                     padding: const EdgeInsets.symmetric(horizontal: 22),
-  //                     decoration: BoxDecoration(
-  //                       color: selected
-  //                           ? const Color(0xFF7C4DFF)
-  //                           : Colors.white,
-  //                       borderRadius: BorderRadius.circular(14),
-  //                       border: Border.all(
-  //                         color: selected
-  //                             ? const Color(0xFF7C4DFF)
-  //                             : const Color(0xFFE3E6ED),
-  //                       ),
-  //                     ),
-  //                     child: Center(
-  //                       child: Row(
-  //                         children: [
-  //                           if (index == 4) ...[
-  //                             const Icon(
-  //                               Icons.calendar_today,
-  //                               size: 18,
-  //                               color: Colors.black87,
-  //                             ),
-  //                             const SizedBox(width: 8),
-  //                           ],
-  //                           Text(
-  //                             vm.filters[index],
-  //                             style: TextStyle(
-  //                               fontWeight: FontWeight.w600,
-  //                               color: selected ? Colors.white : Colors.black87,
-  //                             ),
-  //                           ),
-  //                           if (index == 4) ...[
-  //                             const SizedBox(width: 6),
-  //                             const Icon(
-  //                               Icons.keyboard_arrow_down,
-  //                               size: 18,
-  //                               color: Colors.black87,
-  //                             ),
-  //                           ],
-  //                         ],
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 );
-  //               },
-  //             ),
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 
   Widget _buildFilter(ThongKePageViewModel vm) {
     return Container(
@@ -1289,66 +1215,83 @@ class _ThongKePageState extends State<ThongKePage> {
 
             const SizedBox(height: 20),
 
-            ...List.generate(items.length, (index) {
-              final item = items[index];
-
-              return Container(
-                margin: const EdgeInsets.only(bottom: 14),
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade50,
-                  borderRadius: BorderRadius.circular(16),
+            if (items.isEmpty)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 12),
+                child: Text(
+                  "Chưa có dữ liệu doanh thu phòng.",
+                  style: TextStyle(color: Colors.grey),
                 ),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 22,
-                      backgroundColor: colors[index].withValues(alpha: .12),
-                      child: Text(
-                        icons[index],
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                    ),
+              )
+            else
+              ...List.generate(items.length, (index) {
+                final item = items[index];
+                final colorIndex = index < colors.length
+                    ? index
+                    : colors.length - 1;
+                final iconIndex = index < icons.length
+                    ? index
+                    : icons.length - 1;
 
-                    const SizedBox(width: 14),
-
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            item.tenPhong ?? "",
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-
-                          const SizedBox(height: 4),
-
-                          const Text(
-                            "Doanh thu tháng",
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    Flexible(
-                      child: Text(
-                        formatMoney(item.tongDoanhThu),
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.end,
-                        style: const TextStyle(
-                          color: Colors.green,
-                          fontWeight: FontWeight.bold,
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 14),
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade50,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 22,
+                        backgroundColor: colors[colorIndex].withValues(
+                          alpha: .12,
+                        ),
+                        child: Text(
+                          icons[iconIndex],
+                          style: const TextStyle(fontSize: 18),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              );
-            }),
+
+                      const SizedBox(width: 14),
+
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              item.tenPhong ?? "",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+
+                            const SizedBox(height: 4),
+
+                            const Text(
+                              "Doanh thu tháng",
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      Flexible(
+                        child: Text(
+                          formatMoney(item.tongDoanhThu),
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.end,
+                          style: const TextStyle(
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
           ],
         ),
       ),
@@ -1356,8 +1299,14 @@ class _ThongKePageState extends State<ThongKePage> {
   }
 
   // TOP DEBT
+  // Gồm 1 danh sách tổng hợp (topCongNo, theo người thuê) và 3 danh sách
+  // chi tiết theo nguồn công nợ: hóa đơn phòng, điện nước, phương tiện.
   Widget _buildTopDebt(ThongKePageViewModel vm) {
-    final items = vm.data?.topCongNo;
+    final data = vm.data;
+
+    if (data == null) {
+      return const SizedBox();
+    }
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
@@ -1390,148 +1339,214 @@ class _ThongKePageState extends State<ThongKePage> {
 
             const SizedBox(height: 20),
 
-            ...List.generate(items!.length, (index) {
-              final item = items[index];
+            _buildDebtPersonList(data.topCongNo),
 
-              return ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: CircleAvatar(
-                  backgroundColor: Colors.red.withValues(alpha: .08),
-                  child: Text(
-                    "${index + 1}",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red,
-                    ),
-                  ),
-                ),
+            _buildDebtSubSection(
+              title: "Nợ hóa đơn phòng",
+              icon: Icons.receipt_long_rounded,
+              color: Colors.deepPurple,
+              child: _buildDebtPersonList(data.topCongNoHoaDonPhong),
+            ),
 
-                title: Text(
-                  item.hoTen ?? "Không xác định",
-                  style: const TextStyle(fontWeight: FontWeight.w600),
-                ),
-
-                subtitle: Text("Đã thu: ${formatMoney(item.tongDaThu)}"),
-
-                trailing: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    const Text(
-                      "Còn nợ",
-                      style: TextStyle(fontSize: 11, color: Colors.grey),
-                    ),
-
-                    Text(
-                      formatMoney(item.tongCongNo),
-                      style: const TextStyle(
-                        color: Colors.red,
-                        fontWeight: FontWeight.bold,
+            _buildDebtSubSection(
+              title: "Nợ điện nước",
+              icon: Icons.water_drop_rounded,
+              color: Colors.blue,
+              child: _buildDebtRoomList(
+                data.topCongNoDienNuoc
+                    .map(
+                      (e) => _DebtRoomEntry(
+                        tenPhong: e.tenPhong,
+                        tongDaThu: e.tongDaThu,
+                        tongCongNo: e.tongCongNo,
                       ),
-                    ),
-                  ],
-                ),
-              );
-            }),
+                    )
+                    .toList(),
+              ),
+            ),
+
+            _buildDebtSubSection(
+              title: "Nợ gửi xe / phương tiện",
+              icon: Icons.two_wheeler_rounded,
+              color: Colors.teal,
+              child: _buildDebtRoomList(
+                data.topCongNoPhuongTien
+                    .map(
+                      (e) => _DebtRoomEntry(
+                        tenPhong: e.tenPhong,
+                        tongDaThu: e.tongDaThu,
+                        tongCongNo: e.tongCongNo,
+                      ),
+                    )
+                    .toList(),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  // RECENT ACTIVITY
-  // TODO: chưa làm sẽ cập nhật lại sau
-  // Widget _buildRecentActivity(ThongKePageViewModel vm) {
-  //   final activities = [
-  //     {
-  //       "icon": Icons.payments_rounded,
-  //       "title": "Thu tiền phòng P101",
-  //       "time": "10 phút trước",
-  //       "color": Colors.green,
-  //     },
-  //     {
-  //       "icon": Icons.build_rounded,
-  //       "title": "Thanh toán sửa chữa máy lạnh",
-  //       "time": "40 phút trước",
-  //       "color": Colors.orange,
-  //     },
-  //     {
-  //       "icon": Icons.inventory_rounded,
-  //       "title": "Nhập thiết bị mới",
-  //       "time": "1 giờ trước",
-  //       "color": Colors.blue,
-  //     },
-  //     {
-  //       "icon": Icons.logout_rounded,
-  //       "title": "Người thuê trả phòng",
-  //       "time": "Hôm nay",
-  //       "color": Colors.red,
-  //     },
-  //     {
-  //       "icon": Icons.description_rounded,
-  //       "title": "Lập hợp đồng mới",
-  //       "time": "Hôm nay",
-  //       "color": const Color(0xFF7C4DFF),
-  //     },
-  //   ];
+  Widget _buildDebtSubSection({
+    required String title,
+    required IconData icon,
+    required Color color,
+    required Widget child,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Divider(height: 1),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Icon(icon, color: color, size: 18),
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          child,
+        ],
+      ),
+    );
+  }
 
-  //   return Container(
-  //     child: Padding(
-  //       padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
-  //       child: Container(
-  //         padding: const EdgeInsets.all(20),
-  //         decoration: BoxDecoration(
-  //           color: Colors.white,
-  //           borderRadius: BorderRadius.circular(22),
-  //           boxShadow: [
-  //             BoxShadow(
-  //               color: Colors.black.withValues(alpha: 0.04),
-  //               blurRadius: 16,
-  //               offset: const Offset(0, 6),
-  //             ),
-  //           ],
-  //         ),
-  //         child: Column(
-  //           crossAxisAlignment: CrossAxisAlignment.start,
-  //           children: [
-  //             const Row(
-  //               children: [
-  //                 Icon(Icons.history_rounded, color: Color(0xFF7C4DFF)),
-  //                 SizedBox(width: 10),
-  //                 Text(
-  //                   "Hoạt động gần đây",
-  //                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-  //                 ),
-  //               ],
-  //             ),
+  // Danh sách công nợ theo NGƯỜI THUÊ (idnt/hoTen) — dùng cho topCongNo
+  // và topCongNoHoaDonPhong vì 2 API trả cùng shape (TopCongNoModel).
+  Widget _buildDebtPersonList(List<TopCongNoModel> items) {
+    if (items.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 8),
+        child: Text("Không có công nợ.", style: TextStyle(color: Colors.grey)),
+      );
+    }
 
-  //             const SizedBox(height: 20),
+    return Column(
+      children: List.generate(items.length, (index) {
+        final item = items[index];
 
-  //             ...activities.map(
-  //               (item) => ListTile(
-  //                 contentPadding: EdgeInsets.zero,
-  //                 leading: CircleAvatar(
-  //                   backgroundColor: (item["color"] as Color).withOpacity(.12),
-  //                   child: Icon(
-  //                     item["icon"] as IconData,
-  //                     color: item["color"] as Color,
-  //                   ),
-  //                 ),
-  //                 title: Text(
-  //                   item["title"].toString(),
-  //                   maxLines: 1,
-  //                   overflow: TextOverflow.ellipsis,
-  //                 ),
+        return ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: CircleAvatar(
+            backgroundColor: Colors.red.withValues(alpha: .08),
+            child: Text(
+              "${index + 1}",
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.red,
+              ),
+            ),
+          ),
 
-  //                 subtitle: Text(item["time"].toString()),
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
+          title: Text(
+            item.hoTen ?? "Không xác định",
+            style: const TextStyle(fontWeight: FontWeight.w600),
+          ),
+
+          subtitle: Text("Đã thu: ${formatMoney(item.tongDaThu)}"),
+
+          trailing: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              const Text(
+                "Còn nợ",
+                style: TextStyle(fontSize: 11, color: Colors.grey),
+              ),
+
+              Text(
+                formatMoney(item.tongCongNo),
+                style: const TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        );
+      }),
+    );
+  }
+
+  // Danh sách công nợ theo PHÒNG (phongId/tenPhong) — dùng cho
+  // topCongNoDienNuoc và topCongNoPhuongTien.
+  Widget _buildDebtRoomList(List<_DebtRoomEntry> items) {
+    if (items.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 8),
+        child: Text("Không có công nợ.", style: TextStyle(color: Colors.grey)),
+      );
+    }
+
+    return Column(
+      children: List.generate(items.length, (index) {
+        final item = items[index];
+
+        return ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: CircleAvatar(
+            backgroundColor: Colors.orange.withValues(alpha: .08),
+            child: Text(
+              "${index + 1}",
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.orange,
+              ),
+            ),
+          ),
+
+          title: Text(
+            item.tenPhong ?? "Không xác định",
+            style: const TextStyle(fontWeight: FontWeight.w600),
+          ),
+
+          subtitle: Text("Đã thu: ${formatMoney(item.tongDaThu)}"),
+
+          trailing: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              const Text(
+                "Còn nợ",
+                style: TextStyle(fontSize: 11, color: Colors.grey),
+              ),
+
+              Text(
+                formatMoney(item.tongCongNo),
+                style: const TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        );
+      }),
+    );
+  }
+}
+
+// Model dùng chung nội bộ để render danh sách công nợ theo phòng
+// (điện nước / phương tiện) mà không cần biết chính xác class DTO gốc.
+class _DebtRoomEntry {
+  final String? tenPhong;
+  final double tongDaThu;
+  final double tongCongNo;
+
+  _DebtRoomEntry({
+    required this.tenPhong,
+    required this.tongDaThu,
+    required this.tongCongNo,
+  });
 }
 
 // REVENUE CHART PAINTER
