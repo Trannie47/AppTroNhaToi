@@ -22,6 +22,7 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
   bool taoHoaDon = false;
   bool daTaoHoaDon = false;
   final txtNgayHoaDon = TextEditingController();
+  final txtGhiChu = TextEditingController();
   String maHoaDon = "";
   int? maSuaChua;
   String? errNgayHoaDon;
@@ -29,6 +30,7 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
   String? errNguyenNhan;
   String? errChiPhi;
   String? errPhong;
+  String? errGhiChu;
   int? loaiSua = 0;
   int? trangThai = 0;
 
@@ -38,20 +40,14 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
   /// ID phòng đang được chọn ở dropdown "Phòng lắp đặt"
   int? phongDaChonId;
 
-  /// ID bản ghi lắp ráp (LapRap) đang được chọn ở dropdown "Lắp đặt"
   int? lapRapDaChonId;
 
   LapRap? lapRapCoDinh;
   bool get lapDatBiKhoa => lapRapCoDinh != null;
 
-  /// Thông tin đầy đủ của phòng cố định (khi lapDatBiKhoa), lấy thật từ provider
-  /// thay vì tạo object giả với dữ liệu mặc định.
   ItemPhong? phongCoDinh;
   bool isLoadingPhongCoDinh = false;
 
-  /// Thông tin phòng của bản ghi lắp ráp đã lưu (khi sửa mà KHÔNG có lapRapCoDinh),
-  /// lấy trực tiếp từ lắp đặt để không phụ thuộc dsPhong có chứa phòng đó hay không
-  /// (dsPhong có thể không chứa phòng này nếu đã hết chỗ trống).
   ItemPhong? phongDaLuu;
 
   /// Đang tải lại phòng/lắp đặt cũ khi mở form SỬA mà không có LapRap cố định
@@ -65,10 +61,8 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
   List<ItemPhong> get dsPhong => _phongProvider.listPhongByThietBi;
   bool get isLoadingPhong => _phongProvider.isLoading;
 
-  /// Danh sách lắp ráp thuộc phòng + thiết bị đang chọn
   List<LapRapPageModel> get dsLapRapTheoPhong => _lapRapProvider.listLapRapPage;
 
-  /// Chỉ cho chọn "Lắp đặt" khi đã chọn phòng
   bool get coThePhongLapDat => phongDaChonId != null;
 
   PhieuSuaChuaViewModel({
@@ -181,6 +175,7 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
     errChiPhi = null;
     errNgayHoaDon = null;
     errPhong = null;
+    errGhiChu = null;
 
     if (phongDaChonId == null) {
       errPhong = "Vui lòng chọn phòng";
@@ -249,6 +244,7 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
       }
     }
 
+    // Chi phí có thể bằng 0 (ví dụ sửa miễn phí/bảo hành) nhưng không được âm.
     if (txtChiPhi.text.trim().isNotEmpty) {
       int? chiPhi = int.tryParse(txtChiPhi.text.replaceAll('.', '').trim());
 
@@ -256,8 +252,8 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
         errChiPhi = "Chi phí chỉ được nhập số nguyên";
 
         hopLe = false;
-      } else if (chiPhi <= 0) {
-        errChiPhi = "Chi phí phải lớn hơn 0";
+      } else if (chiPhi < 0) {
+        errChiPhi = "Chi phí không được là số âm";
 
         hopLe = false;
       }
@@ -311,6 +307,7 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
       txtChiPhi.text = (hoaDonSuaChua!.giaTien ?? 0).toInt().toString();
       loaiSua = hoaDonSuaChua!.loaiSua ?? 0;
       trangThai = hoaDonSuaChua!.trangThai ?? 0;
+      txtGhiChu.text = hoaDonSuaChua!.ghiChu ?? "";
     }
 
     Future.microtask(() async {
@@ -387,6 +384,7 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
               ),
               loaiSua: loaiSua,
               ngayLapHoaDonSC: DateFormate.chuyenNgay(txtNgayHoaDon.text),
+              ghiChu: txtGhiChu.text.trim(),
             )
           : null,
     );
@@ -407,6 +405,7 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
     txtNguyenNhan.dispose();
     txtChiPhi.dispose();
     txtNgayHoaDon.dispose();
+    txtGhiChu.dispose();
 
     super.dispose();
   }

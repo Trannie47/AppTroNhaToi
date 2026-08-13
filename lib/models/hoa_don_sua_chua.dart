@@ -7,6 +7,7 @@ class HoaDonSuaChua {
   loaiSua; //mặc định là 0  //0: Sửa chữa nhỏ, 1: Sửa chữa lớn, 2: Bảo trì định kỳ, 3: Thay thế linh kiện, 4: Vệ sinh thiết bị, 5: Khắc phục sự cố điện, 6: Khắc phục sự cố nước, 7: Sửa chữa khẩn cấp, 8: Nâng cấp thiết bị, 9: Khác
   final DateTime? ngayLapHoaDonSC;
   final int? idSuaChua; // FK -> suachua.id
+  final String? ghiChu;
 
   HoaDonSuaChua({
     this.maHoaDonSC,
@@ -15,6 +16,7 @@ class HoaDonSuaChua {
     this.loaiSua = 0,
     this.ngayLapHoaDonSC,
     this.idSuaChua,
+    this.ghiChu,
   });
 
   factory HoaDonSuaChua.fromMap(Map<String, dynamic> map) {
@@ -29,6 +31,7 @@ class HoaDonSuaChua {
           ? DateTime.tryParse(map['ngayLapHoaDonSc'] as String)
           : null,
       idSuaChua: map['id'] as int?,
+      ghiChu: map['ghiChu'] as String?,
     );
   }
 
@@ -40,6 +43,7 @@ class HoaDonSuaChua {
       'loaiSua': loaiSua,
       'ngayLapHoaDonSc': ngayLapHoaDonSC?.toIso8601String().split('T').first,
       'idSuaChua': idSuaChua,
+      'ghiChu': ghiChu,
     };
   }
 
@@ -50,6 +54,7 @@ class HoaDonSuaChua {
     int? loaiSua,
     DateTime? ngayLapHoaDonSC,
     int? id,
+    String? ghiChu,
   }) {
     return HoaDonSuaChua(
       maHoaDonSC: maHoaDonSC ?? this.maHoaDonSC,
@@ -58,6 +63,7 @@ class HoaDonSuaChua {
       loaiSua: loaiSua ?? this.loaiSua,
       ngayLapHoaDonSC: ngayLapHoaDonSC ?? this.ngayLapHoaDonSC,
       idSuaChua: id ?? this.idSuaChua,
+      ghiChu: ghiChu ?? this.ghiChu,
     );
   }
 
@@ -109,6 +115,6 @@ class HoaDonSuaChua {
   String toString() {
     return 'HoaDonSuaChua(maHoaDonSC: $maHoaDonSC, trangThai: $trangThai, '
         'giaTien: $giaTien, loaiSua: $loaiSua, '
-        'ngayLapHoaDonSC: $ngayLapHoaDonSC, id: $idSuaChua)';
+        'ngayLapHoaDonSC: $ngayLapHoaDonSC, id: $idSuaChua, ghiChu: $ghiChu)';
   }
 }

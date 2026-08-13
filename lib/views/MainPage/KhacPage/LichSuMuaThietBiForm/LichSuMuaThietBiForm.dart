@@ -25,6 +25,7 @@ class _LichSuMuaThietBiFormState extends State<LichSuMuaThietBiForm> {
   late LichSuMuaThietBiFormViewModel vm;
   final FocusNode _soLuongFocus = FocusNode();
   final FocusNode _donGiaFocus = FocusNode();
+  final FocusNode _thangBaoHanhFocus = FocusNode();
   final FocusNode _ghiChuFocus = FocusNode();
 
   @override
@@ -37,7 +38,12 @@ class _LichSuMuaThietBiFormState extends State<LichSuMuaThietBiForm> {
       lichSuInput: widget.lichSuMua,
     );
 
-    for (final node in [_soLuongFocus, _donGiaFocus, _ghiChuFocus]) {
+    for (final node in [
+      _soLuongFocus,
+      _donGiaFocus,
+      _thangBaoHanhFocus,
+      _ghiChuFocus,
+    ]) {
       node.addListener(() {
         setState(() {});
       });
@@ -48,6 +54,7 @@ class _LichSuMuaThietBiFormState extends State<LichSuMuaThietBiForm> {
   void dispose() {
     _soLuongFocus.dispose();
     _donGiaFocus.dispose();
+    _thangBaoHanhFocus.dispose();
     _ghiChuFocus.dispose();
     super.dispose();
   }
@@ -59,6 +66,7 @@ class _LichSuMuaThietBiFormState extends State<LichSuMuaThietBiForm> {
     FocusNode? focusNode,
     String? errorText,
     Widget? suffixIcon,
+    String? suffixText,
     bool readOnly = false,
     VoidCallback? onTap,
     ValueChanged<String>? onChanged,
@@ -91,6 +99,7 @@ class _LichSuMuaThietBiFormState extends State<LichSuMuaThietBiForm> {
             decoration: InputDecoration(
               hintText: (focusNode?.hasFocus ?? false) ? null : hint,
               suffixIcon: suffixIcon,
+              suffixText: suffixText,
               errorText: errorText,
 
               errorMaxLines: 2,
@@ -317,6 +326,21 @@ class _LichSuMuaThietBiFormState extends State<LichSuMuaThietBiForm> {
                 errorText: vm.errDonGia,
                 onChanged: (_) {
                   vm.errDonGia = null;
+                  setState(() {});
+                },
+              ),
+
+              _input(
+                title: "Tháng bảo hành",
+                hint: "VD: 12",
+                controller: vm.txtThangBaoHanh,
+                focusNode: _thangBaoHanhFocus,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                suffixText: "Tháng",
+                errorText: vm.errThangBaoHanh,
+                onChanged: (_) {
+                  vm.errThangBaoHanh = null;
                   setState(() {});
                 },
               ),

@@ -324,6 +324,13 @@ class _ChiTietLichSuMuaThietBiPageState
                   _infoRow("Ngày mua", formatDate(vm.ngayMua)),
 
                   _infoRow(
+                    "Tháng bảo hành",
+                    vm.thangBaoHanh > 0
+                        ? "${vm.thangBaoHanh} tháng"
+                        : "Không có",
+                  ),
+
+                  _infoRow(
                     "Ghi chú",
                     vm.ghiChu.isNotEmpty ? vm.ghiChu : "Không có",
                     isLast: true,

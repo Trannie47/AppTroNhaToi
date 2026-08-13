@@ -504,6 +504,17 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
                         ),
                       ],
                     ),
+
+                    const SizedBox(height: 18),
+
+                    /// Ghi chú hóa đơn sửa chữa
+                    _input(
+                      title: "Ghi chú",
+                      hint: "Ghi chú thêm (nếu có)",
+                      controller: vm.txtGhiChu,
+                      errorText: vm.errGhiChu,
+                      maxLines: 3,
+                    ),
                   ],
                 ),
               ),

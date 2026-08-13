@@ -18,6 +18,7 @@ class LichSuMuaThietBiFormViewModel extends ChangeNotifier {
 
   final TextEditingController txtSoLuong = TextEditingController();
   final TextEditingController txtDonGia = TextEditingController();
+  final TextEditingController txtThangBaoHanh = TextEditingController();
   final TextEditingController txtNgayMua = TextEditingController();
   final TextEditingController txtGhiChu = TextEditingController();
 
@@ -25,6 +26,7 @@ class LichSuMuaThietBiFormViewModel extends ChangeNotifier {
 
   String? errSoLuong;
   String? errDonGia;
+  String? errThangBaoHanh;
   String? errNgayMua;
 
   LichSuMuaThietBiFormViewModel(
@@ -47,6 +49,7 @@ class LichSuMuaThietBiFormViewModel extends ChangeNotifier {
           RegExp(r'(\d)(?=(\d{3})+$)'),
           (match) => '${match[1]}.',
         );
+    txtThangBaoHanh.text = (lichSu.thangBaoHanh ?? 0).toString();
     txtGhiChu.text = lichSu.ghiChu ?? "";
 
     ngayMuaChon = lichSu.ngayMua;
@@ -61,6 +64,7 @@ class LichSuMuaThietBiFormViewModel extends ChangeNotifier {
   bool kiemTraDuLieu() {
     errSoLuong = null;
     errDonGia = null;
+    errThangBaoHanh = null;
     errNgayMua = null;
 
     bool hopLe = true;
@@ -90,6 +94,17 @@ class LichSuMuaThietBiFormViewModel extends ChangeNotifier {
       }
     }
 
+    // Tháng bảo hành: không bắt buộc (mặc định 0), nhưng nếu có nhập thì
+    // phải là số nguyên và không được âm.
+    if (txtThangBaoHanh.text.trim().isNotEmpty) {
+      final thangBaoHanh = int.tryParse(txtThangBaoHanh.text.trim());
+
+      if (thangBaoHanh == null || thangBaoHanh < 0) {
+        errThangBaoHanh = "Tháng bảo hành không được âm";
+        hopLe = false;
+      }
+    }
+
     if (ngayMuaChon == null) {
       errNgayMua = "Vui lòng chọn ngày mua";
       hopLe = false;
@@ -114,6 +129,7 @@ class LichSuMuaThietBiFormViewModel extends ChangeNotifier {
         thietBiID: thietBi.thietBiID,
         soLuong: int.tryParse(txtSoLuong.text.trim()),
         donGia: double.tryParse(txtDonGia.text.replaceAll(".", "").trim()),
+        thangBaoHanh: int.tryParse(txtThangBaoHanh.text.trim()) ?? 0,
         ngayMua: ngayMuaChon,
         ghiChu: txtGhiChu.text.trim().isEmpty ? null : txtGhiChu.text.trim(),
       );
@@ -158,6 +174,7 @@ class LichSuMuaThietBiFormViewModel extends ChangeNotifier {
 
     txtSoLuong.clear();
     txtDonGia.clear();
+    txtThangBaoHanh.clear();
     txtNgayMua.clear();
     txtGhiChu.clear();
 
@@ -165,6 +182,7 @@ class LichSuMuaThietBiFormViewModel extends ChangeNotifier {
 
     errSoLuong = null;
     errDonGia = null;
+    errThangBaoHanh = null;
     errNgayMua = null;
 
     notifyListeners();
@@ -195,6 +213,7 @@ class LichSuMuaThietBiFormViewModel extends ChangeNotifier {
   void dispose() {
     txtSoLuong.dispose();
     txtDonGia.dispose();
+    txtThangBaoHanh.dispose();
     txtNgayMua.dispose();
     txtGhiChu.dispose();
 

@@ -345,8 +345,15 @@ class _ChiTietLichSuSuaChuaPageState extends State<ChiTietLichSuSuaChuaPage> {
                       "Trạng thái",
                       vm.hoaDonSuaChua!.trangThaiText,
                       color: Colors.red,
-                      isLast: true,
+                      isLast: (vm.hoaDonSuaChua!.ghiChu ?? "").trim().isEmpty,
                     ),
+
+                    if ((vm.hoaDonSuaChua!.ghiChu ?? "").trim().isNotEmpty)
+                      _infoRow(
+                        "Ghi chú",
+                        vm.hoaDonSuaChua!.ghiChu!.trim(),
+                        isLast: true,
+                      ),
                   ],
                 ),
               ),

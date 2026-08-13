@@ -24,6 +24,10 @@ class ChiTietLichSuMuaThietBiPageViewModel extends ChangeNotifier {
     return lichSuMua.donGia ?? 0;
   }
 
+  int get thangBaoHanh {
+    return lichSuMua.thangBaoHanh ?? 0;
+  }
+
   DateTime? get ngayMua {
     return lichSuMua.ngayMua;
   }
