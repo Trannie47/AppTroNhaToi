@@ -33,8 +33,12 @@ class NguoithueRepository {
 
   Future<List<NguoiThueAvailableDTO>> getAvailableRepresentatives({
     DateTime? ngayKy,
+    int? phongId,
   }) {
-    return nguoiThueApiClient.getAvailableRepresentatives(ngayKy: ngayKy);
+    return nguoiThueApiClient.getAvailableRepresentatives(
+      ngayKy: ngayKy,
+      phongId: phongId,
+    );
   }
 
   Future<List<ThuCongNoFormModel>> getNguoiThueCongNoTapHoa() async {

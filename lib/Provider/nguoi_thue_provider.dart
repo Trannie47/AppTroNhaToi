@@ -117,8 +117,12 @@ class NguoiThueProvider extends ChangeNotifier {
   //lấy người đủ điều kiện đứng tên đại diện.
   Future<List<NguoiThueAvailableDTO>> getAvailableRepresentatives({
     DateTime? ngayKy,
+    int? phongId,
   }) async {
-    return await _repo.getAvailableRepresentatives(ngayKy: ngayKy);
+    return await _repo.getAvailableRepresentatives(
+      ngayKy: ngayKy,
+      phongId: phongId,
+    );
   }
 
   Future<List<NguoiThue>> getListNguoiThueFromIdPhong(int idPhong) async {

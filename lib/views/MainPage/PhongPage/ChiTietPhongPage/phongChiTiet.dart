@@ -332,90 +332,7 @@ class _PhongChiTiet extends State<PhongChiTiet> {
             ),
             const SizedBox(height: 16),
 
-            //Danh sách người đang thuê phòng này
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    vm.isLoadingHopDongHienTai
-                        ? "Người thuê hiện tại (...)"
-                        : "Người thuê hiện tại (${vm.hopDongHienTai == null ? 0 : 1 + vm.hopDongHienTai!.nguoiOGhepConHieuLuc.length})",
-                    style: const TextStyle(
-                      color: Color(0xFF2D7A3A),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
-                  ),
-                  if (vm.isLoadingHopDongHienTai)
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 24),
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            Color(0xFF2D7A3A),
-                          ),
-                        ),
-                      ),
-                    )
-                  else if (vm.errorHopDongHienTai != null)
-                    AppErrorWidget(
-                      message: vm.errorHopDongHienTai!,
-                      onRetry: () {
-                        vm.getHopDongHienTaiCuaPhong(room.phongId);
-                      },
-                    )
-                  else ...[
-                    const SizedBox(height: 16),
-                    if (vm.hopDongHienTai == null)
-                      const Center(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(vertical: 12),
-                          child: Text(
-                            "Phòng hiện đang trống, chưa có người thuê.",
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 13,
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
-                        ),
-                      )
-                    else
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount:
-                            1 + vm.hopDongHienTai!.nguoiOGhepConHieuLuc.length,
-                        itemBuilder: (context, index) {
-                          final hd = vm.hopDongHienTai!;
-                          final isLastItem =
-                              index == hd.nguoiOGhepConHieuLuc.length;
-
-                          if (index == 0) {
-                            return _itemNguoiDaiDien(
-                              hopDong: hd,
-                              isLastItem: isLastItem,
-                            );
-                          }
-
-                          final nguoiOGhep = hd.nguoiOGhepConHieuLuc[index - 1];
-                          return _itemNguoiOGhep(
-                            nguoiOGhep: nguoiOGhep,
-                            isLastItem: isLastItem,
-                          );
-                        },
-                      ),
-                  ],
-                ],
-              ),
-            ),
+            _khungNguoiThueHienTai(vm),
 
             const SizedBox(height: 16),
 
@@ -712,6 +629,105 @@ class _PhongChiTiet extends State<PhongChiTiet> {
       buffer.write(s[i]);
     }
     return buffer.toString();
+  }
+
+  // 1 phòng có thể có nhiều hợp
+  // đồng độc lập cùng hiệu lực song song và sẽ hiển thị các ds người thuê của các hợp đồng đó lên
+  List<(HopDongDTO, NguoiOGhepDTO?)> _ganNguoiThuePhong(
+    List<HopDongDTO> dsHopDong,
+  ) {
+    final List<(HopDongDTO, NguoiOGhepDTO?)> danhSachHang = [];
+    for (final hd in dsHopDong) {
+      danhSachHang.add((hd, null));
+      for (final ng in hd.nguoiOGhepConHieuLuc) {
+        danhSachHang.add((hd, ng));
+      }
+    }
+    return danhSachHang;
+  }
+
+  Widget _khungNguoiThueHienTai(ChiTietPhongViewModel vm) {
+    final danhSachHang = _ganNguoiThuePhong(vm.dsHopDongHienTai);
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            vm.isLoadingHopDongHienTai
+                ? "Người thuê hiện tại (...)"
+                : "Người thuê hiện tại (${danhSachHang.length})",
+            style: const TextStyle(
+              color: Color(0xFF2D7A3A),
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+            ),
+          ),
+          if (vm.isLoadingHopDongHienTai)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 24),
+              child: Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    Color(0xFF2D7A3A),
+                  ),
+                ),
+              ),
+            )
+          else if (vm.errorHopDongHienTai != null)
+            AppErrorWidget(
+              message: vm.errorHopDongHienTai!,
+              onRetry: () {
+                vm.getHopDongHienTaiCuaPhong(widget.room.phongId);
+              },
+            )
+          else ...[
+            const SizedBox(height: 16),
+            if (danhSachHang.isEmpty)
+              const Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  child: Text(
+                    "Phòng hiện đang trống, chưa có người thuê.",
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 13,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ),
+              )
+            else
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: danhSachHang.length,
+                itemBuilder: (context, index) {
+                  final (hd, nguoiOGhep) = danhSachHang[index];
+                  final isLastItem = index == danhSachHang.length - 1;
+
+                  if (nguoiOGhep == null) {
+                    return _itemNguoiDaiDien(
+                      hopDong: hd,
+                      isLastItem: isLastItem,
+                    );
+                  }
+                  return _itemNguoiOGhep(
+                    nguoiOGhep: nguoiOGhep,
+                    isLastItem: isLastItem,
+                  );
+                },
+              ),
+          ],
+        ],
+      ),
+    );
   }
 
   Widget _itemNguoiDaiDien({

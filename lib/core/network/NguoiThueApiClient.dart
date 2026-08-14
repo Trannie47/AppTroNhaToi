@@ -106,10 +106,14 @@ class NguoiThueApiClient {
 
   Future<List<NguoiThueAvailableDTO>> getAvailableRepresentatives({
     DateTime? ngayKy,
+    int? phongId,
   }) async {
     final response = await _dio.get(
       "nguoi-thue/available-representatives",
-      queryParameters: {if (ngayKy != null) 'ngayKy': _formatDateOnly(ngayKy)},
+      queryParameters: {
+        if (ngayKy != null) 'ngayKy': _formatDateOnly(ngayKy),
+        if (phongId != null) 'phongId': phongId,
+      },
     );
     if (response.statusCode == 200 || response.statusCode == 201) {
       final List<dynamic> data = response.data;

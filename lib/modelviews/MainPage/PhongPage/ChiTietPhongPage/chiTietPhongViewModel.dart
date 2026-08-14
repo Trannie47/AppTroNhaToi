@@ -14,8 +14,8 @@ class ChiTietPhongViewModel extends ChangeNotifier {
 
   bool isLoadingHopDongHienTai = true;
   String? errorHopDongHienTai;
-  // null nếu phòng hiện đang trống, không có hợp đồng nào hiệu lực
-  HopDongDTO? hopDongHienTai;
+  // 1 phòng có thể có nhiều hợp đồng cùng hiệu lực song song
+  List<HopDongDTO> dsHopDongHienTai = [];
 
   PhongSaveState _phongSaveState = PhongSaveInitial();
   PhongSaveState get phongSaveState => _phongSaveState;
@@ -36,12 +36,9 @@ class ChiTietPhongViewModel extends ChangeNotifier {
     notifyListeners();
     try {
       final tatCaHopDong = await _hopDongProvider.getListHD();
-      final hopDongHieuLuc = tatCaHopDong.where(
-        (hd) => hd.phongID == idPhong && hd.trangThai == 1,
-      );
-      hopDongHienTai = hopDongHieuLuc.isNotEmpty
-          ? hopDongHieuLuc.first
-          : null;
+      dsHopDongHienTai = tatCaHopDong
+          .where((hd) => hd.phongID == idPhong && hd.trangThai == 1)
+          .toList();
     } catch (e) {
       if (kDebugMode) {
         print("Lỗi getHopDongHienTaiCuaPhong ChiTietPhongViewModel: $e");

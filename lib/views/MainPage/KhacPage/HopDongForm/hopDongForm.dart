@@ -82,6 +82,21 @@ class _TaoHopDongPageState extends State<HopDongForm> {
     final bool isActiveContract = vm.isEdit && vm.hdDTO?.trangThai == 1;
     final bool isPendingContract = vm.isEdit && vm.hdDTO?.trangThai == 0;
 
+    if (vm.thongBaoNguoiDaiDien != null) {
+      final noiDung = vm.thongBaoNguoiDaiDien!;
+      vm.xoaThongBaoNguoiDaiDien();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(noiDung),
+            backgroundColor: Colors.orange.shade800,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      });
+    }
+
     return Stack(
       children: [
         Scaffold(

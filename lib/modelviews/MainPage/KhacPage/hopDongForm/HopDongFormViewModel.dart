@@ -178,6 +178,7 @@ class HopDongFormViewModel extends ChangeNotifier {
       final ngayKy = chuyenNgay(txtNgayKy.text);
       final result = await _nguoiThueProvider.getAvailableRepresentatives(
         ngayKy: ngayKy,
+        phongId: selectedPhong?.id,
       );
       _representativesAvailable = HopDongSuccess(result);
     } catch (e) {
@@ -250,7 +251,13 @@ class HopDongFormViewModel extends ChangeNotifier {
 
   RoomAvailableDTO? selectedPhong;
 
-  void onSelectedPhong(RoomAvailableDTO? phong) {
+  String? thongBaoNguoiDaiDien;
+
+  void xoaThongBaoNguoiDaiDien() {
+    thongBaoNguoiDaiDien = null;
+  }
+
+  void onSelectedPhong(RoomAvailableDTO? phong) async {
     selectedPhong = phong;
     errPhong = null;
     if (phong != null) {
@@ -259,6 +266,23 @@ class HopDongFormViewModel extends ChangeNotifier {
       txtTongGiaPhong.text = "0";
     }
     notifyListeners();
+
+    if (selectedNguoiThue != null && phong != null) {
+      final nguoiThueDangChon = selectedNguoiThue!;
+      await getAvailableRepresentatives();
+      final ds = representativesAvailable;
+      if (ds is HopDongSuccess<NguoiThueAvailableDTO>) {
+        final conHopLe = ds.data.any(
+          (nt) => nt.idnt == nguoiThueDangChon.idnt,
+        );
+        if (!conHopLe) {
+          selectedNguoiThue = null;
+          thongBaoNguoiDaiDien =
+              "Người này đang đại diện 1 hợp đồng khác với phòng vừa chọn, vui lòng chọn lại.";
+          notifyListeners();
+        }
+      }
+    }
   }
 
   void onSelectedNguoiThue(NguoiThueAvailableDTO? nguoiThue) {
