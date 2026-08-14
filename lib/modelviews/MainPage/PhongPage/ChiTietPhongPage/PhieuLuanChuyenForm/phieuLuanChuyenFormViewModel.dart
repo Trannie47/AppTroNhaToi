@@ -34,7 +34,7 @@ class PhieuLuanChuyenFormViewModel extends ChangeNotifier {
 
   /// Phòng mới hiện tại của phiếu đang sửa, dùng để bổ sung vào dropdown
   /// nếu nó không còn nằm trong danh sách "còn chỗ trống" trả về từ backend.
-  ItemPhong? _phongMoiHienTaiCoDinh;
+  ItemPhongModel? _phongMoiHienTaiCoDinh;
 
   final txtTuNgay = TextEditingController();
   final txtDenNgay = TextEditingController();
@@ -58,7 +58,7 @@ class PhieuLuanChuyenFormViewModel extends ChangeNotifier {
   /// Danh sách phòng có thể chuyển tới, phụ thuộc hợp đồng đã chọn.
   /// Nếu đang sửa phiếu và phòng mới hiện tại không nằm trong danh sách
   /// backend trả về (do đã hết chỗ), tự bổ sung nó vào để dropdown chọn được.
-  List<ItemPhong> get dsPhongCoTheChon {
+  List<ItemPhongModel> get dsPhongCoTheChon {
     final list = phongProvider.dsPhongCoTheLuanChuyen;
 
     if (_phongMoiHienTaiCoDinh != null &&

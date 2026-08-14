@@ -93,7 +93,7 @@ class _GhiDienNuocHomePageState extends State<GhiDienNuocHomePage> {
     );
   }
 
-  Widget _buildItemPhong(BuildContext context, ItemPhong itemPhong) {
+  Widget _buildItemPhong(BuildContext context, ItemPhongModel itemPhong) {
     String textTrangThai = "Đang thuê";
     Color bgTrangThai = const Color(0xffFFF1E1);
     Color textColorTrangThai = const Color(0xffFF8A00);

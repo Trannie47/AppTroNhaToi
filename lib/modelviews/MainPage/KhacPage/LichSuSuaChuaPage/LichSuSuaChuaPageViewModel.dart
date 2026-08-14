@@ -21,7 +21,7 @@ class LichSuSuaChuaPageViewModel extends ChangeNotifier {
 
   /// Thông tin phòng thật (lấy từ provider), dùng để hiển thị tên phòng
   /// khi mở trang từ 1 LapRap cụ thể.
-  ItemPhong? phongCuaLapRap;
+  ItemPhongModel? phongCuaLapRap;
   bool isLoadingPhong = false;
 
   LichSuSuaChuaPageViewModel({

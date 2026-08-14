@@ -6,21 +6,21 @@ import '../models/item_phong.dart';
 
 class PhongProvider extends ChangeNotifier {
   final PhongRepository phongRepository = PhongRepository();
-  List<ItemPhong> _listPhong = [];
-  List<ItemPhong> get listPhong => _listPhong;
+  List<ItemPhongModel> _listPhong = [];
+  List<ItemPhongModel> get listPhong => _listPhong;
 
-  List<ItemPhong> get listPhongTrong =>
+  List<ItemPhongModel> get listPhongTrong =>
       _listPhong.where((phong) => phong.trangThai == 0).toList();
-  List<ItemPhong> get listPhongDangThue =>
+  List<ItemPhongModel> get listPhongDangThue =>
       _listPhong.where((phong) => phong.trangThai == 1).toList();
-  List<ItemPhong> get listPhongDangSua =>
+  List<ItemPhongModel> get listPhongDangSua =>
       _listPhong.where((phong) => phong.trangThai == 2).toList();
 
-  List<ItemPhong> _listPhongByThietBi = [];
-  List<ItemPhong> get listPhongByThietBi => _listPhongByThietBi;
+  List<ItemPhongModel> _listPhongByThietBi = [];
+  List<ItemPhongModel> get listPhongByThietBi => _listPhongByThietBi;
 
-  List<ItemPhong> _dsPhongCoTheLuanChuyen = [];
-  List<ItemPhong> get dsPhongCoTheLuanChuyen => _dsPhongCoTheLuanChuyen;
+  List<ItemPhongModel> _dsPhongCoTheLuanChuyen = [];
+  List<ItemPhongModel> get dsPhongCoTheLuanChuyen => _dsPhongCoTheLuanChuyen;
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -78,7 +78,7 @@ class PhongProvider extends ChangeNotifier {
     }
   }
 
-  Future<ItemPhong> getInforPhong(int maPhong) async {
+  Future<ItemPhongModel> getInforPhong(int maPhong) async {
     try {
       final result = await phongRepository.getInforPhong(maPhong);
       return result;
@@ -89,13 +89,13 @@ class PhongProvider extends ChangeNotifier {
   }
 
   //thêm local vào ds sau khi khi thực hiện thao tác thêm mà ko cần fetch lại api
-  void addRoom(ItemPhong room) {
+  void addRoom(ItemPhongModel room) {
     _listPhong.insert(0, room);
     notifyListeners();
   }
 
   // Cập nhật lại item trong list
-  void updateRoomInList(ItemPhong updateRoom) {
+  void updateRoomInList(ItemPhongModel updateRoom) {
     final index = _listPhong.indexWhere(
       (phong) => phong.phongId == updateRoom.phongId,
     );

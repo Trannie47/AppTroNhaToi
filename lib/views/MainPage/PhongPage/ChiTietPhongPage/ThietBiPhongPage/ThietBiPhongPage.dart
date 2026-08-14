@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 import 'ThietBiPhongFormDialog.dart';
 
 class ThietBiPhongPage extends StatefulWidget {
-  final ItemPhong room;
+  final ItemPhongModel room;
 
   const ThietBiPhongPage({super.key, required this.room});
 

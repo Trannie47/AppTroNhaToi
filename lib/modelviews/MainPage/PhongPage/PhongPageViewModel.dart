@@ -14,10 +14,10 @@ class PhongPageViewModel extends ChangeNotifier {
   String _searchQuery = "";
 
   bool get isLoading => _service.isLoading;
-  List<ItemPhong> get listPhong => _service.listPhong;
-  List<ItemPhong> get listPhongTrong => _service.listPhongTrong;
-  List<ItemPhong> get listPhongDangThue => _service.listPhongDangThue;
-  List<ItemPhong> get listPhongDangSua => _service.listPhongDangSua;
+  List<ItemPhongModel> get listPhong => _service.listPhong;
+  List<ItemPhongModel> get listPhongTrong => _service.listPhongTrong;
+  List<ItemPhongModel> get listPhongDangThue => _service.listPhongDangThue;
+  List<ItemPhongModel> get listPhongDangSua => _service.listPhongDangSua;
 
   PhongPageViewModel(this._service) {
     _service.addListener(_onProviderUpdate);
@@ -28,8 +28,8 @@ class PhongPageViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<ItemPhong> get listPhongHienThi {
-    List<ItemPhong> baseList;
+  List<ItemPhongModel> get listPhongHienThi {
+    List<ItemPhongModel> baseList;
     switch (_currentFilter) {
       case 0:
         baseList = listPhongTrong;

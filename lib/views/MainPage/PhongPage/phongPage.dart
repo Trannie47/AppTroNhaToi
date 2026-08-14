@@ -47,6 +47,13 @@ class _PhongPageState extends State<PhongPage> {
     );
   }
 
+  void toChiTietPhong(ItemPhong item) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => PhongChiTiet(room: item)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final listPhong = vm.listPhong;
@@ -236,18 +243,32 @@ class _PhongPageState extends State<PhongPage> {
                             Padding(
                               padding: const EdgeInsets.only(bottom: 12),
                               child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 14,
+                                  vertical: 10,
+                                ),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xffEAF3EB).withOpacity(0.7),
+                                  color: const Color(
+                                    0xffEAF3EB,
+                                  ).withOpacity(0.7),
                                   borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: const Color(0xff2D7A3A).withOpacity(0.2)),
+                                  border: Border.all(
+                                    color: const Color(
+                                      0xff2D7A3A,
+                                    ).withOpacity(0.2),
+                                  ),
                                 ),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Row(
                                       children: [
-                                        const Icon(Icons.search_rounded, size: 16, color: Color(0xff2D7A3A)),
+                                        const Icon(
+                                          Icons.search_rounded,
+                                          size: 16,
+                                          color: Color(0xff2D7A3A),
+                                        ),
                                         const SizedBox(width: 8),
                                         Text(
                                           "Kết quả cho \"${vm.searchController.text}\"",
@@ -260,7 +281,10 @@ class _PhongPageState extends State<PhongPage> {
                                       ],
                                     ),
                                     Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 3,
+                                      ),
                                       decoration: BoxDecoration(
                                         color: const Color(0xff2D7A3A),
                                         borderRadius: BorderRadius.circular(20),
@@ -280,51 +304,57 @@ class _PhongPageState extends State<PhongPage> {
                             ),
                           Expanded(
                             child: vm.listPhongHienThi.isEmpty
-                          ? const Center(
-                              child: Text(
-                                "Không có phòng trọ nào thuộc trạng thái này",
-                              ),
-                            )
-                          : ListView.builder(
-                              itemCount: vm.listPhongHienThi.length,
-                              itemBuilder: (context, index) {
-                                final itemBackend = vm.listPhongHienThi[index];
-                                final currentPhong = Phong(
-                                  phongID: itemBackend.phongId,
-                                  tenPhong: itemBackend.tenPhong,
-                                  trangThai: itemBackend.trangThai,
-                                  moTa: itemBackend.moTa,
-                                  maLoaiPhong: itemBackend.maLoaiPhong,
-                                );
-                                final currentLoaiPhong = LoaiPhong(
-                                  maLoaiPhong:
-                                      itemBackend.loaiPhong.maLoaiPhong,
-                                  tenLoaiPhong:
-                                      itemBackend.loaiPhong.tenLoaiPhong,
-                                  dienTich: itemBackend.loaiPhong.dienTich,
-                                  isMayLanh: itemBackend.loaiPhong.isMayLanh,
-                                  soNguoiToiDa:
-                                      itemBackend.loaiPhong.soNguoiToiDa,
-                                  giaTien: itemBackend
-                                      .loaiPhong
-                                      .giaTien, // item phòng phải hiển thị giá loại phòng lên
-                                );
-                                return ItemPhong(
-                                  phong: currentPhong,
-                                  loaiPhong: currentLoaiPhong,
-                                  soNguoiHienTai: itemBackend.soNguoiHienTai,
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            PhongChiTiet(room: itemBackend),
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                            ),
+                                ? const Center(
+                                    child: Text(
+                                      "Không có phòng trọ nào thuộc trạng thái này",
+                                    ),
+                                  )
+                                : ListView.builder(
+                                    itemCount: vm.listPhongHienThi.length,
+                                    itemBuilder: (context, index) {
+                                      final itemBackend =
+                                          vm.listPhongHienThi[index];
+                                      final currentPhong = Phong(
+                                        phongID: itemBackend.phongId,
+                                        tenPhong: itemBackend.tenPhong,
+                                        trangThai: itemBackend.trangThai,
+                                        moTa: itemBackend.moTa,
+                                        maLoaiPhong: itemBackend.maLoaiPhong,
+                                      );
+                                      final currentLoaiPhong = LoaiPhong(
+                                        maLoaiPhong:
+                                            itemBackend.loaiPhong.maLoaiPhong,
+                                        tenLoaiPhong:
+                                            itemBackend.loaiPhong.tenLoaiPhong,
+                                        dienTich:
+                                            itemBackend.loaiPhong.dienTich,
+                                        isMayLanh:
+                                            itemBackend.loaiPhong.isMayLanh,
+                                        soNguoiToiDa:
+                                            itemBackend.loaiPhong.soNguoiToiDa,
+                                        giaTien: itemBackend
+                                            .loaiPhong
+                                            .giaTien, // item phòng phải hiển thị giá loại phòng lên
+                                      );
+                                      return ItemPhong(
+                                        phong: currentPhong,
+                                        loaiPhong: currentLoaiPhong,
+                                        soNguoiHienTai:
+                                            itemBackend.soNguoiHienTai,
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  PhongChiTiet(
+                                                    room: itemBackend,
+                                                  ),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                  ),
                           ),
                         ],
                       ),

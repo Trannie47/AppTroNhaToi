@@ -8,14 +8,14 @@ import '../models/phong.dart';
 
 class PhongViewModel extends ChangeNotifier {
   final PhongRepository phongRepository = PhongRepository();
-  List<ItemPhong> _listPhong = [];
-  List<ItemPhong> get listPhong => _listPhong;
+  List<ItemPhongModel> _listPhong = [];
+  List<ItemPhongModel> get listPhong => _listPhong;
 
-  List<ItemPhong> get listPhongTrong =>
+  List<ItemPhongModel> get listPhongTrong =>
       _listPhong.where((phong) => phong.trangThai == 0).toList();
-  List<ItemPhong> get listPhongDangThue =>
+  List<ItemPhongModel> get listPhongDangThue =>
       _listPhong.where((phong) => phong.trangThai == 1).toList();
-  List<ItemPhong> get listPhongDangSua =>
+  List<ItemPhongModel> get listPhongDangSua =>
       _listPhong.where((phong) => phong.trangThai == 2).toList();
 
   PhongSaveState _phongSaveState = PhongSaveInitial();
@@ -80,7 +80,7 @@ class PhongViewModel extends ChangeNotifier {
     }
   }
 
-  List<ItemPhong> get listPhongHienThi {
+  List<ItemPhongModel> get listPhongHienThi {
     switch (_currentFilter) {
       case 0:
         return listPhongTrong;
@@ -151,12 +151,12 @@ class PhongViewModel extends ChangeNotifier {
     return hopLe;
   }
 
-  void addRoom(ItemPhong room) {
+  void addRoom(ItemPhongModel room) {
     _listPhong.insert(0, room);
     notifyListeners();
   }
 
-  void updateRoomInList(ItemPhong updateRoom) {
+  void updateRoomInList(ItemPhongModel updateRoom) {
     final index = _listPhong.indexWhere(
       (phong) => phong.phongId == updateRoom.phongId,
     );

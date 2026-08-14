@@ -73,7 +73,7 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
   Widget _dropDownPhong() {
     final phongTuDsPhong = vm.dsPhong
         .where((e) => e.phongId == vm.phongDaChonId)
-        .cast<ItemPhong?>()
+        .cast<ItemPhongModel?>()
         .firstOrNull;
 
     final phongDangChon = vm.lapDatBiKhoa
@@ -89,7 +89,7 @@ class _PhieuSuaChuaFormState extends State<PhieuSuaChuaForm> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CustomDropdownSearch<ItemPhong>(
+        CustomDropdownSearch<ItemPhongModel>(
           label: "Phòng lắp đặt",
           hintText: "-- Chọn phòng --",
           items: danhSachHienThi,

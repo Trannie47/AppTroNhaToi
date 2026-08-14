@@ -26,8 +26,8 @@ class ChiTietPhieuLuanChuyenViewModel extends ChangeNotifier {
   List<NguoiOGhep> _dsNguoiOGhep = [];
   List<NguoiOGhep> get dsNguoiOGhep => _dsNguoiOGhep;
 
-  ItemPhong? _phongCu;
-  ItemPhong? get phongCu => _phongCu;
+  ItemPhongModel? _phongCu;
+  ItemPhongModel? get phongCu => _phongCu;
 
   int get tongSoNguoi => (_tenDaiDien != null ? 1 : 0) + _dsNguoiOGhep.length;
 
@@ -45,7 +45,7 @@ class ChiTietPhieuLuanChuyenViewModel extends ChangeNotifier {
       ]);
 
       final ds = results[0] as List<ItemHopDong>;
-      _phongCu = results[1] as ItemPhong;
+      _phongCu = results[1] as ItemPhongModel;
 
       final hopDong = ds
           .where((hd) => hd.hopDongId == item.hopDongId)

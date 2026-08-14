@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class PhieuLuanChuyenPage extends StatefulWidget {
-  final ItemPhong phong;
+  final ItemPhongModel phong;
 
   const PhieuLuanChuyenPage({super.key, required this.phong});
 

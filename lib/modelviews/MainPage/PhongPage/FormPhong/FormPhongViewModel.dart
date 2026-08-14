@@ -11,7 +11,7 @@ import '../../../../states/phong_save_state.dart';
 class FormPhongViewModel extends ChangeNotifier {
   final PhongProvider _phongProvider;
   final LoaiPhongProvider _loaiPhongProvider;
-  final ItemPhong? room;
+  final ItemPhongModel? room;
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController descController = TextEditingController();

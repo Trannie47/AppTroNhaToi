@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 
 class PhieuLuanChuyenPageViewModel extends ChangeNotifier {
   final PhieuLuanChuyenProvider _provider;
-  late final ItemPhong phong;
+  late final ItemPhongModel phong;
 
   List<PhieuLuanChuyen> get dsPhieu => _provider.listByPhongHopDong;
 

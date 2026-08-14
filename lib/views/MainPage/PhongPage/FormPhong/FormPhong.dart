@@ -15,7 +15,7 @@ import '../../../../Provider/phong_provider.dart';
 import '../../../../view_models/loaiphong_view_model.dart';
 
 class FormPhong extends StatefulWidget {
-  final ItemPhong? room;
+  final ItemPhongModel? room;
 
   const FormPhong({super.key, this.room});
 
@@ -91,7 +91,7 @@ class _FormPhongState extends State<FormPhong> {
         );
       }
 
-      ItemPhong itemPhong = ItemPhong(
+      ItemPhongModel itemPhong = ItemPhongModel(
         phongId: state.phong.phongID,
         tenPhong: state.phong.tenPhong,
         trangThai: state.phong.trangThai,

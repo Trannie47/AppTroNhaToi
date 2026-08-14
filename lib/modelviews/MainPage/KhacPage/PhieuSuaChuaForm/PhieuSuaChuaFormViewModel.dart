@@ -45,10 +45,10 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
   LapRap? lapRapCoDinh;
   bool get lapDatBiKhoa => lapRapCoDinh != null;
 
-  ItemPhong? phongCoDinh;
+  ItemPhongModel? phongCoDinh;
   bool isLoadingPhongCoDinh = false;
 
-  ItemPhong? phongDaLuu;
+  ItemPhongModel? phongDaLuu;
 
   /// Đang tải lại phòng/lắp đặt cũ khi mở form SỬA mà không có LapRap cố định
   bool isLoadingDuLieuCu = false;
@@ -58,7 +58,7 @@ class PhieuSuaChuaViewModel extends ChangeNotifier {
   final SuaChuaProvider _suaChuaProvider;
   final LapRapProvider _lapRapProvider;
 
-  List<ItemPhong> get dsPhong => _phongProvider.listPhongByThietBi;
+  List<ItemPhongModel> get dsPhong => _phongProvider.listPhongByThietBi;
   bool get isLoadingPhong => _phongProvider.isLoading;
 
   List<LapRapPageModel> get dsLapRapTheoPhong => _lapRapProvider.listLapRapPage;

@@ -26,7 +26,7 @@ class ChiTietHopDongViewModel extends ChangeNotifier {
   }
 
   //lấy thông tin itemPhong để hieenr thij thông tin chi tiết phòng
-  Future<ItemPhong?> getInforPhong(int phongId) async {
+  Future<ItemPhongModel?> getInforPhong(int phongId) async {
     //Tìm trong list đã có sẵn
     final phongTrongList = _phongProvider.listPhong
         .where((p) => p.phongId == phongId)

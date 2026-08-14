@@ -7,12 +7,12 @@ import 'package:flutter/foundation.dart';
 class PhongApiClient {
   final Dio _dio = RetrofitClient().dio;
 
-  Future<List<ItemPhong>> getListPhong() async {
+  Future<List<ItemPhongModel>> getListPhong() async {
     try {
       final response = await _dio.get("phong/findAll");
       if (response.statusCode == 200 || response.statusCode == 201) {
         final List<dynamic> data = response.data;
-        return data.map((json) => ItemPhong.fromMap(json)).toList();
+        return data.map((json) => ItemPhongModel.fromMap(json)).toList();
       }
       return [];
     } catch (e) {
@@ -93,11 +93,11 @@ class PhongApiClient {
     }
   }
 
-  Future<ItemPhong> getInforPhong(int idPhong) async {
+  Future<ItemPhongModel> getInforPhong(int idPhong) async {
     try {
       final response = await _dio.get("phong/$idPhong");
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return ItemPhong.fromMap(response.data);
+        return ItemPhongModel.fromMap(response.data);
       }
       throw Exception(
         "Lấy thông tin phong thất bại, Mã lỗi ${response.statusCode}",
@@ -136,13 +136,13 @@ class PhongApiClient {
     }
   }
 
-  Future<List<ItemPhong>> getListByThietBi(int thietBiId) async {
+  Future<List<ItemPhongModel>> getListByThietBi(int thietBiId) async {
     try {
       final response = await _dio.get("phong/thiet-bi/$thietBiId");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final List<dynamic> data = response.data;
-        return data.map((json) => ItemPhong.fromMap(json)).toList();
+        return data.map((json) => ItemPhongModel.fromMap(json)).toList();
       }
 
       return [];
@@ -160,13 +160,15 @@ class PhongApiClient {
   }
 
   /// Danh sách phòng có thể luân chuyển tới cho 1 hợp đồng (đã lọc còn chỗ trống).
-  Future<List<ItemPhong>> getCoTheLuanChuyenByHopDong(String hopDongId) async {
+  Future<List<ItemPhongModel>> getCoTheLuanChuyenByHopDong(
+    String hopDongId,
+  ) async {
     try {
       final response = await _dio.get("phong/co-the-luan-chuyen/$hopDongId");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final List<dynamic> data = response.data;
-        return data.map((json) => ItemPhong.fromMap(json)).toList();
+        return data.map((json) => ItemPhongModel.fromMap(json)).toList();
       }
 
       return [];

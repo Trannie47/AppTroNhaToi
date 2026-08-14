@@ -6,7 +6,7 @@ class GhiDienNuocHomePageViewModel extends ChangeNotifier {
   final PhongProvider _phongProvider;
 
   bool get isLoading => _phongProvider.isLoading;
-  List<ItemPhong> get listPhong => _phongProvider.listPhong;
+  List<ItemPhongModel> get listPhong => _phongProvider.listPhong;
 
   GhiDienNuocHomePageViewModel(this._phongProvider) {
     _phongProvider.addListener(_onProviderUpdate);

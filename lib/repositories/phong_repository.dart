@@ -6,7 +6,7 @@ import '../models/phong.dart';
 class PhongRepository {
   final PhongApiClient _phongApiClient = PhongApiClient();
 
-  Future<List<ItemPhong>> getListPhong() async {
+  Future<List<ItemPhongModel>> getListPhong() async {
     return await _phongApiClient.getListPhong();
   }
 
@@ -22,16 +22,18 @@ class PhongRepository {
     return await _phongApiClient.removePhong(idPhong);
   }
 
-  Future<ItemPhong> getInforPhong(int maPhong) {
+  Future<ItemPhongModel> getInforPhong(int maPhong) {
     return _phongApiClient.getInforPhong(maPhong);
   }
 
-  Future<List<ItemPhong>> getListByThietBi(int thietBiId) async {
+  Future<List<ItemPhongModel>> getListByThietBi(int thietBiId) async {
     return await _phongApiClient.getListByThietBi(thietBiId);
   }
 
   /// Danh sách phòng có thể luân chuyển tới cho 1 hợp đồng (đã lọc còn chỗ trống).
-  Future<List<ItemPhong>> getCoTheLuanChuyenByHopDong(String hopDongId) async {
+  Future<List<ItemPhongModel>> getCoTheLuanChuyenByHopDong(
+    String hopDongId,
+  ) async {
     return await _phongApiClient.getCoTheLuanChuyenByHopDong(hopDongId);
   }
 }

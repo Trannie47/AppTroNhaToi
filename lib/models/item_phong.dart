@@ -1,6 +1,6 @@
 import 'package:AppTroNhaToi/models/loai_phong.dart';
 
-class ItemPhong {
+class ItemPhongModel {
   final int phongId;
   final String tenPhong;
   final int trangThai;
@@ -11,7 +11,7 @@ class ItemPhong {
   final double giahientai;
   final int soNguoiHienTai;
 
-  ItemPhong({
+  ItemPhongModel({
     required this.phongId,
     required this.tenPhong,
     required this.trangThai,
@@ -23,8 +23,8 @@ class ItemPhong {
     this.soNguoiHienTai = 0,
   });
 
-  factory ItemPhong.fromMap(Map<String, dynamic> map) {
-    return ItemPhong(
+  factory ItemPhongModel.fromMap(Map<String, dynamic> map) {
+    return ItemPhongModel(
       phongId: map['phongId'] as int? ?? 0,
       tenPhong: map['tenPhong'] as String? ?? 'Chưa đặt tên',
       trangThai: map['trangThai'] as int? ?? 0,

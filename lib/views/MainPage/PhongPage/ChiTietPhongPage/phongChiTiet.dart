@@ -25,7 +25,7 @@ import 'TrangChucNang/LichSuThuePage/lichSuThuePage.dart';
 import 'TrangChucNang/TaoHoaDonPhongPage/taoHoaDonPhong.dart';
 
 class PhongChiTiet extends StatefulWidget {
-  final ItemPhong room;
+  final ItemPhongModel room;
 
   const PhongChiTiet({super.key, required this.room});
 
@@ -55,28 +55,28 @@ class _PhongChiTiet extends State<PhongChiTiet> {
     });
   }
 
-  void _chinhSuaPhong(ItemPhong room) {
+  void _chinhSuaPhong(ItemPhongModel room) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => FormPhong(room: room)),
     );
   }
 
-  void _xemThietBiInPhong(ItemPhong room) {
+  void _xemThietBiInPhong(ItemPhongModel room) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => ThietBiPhongPage(room: room)),
     );
   }
 
-  void _xemSuCo(ItemPhong room) {
+  void _xemSuCo(ItemPhongModel room) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => PhieuLuanChuyenPage(phong: room)),
     );
   }
 
-  void _xuaLyXoaPhong(ItemPhong room) async {
+  void _xuaLyXoaPhong(ItemPhongModel room) async {
     //Nếu phòng đang có hợp đồng liên kết -> Chặn lại không cho ẩn
     if (room.dsHopDong.isNotEmpty) {
       ScaffoldMessenger.of(context).clearSnackBars();
@@ -465,7 +465,7 @@ class _PhongChiTiet extends State<PhongChiTiet> {
   }
 
   // Hàng chức năng tiện ích cho phong
-  Widget _buildQuickActionsRow(ItemPhong room) {
+  Widget _buildQuickActionsRow(ItemPhongModel room) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
@@ -674,9 +674,7 @@ class _PhongChiTiet extends State<PhongChiTiet> {
               padding: EdgeInsets.symmetric(vertical: 24),
               child: Center(
                 child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    Color(0xFF2D7A3A),
-                  ),
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF2D7A3A)),
                 ),
               ),
             )

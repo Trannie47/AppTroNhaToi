@@ -5,7 +5,7 @@ import 'package:AppTroNhaToi/models/item_phong.dart';
 import 'package:flutter/material.dart';
 
 class ItemPhieuLuanChuyen extends StatelessWidget {
-  final ItemPhong phongCu;
+  final ItemPhongModel phongCu;
   final PhieuLuanChuyen item;
 
   final VoidCallback? edit;

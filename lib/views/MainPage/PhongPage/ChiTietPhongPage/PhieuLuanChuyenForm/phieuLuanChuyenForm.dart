@@ -93,9 +93,7 @@ class _PhieuLuanChuyenFormState extends State<PhieuLuanChuyenForm> {
                 ),
                 subtitle: const Text(
                   "Người thuê đại diện",
-                  style: TextStyle(
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(fontSize: 14),
                 ),
               ),
               if (hopDong.dsNguoiOGhep.isEmpty)
@@ -103,10 +101,7 @@ class _PhieuLuanChuyenFormState extends State<PhieuLuanChuyenForm> {
                   padding: EdgeInsets.symmetric(vertical: 8),
                   child: Text(
                     "Không có người ở ghép",
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 15,
-                    ),
+                    style: TextStyle(color: Colors.grey, fontSize: 15),
                   ),
                 )
               else
@@ -124,9 +119,7 @@ class _PhieuLuanChuyenFormState extends State<PhieuLuanChuyenForm> {
                     ),
                     subtitle: Text(
                       nt.quanHeVoiDaiDien ?? "",
-                      style: const TextStyle(
-                        fontSize: 14,
-                      ),
+                      style: const TextStyle(fontSize: 14),
                     ),
                   ),
                 ),
@@ -138,10 +131,7 @@ class _PhieuLuanChuyenFormState extends State<PhieuLuanChuyenForm> {
             onPressed: () => Navigator.pop(dialogContext),
             child: const Text(
               "Đóng",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
           ),
         ],
@@ -174,8 +164,8 @@ class _PhieuLuanChuyenFormState extends State<PhieuLuanChuyenForm> {
                 itemAsString: (item) =>
                     "${item.hopDongId} - ${item.tenDaiDien ?? ''}",
                 onChanged: (value) async {
-  await vm.chonHopDong(value?.hopDongId);
-},
+                  await vm.chonHopDong(value?.hopDongId);
+                },
               ),
             ),
 
@@ -208,13 +198,13 @@ class _PhieuLuanChuyenFormState extends State<PhieuLuanChuyenForm> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CustomDropdownSearch<ItemPhong>(
+        CustomDropdownSearch<ItemPhongModel>(
           label: "Phòng mới",
           hintText: "-- Chọn phòng mới --",
           items: vm.dsPhongCoTheChon,
           selectedItem: vm.dsPhongCoTheChon
               .where((e) => e.phongId == vm.phongMoiDaChonId)
-              .cast<ItemPhong?>()
+              .cast<ItemPhongModel?>()
               .firstOrNull,
           itemAsString: (item) => item.tenPhong,
           onChanged: (value) {
@@ -415,29 +405,29 @@ class _PhieuLuanChuyenFormState extends State<PhieuLuanChuyenForm> {
             onPressed: vm.isSaving
                 ? null
                 : () async {
-              final result = await vm.luu();
+                    final result = await vm.luu();
 
-              if (!mounted) return;
+                    if (!mounted) return;
 
-              if (result != null) {
-                Navigator.pop(context, result);
-                return;
-              }
+                    if (result != null) {
+                      Navigator.pop(context, result);
+                      return;
+                    }
 
-              if (vm.errLuu != null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(vm.errLuu!),
-                    backgroundColor: Colors.red,
-                    behavior: SnackBarBehavior.floating,
-                    margin: const EdgeInsets.all(16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                );
-              }
-            },
+                    if (vm.errLuu != null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(vm.errLuu!),
+                          backgroundColor: Colors.red,
+                          behavior: SnackBarBehavior.floating,
+                          margin: const EdgeInsets.all(16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      );
+                    }
+                  },
 
             child: vm.isSaving
                 ? const SizedBox(
