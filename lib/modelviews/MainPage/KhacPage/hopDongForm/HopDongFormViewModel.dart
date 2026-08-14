@@ -98,11 +98,11 @@ class HopDongFormViewModel extends ChangeNotifier {
 
     final cccdTrim = cccd.trim();
     if (cccdTrim.isEmpty) {
-      loi['cccd'] = "Vui lòng nhập CCCD";
+      loi['cccd'] = "Vui lòng nhập CCCD/Mã định danh cá nhân";
     } else if (!RegExp(r'^\d{12}$').hasMatch(cccdTrim)) {
-      loi['cccd'] = "CCCD phải gồm đúng 12 số";
+      loi['cccd'] = "CCCD/Mã định danh cá nhân phải gồm đúng 12 số";
     } else if (listNguoiOGhep.any((ng) => ng.cccd == cccdTrim)) {
-      loi['cccd'] = "CCCD này đã có trong danh sách người ở ghép";
+      loi['cccd'] = "Số này đã có trong danh sách người ở ghép";
     }
 
     final hoTenTrim = hoTen?.trim() ?? '';
@@ -111,10 +111,12 @@ class HopDongFormViewModel extends ChangeNotifier {
     }
 
     final sdtTrim = sdt?.trim() ?? '';
-    if (sdtTrim.isEmpty) {
-      loi['sdt'] = "Vui lòng nhập số điện thoại";
-    } else if (!RegExp(r'^0\d{9}$').hasMatch(sdtTrim)) {
-      loi['sdt'] = "Số điện thoại phải gồm đúng 10 số";
+    if (sdtTrim.isNotEmpty) {
+      if (!RegExp(r'^\d{10}$').hasMatch(sdtTrim)) {
+        loi['sdt'] = "Số điện thoại phải gồm đúng 10 số";
+      } else if (!sdtTrim.startsWith('0')) {
+        loi['sdt'] = "Số điện thoại phải bắt đầu bằng số 0";
+      }
     }
 
     final quanHeTrim = quanHeVoiDaiDien?.trim() ?? '';
@@ -130,7 +132,7 @@ class HopDongFormViewModel extends ChangeNotifier {
       NguoiOGhepDTO(
         cccd: cccdTrim,
         hoTen: hoTenTrim,
-        sdt: sdtTrim,
+        sdt: sdtTrim.isEmpty ? null : sdtTrim,
         quanHeVoiDaiDien: quanHeTrim,
       ),
     );

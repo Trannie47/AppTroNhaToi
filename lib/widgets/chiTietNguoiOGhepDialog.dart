@@ -4,8 +4,15 @@ import '../models/DTO/NguoiOGhepDTO.dart';
 
 class ChiTietNguoiOGhepDialog extends StatelessWidget {
   final NguoiOGhepDTO nguoiOGhep;
+  // Tên người đại diện của hợp đồng chứa người ở ghép này -> hiện rõ ra vì
+  // 1 phòng có thể có nhiều hợp đồng/nhiều đại diện cùng lúc
+  final String tenDaiDien;
 
-  const ChiTietNguoiOGhepDialog({super.key, required this.nguoiOGhep});
+  const ChiTietNguoiOGhepDialog({
+    super.key,
+    required this.nguoiOGhep,
+    required this.tenDaiDien,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -105,6 +112,15 @@ class ChiTietNguoiOGhepDialog extends StatelessWidget {
                           ),
                         ),
                       ),
+                      const SizedBox(height: 6),
+                      Text(
+                        "Ở ghép cùng hợp đồng của: $tenDaiDien",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 11.5,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -167,7 +183,7 @@ class ChiTietNguoiOGhepDialog extends StatelessWidget {
                         _infoRow(
                           icon: Icons.diversity_3_outlined,
                           color: const Color(0xffFF8A00),
-                          label: "Quan hệ với đại diện",
+                          label: "Quan hệ với đại diện $tenDaiDien",
                           value: nguoiOGhep.quanHeVoiDaiDien ?? "Chưa rõ",
                         ),
                       ],

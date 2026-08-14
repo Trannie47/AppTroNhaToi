@@ -71,8 +71,10 @@ class NguoiThueFormViewModel extends ChangeNotifier {
     final sdt = txtSDT.text.trim();
     if (sdt.isEmpty) {
       errSDT = "Vui lòng nhập số điện thoại";
-    } else if (!RegExp(r'^0\d{9}$').hasMatch(sdt)) {
+    } else if (!RegExp(r'^\d{10}$').hasMatch(sdt)) {
       errSDT = "Số điện thoại phải gồm đúng 10 số";
+    } else if (!sdt.startsWith('0')) {
+      errSDT = "Số điện thoại phải bắt đầu bằng số 0";
     } else if (checkTrungSDT()) {
       errSDT = "Số điện thoại này đã tồn tại trong hệ thống";
     } else {

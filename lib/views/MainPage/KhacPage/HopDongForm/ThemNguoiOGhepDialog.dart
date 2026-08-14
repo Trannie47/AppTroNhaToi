@@ -33,7 +33,7 @@ class ThemNguoiOGhepDialog extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      "CCCD",
+                      "CCCD / Mã định danh",
                       style: TextStyle(fontSize: 13, color: Colors.black87),
                     ),
                     const SizedBox(height: 6),
@@ -45,7 +45,7 @@ class ThemNguoiOGhepDialog extends StatelessWidget {
                         LengthLimitingTextInputFormatter(12),
                       ],
                       decoration: _dialogInputDecoration(
-                        hint: "Nhập đúng 12 số CCCD",
+                        hint: "Nhập CCCD hoặc mã định danh",
                         errorText: vm.errCccd,
                       ),
                     ),

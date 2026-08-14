@@ -720,6 +720,7 @@ class _PhongChiTiet extends State<PhongChiTiet> {
                   }
                   return _itemNguoiOGhep(
                     nguoiOGhep: nguoiOGhep,
+                    hopDong: hd,
                     isLastItem: isLastItem,
                   );
                 },
@@ -745,6 +746,7 @@ class _PhongChiTiet extends State<PhongChiTiet> {
 
   Widget _itemNguoiOGhep({
     required NguoiOGhepDTO nguoiOGhep,
+    required HopDongDTO hopDong,
     required bool isLastItem,
   }) {
     return _itemNguoiORow(
@@ -754,7 +756,10 @@ class _PhongChiTiet extends State<PhongChiTiet> {
       isLastItem: isLastItem,
       onTap: () => showDialog(
         context: context,
-        builder: (_) => ChiTietNguoiOGhepDialog(nguoiOGhep: nguoiOGhep),
+        builder: (_) => ChiTietNguoiOGhepDialog(
+          nguoiOGhep: nguoiOGhep,
+          tenDaiDien: hopDong.nguoiDaiDien.hoTen,
+        ),
       ),
     );
   }
