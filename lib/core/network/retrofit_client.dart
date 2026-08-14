@@ -11,9 +11,9 @@ class RetrofitClient {
     _dio = Dio(
       BaseOptions(
         baseUrl: HttpConfig.baseUrl,
-        connectTimeout: const Duration(seconds: 5),
-        receiveTimeout: const Duration(seconds: 5),
-        sendTimeout: const Duration(seconds: 5),
+        connectTimeout: const Duration(seconds: 15),
+        receiveTimeout: const Duration(seconds: 15),
+        sendTimeout: const Duration(seconds: 15),
         contentType: 'application/json',
         responseType: ResponseType.json,
       ),
@@ -40,4 +40,11 @@ class RetrofitClient {
   factory RetrofitClient() => _instance;
 
   Dio get dio => _dio;
+
+  // Dùng cho các request có upload file (tạo/cập nhật hợp đồng, ghi điện
+  // nước, tạo hóa đơn phòng kèm ảnh...).
+  static Options get uploadOptions => Options(
+    sendTimeout: const Duration(seconds: 30),
+    receiveTimeout: const Duration(seconds: 30),
+  );
 }

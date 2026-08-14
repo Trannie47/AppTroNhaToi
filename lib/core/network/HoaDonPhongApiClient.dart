@@ -74,7 +74,11 @@ class HoaDonPhongApiClient {
 
       final formData = FormData.fromMap(mapData);
 
-      final response = await _dio.post('/hoa-don-phong/create', data: formData);
+      final response = await _dio.post(
+        '/hoa-don-phong/create',
+        data: formData,
+        options: RetrofitClient.uploadOptions,
+      );
 
       final resData = response.data;
       if (resData['success'] == true && resData['data'] != null) {

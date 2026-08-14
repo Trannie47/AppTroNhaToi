@@ -70,7 +70,11 @@ class DienNuocApiClient {
 
       final formData = FormData.fromMap(dataMap);
 
-      final response = await _dio.post("dien-nuoc/create", data: formData);
+      final response = await _dio.post(
+        "dien-nuoc/create",
+        data: formData,
+        options: RetrofitClient.uploadOptions,
+      );
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (response.data is Map<String, dynamic>) {
           return response.data as Map<String, dynamic>;
@@ -127,6 +131,7 @@ class DienNuocApiClient {
           "thangNam": dienNuoc.thangNam,
           "lanGhi": dienNuoc.lanGhi,
         },
+        options: RetrofitClient.uploadOptions,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {

@@ -59,6 +59,7 @@ class HopDongApiClient {
       final request = await _dio.post(
         "hop-dong/createContract",
         data: formData,
+        options: RetrofitClient.uploadOptions,
       );
       if (request.statusCode == 200 || request.statusCode == 201) {
         final responseData = request.data['data'] ?? request.data;
@@ -101,6 +102,7 @@ class HopDongApiClient {
       final request = await _dio.post(
         "hop-dong/$hopDongId/updateContract",
         data: formData,
+        options: RetrofitClient.uploadOptions,
       );
       if (request.statusCode == 200 || request.statusCode == 201) {
         final responseData = request.data['data'] ?? request.data;
@@ -140,6 +142,7 @@ class HopDongApiClient {
       final request = await _dio.post(
         "hop-dong/$hopDongId/giaHan",
         data: formData,
+        options: RetrofitClient.uploadOptions,
       );
       if (request.statusCode == 200 || request.statusCode == 201) {
         final responseData = request.data['data'] ?? request.data;
