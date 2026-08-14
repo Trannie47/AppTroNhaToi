@@ -3,8 +3,15 @@ class ThietBi {
   final String? tenThietBi;
   final String? loai;
   final int? trangThai;
+  final String? ghiChu;
 
-  const ThietBi({this.thietBiID, this.tenThietBi, this.loai, this.trangThai});
+  const ThietBi({
+    this.thietBiID,
+    this.tenThietBi,
+    this.loai,
+    this.trangThai,
+    this.ghiChu,
+  });
 
   factory ThietBi.fromMap(Map<String, dynamic> map) {
     return ThietBi(
@@ -12,6 +19,7 @@ class ThietBi {
       tenThietBi: map['tenThietBi'] as String?,
       loai: map['loai'] as String?,
       trangThai: map['trangThai'] as int?,
+      ghiChu: map['ghiChu'] as String?,
     );
   }
 
@@ -21,6 +29,7 @@ class ThietBi {
       'tenThietBi': tenThietBi,
       'loai': loai,
       'trangThai': trangThai,
+      'ghiChu': ghiChu,
     };
   }
 
@@ -29,12 +38,14 @@ class ThietBi {
     String? tenThietBi,
     String? loai,
     int? trangThai,
+    String? ghiChu,
   }) {
     return ThietBi(
       thietBiID: thietBiID ?? this.thietBiID,
       tenThietBi: tenThietBi ?? this.tenThietBi,
       loai: loai ?? this.loai,
       trangThai: trangThai ?? this.trangThai,
+      ghiChu: ghiChu ?? this.ghiChu,
     );
   }
 
@@ -61,7 +72,8 @@ class ThietBi {
         'thietBiID: $thietBiID, '
         'tenThietBi: $tenThietBi, '
         'loai: $loai, '
-        'trangThai: $trangThai'
+        'trangThai: $trangThai, '
+        'ghiChu: $ghiChu'
         ')';
   }
 }

@@ -14,14 +14,17 @@ class ThietBiFormViewModel extends ChangeNotifier {
   bool get isEditMode => _thietBiDangSua != null;
 
   final TextEditingController txtTenThietBi = TextEditingController();
+  final TextEditingController txtGhiChu = TextEditingController();
 
   String? loaiThietBi;
   int? phongID;
   String? trangThai;
+  String? ghiChu;
 
   String? errTenThietBi;
   String? errLoaiThietBi;
   String? errTrangThai;
+  String? errGhiChu;
 
   final List<String> dsLoaiThietBi = [
     "Điều hòa",

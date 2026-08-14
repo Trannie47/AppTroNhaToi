@@ -27,6 +27,7 @@ class _ThietBiFormState extends State<ThietBiForm> {
     required String hint,
     required TextEditingController controller,
     String? errorText,
+    int maxLines = 1,
     Widget? suffixIcon,
     List<TextInputFormatter>? inputFormatters,
     TextInputType keyboardType = TextInputType.text,
@@ -49,7 +50,7 @@ class _ThietBiFormState extends State<ThietBiForm> {
             controller: controller,
             keyboardType: keyboardType,
             inputFormatters: inputFormatters,
-
+            maxLines: maxLines,
             decoration: InputDecoration(
               hintText: hint,
               suffixIcon: suffixIcon,
@@ -171,54 +172,6 @@ class _ThietBiFormState extends State<ThietBiForm> {
     );
   }
 
-  // Widget _dropDownPhong() {
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-
-  //     children: [
-  //       const Text(
-  //         "Phòng lắp đặt",
-  //         style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-  //       ),
-
-  //       const SizedBox(height: 8),
-
-  //       DropdownButtonFormField<int>(
-  //         value: vm.phongID,
-
-  //         decoration: InputDecoration(
-  //           errorText: vm.errPhong,
-
-  //           filled: true,
-  //           fillColor: const Color(0xffF8F8F8),
-
-  //           border: OutlineInputBorder(
-  //             borderRadius: BorderRadius.circular(14),
-  //             borderSide: BorderSide.none,
-  //           ),
-  //         ),
-
-  //         hint: const Text("--Chọn phòng--"),
-
-  //         items: widget.dsPhong
-  //             .map(
-  //               (e) => DropdownMenuItem<int>(
-  //                 value: e.phongID,
-  //                 child: Text(e.tenPhong),
-  //               ),
-  //             )
-  //             .toList(),
-
-  //         onChanged: (value) {
-  //           setState(() {
-  //             vm.phongID = value;
-  //           });
-  //         },
-  //       ),
-  //     ],
-  //   );
-  // }
-
   DateTime? chuyenNgay(String ngay) {
     try {
       final tach = ngay.split('/');
@@ -295,25 +248,6 @@ class _ThietBiFormState extends State<ThietBiForm> {
               ),
             ),
 
-            // onPressed: () {
-            //   bool hopLe = vm.kiemTraDuLieu();
-            //
-            //   setState(() {});
-            //
-            //   if (!hopLe) {
-            //     return;
-            //   }
-            //
-            //   ThietBi thietBiMoi = (widget.thietBi ?? ThietBi()).copyWith(
-            //     tenThietBi: vm.txtTenThietBi.text,
-            //     loai: vm.loaiThietBi,
-            //     trangThai: vm.trangThai == "Tốt" ? 0 : 1,
-            //     giaTri: double.tryParse(vm.txtGiaTri.text),
-            //     ngayMua: chuyenNgay(vm.txtNgayMua.text),
-            //   );
-            //
-            //   Navigator.pop(context, thietBiMoi);
-            // },
             onPressed: () async {
               final result = await vm.luu();
 
@@ -374,51 +308,43 @@ class _ThietBiFormState extends State<ThietBiForm> {
 
               const SizedBox(height: 8),
 
-              // _dropDownPhong(),
-              // const SizedBox(height: 16),
-              // _input(
-              //   title: "Ngày mua",
-              //   hint: "dd/MM/yyyy",
-              //   controller: vm.txtNgayMua,
-              //   errorText: vm.errNgayMua,
-
-              //   keyboardType: TextInputType.number,
-
-              //   inputFormatters: [MaskedInputFormatter('##/##/####')],
-
-              //   suffixIcon: IconButton(
-              //     icon: const Icon(Icons.calendar_today_outlined, size: 20),
-
-              //     onPressed: () async {
-              //       DateTime? pickedDate = await showDatePicker(
-              //         context: context,
-              //         initialDate: DateTime.now(),
-              //         firstDate: DateTime(2000),
-              //         lastDate: DateTime.now(),
-              //       );
-
-              //       if (pickedDate != null) {
-              //         vm.txtNgayMua.text = formatDate(pickedDate);
-
-              //         setState(() {});
-              //       }
-              //     },
-              //   ),
-              // ),
-
-              // const SizedBox(width: 12),
-
-              // _input(
-              //   title: "Giá trị (đ)",
-              //   hint: "0",
-              //   controller: vm.txtGiaTri,
-              //   keyboardType: TextInputType.number,
-              //   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              //   errorText: vm.errGiaTri,
-              // ),
               const SizedBox(height: 16),
 
               _dropDownTrangThai(),
+
+              _input(
+                title: "Ghi chú",
+                hint: "Ghi chú thêm (nếu có)",
+                controller: vm.txtGhiChu,
+                errorText: vm.errGhiChu,
+                maxLines: 3,
+              ),
+              // title: "Ghi chú",
+
+              // child: Column(
+              //   children: [
+              //     const SizedBox(height: 12),
+
+              //     TextFormField(
+              //       controller: vm.txtGhiChu,
+              //       maxLines: 2,
+
+              //       decoration: InputDecoration(
+              //         hintText: "",
+
+              //         filled: true,
+              //         fillColor: const Color(0xffF8F8F8),
+
+              //         contentPadding: const EdgeInsets.all(14),
+
+              //         border: OutlineInputBorder(
+              //           borderRadius: BorderRadius.circular(14),
+              //           borderSide: BorderSide.none,
+              //         ),
+              //       ),
+              //     ),
+              //   ],
+              // ),
             ],
           ),
         ),
