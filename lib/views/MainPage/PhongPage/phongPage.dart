@@ -1,6 +1,5 @@
+import 'package:AppTroNhaToi/models/item_phong.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
-import 'package:AppTroNhaToi/view_models/phong_view_model.dart';
-import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/chiTietPhongPage.dart';
 import 'package:AppTroNhaToi/views/MainPage/PhongPage/FormPhong/FormPhong.dart';
 import 'package:AppTroNhaToi/widgets/itemPhong.dart';
 import 'package:flutter/material.dart';
@@ -47,11 +46,12 @@ class _PhongPageState extends State<PhongPage> {
     );
   }
 
-  void toChiTietPhong(ItemPhong item) async {
+  void toChiTietPhong(ItemPhongModel item) async {
     await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => PhongChiTiet(room: item)),
     );
+    await vm.refresh();
   }
 
   @override
