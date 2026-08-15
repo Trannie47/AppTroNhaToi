@@ -271,6 +271,39 @@ class _PhongChiTiet extends State<PhongChiTiet> {
                       fontSize: 15,
                     ),
                   ),
+                  if (room.dangOMotMinh) ...[
+                    const SizedBox(width: 10),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.deepPurple.shade50,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: Colors.deepPurple.shade100),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.meeting_room_outlined,
+                            size: 13,
+                            color: Colors.deepPurple.shade400,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            "Thuê cả phòng",
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.deepPurple.shade400,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -313,6 +346,14 @@ class _PhongChiTiet extends State<PhongChiTiet> {
                     value: "${_formatCurrency(room.giahientai)}đ/tháng",
                     valueColor: const Color(0xFF2D7A3A),
                     isBold: true,
+                  ),
+                  _infoLine(
+                    label: "Hình thức ở",
+                    value: room.dangOMotMinh ? "Ở nguyên phòng" : "Ở ghép",
+                    valueColor: room.dangOMotMinh
+                        ? Colors.deepPurple.shade400
+                        : null,
+                    isBold: room.dangOMotMinh,
                   ),
                   _infoLine(
                     label: "Số người tối đa",

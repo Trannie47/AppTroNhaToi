@@ -344,6 +344,7 @@ class _PhongPageState extends State<PhongPage> {
                                         loaiPhong: currentLoaiPhong,
                                         soNguoiHienTai:
                                             itemBackend.soNguoiHienTai,
+                                        dangOMotMinh: itemBackend.dangOMotMinh,
                                         onTap: () {
                                           toChiTietPhong(itemBackend);
                                         },

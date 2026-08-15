@@ -23,6 +23,10 @@ class ItemPhongModel {
     this.soNguoiHienTai = 0,
   });
 
+  /// true nếu phòng đang có ít nhất 1 hợp đồng "Ở nguyên phòng" (hinhThucO == true)
+  /// trong danh sách hợp đồng của phòng.
+  bool get dangOMotMinh => dsHopDong.any((hd) => hd.hinhThucO == true);
+
   factory ItemPhongModel.fromMap(Map<String, dynamic> map) {
     return ItemPhongModel(
       phongId: map['phongId'] as int? ?? 0,
@@ -70,6 +74,7 @@ class hopDongTrongPhong {
   final DateTime? ngayKy;
   final DateTime? ngayHetHan;
   final double giaPhongThucTe;
+  final bool hinhThucO;
 
   hopDongTrongPhong({
     required this.hopDongId,
@@ -78,12 +83,13 @@ class hopDongTrongPhong {
     this.ngayKy,
     this.ngayHetHan,
     required this.giaPhongThucTe,
+    this.hinhThucO = false,
   });
 
   factory hopDongTrongPhong.fromMap(Map<String, dynamic> map) {
     return hopDongTrongPhong(
       hopDongId: map['hopDongId'] as String? ?? '',
-      idnt: map['idnt'] as int? ?? 0,
+      idnt: map['idntDaiDien'] as int? ?? 0,
       phongId: map['phongId'] as int? ?? 0,
       ngayKy: map['ngayKy'] != null
           ? DateTime.tryParse(map['ngayKy'].toString())
@@ -94,6 +100,7 @@ class hopDongTrongPhong {
       giaPhongThucTe: map['giaPhongThucTe'] != null
           ? (double.tryParse(map['giaPhongThucTe'].toString()) ?? 0.0)
           : 0.0,
+      hinhThucO: map['hinhThucO'] == true,
     );
   }
 }

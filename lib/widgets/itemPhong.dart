@@ -7,6 +7,7 @@ class ItemPhong extends StatelessWidget {
   final Phong phong;
   final LoaiPhong loaiPhong;
   final int soNguoiHienTai;
+  final bool? dangOMotMinh;
   final Function()? onTap;
 
   const ItemPhong({
@@ -14,6 +15,7 @@ class ItemPhong extends StatelessWidget {
     required this.phong,
     required this.loaiPhong,
     this.soNguoiHienTai = 0,
+    this.dangOMotMinh = false,
     this.onTap,
   });
 
@@ -110,24 +112,61 @@ class ItemPhong extends StatelessWidget {
                 const SizedBox(width: 8),
 
                 /// STATUS
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: bgTrangThai,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    textTrangThai,
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: textColorTrangThai,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: bgTrangThai,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        textTrangThai,
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: textColorTrangThai,
+                        ),
+                      ),
                     ),
-                  ),
+                    if (dangOMotMinh == true) ...[
+                      const SizedBox(height: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xffEDE7F6),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.meeting_room_outlined,
+                              size: 11,
+                              color: Colors.deepPurple.shade400,
+                            ),
+                            const SizedBox(width: 3),
+                            Text(
+                              "Thuê cả phòng",
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.deepPurple.shade400,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ],
             ),
@@ -170,9 +209,11 @@ class ItemPhong extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      phong.trangThai == 1
-                          ? "$soNguoiHienTai/${loaiPhong.soNguoiToiDa} người"
-                          : "Tối đa ${loaiPhong.soNguoiToiDa} người",
+                      dangOMotMinh == true
+                          ? "Đang ở $soNguoiHienTai"
+                          : (phong.trangThai == 1
+                                ? "$soNguoiHienTai/${loaiPhong.soNguoiToiDa} người"
+                                : "Tối đa ${loaiPhong.soNguoiToiDa} người"),
                       style: const TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
