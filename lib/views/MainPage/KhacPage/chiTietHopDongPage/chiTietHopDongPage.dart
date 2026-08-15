@@ -253,9 +253,10 @@ class _ChiTietHopDongPageState extends State<ChiTietHopDongPage> {
       builder: (dialogContext) => AppConfirmDialog(
         title: "Xác nhận kết thúc hợp đồng",
         content:
-            "Bạn có chắc chắn muốn kết thúc hợp đồng này không? Hệ thống sẽ kiểm tra công nợ và chốt ngày trả phòng thực tế.",
+            "Bạn có chắc chắn  muốn kết thúc hợp đồng này không? Hệ thống sẽ kiểm tra công nợ và chốt ngày trả phòng thực tế.",
         textConfirm: "Kết thúc",
         isDangerous: true,
+        customIcon: Icons.event_busy_rounded,
         onConfirm: () async {
           Navigator.pop(dialogContext);
 

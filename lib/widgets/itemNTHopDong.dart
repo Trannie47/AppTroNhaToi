@@ -10,19 +10,17 @@ class ItemNTHopDong extends StatelessWidget {
 
   const ItemNTHopDong({super.key, required this.hopDong, this.onTap});
 
+  // Hợp đồng vẫn đang trangThai == 1 (hiệu lực) nhưng ngày hết hạn đã tới
+  // hoặc đã qua rồi mà chủ trọ chưa gia hạn/kết thúc -> cảnh báo đỏ.
+  bool get _isQuaHan {
+    if (hopDong.trangThai != 1) return false;
+    return _soNgayConLai <= 0;
+  }
+
   bool get _isSapHetHan {
     if (hopDong.trangThai != 1) return false;
-
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final ngayHetHan = DateTime(
-      hopDong.ngayHetHan.year,
-      hopDong.ngayHetHan.month,
-      hopDong.ngayHetHan.day,
-    );
-
-    final soNgayConLai = ngayHetHan.difference(today).inDays;
-    return soNgayConLai >= 0 && soNgayConLai <= 30;
+    final soNgayConLai = _soNgayConLai;
+    return soNgayConLai > 0 && soNgayConLai <= 30;
   }
 
   int get _soNgayConLai {
@@ -38,6 +36,7 @@ class ItemNTHopDong extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final quaHan = _isQuaHan;
     final sapHetHan = _isSapHetHan;
     final ngayConLai = _soNgayConLai;
 
@@ -53,7 +52,9 @@ class ItemNTHopDong extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(18),
-          border: sapHetHan
+          border: quaHan
+              ? Border.all(color: const Color(0xFFE53935), width: 1.2)
+              : sapHetHan
               ? Border.all(color: const Color(0xFFFFA726), width: 1.2)
               : null,
           boxShadow: [
@@ -104,7 +105,28 @@ class ItemNTHopDong extends StatelessWidget {
                           color: Color(0xff111111),
                         ),
                       ),
-                      if (sapHetHan)
+                      if (quaHan)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFFEBEE),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            ngayConLai == 0
+                                ? "Hết hạn hôm nay"
+                                : "Đã quá hạn ${-ngayConLai} ngày",
+                            style: const TextStyle(
+                              fontSize: 11,
+                              color: Color(0xFFE53935),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        )
+                      else if (sapHetHan)
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 8,
@@ -115,9 +137,7 @@ class ItemNTHopDong extends StatelessWidget {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
-                            ngayConLai == 0
-                                ? "Hôm nay hết hạn"
-                                : "Còn $ngayConLai ngày",
+                            "Còn $ngayConLai ngày",
                             style: const TextStyle(
                               fontSize: 11,
                               color: Color(0xFFD97706),
