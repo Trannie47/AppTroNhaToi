@@ -39,6 +39,7 @@ class HopDongApiClient {
     final formData = FormData.fromMap({
       'phongId': hopDongPayload['phongId'],
       'idntDaiDien': hopDongPayload['idntDaiDien'],
+      'hinhThucO': hopDongPayload['hinhThucO'],
       'ngayKy': hopDongPayload['ngayKy'],
       'ngayHetHan': hopDongPayload['ngayHetHan'],
       'tienCoc': hopDongPayload['tienCoc'],
@@ -81,6 +82,7 @@ class HopDongApiClient {
     final formData = FormData.fromMap({
       'phongId': hopDongPayload['phongId'],
       'idntDaiDien': hopDongPayload['idntDaiDien'],
+      'hinhThucO': hopDongPayload['hinhThucO'],
       'ngayKy': hopDongPayload['ngayKy'],
       'ngayHetHan': hopDongPayload['ngayHetHan'],
       'tienCoc': hopDongPayload['tienCoc'],
