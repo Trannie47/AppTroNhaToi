@@ -1,3 +1,4 @@
+import 'package:AppTroNhaToi/models/DTO/RoomAvailableDTO.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/repositories/phong_repository.dart';
 import 'package:flutter/foundation.dart';
@@ -22,6 +23,11 @@ class PhongProvider extends ChangeNotifier {
   List<ItemPhongModel> _dsPhongCoTheLuanChuyen = [];
   List<ItemPhongModel> get dsPhongCoTheLuanChuyen => _dsPhongCoTheLuanChuyen;
 
+  List<RoomAvailableDTO> _dsPhongChoOGhep = [];
+  List<RoomAvailableDTO> get dsPhongChoOGhep => _dsPhongChoOGhep;
+
+  List<RoomAvailableDTO> _dsPhongChoOMotMinh = [];
+  List<RoomAvailableDTO> get dsPhongChoOMotMinh => _dsPhongChoOMotMinh;
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
@@ -145,6 +151,48 @@ class PhongProvider extends ChangeNotifier {
       _dsPhongCoTheLuanChuyen = [];
       if (kDebugMode) {
         print("Lỗi getCoTheLuanChuyenByHopDong tại Provider: $e");
+      }
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  /// Danh sách phòng có thể chọn khi tạo hợp đồng "Ở GHÉP"
+  Future<void> getPhongChoOGhep(int soNguoi) async {
+    if (_isLoading) return;
+
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      _dsPhongChoOGhep = await phongRepository.getPhongChoOGhep(soNguoi);
+      notifyListeners();
+    } catch (e) {
+      _dsPhongChoOGhep = [];
+      if (kDebugMode) {
+        print("Lỗi getPhongChoOGhep tại Provider: $e");
+      }
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  /// Danh sách phòng có thể chọn khi tạo hợp đồng "Ở MỘT MÌNH"
+  Future<void> getPhongChoOMotMinh(int soNguoi) async {
+    if (_isLoading) return;
+
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      _dsPhongChoOMotMinh = await phongRepository.getPhongChoOMotMinh(soNguoi);
+      notifyListeners();
+    } catch (e) {
+      _dsPhongChoOMotMinh = [];
+      if (kDebugMode) {
+        print("Lỗi getPhongChoOMotMinh tại Provider: $e");
       }
     } finally {
       _isLoading = false;

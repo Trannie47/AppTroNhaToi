@@ -140,77 +140,6 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                   title: "Thông tin thuê",
                   child: Column(
                     children: [
-                      _label("Phòng thuê"),
-                      const SizedBox(height: 6),
-                      AbsorbPointer(
-                        absorbing: isEditMode,
-                        child: Opacity(
-                          opacity: isEditMode ? 0.6 : 1.0,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CustomDropdownSearch<RoomAvailableDTO>(
-                                hintText: "Chọn phòng thuê",
-                                asyncItems: (filter) async {
-                                  if (vm.roomsAvailable
-                                      is! HopDongSuccess<RoomAvailableDTO>) {
-                                    await vm.getRoomsAvailableForContract();
-                                  }
-                                  if (vm.roomsAvailable is HopDongError) {
-                                    final errorState =
-                                        vm.roomsAvailable as HopDongError;
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(errorState.errorMessage),
-                                        backgroundColor: Colors.red.shade700,
-                                        behavior: SnackBarBehavior.floating,
-                                      ),
-                                    );
-                                    return [];
-                                  }
-                                  if (vm.roomsAvailable
-                                      is HopDongSuccess<RoomAvailableDTO>) {
-                                    final data =
-                                        (vm.roomsAvailable
-                                                as HopDongSuccess<
-                                                  RoomAvailableDTO
-                                                >)
-                                            .data;
-                                    final f = filter.toLowerCase();
-                                    if (f.isEmpty) return data;
-                                    return data
-                                        .where(
-                                          (e) => e.tenPhong
-                                              .toLowerCase()
-                                              .contains(f),
-                                        )
-                                        .toList();
-                                  }
-                                  return [];
-                                },
-                                selectedItem: vm.selectedPhong,
-                                itemAsString: (item) => item.tenPhong,
-                                onChanged: (value) {
-                                  vm.onSelectedPhong(value);
-                                },
-                              ),
-                              if (vm.errPhong != null) ...[
-                                const SizedBox(height: 4),
-                                Text(
-                                  vm.errPhong!,
-                                  style: const TextStyle(
-                                    color: Colors.red,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 16),
-
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -310,6 +239,35 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                               ],
                             ],
                           ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 16),
+                      _label("Hình thức ở"),
+                      const SizedBox(height: 6),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: const Color(0xffF7F7F7),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.grey.shade300),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: _hinhThucOOption(
+                                label: "Ở ghép",
+                                selected: vm.hinhThucO == false,
+                                onTap: () => vm.onChangeHinhThucO(false),
+                              ),
+                            ),
+                            Expanded(
+                              child: _hinhThucOOption(
+                                label: "Ở nguyên phòng",
+                                selected: vm.hinhThucO == true,
+                                onTap: () => vm.onChangeHinhThucO(true),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
 
@@ -442,6 +400,77 @@ class _TaoHopDongPageState extends State<HopDongForm> {
 
                       const SizedBox(height: 16),
 
+                      _label("Phòng thuê"),
+                      const SizedBox(height: 6),
+                      AbsorbPointer(
+                        absorbing: isEditMode,
+                        child: Opacity(
+                          opacity: isEditMode ? 0.6 : 1.0,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomDropdownSearch<RoomAvailableDTO>(
+                                key: ValueKey('phong-${vm.hinhThucO}'),
+                                hintText: "Chọn phòng thuê",
+                                asyncItems: (filter) async {
+                                  if (vm.roomsAvailable
+                                      is! HopDongSuccess<RoomAvailableDTO>) {
+                                    await vm.getRoomsAvailableForContract();
+                                  }
+                                  if (vm.roomsAvailable is HopDongError) {
+                                    final errorState =
+                                        vm.roomsAvailable as HopDongError;
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(errorState.errorMessage),
+                                        backgroundColor: Colors.red.shade700,
+                                        behavior: SnackBarBehavior.floating,
+                                      ),
+                                    );
+                                    return [];
+                                  }
+                                  if (vm.roomsAvailable
+                                      is HopDongSuccess<RoomAvailableDTO>) {
+                                    final data =
+                                        (vm.roomsAvailable
+                                                as HopDongSuccess<
+                                                  RoomAvailableDTO
+                                                >)
+                                            .data;
+                                    final f = filter.toLowerCase();
+                                    if (f.isEmpty) return data;
+                                    return data
+                                        .where(
+                                          (e) => e.tenPhong
+                                              .toLowerCase()
+                                              .contains(f),
+                                        )
+                                        .toList();
+                                  }
+                                  return [];
+                                },
+                                selectedItem: vm.selectedPhong,
+                                itemAsString: (item) => item.tenPhong,
+                                onChanged: (value) {
+                                  vm.onSelectedPhong(value);
+                                },
+                              ),
+                              if (vm.errPhong != null) ...[
+                                const SizedBox(height: 4),
+                                Text(
+                                  vm.errPhong!,
+                                  style: const TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 16),
                       Row(
                         children: [
                           Expanded(
@@ -1045,6 +1074,34 @@ class _TaoHopDongPageState extends State<HopDongForm> {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: Color(0xff2D7A3A), width: 1.2),
+        ),
+      ),
+    );
+  }
+
+  Widget _hinhThucOOption({
+    required String label,
+    required bool selected,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: selected ? const Color(0xff2E7D32) : Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Center(
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: selected ? Colors.white : Colors.black87,
+            ),
+          ),
         ),
       ),
     );

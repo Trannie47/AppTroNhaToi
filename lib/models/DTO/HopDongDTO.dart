@@ -9,6 +9,7 @@ class HopDongDTO {
   final double giaPhongThucTe;
   final int
   trangThai; //0: hợp đồng khởi tạo(chưa tới ngày hiệu lực), 1: HD hiệu lực, 2: hết hiệu lực
+  final bool? hinhThucO; // false: ở ghép, true: ở một mình
   final PhongHD phong;
   final String? ghiChu;
   final List<String> dsAnhHopDong;
@@ -24,6 +25,7 @@ class HopDongDTO {
     required this.giaPhongThucTe,
     this.ghiChu,
     required this.trangThai,
+    this.hinhThucO = false,
     required this.phong,
     required this.dsAnhHopDong,
     required this.idntDaiDien,
@@ -54,6 +56,12 @@ class HopDongDTO {
           : double.tryParse(json['giaPhongThucTe']?.toString() ?? '') ?? 0.0,
       ghiChu: json['ghiChu'] as String?,
       trangThai: json['trangThai'] ?? 0,
+      hinhThucO: json['hinhThucO'] == null
+          ? false
+          : (json['hinhThucO'] is bool
+                ? json['hinhThucO'] as bool
+                : (json['hinhThucO'].toString() == 'true' ||
+                      json['hinhThucO'].toString() == '1')),
       dsAnhHopDong: json['anhHopDong'] is List
           ? List<String>.from(json['anhHopDong'])
           : (json['anhHopDong'] != null ? [json['anhHopDong'].toString()] : []),
@@ -73,7 +81,7 @@ class HopDongDTO {
   }
   @override
   String toString() {
-    return 'HopDongDTO(hopDongID: $hopDongID, phongID: $phongID, ngayKy: $ngayKy, ngayHetHan: $ngayHetHan, tienCoc: $tienCoc, giaPhongThucTe: $giaPhongThucTe, trangThai: $trangThai, phong: ${phong.tenPhong}, ghiChu: $ghiChu, nguoiDaiDien: ${nguoiDaiDien.hoTen}, dsAnhHopDong: $dsAnhHopDong giaGocCuaPhong: ${phong.giaPhongGoc})';
+    return 'HopDongDTO(hopDongID: $hopDongID, phongID: $phongID, ngayKy: $ngayKy, ngayHetHan: $ngayHetHan, tienCoc: $tienCoc, giaPhongThucTe: $giaPhongThucTe, trangThai: $trangThai, hinhThucO: $hinhThucO, phong: ${phong.tenPhong}, ghiChu: $ghiChu, nguoiDaiDien: ${nguoiDaiDien.hoTen}, dsAnhHopDong: $dsAnhHopDong giaGocCuaPhong: ${phong.giaPhongGoc})';
   }
 }
 

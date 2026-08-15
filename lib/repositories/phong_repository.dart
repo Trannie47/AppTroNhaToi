@@ -1,4 +1,5 @@
 import 'package:AppTroNhaToi/core/network/PhongApiClient.dart';
+import 'package:AppTroNhaToi/models/DTO/RoomAvailableDTO.dart';
 import 'package:AppTroNhaToi/models/item_phong.dart';
 
 import '../models/phong.dart';
@@ -35,5 +36,15 @@ class PhongRepository {
     String hopDongId,
   ) async {
     return await _phongApiClient.getCoTheLuanChuyenByHopDong(hopDongId);
+  }
+
+  /// Danh sách phòng có thể chọn khi tạo hợp đồng "Ở GHÉP"
+  Future<List<RoomAvailableDTO>> getPhongChoOGhep(int soNguoi) async {
+    return await _phongApiClient.getPhongChoOGhep(soNguoi);
+  }
+
+  /// Danh sách phòng có thể chọn khi tạo hợp đồng "Ở MỘT MÌNH"
+  Future<List<RoomAvailableDTO>> getPhongChoOMotMinh(int soNguoi) async {
+    return await _phongApiClient.getPhongChoOMotMinh(soNguoi);
   }
 }

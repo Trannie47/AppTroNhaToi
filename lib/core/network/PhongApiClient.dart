@@ -1,4 +1,5 @@
 import 'package:AppTroNhaToi/core/network/retrofit_client.dart';
+import 'package:AppTroNhaToi/models/DTO/RoomAvailableDTO.dart';
 import 'package:AppTroNhaToi/models/item_phong.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:dio/dio.dart';
@@ -180,6 +181,70 @@ class PhongApiClient {
     } catch (e) {
       if (kDebugMode) {
         print("Lỗi không xác định getCoTheLuanChuyenByHopDong: $e");
+      }
+      throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
+    }
+  }
+
+  /// Danh sách phòng có thể chọn khi tạo hợp đồng "Ở GHÉP"
+  /// [soNguoi]: số người muốn thêm vào phòng
+  Future<List<RoomAvailableDTO>> getPhongChoOGhep(int soNguoi) async {
+    try {
+      final response = await _dio.get(
+        "phong/cho-o-ghep",
+        queryParameters: {"soNguoi": soNguoi},
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final List<dynamic> data = response.data;
+        return data
+            .map(
+              (json) => RoomAvailableDTO.fromJson(json as Map<String, dynamic>),
+            )
+            .toList();
+      }
+
+      return [];
+    } on DioException catch (e) {
+      if (kDebugMode) {
+        print("Lỗi getPhongChoOGhep: $e");
+      }
+      throw Exception(_mapErrorToMessage(e));
+    } catch (e) {
+      if (kDebugMode) {
+        print("Lỗi không xác định getPhongChoOGhep: $e");
+      }
+      throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
+    }
+  }
+
+  /// Danh sách phòng có thể chọn khi tạo hợp đồng "Ở MỘT MÌNH"
+  /// [soNguoi]: số người sẽ ở
+  Future<List<RoomAvailableDTO>> getPhongChoOMotMinh(int soNguoi) async {
+    try {
+      final response = await _dio.get(
+        "phong/cho-o-mot-minh",
+        queryParameters: {"soNguoi": soNguoi},
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final List<dynamic> data = response.data;
+        return data
+            .map(
+              (json) => RoomAvailableDTO.fromJson(json as Map<String, dynamic>),
+            )
+            .toList();
+      }
+
+      return [];
+    } on DioException catch (e) {
+      if (kDebugMode) {
+        print("Lỗi getPhongChoOMotMinh: $e");
+      }
+      throw Exception(_mapErrorToMessage(e));
+    } catch (e) {
+      if (kDebugMode) {
+        print("Lỗi không xác định getPhongChoOMotMinh: $e");
       }
       throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
     }

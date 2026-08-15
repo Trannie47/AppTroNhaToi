@@ -26,7 +26,11 @@ class HopDongFormViewModel extends ChangeNotifier {
   final NguoiThueProvider _nguoiThueProvider;
   final PhongProvider _phongProvider;
 
-  HopDongFormViewModel(this._hopDongProvider, this._nguoiThueProvider, this._phongProvider) {
+  HopDongFormViewModel(
+    this._hopDongProvider,
+    this._nguoiThueProvider,
+    this._phongProvider,
+  ) {
     txtGiaHopDong.addListener(() {
       if (errGiaHopDong != null) {
         errGiaHopDong = null;
@@ -71,7 +75,27 @@ class HopDongFormViewModel extends ChangeNotifier {
   final txtTienCoc = TextEditingController();
   final txtGhiChu = TextEditingController();
 
+  bool? hinhThucO = false;
+
+  void onChangeHinhThucO(bool value) {
+    if (hinhThucO == value) return;
+    hinhThucO = value;
+    if (value == true) {
+      // Ở nguyên phòng -> xoá danh sách người ở ghép nếu có
+      listNguoiOGhep.clear();
+    }
+    // Phòng đã chọn trước đó (theo hình thức cũ) không còn hợp lệ -> reset lại
+    selectedPhong = null;
+    txtTongGiaPhong.text = "0";
+    _roomsAvailable = HopDongInitial();
+    notifyListeners();
+  }
+
   int soNguoiHienTai = 0;
+
+  /// Số người dự kiến ở trong hợp đồng = đại diện (luôn tính 1) + số người ở ghép hiện có.
+  /// Không có ai ở ghép thì mặc định vẫn là 1 (chỉ đại diện).
+  int get soNguoiDuKien => 1 + listNguoiOGhep.length;
 
   HopDongState _roomsAvailable = HopDongInitial();
   HopDongState get roomsAvailable => _roomsAvailable;
@@ -152,18 +176,47 @@ class HopDongFormViewModel extends ChangeNotifier {
   HopDongDTO? hdDTO;
 
   //gọi hiển thị list phòng khi tạo hợp đồng mới
+  // Future<void> getRoomsAvailableForContract() async {
+  //   _roomsAvailable = HopDongLoading();
+  //   notifyListeners();
+  //   try {
+  //     final result = await _hopDongProvider.getRoomsAvailable();
+  //     _roomsAvailable = HopDongSuccess(result);
+  //   } catch (e) {
+  //     String loi = "Đã có lỗi xảy ra, vui lòng thử lại sau!";
+  //     if (e is DioException) {
+  //       loi = mapDioErrorToMessage(e);
+  //     } else {
+  //       if (kDebugMode)
+  //         print("Lỗi logic hệ thống trong HopDongFormViewModel: $e");
+  //     }
+  //     _roomsAvailable = HopDongError(loi);
+  //   } finally {
+  //     notifyListeners();
+  //   }
+  // }
+
+  //gọi hiển thị list phòng khi tạo hợp đồng mới
   Future<void> getRoomsAvailableForContract() async {
     _roomsAvailable = HopDongLoading();
     notifyListeners();
     try {
-      final result = await _hopDongProvider.getRoomsAvailable();
+      final soNguoi = soNguoiDuKien;
+
+      // hinhThucO == true -> Ở nguyên phòng -> gọi API cho-o-mot-minh
+      // hinhThucO == false/null -> Ở ghép -> gọi API cho-o-ghep
+      final result = hinhThucO == true
+          ? await _phongProvider.phongRepository.getPhongChoOMotMinh(soNguoi)
+          : await _phongProvider.phongRepository.getPhongChoOGhep(soNguoi);
+
       _roomsAvailable = HopDongSuccess(result);
     } catch (e) {
       String loi = "Đã có lỗi xảy ra, vui lòng thử lại sau!";
       if (e is DioException) {
         loi = mapDioErrorToMessage(e);
       } else {
-        if (kDebugMode) print("Lỗi logic hệ thống trong HopDongFormViewModel: $e");
+        if (kDebugMode)
+          print("Lỗi logic hệ thống trong HopDongFormViewModel: $e");
       }
       _roomsAvailable = HopDongError(loi);
     } finally {
@@ -198,7 +251,10 @@ class HopDongFormViewModel extends ChangeNotifier {
     _createContractState = CreateContractLoading();
     notifyListeners();
     try {
-      final result = await _hopDongProvider.createHopDong(hopDongInfor, listImageContract);
+      final result = await _hopDongProvider.createHopDong(
+        hopDongInfor,
+        listImageContract,
+      );
       _createContractState = CreateContractSuccess(result);
       await _phongProvider.getListPhong();
       await _nguoiThueProvider.fetchAll();
@@ -219,7 +275,10 @@ class HopDongFormViewModel extends ChangeNotifier {
     _updateContractState = HopDongUpdateLoading();
     notifyListeners();
     try {
-      final result = await _hopDongProvider.updateHopDong(hopDongInfor, listImageContract);
+      final result = await _hopDongProvider.updateHopDong(
+        hopDongInfor,
+        listImageContract,
+      );
       await _phongProvider.getListPhong();
       _updateContractState = HopDongUpdateSuccess(result);
       await _nguoiThueProvider.fetchAll();
@@ -235,7 +294,9 @@ class HopDongFormViewModel extends ChangeNotifier {
   }
 
   Future<void> selectImageCotract() async {
-    final List<XFile> imageSelect = await _picker.pickMultiImage(imageQuality: 80);
+    final List<XFile> imageSelect = await _picker.pickMultiImage(
+      imageQuality: 80,
+    );
     if (imageSelect.isNotEmpty) {
       listImageContract.addAll(imageSelect.map((x) => File(x.path)));
       errImageContract = null;
@@ -263,7 +324,10 @@ class HopDongFormViewModel extends ChangeNotifier {
     selectedPhong = phong;
     errPhong = null;
     if (phong != null) {
-      txtTongGiaPhong.text = NumberFormat('#,###', 'vi_VN').format(phong.giaPhongGoc).replaceAll(',', '.');
+      txtTongGiaPhong.text = NumberFormat(
+        '#,###',
+        'vi_VN',
+      ).format(phong.giaPhongGoc).replaceAll(',', '.');
     } else {
       txtTongGiaPhong.text = "0";
     }
@@ -274,9 +338,7 @@ class HopDongFormViewModel extends ChangeNotifier {
       await getAvailableRepresentatives();
       final ds = representativesAvailable;
       if (ds is HopDongSuccess<NguoiThueAvailableDTO>) {
-        final conHopLe = ds.data.any(
-          (nt) => nt.idnt == nguoiThueDangChon.idnt,
-        );
+        final conHopLe = ds.data.any((nt) => nt.idnt == nguoiThueDangChon.idnt);
         if (!conHopLe) {
           selectedNguoiThue = null;
           thongBaoNguoiDaiDien =
@@ -309,10 +371,21 @@ class HopDongFormViewModel extends ChangeNotifier {
       txtNgayKy.text = formatDate(hopDong.ngayKy);
 
       txtNgayHetHan.text = formatDate(hopDong.ngayHetHan);
+      hinhThucO = hopDong.hinhThucO ?? false;
       final giaThucTe = hopDong.giaPhongThucTe.toInt();
-      txtGiaHopDong.text = giaThucTe > 0 ? NumberFormat('#,###', 'vi_VN').format(giaThucTe).replaceAll(',', '.') : "";
+      txtGiaHopDong.text = giaThucTe > 0
+          ? NumberFormat(
+              '#,###',
+              'vi_VN',
+            ).format(giaThucTe).replaceAll(',', '.')
+          : "";
       final tienCocVal = hopDong.tienCoc.toInt();
-      txtTienCoc.text = tienCocVal > 0 ? NumberFormat('#,###', 'vi_VN').format(tienCocVal).replaceAll(',', '.') : "";
+      txtTienCoc.text = tienCocVal > 0
+          ? NumberFormat(
+              '#,###',
+              'vi_VN',
+            ).format(tienCocVal).replaceAll(',', '.')
+          : "";
       txtGhiChu.text = hopDong.ghiChu ?? "";
 
       selectedPhong = RoomAvailableDTO(
@@ -336,6 +409,7 @@ class HopDongFormViewModel extends ChangeNotifier {
 
     notifyListeners();
   }
+
   // Kiểm tra xem người dùng có thay đổi Giá phòng hoặc Tiền cọc so với ban đầu không
   bool get hasPriceChanged {
     if (hdDTO == null) return false;
@@ -343,7 +417,8 @@ class HopDongFormViewModel extends ChangeNotifier {
     double oldGia = hdDTO!.giaPhongThucTe;
     double oldCoc = hdDTO!.tienCoc;
 
-    double newGia = double.tryParse(txtGiaHopDong.text.replaceAll('.', '')) ?? 0.0;
+    double newGia =
+        double.tryParse(txtGiaHopDong.text.replaceAll('.', '')) ?? 0.0;
     double newCoc = double.tryParse(txtTienCoc.text.replaceAll('.', '')) ?? 0.0;
 
     return oldGia != newGia || oldCoc != newCoc;
@@ -354,14 +429,17 @@ class HopDongFormViewModel extends ChangeNotifier {
     DateTime? ngayKyParsed = chuyenNgay(txtNgayKy.text);
     DateTime? ngayHetHanParsed = chuyenNgay(txtNgayHetHan.text);
 
-    double tienCocParsed = double.tryParse(txtTienCoc.text.replaceAll('.', '')) ?? 0.0;
-    double giaHopDongParsed = double.tryParse(txtGiaHopDong.text.replaceAll('.', '')) ?? 0.0;
+    double tienCocParsed =
+        double.tryParse(txtTienCoc.text.replaceAll('.', '')) ?? 0.0;
+    double giaHopDongParsed =
+        double.tryParse(txtGiaHopDong.text.replaceAll('.', '')) ?? 0.0;
 
     return {
       "hopDongId": hdDTO?.hopDongID,
       "trangThai": hdDTO?.trangThai,
       "phongId": selectedPhong?.id,
       "idntDaiDien": selectedNguoiThue!.idnt,
+      "hinhThucO": hinhThucO,
       "ngayKy": _formatDateOnly(ngayKyParsed),
       "ngayHetHan": _formatDateOnly(ngayHetHanParsed),
       "tienCoc": tienCocParsed,
@@ -385,19 +463,21 @@ class HopDongFormViewModel extends ChangeNotifier {
   }
 
   Future<void> chonNgay(
-      BuildContext context,
-      TextEditingController controller, {
-        DateTime? firstDate,
-        DateTime? lastDate,
-      }) async {
+    BuildContext context,
+    TextEditingController controller, {
+    DateTime? firstDate,
+    DateTime? lastDate,
+  }) async {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     DateTime initDate = chuyenNgay(controller.text) ?? today;
     DateTime minDate = firstDate ?? DateTime(2020);
     DateTime maxDate = lastDate ?? DateTime(2100);
 
-    if (initDate.isBefore(minDate)) initDate = minDate;
-    else if (initDate.isAfter(maxDate)) initDate = maxDate;
+    if (initDate.isBefore(minDate))
+      initDate = minDate;
+    else if (initDate.isAfter(maxDate))
+      initDate = maxDate;
 
     DateTime? ngay = await showDatePicker(
       context: context,
@@ -416,13 +496,14 @@ class HopDongFormViewModel extends ChangeNotifier {
 
   bool get coThayDoi =>
       selectedPhong != null ||
-          selectedNguoiThue != null ||
-          txtNgayHetHan.text.isNotEmpty ||
-          txtGiaHopDong.text.isNotEmpty ||
-          txtTienCoc.text.isNotEmpty ||
-          txtGhiChu.text.isNotEmpty ||
-          listImageContract.isNotEmpty ||
-          listNguoiOGhep.isNotEmpty;
+      selectedNguoiThue != null ||
+      txtNgayHetHan.text.isNotEmpty ||
+      txtGiaHopDong.text.isNotEmpty ||
+      txtTienCoc.text.isNotEmpty ||
+      txtGhiChu.text.isNotEmpty ||
+      listImageContract.isNotEmpty ||
+      listNguoiOGhep.isNotEmpty ||
+      hinhThucO == true;
 
   bool kiemTraDuLieu() {
     errPhong = null;
@@ -450,7 +531,8 @@ class HopDongFormViewModel extends ChangeNotifier {
           errNgayKy = "Chỉ được chọn lùi tối đa về ngày 01 tháng này";
           hopLe = false;
         } else if (ngayKy.isAfter(maxTuongLai)) {
-          errNgayKy = "Chỉ được phép đặt trước phòng tối đa 30 ngày ở tương lai";
+          errNgayKy =
+              "Chỉ được phép đặt trước phòng tối đa 30 ngày ở tương lai";
           hopLe = false;
         }
       } else if (hdDTO?.trangThai == 0) {
@@ -521,6 +603,7 @@ class HopDongFormViewModel extends ChangeNotifier {
     notifyListeners();
     return hopLe;
   }
+
   String? _formatDateOnly(DateTime? date) {
     if (date == null) return null;
 

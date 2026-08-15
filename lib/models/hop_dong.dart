@@ -11,6 +11,7 @@ class HopDong {
   final String? ghiChu;
   final List<String>? dsAnhHopDong;
   final int? trangThai; //0: Khởi tạo , 1 Đã ký , 2: Hết hạn
+  final bool? hinhThucO; // false: ở ghép, true: ở một mình
   final Phong?
   phong; // cái này dùng để lấy thông tin phòng hiển thị phòng trên chi tiết ngthue vì cần ngày ký
 
@@ -25,6 +26,7 @@ class HopDong {
     this.trangThai,
     this.dsAnhHopDong,
     this.ghiChu,
+    this.hinhThucO,
     this.phong,
   });
 
@@ -53,6 +55,12 @@ class HopDong {
                 : List<String>.from(map['anhHopDong']))
           : null,
       ghiChu: map['ghiChu'] as String?,
+      hinhThucO: map['hinhThucO'] != null
+          ? (map['hinhThucO'] is bool
+                ? map['hinhThucO'] as bool
+                : map['hinhThucO'].toString() == 'true' ||
+                      map['hinhThucO'].toString() == '1')
+          : null,
       phong: map['phong'] != null
           ? Phong.fromMap(map['phong'] as Map<String, dynamic>)
           : null,
@@ -70,6 +78,7 @@ class HopDong {
       'giaPhongThucTe': giaPhongThucTe,
       'trangThai': trangThai,
       'ghiChu': ghiChu,
+      if (hinhThucO != null) 'hinhThucO': hinhThucO,
       if (dsAnhHopDong != null) 'dsAnhHopDong': dsAnhHopDong,
     };
   }
@@ -84,6 +93,7 @@ class HopDong {
     double? giaPhongThucTe,
     String? ghiChu,
     int? trangThai,
+    bool? hinhThucO,
     List<String>? dsAnhHopDong,
   }) {
     return HopDong(
@@ -96,6 +106,7 @@ class HopDong {
       giaPhongThucTe: giaPhongThucTe ?? this.giaPhongThucTe,
       ghiChu: ghiChu ?? this.ghiChu,
       trangThai: trangThai ?? this.trangThai,
+      hinhThucO: hinhThucO ?? this.hinhThucO,
       dsAnhHopDong: dsAnhHopDong ?? this.dsAnhHopDong,
     );
   }
@@ -104,6 +115,7 @@ class HopDong {
   String toString() {
     return 'HopDong(hopDongID: $hopDongID, idnt: $idnt, phongID: $phongID, '
         'ngayKy: $ngayKy, ngayHetHan: $ngayHetHan, tienCoc: $tienCoc, '
-        'giaPhongThucTe: $giaPhongThucTe, trangThai: $trangThai,ghiChu: $ghiChu, dsAnhHopDong: $dsAnhHopDong)';
+        'giaPhongThucTe: $giaPhongThucTe, trangThai: $trangThai, hinhThucO: $hinhThucO, '
+        'ghiChu: $ghiChu, dsAnhHopDong: $dsAnhHopDong)';
   }
 }
