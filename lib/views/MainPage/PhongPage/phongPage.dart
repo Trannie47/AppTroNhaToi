@@ -46,12 +46,15 @@ class _PhongPageState extends State<PhongPage> {
     );
   }
 
-  void toChiTietPhong(ItemPhongModel item) async {
+  Future<void> toChiTietPhong(ItemPhongModel item) async {
     await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => PhongChiTiet(room: item)),
     );
-    await vm.refresh();
+
+    if (mounted) {
+      await vm.refresh();
+    }
   }
 
   @override
@@ -342,15 +345,7 @@ class _PhongPageState extends State<PhongPage> {
                                         soNguoiHienTai:
                                             itemBackend.soNguoiHienTai,
                                         onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  PhongChiTiet(
-                                                    room: itemBackend,
-                                                  ),
-                                            ),
-                                          );
+                                          toChiTietPhong(itemBackend);
                                         },
                                       );
                                     },
