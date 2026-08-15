@@ -1,4 +1,4 @@
-import 'package:AppTroNhaToi/models/item_phong.dart';
+import 'package:AppTroNhaToi/models/item_phong_model.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:AppTroNhaToi/views/MainPage/PhongPage/FormPhong/FormPhong.dart';
 import 'package:AppTroNhaToi/widgets/itemPhong.dart';

@@ -3,7 +3,7 @@ import 'package:AppTroNhaToi/Provider/phieu_luan_chuyen_provider.dart';
 import 'package:AppTroNhaToi/Provider/phong_provider.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/model_formatter.dart';
-import 'package:AppTroNhaToi/models/item_phong.dart';
+import 'package:AppTroNhaToi/models/item_phong_model.dart';
 import 'package:AppTroNhaToi/models/phieu_luan_chuyen.dart';
 import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/PhieuLuanChuyenForm/ItemHopDong.dart';
 import 'package:flutter/material.dart';

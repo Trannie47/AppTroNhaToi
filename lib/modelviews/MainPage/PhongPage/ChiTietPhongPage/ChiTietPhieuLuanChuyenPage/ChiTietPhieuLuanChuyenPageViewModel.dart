@@ -1,6 +1,6 @@
 import 'package:AppTroNhaToi/Provider/hop_dong_provider.dart';
 import 'package:AppTroNhaToi/Provider/phong_provider.dart';
-import 'package:AppTroNhaToi/models/item_phong.dart';
+import 'package:AppTroNhaToi/models/item_phong_model.dart';
 import 'package:AppTroNhaToi/models/nguoi_o_ghep.dart';
 import 'package:AppTroNhaToi/models/phieu_luan_chuyen.dart';
 import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/PhieuLuanChuyenForm/ItemHopDong.dart';

@@ -2,7 +2,7 @@ import 'package:AppTroNhaToi/Provider/hop_dong_provider.dart';
 import 'package:AppTroNhaToi/Provider/phieu_luan_chuyen_provider.dart';
 import 'package:AppTroNhaToi/Provider/phong_provider.dart';
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
-import 'package:AppTroNhaToi/models/item_phong.dart';
+import 'package:AppTroNhaToi/models/item_phong_model.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/ChiTietPhongPage/PhieuLuanChuyenForm/phieuLuanChuyenFormViewModel.dart';
 import 'package:AppTroNhaToi/models/phieu_luan_chuyen.dart';
 import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/PhieuLuanChuyenForm/ItemHopDong.dart';

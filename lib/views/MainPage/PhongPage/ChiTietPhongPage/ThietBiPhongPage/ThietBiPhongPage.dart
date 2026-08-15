@@ -1,6 +1,6 @@
 import 'package:AppTroNhaToi/Provider/lap_rap_provider.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
-import 'package:AppTroNhaToi/models/item_phong.dart';
+import 'package:AppTroNhaToi/models/item_phong_model.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/ChiTietPhongPage/ThietBiPhongPage/ThietBiPhongPageViewModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/LapRapPage/LapRapPage.dart';
 import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/ThietBiPhongPage/NhomThietBiTrongPhongModel.dart';

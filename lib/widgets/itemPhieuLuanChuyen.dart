@@ -1,7 +1,7 @@
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/models/phieu_luan_chuyen.dart';
-import 'package:AppTroNhaToi/models/item_phong.dart';
+import 'package:AppTroNhaToi/models/item_phong_model.dart';
 import 'package:flutter/material.dart';
 
 class ItemPhieuLuanChuyen extends StatelessWidget {
@@ -25,7 +25,6 @@ class ItemPhieuLuanChuyen extends StatelessWidget {
     this.hoanThanh,
     this.onClick,
   });
-
 
   bool get _daHetHieuLuc {
     if (item.denNgay == null) return false;

@@ -441,6 +441,11 @@ Widget _thongTinThuePhong(HopDongDTO hopDong) {
         const SizedBox(height: 12),
         _item("Tiền đặt cọc", formatMoney(hopDong.tienCoc)),
         const SizedBox(height: 12),
+        _item(
+          "Hình thức ở",
+          hopDong.hinhThucO == true ? "Ở nguyên phòng" : "Ở ghép",
+        ),
+        const SizedBox(height: 12),
         _item("Ngày bắt đầu", formatDate(hopDong.ngayKy)),
         const SizedBox(height: 12),
         _item("Hạn hợp đồng", formatDate(hopDong.ngayHetHan)),
@@ -502,7 +507,8 @@ Widget _danhSachThanhVienSection(HopDongDTO hopDong) {
         ...danhSachNguoiOGhep.map(
           (ng) => _nguoiORow(
             ten: ng.hoTen ?? "Chưa rõ tên",
-            moTa: "CCCD: ${ng.cccd} · Quan hệ: ${ng.quanHeVoiDaiDien ?? 'Chưa rõ'}",
+            moTa:
+                "CCCD: ${ng.cccd} · Quan hệ: ${ng.quanHeVoiDaiDien ?? 'Chưa rõ'}",
             isDaiDien: false,
           ),
         ),

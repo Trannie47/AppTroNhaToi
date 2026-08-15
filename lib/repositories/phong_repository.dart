@@ -1,6 +1,6 @@
 import 'package:AppTroNhaToi/core/network/PhongApiClient.dart';
 import 'package:AppTroNhaToi/models/DTO/RoomAvailableDTO.dart';
-import 'package:AppTroNhaToi/models/item_phong.dart';
+import 'package:AppTroNhaToi/models/item_phong_model.dart';
 
 import '../models/phong.dart';
 

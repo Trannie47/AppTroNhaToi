@@ -2,7 +2,7 @@ import 'package:AppTroNhaToi/Provider/phieu_luan_chuyen_provider.dart';
 import 'package:AppTroNhaToi/Provider/phong_provider.dart';
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/model_formatter.dart';
-import 'package:AppTroNhaToi/models/item_phong.dart';
+import 'package:AppTroNhaToi/models/item_phong_model.dart';
 import 'package:AppTroNhaToi/models/phieu_luan_chuyen.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/ChiTietPhongPage/LuanChuyenPage/luanChuyenPageViewModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/ChiTietPhieuLuanChuyenPage/ChiTietPhieuLuanChuyenPage.dart';
@@ -155,9 +155,10 @@ class _PhieuLuanChuyenPageState extends State<PhieuLuanChuyenPage> {
 
     final txtChiPhi = TextEditingController(
       text: item.chiPhi != null && item.chiPhi! > 0
-          ? NumberFormat('#,###', 'vi_VN')
-              .format(intOf(item.chiPhi))
-              .replaceAll(',', '.')
+          ? NumberFormat(
+              '#,###',
+              'vi_VN',
+            ).format(intOf(item.chiPhi)).replaceAll(',', '.')
           : '',
     );
     final txtGhiChu = TextEditingController();
@@ -262,7 +263,9 @@ class _PhieuLuanChuyenPageState extends State<PhieuLuanChuyenPage> {
         await context.read<PhongProvider>().getListPhong();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Không thể hoàn thành phiếu luân chuyển")),
+          const SnackBar(
+            content: Text("Không thể hoàn thành phiếu luân chuyển"),
+          ),
         );
       }
     } catch (e) {

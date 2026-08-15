@@ -3,7 +3,7 @@ import 'package:AppTroNhaToi/Provider/phieu_luan_chuyen_provider.dart';
 import 'package:AppTroNhaToi/core/utils/string_formatter.dart';
 import 'package:AppTroNhaToi/models/DTO/HopDongDTO.dart';
 import 'package:AppTroNhaToi/models/DTO/NguoiOGhepDTO.dart';
-import 'package:AppTroNhaToi/models/item_phong.dart';
+import 'package:AppTroNhaToi/models/item_phong_model.dart';
 import 'package:AppTroNhaToi/models/nguoi_thue.dart';
 import 'package:AppTroNhaToi/views/MainPage/NguoiThuePage/ChiTietNguoiThuePage/chiTietNguoiThuePage.dart';
 import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/ChiTietPhieuLuanChuyenPage/ChiTietPhieuLuanChuyenPage.dart';

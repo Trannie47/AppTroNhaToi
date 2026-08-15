@@ -3,7 +3,7 @@ import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:flutter/material.dart';
 
 import '../../../Provider/phong_provider.dart';
-import '../../../models/item_phong.dart';
+import '../../../models/item_phong_model.dart';
 
 class PhongPageViewModel extends ChangeNotifier {
   final PhongProvider _service;

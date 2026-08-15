@@ -5,7 +5,7 @@ import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart' as DateFormate;
 import 'package:AppTroNhaToi/models/DTO/SuaChuaDTO.dart';
 import 'package:AppTroNhaToi/models/hoa_don_sua_chua.dart';
-import 'package:AppTroNhaToi/models/item_phong.dart';
+import 'package:AppTroNhaToi/models/item_phong_model.dart';
 import 'package:AppTroNhaToi/models/lap_rap.dart';
 import 'package:AppTroNhaToi/models/sua_chua.dart';
 import 'package:AppTroNhaToi/models/thiet_bi.dart';

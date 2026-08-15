@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:AppTroNhaToi/Provider/phong_provider.dart';
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
-import 'package:AppTroNhaToi/models/item_phong.dart';
+import 'package:AppTroNhaToi/models/item_phong_model.dart';
 import '../../../../modelviews/MainPage/HomePage/GhiDienNuocHomePage/GhiDienNuocHomePageViewModel.dart';
 import '../../PhongPage/ChiTietPhongPage/TrangChucNang/GhiDienNuocPage/ghiDienNuocPage.dart';
 

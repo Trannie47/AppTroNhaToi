@@ -6,7 +6,7 @@ import '../../../../Provider/hop_dong_provider.dart';
 import '../../../../models/DTO/HopDongDTO.dart';
 import '../../../../models/DTO/NguoiOGhepDTO.dart';
 import '../../../../models/hop_dong.dart';
-import '../../../../models/item_phong.dart';
+import '../../../../models/item_phong_model.dart';
 
 class ChiTietHopDongViewModel extends ChangeNotifier {
   final PhongProvider _phongProvider;

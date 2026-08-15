@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../Provider/loai_phong_provider.dart';
 import '../../../../Provider/phong_provider.dart';
-import '../../../../models/item_phong.dart';
+import '../../../../models/item_phong_model.dart';
 import '../../../../states/loaiphong_state.dart';
 import '../../../../states/phong_save_state.dart';
 

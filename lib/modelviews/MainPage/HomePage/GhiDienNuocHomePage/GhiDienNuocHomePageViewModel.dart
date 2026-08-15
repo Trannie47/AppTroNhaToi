@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:AppTroNhaToi/Provider/phong_provider.dart';
-import 'package:AppTroNhaToi/models/item_phong.dart';
+import 'package:AppTroNhaToi/models/item_phong_model.dart';
 
 class GhiDienNuocHomePageViewModel extends ChangeNotifier {
   final PhongProvider _phongProvider;

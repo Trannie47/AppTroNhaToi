@@ -1,5 +1,5 @@
 import 'package:AppTroNhaToi/Provider/phieu_luan_chuyen_provider.dart';
-import 'package:AppTroNhaToi/models/item_phong.dart';
+import 'package:AppTroNhaToi/models/item_phong_model.dart';
 import 'package:AppTroNhaToi/models/phieu_luan_chuyen.dart';
 import 'package:flutter/foundation.dart';
 

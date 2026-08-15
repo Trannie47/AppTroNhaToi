@@ -1,4 +1,4 @@
-import 'package:AppTroNhaToi/models/item_phong.dart';
+import 'package:AppTroNhaToi/models/item_phong_model.dart';
 import 'package:AppTroNhaToi/repositories/phong_repository.dart';
 import 'package:AppTroNhaToi/states/phong_save_state.dart';
 import 'package:flutter/cupertino.dart';

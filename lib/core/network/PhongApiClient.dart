@@ -1,6 +1,6 @@
 import 'package:AppTroNhaToi/core/network/retrofit_client.dart';
 import 'package:AppTroNhaToi/models/DTO/RoomAvailableDTO.dart';
-import 'package:AppTroNhaToi/models/item_phong.dart';
+import 'package:AppTroNhaToi/models/item_phong_model.dart';
 import 'package:AppTroNhaToi/models/phong.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
