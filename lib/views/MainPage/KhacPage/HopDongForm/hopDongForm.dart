@@ -410,7 +410,9 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               CustomDropdownSearch<RoomAvailableDTO>(
-                                key: ValueKey('phong-${vm.hinhThucO}'),
+                                key: ValueKey(
+                                  'phong-${vm.hinhThucO}-${vm.soNguoiDuKien}',
+                                ),
                                 hintText: "Chọn phòng thuê",
                                 asyncItems: (filter) async {
                                   if (vm.roomsAvailable

@@ -84,11 +84,16 @@ class HopDongFormViewModel extends ChangeNotifier {
       // Ở nguyên phòng -> xoá danh sách người ở ghép nếu có
       listNguoiOGhep.clear();
     }
-    // Phòng đã chọn trước đó (theo hình thức cũ) không còn hợp lệ -> reset lại
+    _resetDanhSachPhongDoTheoDoiSoNguoi();
+    notifyListeners();
+  }
+
+  /// Số người dự kiến (soNguoiDuKien) hoặc hình thức ở vừa đổi -> phòng đã
+  /// chọn trước đó có thể không còn hợp lệ -> reset để form gọi lại API lọc phòng.
+  void _resetDanhSachPhongDoTheoDoiSoNguoi() {
     selectedPhong = null;
     txtTongGiaPhong.text = "0";
     _roomsAvailable = HopDongInitial();
-    notifyListeners();
   }
 
   int soNguoiHienTai = 0;
@@ -160,12 +165,14 @@ class HopDongFormViewModel extends ChangeNotifier {
         quanHeVoiDaiDien: quanHeTrim,
       ),
     );
+    _resetDanhSachPhongDoTheoDoiSoNguoi();
     notifyListeners();
     return {};
   }
 
   void removeNguoiOGhep(int index) {
     listNguoiOGhep.removeAt(index);
+    _resetDanhSachPhongDoTheoDoiSoNguoi();
     notifyListeners();
   }
 
