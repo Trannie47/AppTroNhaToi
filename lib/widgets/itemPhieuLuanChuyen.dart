@@ -12,6 +12,8 @@ class ItemPhieuLuanChuyen extends StatelessWidget {
 
   final VoidCallback? delete;
 
+  final VoidCallback? hoanThanh;
+
   final VoidCallback? onClick;
 
   const ItemPhieuLuanChuyen({
@@ -20,10 +22,11 @@ class ItemPhieuLuanChuyen extends StatelessWidget {
     required this.phongCu,
     this.edit,
     this.delete,
+    this.hoanThanh,
     this.onClick,
   });
 
-  /// Phiếu đã hết hiệu lực nếu có ngày kết thúc và ngày đó <= hôm nay.
+
   bool get _daHetHieuLuc {
     if (item.denNgay == null) return false;
 
@@ -38,9 +41,29 @@ class ItemPhieuLuanChuyen extends StatelessWidget {
     return !denNgay.isAfter(ngayHomNay); // denNgay <= hôm nay
   }
 
+  // Phiếu chưa tới ngày bắt đầu -> chưa có gì để "hoàn thành sớm" cả.
+  bool get _chuaBatDau {
+    if (item.tuNgay == null) return false;
+
+    final homNay = DateTime.now();
+    final ngayHomNay = DateTime(homNay.year, homNay.month, homNay.day);
+    final tuNgay = DateTime(
+      item.tuNgay!.year,
+      item.tuNgay!.month,
+      item.tuNgay!.day,
+    );
+
+    return tuNgay.isAfter(ngayHomNay);
+  }
+
+  //Chỉ hiện nút "Hoàn thành sớm" khi phiếu đang thực sự trong thời gian
+  bool get _coTheHoanThanhSom => !_daHetHieuLuc && !_chuaBatDau;
+
   @override
   Widget build(BuildContext context) {
-    final hienNutHanhDong = !_daHetHieuLuc && (edit != null || delete != null);
+    final hienNutHoanThanh = hoanThanh != null && _coTheHoanThanhSom;
+    final hienNutHanhDong =
+        !_daHetHieuLuc && (edit != null || delete != null || hienNutHoanThanh);
 
     return Material(
       color: Colors.white,
@@ -302,7 +325,36 @@ class ItemPhieuLuanChuyen extends StatelessWidget {
                         ),
                       ),
 
-                    if (edit != null && delete != null)
+                    if (edit != null && hienNutHoanThanh)
+                      const SizedBox(width: 8),
+
+                    if (hienNutHoanThanh)
+                      InkWell(
+                        borderRadius: BorderRadius.circular(8),
+                        onTap: hoanThanh,
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: 6,
+                            horizontal: 8,
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.check_circle_outline,
+                                size: 16,
+                                color: Color(0xff2D7A3A),
+                              ),
+                              SizedBox(width: 4),
+                              Text(
+                                "Hoàn thành sớm",
+                                style: TextStyle(color: Color(0xff2D7A3A)),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                    if ((edit != null || hienNutHoanThanh) && delete != null)
                       const SizedBox(width: 8),
 
                     if (delete != null)

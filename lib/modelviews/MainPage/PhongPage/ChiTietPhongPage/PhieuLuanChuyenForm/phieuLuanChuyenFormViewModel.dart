@@ -172,9 +172,21 @@ class PhieuLuanChuyenFormViewModel extends ChangeNotifier {
     if (ngayChon != null) {
       controller.text = formatDate(ngayChon);
 
-      final ngayKetThucHienTai = chuyenNgay(txtDenNgay.text);
-      if (ngayKetThucHienTai != null && ngayKetThucHienTai.isBefore(ngayChon)) {
-        txtDenNgay.text = formatDate(ngayChon);
+      // Ngày kết thúc phải sau ngày bắt đầu ít nhất 1 ngày (không được
+      // trùng) -> nếu ngày kết thúc hiện tại <= ngày bắt đầu mới chọn thì
+      // tự đẩy nó sang ngày kế tiếp. txtDenNgay có thể đang để trống (không
+      // bắt buộc) nên phải kiểm tra rỗng trước khi parse.
+      if (txtDenNgay.text.trim().isNotEmpty) {
+        try {
+          final ngayKetThucHienTai = chuyenNgay(txtDenNgay.text);
+          if (!ngayKetThucHienTai.isAfter(ngayChon)) {
+            txtDenNgay.text = formatDate(
+              DateTime(ngayChon.year, ngayChon.month, ngayChon.day + 1),
+            );
+          }
+        } catch (_) {
+          // Ngày kết thúc đang nhập dở/không hợp lệ -> bỏ qua, không tự đẩy.
+        }
       }
 
       notifyListeners();
@@ -186,7 +198,11 @@ class PhieuLuanChuyenFormViewModel extends ChangeNotifier {
     TextEditingController controller,
   ) async {
     final ngayBatDau = chuyenNgay(txtTuNgay.text);
-    final minDate = ngayBatDau ?? DateTime(2000);
+    // Ngày kết thúc phải SAU ngày bắt đầu ít nhất 1 ngày (không được trùng)
+    // -> chặn luôn từ date-picker, không cho chọn trùng ngày bắt đầu.
+    final minDate = ngayBatDau != null
+        ? DateTime(ngayBatDau.year, ngayBatDau.month, ngayBatDau.day + 1)
+        : DateTime(2000);
 
     DateTime ngayHienTai;
     try {
@@ -237,6 +253,25 @@ class PhieuLuanChuyenFormViewModel extends ChangeNotifier {
     } else if (phongMoiDaChonId == _phongCuIdCoDinh) {
       errPhongMoi = "Phòng mới phải khác phòng hiện tại";
       hopLe = false;
+    } else {
+      final hopDong = hopDongDaChon;
+      final phongMoi = dsPhongCoTheChon
+          .where((p) => p.phongId == phongMoiDaChonId)
+          .cast<ItemPhongModel?>()
+          .firstOrNull;
+
+      if (hopDong != null && phongMoi != null) {
+        final soNguoiHopDong =
+            1 + hopDong.dsNguoiOGhep.where((ng) => !ng.isDelete).length;
+        final soChoTrong =
+            phongMoi.loaiPhong.soNguoiToiDa - phongMoi.soNguoiHienTai;
+
+        if (soNguoiHopDong > soChoTrong) {
+          errPhongMoi =
+              "Phòng chỉ còn $soChoTrong chỗ trống, không đủ cho $soNguoiHopDong người của hợp đồng này";
+          hopLe = false;
+        }
+      }
     }
 
     DateTime? tuNgay;
@@ -274,8 +309,8 @@ class PhieuLuanChuyenFormViewModel extends ChangeNotifier {
       }
     }
 
-    if (tuNgay != null && denNgay != null && denNgay.isBefore(tuNgay)) {
-      errDenNgay = "Ngày kết thúc phải sau hoặc bằng ngày bắt đầu";
+    if (tuNgay != null && denNgay != null && !denNgay.isAfter(tuNgay)) {
+      errDenNgay = "Ngày kết thúc phải sau ngày bắt đầu ít nhất 1 ngày";
       hopLe = false;
     }
 

@@ -3,10 +3,13 @@ import 'package:AppTroNhaToi/Provider/phieu_luan_chuyen_provider.dart';
 import 'package:AppTroNhaToi/Provider/phong_provider.dart';
 import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
 import 'package:AppTroNhaToi/core/utils/date_formatter.dart';
+import 'package:AppTroNhaToi/core/utils/model_formatter.dart';
 import 'package:AppTroNhaToi/models/phieu_luan_chuyen.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/ChiTietPhongPage/ChiTietPhieuLuanChuyenPage/ChiTietPhieuLuanChuyenPageViewModel.dart';
 import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/PhieuLuanChuyenForm/phieuLuanChuyenForm.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class ChiTietPhieuLuanChuyenPage extends StatefulWidget {
@@ -45,6 +48,7 @@ class _ChiTietPhieuLuanChuyenPageState
     });
   }
 
+  // Ẩn hết nút khi denNgay <= hôm nay (đã hoàn thành/hết hiệu lực).
   bool get _hienNutHanhDong {
     if (item.denNgay == null) return true;
 
@@ -56,8 +60,25 @@ class _ChiTietPhieuLuanChuyenPageState
       item.denNgay!.day,
     );
 
-    return !denNgay.isBefore(ngayHomNay);
+    return denNgay.isAfter(ngayHomNay);
   }
+
+  //Phiếu chưa tới ngày bắt đầu -> chưa có gì để "hoàn thành sớm" cả.
+  bool get _chuaBatDau {
+    if (item.tuNgay == null) return false;
+
+    final homNay = DateTime.now();
+    final ngayHomNay = DateTime(homNay.year, homNay.month, homNay.day);
+    final tuNgay = DateTime(
+      item.tuNgay!.year,
+      item.tuNgay!.month,
+      item.tuNgay!.day,
+    );
+
+    return tuNgay.isAfter(ngayHomNay);
+  }
+
+  bool get _coTheHoanThanhSom => _hienNutHanhDong && !_chuaBatDau;
 
   Future<void> _suaPhieu() async {
     final result = await Navigator.push<PhieuLuanChuyen>(
@@ -82,6 +103,7 @@ class _ChiTietPhieuLuanChuyenPageState
           backgroundColor: Color(0xff2D7A3A),
         ),
       );
+      await context.read<PhongProvider>().getListPhong();
     }
   }
 
@@ -91,8 +113,12 @@ class _ChiTietPhieuLuanChuyenPageState
     final xacNhan = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text("Xác nhận"),
-        content: const Text("Bạn có chắc muốn ẩn phiếu luân chuyển này?"),
+        title: const Text("Xóa phiếu luân chuyển"),
+        content: const Text(
+          "Phiếu sẽ bị xóa hẳn, coi như chưa từng tồn tại. Chỉ dùng khi bạn "
+          "tạo nhầm phiếu này.\n\nNếu người thuê đã dọn về phòng gốc, hãy "
+          "dùng \"Hoàn thành sớm\" thay vì xóa để giữ lại lịch sử.",
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
@@ -100,7 +126,7 @@ class _ChiTietPhieuLuanChuyenPageState
           ),
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, true),
-            child: const Text("Ẩn", style: TextStyle(color: Colors.red)),
+            child: const Text("Xóa", style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -115,13 +141,154 @@ class _ChiTietPhieuLuanChuyenPageState
       if (!mounted) return;
 
       if (ok) {
+        await context.read<PhongProvider>().getListPhong();
+        if (!mounted) return;
         Navigator.of(context).pop(true);
         return;
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Ẩn phiếu luân chuyển thất bại")),
+        const SnackBar(content: Text("Xóa phiếu luân chuyển thất bại")),
       );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+      );
+    }
+  }
+
+  Future<void> _hoanThanhSom() async {
+    if (item.chiTietLuanChuyenID == null) return;
+
+    final txtChiPhi = TextEditingController(
+      text: item.chiPhi != null && item.chiPhi! > 0
+          ? NumberFormat('#,###', 'vi_VN')
+              .format(intOf(item.chiPhi))
+              .replaceAll(',', '.')
+          : '',
+    );
+    final txtGhiChu = TextEditingController();
+
+    final xacNhan = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        title: const Text("Hoàn thành sớm"),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Xác nhận người thuê đã dọn về phòng gốc trước ngày dự "
+                "kiến. Hệ thống sẽ chốt ngày kết thúc là hôm nay.",
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                "Chi phí thực tế",
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 6),
+              TextField(
+                controller: txtChiPhi,
+                keyboardType: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  DinhDangGiaVN(),
+                ],
+                decoration: InputDecoration(
+                  hintText: "VD: 200.000",
+                  contentPadding: const EdgeInsets.all(12),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                "Ghi chú",
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 6),
+              TextField(
+                controller: txtGhiChu,
+                maxLines: 2,
+                decoration: InputDecoration(
+                  hintText: "VD: Đã dọn về phòng gốc ngày hôm nay",
+                  contentPadding: const EdgeInsets.all(12),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text("Hủy"),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xff2D7A3A),
+            ),
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text(
+              "Hoàn thành",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (xacNhan != true) return;
+
+    final chiPhiText = txtChiPhi.text.replaceAll('.', '').trim();
+    final chiPhiMoi = chiPhiText.isEmpty ? null : double.tryParse(chiPhiText);
+    final ghiChuMoi = txtGhiChu.text.trim().isEmpty
+        ? null
+        : txtGhiChu.text.trim();
+
+    try {
+      final provider = context.read<PhieuLuanChuyenProvider>();
+      final homNay = DateTime.now();
+      final ngayHomQua = DateTime(homNay.year, homNay.month, homNay.day - 1);
+      final tuNgay = item.tuNgay;
+      final denNgayMoi =
+          (tuNgay != null &&
+              !ngayHomQua.isAfter(
+                DateTime(tuNgay.year, tuNgay.month, tuNgay.day),
+              ))
+          ? DateTime(tuNgay.year, tuNgay.month, tuNgay.day)
+          : ngayHomQua;
+      final capNhat = item.copyWith(
+        denNgay: denNgayMoi,
+        chiPhi: chiPhiMoi,
+        ghiChu: ghiChuMoi,
+      );
+      final ok = await provider.capNhat(capNhat);
+
+      if (!mounted) return;
+
+      if (ok) {
+        setState(() {
+          item = capNhat;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Hoàn thành phiếu luân chuyển thành công!"),
+            backgroundColor: Color(0xff2D7A3A),
+          ),
+        );
+        await context.read<PhongProvider>().getListPhong();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Không thể hoàn thành phiếu luân chuyển")),
+        );
+      }
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -183,6 +350,9 @@ class _ChiTietPhieuLuanChuyenPageState
                   case "update":
                     _suaPhieu();
                     break;
+                  case "complete":
+                    _hoanThanhSom();
+                    break;
                   case "delete":
                     _xoaPhieu();
                     break;
@@ -200,6 +370,18 @@ class _ChiTietPhieuLuanChuyenPageState
                     title: const Text("Sửa phiếu luân chuyển"),
                   ),
                 ),
+                if (_coTheHoanThanhSom)
+                  PopupMenuItem<String>(
+                    value: "complete",
+                    child: ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: const Icon(
+                        Icons.check_circle_outline,
+                        color: Color(0xff2D7A3A),
+                      ),
+                      title: const Text("Hoàn thành sớm"),
+                    ),
+                  ),
                 PopupMenuItem<String>(
                   value: "delete",
                   child: ListTile(
@@ -209,7 +391,7 @@ class _ChiTietPhieuLuanChuyenPageState
                       color: Colors.red,
                     ),
                     title: const Text(
-                      "Ẩn phiếu luân chuyển",
+                      "Xóa phiếu luân chuyển",
                       style: TextStyle(color: Colors.red),
                     ),
                   ),

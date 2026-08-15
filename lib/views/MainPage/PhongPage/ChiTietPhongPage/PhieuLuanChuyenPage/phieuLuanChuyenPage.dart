@@ -1,5 +1,7 @@
 import 'package:AppTroNhaToi/Provider/phieu_luan_chuyen_provider.dart';
 import 'package:AppTroNhaToi/Provider/phong_provider.dart';
+import 'package:AppTroNhaToi/core/utils/currency_formatter.dart';
+import 'package:AppTroNhaToi/core/utils/model_formatter.dart';
 import 'package:AppTroNhaToi/models/item_phong.dart';
 import 'package:AppTroNhaToi/models/phieu_luan_chuyen.dart';
 import 'package:AppTroNhaToi/modelviews/MainPage/PhongPage/ChiTietPhongPage/LuanChuyenPage/luanChuyenPageViewModel.dart';
@@ -7,6 +9,8 @@ import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/ChiTietPh
 import 'package:AppTroNhaToi/views/MainPage/PhongPage/ChiTietPhongPage/PhieuLuanChuyenForm/phieuLuanChuyenForm.dart';
 import 'package:AppTroNhaToi/widgets/itemPhieuLuanChuyen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class PhieuLuanChuyenPage extends StatefulWidget {
@@ -86,6 +90,7 @@ class _PhieuLuanChuyenPageState extends State<PhieuLuanChuyenPage> {
         ),
       );
       await vm.refesh();
+      await context.read<PhongProvider>().getListPhong();
     }
   }
 
@@ -103,8 +108,12 @@ class _PhieuLuanChuyenPageState extends State<PhieuLuanChuyenPage> {
     final xacNhan = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Xác nhận"),
-        content: const Text("Bạn có chắc muốn ẩn phiếu luân chuyển này?"),
+        title: const Text("Xóa phiếu luân chuyển"),
+        content: const Text(
+          "Phiếu sẽ bị xóa hẳn, coi như chưa từng tồn tại. Chỉ dùng khi bạn "
+          "tạo nhầm phiếu này.\n\nNếu người thuê đã dọn về phòng gốc, hãy "
+          "dùng \"Hoàn thành sớm\" thay vì xóa để giữ lại lịch sử.",
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -112,7 +121,7 @@ class _PhieuLuanChuyenPageState extends State<PhieuLuanChuyenPage> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text("Ẩn", style: TextStyle(color: Colors.red)),
+            child: const Text("Xóa", style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -121,7 +130,141 @@ class _PhieuLuanChuyenPageState extends State<PhieuLuanChuyenPage> {
     if (xacNhan != true) return;
 
     try {
-      await vm.anPhieu(item.chiTietLuanChuyenID!);
+      final thanhCong = await vm.anPhieu(item.chiTietLuanChuyenID!);
+      if (!mounted) return;
+
+      if (thanhCong) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Xóa phiếu luân chuyển thành công!"),
+            backgroundColor: Color(0xff2D7A3A),
+          ),
+        );
+        await context.read<PhongProvider>().getListPhong();
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+      );
+    }
+  }
+
+  Future<void> _hoanThanhSom(PhieuLuanChuyen item) async {
+    if (item.chiTietLuanChuyenID == null) return;
+
+    final txtChiPhi = TextEditingController(
+      text: item.chiPhi != null && item.chiPhi! > 0
+          ? NumberFormat('#,###', 'vi_VN')
+              .format(intOf(item.chiPhi))
+              .replaceAll(',', '.')
+          : '',
+    );
+    final txtGhiChu = TextEditingController();
+
+    final xacNhan = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        title: const Text("Hoàn thành sớm"),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Xác nhận người thuê đã dọn về phòng gốc trước ngày dự "
+                "kiến. Hệ thống sẽ chốt ngày kết thúc là hôm nay.",
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                "Chi phí thực tế (không bắt buộc)",
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 6),
+              TextField(
+                controller: txtChiPhi,
+                keyboardType: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  DinhDangGiaVN(),
+                ],
+                decoration: InputDecoration(
+                  hintText: "VD: 200.000",
+                  contentPadding: const EdgeInsets.all(12),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                "Ghi chú (không bắt buộc)",
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 6),
+              TextField(
+                controller: txtGhiChu,
+                maxLines: 2,
+                decoration: InputDecoration(
+                  hintText: "VD: Đã dọn về phòng gốc ngày hôm nay",
+                  contentPadding: const EdgeInsets.all(12),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text("Hủy"),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xff2D7A3A),
+            ),
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text(
+              "Hoàn thành",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (xacNhan != true) return;
+
+    final chiPhiText = txtChiPhi.text.replaceAll('.', '').trim();
+    final chiPhiMoi = chiPhiText.isEmpty ? null : double.tryParse(chiPhiText);
+    final ghiChuMoi = txtGhiChu.text.trim().isEmpty
+        ? null
+        : txtGhiChu.text.trim();
+
+    try {
+      final thanhCong = await vm.hoanThanhSom(
+        item,
+        chiPhiMoi: chiPhiMoi,
+        ghiChuMoi: ghiChuMoi,
+      );
+      if (!mounted) return;
+
+      if (thanhCong) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Hoàn thành phiếu luân chuyển thành công!"),
+            backgroundColor: Color(0xff2D7A3A),
+          ),
+        );
+        await context.read<PhongProvider>().getListPhong();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Không thể hoàn thành phiếu luân chuyển")),
+        );
+      }
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -257,6 +400,7 @@ class _PhieuLuanChuyenPageState extends State<PhieuLuanChuyenPage> {
                   edit: () => _suaPhieu(item),
                   onClick: () => _xemChiTiet(item),
                   delete: () => _anPhieu(item),
+                  hoanThanh: () => _hoanThanhSom(item),
                 );
               },
             ),

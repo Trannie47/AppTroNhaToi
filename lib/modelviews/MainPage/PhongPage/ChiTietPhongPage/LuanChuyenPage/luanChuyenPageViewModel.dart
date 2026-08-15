@@ -56,6 +56,41 @@ class PhieuLuanChuyenPageViewModel extends ChangeNotifier {
     }
   }
 
+  // Hoàn thành sớm: người thuê đã dọn về phòng gốc trước ngày denNgay dự kiến ban đầu.
+  Future<bool> hoanThanhSom(
+    PhieuLuanChuyen item, {
+    double? chiPhiMoi,
+    String? ghiChuMoi,
+  }) async {
+    try {
+      final homNay = DateTime.now();
+      final ngayHomQua = DateTime(homNay.year, homNay.month, homNay.day - 1);
+      final tuNgay = item.tuNgay;
+      final denNgayMoi =
+          (tuNgay != null &&
+              !ngayHomQua.isAfter(
+                DateTime(tuNgay.year, tuNgay.month, tuNgay.day),
+              ))
+          ? DateTime(tuNgay.year, tuNgay.month, tuNgay.day)
+          : ngayHomQua;
+      final capNhat = item.copyWith(
+        denNgay: denNgayMoi,
+        chiPhi: chiPhiMoi,
+        ghiChu: ghiChuMoi,
+      );
+      final thanhCong = await _provider.capNhat(capNhat);
+      if (thanhCong) {
+        await refesh();
+      }
+      return thanhCong;
+    } catch (e) {
+      if (kDebugMode) {
+        print("Lỗi DanhSachPhieuLuanChuyenPageViewModel.hoanThanhSom: $e");
+      }
+      rethrow;
+    }
+  }
+
   @override
   void dispose() {
     _provider.removeListener(_onProviderUpdate);
