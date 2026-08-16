@@ -90,7 +90,10 @@ class HopDongFormViewModel extends ChangeNotifier {
 
   /// Số người dự kiến (soNguoiDuKien) hoặc hình thức ở vừa đổi -> phòng đã
   /// chọn trước đó có thể không còn hợp lệ -> reset để form gọi lại API lọc phòng.
+  /// Khi đang sửa hợp đồng thì Phòng đã bị khóa (không cho đổi) nên bỏ qua,
+  /// không được xoá lựa chọn phòng hiện tại của hợp đồng.
   void _resetDanhSachPhongDoTheoDoiSoNguoi() {
+    if (isEdit) return;
     selectedPhong = null;
     txtTongGiaPhong.text = "0";
     _roomsAvailable = HopDongInitial();

@@ -245,29 +245,35 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                       const SizedBox(height: 16),
                       _label("Hình thức ở"),
                       const SizedBox(height: 6),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: const Color(0xffF7F7F7),
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.grey.shade300),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: _hinhThucOOption(
-                                label: "Ở ghép",
-                                selected: vm.hinhThucO == false,
-                                onTap: () => vm.onChangeHinhThucO(false),
-                              ),
+                      AbsorbPointer(
+                        absorbing: isEditMode,
+                        child: Opacity(
+                          opacity: isEditMode ? 0.6 : 1.0,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: const Color(0xffF7F7F7),
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: Colors.grey.shade300),
                             ),
-                            Expanded(
-                              child: _hinhThucOOption(
-                                label: "Ở nguyên phòng",
-                                selected: vm.hinhThucO == true,
-                                onTap: () => vm.onChangeHinhThucO(true),
-                              ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: _hinhThucOOption(
+                                    label: "Ở ghép",
+                                    selected: vm.hinhThucO == false,
+                                    onTap: () => vm.onChangeHinhThucO(false),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: _hinhThucOOption(
+                                    label: "Ở nguyên phòng",
+                                    selected: vm.hinhThucO == true,
+                                    onTap: () => vm.onChangeHinhThucO(true),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
                       ),
 
@@ -411,7 +417,9 @@ class _TaoHopDongPageState extends State<HopDongForm> {
                             children: [
                               CustomDropdownSearch<RoomAvailableDTO>(
                                 key: ValueKey(
-                                  'phong-${vm.hinhThucO}-${vm.soNguoiDuKien}',
+                                  isEditMode
+                                      ? 'phong-edit'
+                                      : 'phong-${vm.hinhThucO}-${vm.soNguoiDuKien}',
                                 ),
                                 hintText: "Chọn phòng thuê",
                                 asyncItems: (filter) async {
