@@ -12,6 +12,7 @@ class ThongKeDTO {
   final List<TopPhongModel> topPhong;
   final List<TopCongNoModel> topCongNo;
   final List<TopCongNoModel> topCongNoHoaDonPhong;
+  final List<TopCongNoModel> topCongNoTapHoa;
   final List<TopCongNoDienNuocModel> topCongNoDienNuoc;
   final List<TopCongNoPhuongTienModel> topCongNoPhuongTien;
   final List<TopHangHoaModel> topHangHoa;
@@ -30,6 +31,7 @@ class ThongKeDTO {
     required this.topPhong,
     required this.topCongNo,
     required this.topCongNoHoaDonPhong,
+    required this.topCongNoTapHoa,
     required this.topCongNoDienNuoc,
     required this.topCongNoPhuongTien,
     required this.topHangHoa,
@@ -56,6 +58,9 @@ class ThongKeDTO {
           .map((e) => TopCongNoModel.fromMap(e as Map<String, dynamic>))
           .toList(),
       topCongNoHoaDonPhong: ((map['topCongNoHoaDonPhong'] as List?) ?? [])
+          .map((e) => TopCongNoModel.fromMap(e as Map<String, dynamic>))
+          .toList(),
+      topCongNoTapHoa: ((map['topCongNoTapHoa'] as List?) ?? [])
           .map((e) => TopCongNoModel.fromMap(e as Map<String, dynamic>))
           .toList(),
       topCongNoDienNuoc: ((map['topCongNoDienNuoc'] as List?) ?? [])
@@ -93,6 +98,7 @@ class ThongKeDTO {
       'topCongNoHoaDonPhong': topCongNoHoaDonPhong
           .map((e) => e.toMap())
           .toList(),
+      'topCongNoTapHoa': topCongNoTapHoa.map((e) => e.toMap()).toList(),
       'topCongNoDienNuoc': topCongNoDienNuoc.map((e) => e.toMap()).toList(),
       'topCongNoPhuongTien': topCongNoPhuongTien.map((e) => e.toMap()).toList(),
       'topHangHoa': topHangHoa.map((e) => e.toMap()).toList(),
@@ -113,6 +119,7 @@ class ThongKeDTO {
     List<TopPhongModel>? topPhong,
     List<TopCongNoModel>? topCongNo,
     List<TopCongNoModel>? topCongNoHoaDonPhong,
+    List<TopCongNoModel>? topCongNoTapHoa,
     List<TopCongNoDienNuocModel>? topCongNoDienNuoc,
     List<TopCongNoPhuongTienModel>? topCongNoPhuongTien,
     List<TopHangHoaModel>? topHangHoa,
@@ -131,6 +138,7 @@ class ThongKeDTO {
       topPhong: topPhong ?? this.topPhong,
       topCongNo: topCongNo ?? this.topCongNo,
       topCongNoHoaDonPhong: topCongNoHoaDonPhong ?? this.topCongNoHoaDonPhong,
+      topCongNoTapHoa: topCongNoTapHoa ?? this.topCongNoTapHoa,
       topCongNoDienNuoc: topCongNoDienNuoc ?? this.topCongNoDienNuoc,
       topCongNoPhuongTien: topCongNoPhuongTien ?? this.topCongNoPhuongTien,
       topHangHoa: topHangHoa ?? this.topHangHoa,
@@ -451,8 +459,9 @@ class TopPhongModel {
 
 /// ==========================================
 /// TOP NGƯỜI THUÊ CÒN NỢ (tổng hợp, theo người)
-/// Dùng chung cho "topCongNo" (tổng) và "topCongNoHoaDonPhong"
-/// (nợ riêng phần hóa đơn phòng) vì 2 API trả cùng shape theo idnt.
+/// Dùng chung cho "topCongNo" (tổng), "topCongNoHoaDonPhong"
+/// (nợ riêng phần hóa đơn phòng) và "topCongNoTapHoa"
+/// (nợ riêng phần tạp hóa) vì cả 3 API trả cùng shape theo idnt.
 /// ==========================================
 class TopCongNoModel {
   final int idnt;

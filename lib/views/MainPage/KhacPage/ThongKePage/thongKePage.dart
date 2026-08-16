@@ -1299,8 +1299,9 @@ class _ThongKePageState extends State<ThongKePage> {
   }
 
   // TOP DEBT
-  // Gồm 1 danh sách tổng hợp (topCongNo, theo người thuê) và 3 danh sách
-  // chi tiết theo nguồn công nợ: hóa đơn phòng, điện nước, phương tiện.
+  // Gồm 1 danh sách tổng hợp (topCongNo, theo người thuê) và các danh sách
+  // chi tiết theo nguồn công nợ: hóa đơn phòng, tạp hóa (theo người),
+  // phương tiện (theo phòng). Điện nước tạm ẩn (comment) theo yêu cầu.
   Widget _buildTopDebt(ThongKePageViewModel vm) {
     final data = vm.data;
 
@@ -1331,7 +1332,7 @@ class _ThongKePageState extends State<ThongKePage> {
                 Icon(Icons.warning_amber_rounded, color: Colors.red),
                 SizedBox(width: 10),
                 Text(
-                  "Top 5 khách còn nợ",
+                  "Top 5 người nợ nhiều nhất",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ],
@@ -1349,22 +1350,29 @@ class _ThongKePageState extends State<ThongKePage> {
             ),
 
             _buildDebtSubSection(
-              title: "Nợ điện nước",
-              icon: Icons.water_drop_rounded,
-              color: Colors.blue,
-              child: _buildDebtRoomList(
-                data.topCongNoDienNuoc
-                    .map(
-                      (e) => _DebtRoomEntry(
-                        tenPhong: e.tenPhong,
-                        tongDaThu: e.tongDaThu,
-                        tongCongNo: e.tongCongNo,
-                      ),
-                    )
-                    .toList(),
-              ),
+              title: "Nợ tạp hoá",
+              icon: Icons.shopping_basket_rounded,
+              color: Colors.amber.shade800,
+              child: _buildDebtPersonList(data.topCongNoTapHoa),
             ),
 
+            // Tạm ẩn: nợ điện nước (theo phòng) — bật lại khi cần hiển thị.
+            // _buildDebtSubSection(
+            //   title: "Nợ điện nước",
+            //   icon: Icons.water_drop_rounded,
+            //   color: Colors.blue,
+            //   child: _buildDebtRoomList(
+            //     data.topCongNoDienNuoc
+            //         .map(
+            //           (e) => _DebtRoomEntry(
+            //             tenPhong: e.tenPhong,
+            //             tongDaThu: e.tongDaThu,
+            //             tongCongNo: e.tongCongNo,
+            //           ),
+            //         )
+            //         .toList(),
+            //   ),
+            // ),
             _buildDebtSubSection(
               title: "Nợ gửi xe / phương tiện",
               icon: Icons.two_wheeler_rounded,
@@ -1420,8 +1428,9 @@ class _ThongKePageState extends State<ThongKePage> {
     );
   }
 
-  // Danh sách công nợ theo NGƯỜI THUÊ (idnt/hoTen) — dùng cho topCongNo
-  // và topCongNoHoaDonPhong vì 2 API trả cùng shape (TopCongNoModel).
+  // Danh sách công nợ theo NGƯỜI THUÊ (idnt/hoTen) — dùng cho topCongNo,
+  // topCongNoHoaDonPhong và topCongNoTapHoa vì cả 3 API trả cùng shape
+  // (TopCongNoModel).
   Widget _buildDebtPersonList(List<TopCongNoModel> items) {
     if (items.isEmpty) {
       return const Padding(
@@ -1478,7 +1487,7 @@ class _ThongKePageState extends State<ThongKePage> {
   }
 
   // Danh sách công nợ theo PHÒNG (phongId/tenPhong) — dùng cho
-  // topCongNoDienNuoc và topCongNoPhuongTien.
+  // topCongNoDienNuoc (đang tạm ẩn) và topCongNoPhuongTien.
   Widget _buildDebtRoomList(List<_DebtRoomEntry> items) {
     if (items.isEmpty) {
       return const Padding(
