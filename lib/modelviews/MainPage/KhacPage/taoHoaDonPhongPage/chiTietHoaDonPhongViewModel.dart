@@ -98,11 +98,8 @@ class ChiTietHoaDonPhongViewModel extends ChangeNotifier {
             : 1;
 
         String finalGhiChu = inv['ghiChu'] ?? parsedJson['ghiChu'] ?? '';
-        if (isDienNuoc &&
-            (finalGhiChu.isEmpty ||
-                finalGhiChu.contains('Chốt') ||
-                finalGhiChu.contains('chốt'))) {
-          finalGhiChu = "Chot chi so dien nuoc thang $thangNam (Lan $lanGhi)";
+        if (isDienNuoc && finalGhiChu.isEmpty) {
+          finalGhiChu = "Chốt chỉ số điện nước tháng $thangNam (Lần $lanGhi)";
         }
 
         return {
