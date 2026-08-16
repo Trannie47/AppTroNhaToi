@@ -208,6 +208,51 @@ class _TapHoaPageState extends State<TapHoaPage> {
                       ],
                     ),
                   ),
+                  const SizedBox(height: 16),
+
+                  /// TÌM KIẾM
+                  Container(
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: const Color(0xffE5E5E5)),
+                    ),
+                    child: TextField(
+                      controller: vm.searchController,
+                      onChanged: vm.timKiem,
+                      textInputAction: TextInputAction.search,
+                      textAlignVertical: TextAlignVertical.center,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: vm.currentTab == 0
+                            ? "Tìm kiếm tên hàng hóa..."
+                            : "Tìm kiếm mã hóa đơn, người thuê...",
+                        hintStyle: const TextStyle(
+                          color: Color(0xff999999),
+                          fontSize: 13,
+                        ),
+                        prefixIcon: const Icon(
+                          Icons.search,
+                          color: Color(0xff888888),
+                          size: 20,
+                        ),
+                        suffixIcon: vm.searchController.text.isNotEmpty
+                            ? IconButton(
+                                onPressed: () {
+                                  vm.searchController.clear();
+                                  vm.timKiem('');
+                                },
+                                icon: const Icon(
+                                  Icons.close,
+                                  size: 18,
+                                  color: Color(0xff888888),
+                                ),
+                              )
+                            : null,
+                      ),
+                    ),
+                  ),
 
                   const SizedBox(height: 16),
 
@@ -285,23 +330,20 @@ class _TapHoaPageState extends State<TapHoaPage> {
                   /// DANH SÁCH HÀNG
                   Expanded(
                     child: ListView.builder(
-                      // itemCount: vm.currentTab == 0
-                      //     ? vm.dsHangHoa.length
-                      //     : vm.dsHoaDon.length,
                       itemCount: vm.currentTab == 0
-                          ? vm.dsHangHoa.length
+                          ? vm.dsHangHoaHienThi.length
                           : vm.currentTab == 2
-                          ? vm.dsHoaDonTapHoa.length
-                          : vm.dsCongNoTapHoa.length,
+                          ? vm.dsHoaDonHienThi.length
+                          : vm.dsCongNoHienThi.length,
 
                       itemBuilder: (context, index) {
                         /// HÀNG HÓA
                         if (vm.currentTab == 0) {
                           return ItemHangHoa(
-                            hangHoa: vm.dsHangHoa[index],
+                            hangHoa: vm.dsHangHoaHienThi[index],
 
                             onSua: () async {
-                              HangHoa hangHoaCu = vm.dsHangHoa[index];
+                              HangHoa hangHoaCu = vm.dsHangHoaHienThi[index];
 
                               final result = await Navigator.push(
                                 context,
@@ -327,14 +369,14 @@ class _TapHoaPageState extends State<TapHoaPage> {
                             },
 
                             onXoa: () async {
-                              HangHoa hangHoaCu = vm.dsHangHoa[index];
+                              HangHoa hangHoaCu = vm.dsHangHoaHienThi[index];
                               bool? xacNhan = await showDialog<bool>(
                                 context: context,
                                 builder: (context) {
                                   return AlertDialog(
                                     title: const Text("Ẩn hàng hóa"),
                                     content: Text(
-                                      "Bạn có muốn ẩn '${vm.dsHangHoa[index].tenHangHoa}' không?",
+                                      "Bạn có muốn ẩn hóa đơn ${vm.dsCongNoHienThi[index].hoaDon.maHoaDon} không?",
                                     ),
 
                                     actions: [
@@ -363,7 +405,6 @@ class _TapHoaPageState extends State<TapHoaPage> {
                               );
 
                               if (xacNhan == true) {
-                                // vm.xoaHangHoa(vm.dsHangHoa[index].maHangHoa!);
                                 final ok = await vm.xoa(hangHoaCu);
 
                                 if (!context.mounted) return;
@@ -379,9 +420,9 @@ class _TapHoaPageState extends State<TapHoaPage> {
                         /// HÓA ĐƠN
                         if (vm.currentTab == 2) {
                           return ItemHoaDonTapHoa(
-                            hoaDonTapHoaModel: vm.dsHoaDonTapHoa[index],
+                            hoaDonTapHoaModel: vm.dsHoaDonHienThi[index],
 
-                            tenNguoiThue: vm.dsHoaDonTapHoa[index].tenNguoiMua,
+                            tenNguoiThue: vm.dsHoaDonHienThi[index].tenNguoiMua,
 
                             /// SỬA
                             onSua: () async {
@@ -398,7 +439,7 @@ class _TapHoaPageState extends State<TapHoaPage> {
                                       ),
                                     ],
                                     child: HoaDonTapHoaForm(
-                                      hoaDonModel: vm.dsHoaDonTapHoa[index],
+                                      hoaDonModel: vm.dsHoaDonHienThi[index],
                                     ),
                                   ),
                                 ),
@@ -444,9 +485,9 @@ class _TapHoaPageState extends State<TapHoaPage> {
                                       ),
                                     ],
                                     child: ChiTietHoaDonTapHoa(
-                                      hoaDon: vm.dsHoaDonTapHoa[index].hoaDon,
+                                      hoaDon: vm.dsHoaDonHienThi[index].hoaDon,
                                       tenNguoiMua:
-                                          vm.dsHoaDonTapHoa[index].tenNguoiMua,
+                                          vm.dsHoaDonHienThi[index].tenNguoiMua,
                                     ),
                                   ),
                                 ),
@@ -462,7 +503,7 @@ class _TapHoaPageState extends State<TapHoaPage> {
                                     title: const Text("Ẩn hóa đơn"),
 
                                     content: Text(
-                                      "Bạn có muốn ẩn hóa đơn ${vm.dsHoaDonTapHoa[index].hoaDon.maHoaDon} không?",
+                                      "Bạn có muốn ẩn hóa đơn ${vm.dsHoaDonHienThi[index].hoaDon.maHoaDon} không?",
                                     ),
 
                                     actions: [
@@ -494,7 +535,7 @@ class _TapHoaPageState extends State<TapHoaPage> {
 
                               if (xacNhan == true) {
                                 vm.xoaHoaDon(
-                                  vm.dsHoaDonTapHoa[index].hoaDon.maHoaDon!,
+                                  vm.dsHoaDonHienThi[index].hoaDon.maHoaDon!,
                                 );
                               }
                             },
@@ -503,8 +544,9 @@ class _TapHoaPageState extends State<TapHoaPage> {
                         // công nợ
                         if (vm.currentTab == 1) {
                           return ItemHoaDonTapHoa(
-                            hoaDonTapHoaModel: vm.dsCongNoTapHoa[index],
-                            tenNguoiThue: vm.dsCongNoTapHoa[index].tenNguoiMua,
+                            hoaDonTapHoaModel: vm.dsCongNoHienThi[index],
+
+                            tenNguoiThue: vm.dsCongNoHienThi[index].tenNguoiMua,
 
                             onSua: () async {
                               final result = await Navigator.push(
@@ -520,7 +562,7 @@ class _TapHoaPageState extends State<TapHoaPage> {
                                       ),
                                     ],
                                     child: HoaDonTapHoaForm(
-                                      hoaDonModel: vm.dsCongNoTapHoa[index],
+                                      hoaDonModel: vm.dsCongNoHienThi[index],
                                     ),
                                   ),
                                 ),
@@ -565,9 +607,9 @@ class _TapHoaPageState extends State<TapHoaPage> {
                                       ),
                                     ],
                                     child: ChiTietHoaDonTapHoa(
-                                      hoaDon: vm.dsCongNoTapHoa[index].hoaDon,
+                                      hoaDon: vm.dsCongNoHienThi[index].hoaDon,
                                       tenNguoiMua:
-                                          vm.dsCongNoTapHoa[index].tenNguoiMua,
+                                          vm.dsCongNoHienThi[index].tenNguoiMua,
                                     ),
                                   ),
                                 ),
@@ -610,7 +652,7 @@ class _TapHoaPageState extends State<TapHoaPage> {
 
                               if (xacNhan == true) {
                                 vm.xoaHoaDon(
-                                  vm.dsCongNoTapHoa[index].hoaDon.maHoaDon!,
+                                  vm.dsCongNoHienThi[index].hoaDon.maHoaDon!,
                                 );
                               }
                             },

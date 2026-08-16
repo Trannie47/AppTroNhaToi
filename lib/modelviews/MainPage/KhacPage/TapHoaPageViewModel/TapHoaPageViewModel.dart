@@ -1,6 +1,4 @@
 import 'package:AppTroNhaToi/models/hang_hoa.dart';
-import 'package:AppTroNhaToi/models/hoa_don_tap_hoa.dart';
-import 'package:AppTroNhaToi/models/phieu_thu_hd_th.dart';
 import 'package:AppTroNhaToi/Provider/hang_hoa_provider.dart';
 import 'package:AppTroNhaToi/Provider/hoa_don_tap_hoa_provider.dart';
 import 'package:AppTroNhaToi/views/MainPage/KhacPage/TapHoaPage/HoaDonTapHoaModel.dart';
@@ -12,6 +10,9 @@ class TapHoaPageViewModel extends ChangeNotifier {
   bool hienMenu = false;
   int currentTab = 0;
   int sttHoaDon = 1;
+  final TextEditingController searchController = TextEditingController();
+
+String tuKhoa = '';
 
   List<HangHoa> dsHangHoa = [];
   List<HoaDonTapHoaModel> dsHoaDonTapHoa = [];
@@ -84,13 +85,62 @@ class TapHoaPageViewModel extends ChangeNotifier {
   }
 
   /// tab
-  void changeTab(int index) {
-    currentTab = index;
+ void changeTab(int index) {
+  currentTab = index;
 
-    print("currentTab = $currentTab");
+  searchController.clear();
+  tuKhoa = '';
 
+  print("currentTab = $currentTab");
+
+  notifyListeners();
+}
+
+// tìm kiếm
+  void timKiem(String value) {
+    tuKhoa = boDau(value.trim());
     notifyListeners();
   }
+
+List<HangHoa> get dsHangHoaHienThi {
+  if (tuKhoa.isEmpty) {
+    return dsHangHoa;
+  }
+
+  return dsHangHoa.where((item) {
+    final tenHangHoa = boDau(item.tenHangHoa ?? '');
+    return tenHangHoa.contains(tuKhoa);
+  }).toList();
+}
+
+List<HoaDonTapHoaModel> get dsCongNoHienThi {
+  if (tuKhoa.isEmpty) {
+    return dsCongNoTapHoa;
+  }
+
+  return dsCongNoTapHoa.where((item) {
+    final tenNguoiMua = boDau(item.tenNguoiMua ?? '');
+    final maHoaDon = boDau(item.hoaDon.maHoaDon ?? '');
+
+    return tenNguoiMua.contains(tuKhoa) ||
+        maHoaDon.contains(tuKhoa);
+  }).toList();
+}
+
+List<HoaDonTapHoaModel> get dsHoaDonHienThi {
+  if (tuKhoa.isEmpty) {
+    return dsHoaDonTapHoa;
+  }
+
+
+  return dsHoaDonTapHoa.where((item) {
+    final tenNguoiMua = boDau(item.tenNguoiMua ?? '');
+    final maHoaDon = boDau(item.hoaDon.maHoaDon ?? '');
+
+    return tenNguoiMua.contains(tuKhoa) ||
+        maHoaDon.contains(tuKhoa);
+  }).toList();
+}
 
   /// thêm hàng hóa
   void themHoaDon(HoaDonTapHoaModel hoaDonModel) {
@@ -180,11 +230,45 @@ class TapHoaPageViewModel extends ChangeNotifier {
     loadData();
     notifyListeners();
   }
+// bỏ dấu
+  String boDau(String text) {
+    const withDiacritics =
+        'àáạảãâầấậẩẫăằắặẳẵ'
+        'èéẹẻẽêềếệểễ'
+        'ìíịỉĩ'
+        'òóọỏõôồốộổỗơờớợởỡ'
+        'ùúụủũưừứựửữ'
+        'ỳýỵỷỹ'
+        'đ';
 
-  @override
-  void dispose() {
-    _service_hh.removeListener(_onHangHoaUpdate);
-    _service_hdth.removeListener(_onHoaDonUpdate);
-    super.dispose();
+    const withoutDiacritics =
+        'aaaaaaaaaaaaaaaaa'
+        'eeeeeeeeeee'
+        'iiiii'
+        'ooooooooooooooooo'
+        'uuuuuuuuuuu'
+        'yyyyy'
+        'd';
+
+    String result = text.toLowerCase();
+
+    for (int i = 0; i < withDiacritics.length; i++) {
+      result = result.replaceAll(
+        withDiacritics[i],
+        withoutDiacritics[i],
+      );
+    }
+
+    return result;
   }
+
+ @override
+void dispose() {
+  searchController.dispose();
+
+  _service_hh.removeListener(_onHangHoaUpdate);
+  _service_hdth.removeListener(_onHoaDonUpdate);
+
+  super.dispose();
+}
 }
