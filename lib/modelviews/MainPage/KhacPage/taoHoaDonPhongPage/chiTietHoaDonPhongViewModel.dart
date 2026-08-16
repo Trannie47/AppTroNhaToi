@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -13,6 +14,11 @@ class ChiTietHoaDonPhongViewModel extends ChangeNotifier {
   bool isLoading = false;
   bool isDeleting = false;
   String? errorMessage;
+
+  // Theo dõi riêng từng hóa đơn đang gửi (theo mã hóa đơn) để chỉ icon Gửi
+  // của đúng item đó xoay loading, không ảnh hưởng các item khác trong list.
+  final Set<String> _dangGuiMaHoaDon = {};
+  bool isSendingInvoice(String maHoaDon) => _dangGuiMaHoaDon.contains(maHoaDon);
 
   int phongId = 0;
   String thangNam = "";
@@ -155,10 +161,43 @@ class ChiTietHoaDonPhongViewModel extends ChangeNotifier {
 
   //HÀM XỬ LÝ TẠO VÀ XUẤT FILE PDF HÓA ĐƠN CHI TIẾT TỪNG KHOẢN PHÍ
   Future<void> exportOrSharePdf(Map<String, dynamic> item) async {
+    final maHoaDon = item['maHoaDon'] ?? '';
+    final bytes = await _buildPdfBytes(item);
+
+    await Printing.layoutPdf(
+      onLayout: (PdfPageFormat format) async => bytes,
+      name: 'HoaDon_$maHoaDon.pdf',
+    );
+  }
+
+  //HÀM TẠO PDF RỒI MỞ BẢNG CHIA SẺ CỦA HỆ ĐIỀU HÀNH (GỬI QUA ZALO/MESSENGER/...)
+  Future<bool> shareInvoicePdf(Map<String, dynamic> item) async {
+    final maHoaDon = item['maHoaDon'] ?? '';
+    _dangGuiMaHoaDon.add(maHoaDon);
+    notifyListeners();
+
+    try {
+      final tNam = item['thangNam'] ?? thangNam;
+      final bytes = await _buildPdfBytes(item);
+
+      return await Printing.sharePdf(
+        bytes: bytes,
+        filename: 'HoaDon_$maHoaDon.pdf',
+        subject: 'Hóa đơn tháng $tNam - $tenPhong',
+        body: 'Hóa đơn tháng $tNam - Phòng $tenPhong.',
+      );
+    } finally {
+      _dangGuiMaHoaDon.remove(maHoaDon);
+      notifyListeners();
+    }
+  }
+
+  Future<Uint8List> _buildPdfBytes(Map<String, dynamic> item) async {
     final pdf = pw.Document();
 
     final font = await PdfGoogleFonts.robotoRegular();
     final fontBold = await PdfGoogleFonts.robotoBold();
+    final fontItalic = await PdfGoogleFonts.robotoItalic();
 
     final bool isDienNuoc = item['isDienNuoc'] == true;
     final String hoTen = item['hoTen'] ?? 'Khách thuê';
@@ -189,7 +228,11 @@ class ChiTietHoaDonPhongViewModel extends ChangeNotifier {
     pdf.addPage(
       pw.Page(
         pageFormat: PdfPageFormat.a5,
-        theme: pw.ThemeData.withFont(base: font, bold: fontBold),
+        theme: pw.ThemeData.withFont(
+          base: font,
+          bold: fontBold,
+          italic: fontItalic,
+        ),
         build: (pw.Context context) {
           return pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -548,10 +591,7 @@ class ChiTietHoaDonPhongViewModel extends ChangeNotifier {
       ),
     );
 
-    await Printing.layoutPdf(
-      onLayout: (PdfPageFormat format) async => pdf.save(),
-      name: 'HoaDon_$maHoaDon.pdf',
-    );
+    return pdf.save();
   }
 
   Future<bool> deleteHoaDonByMa(String maHoaDon) async {

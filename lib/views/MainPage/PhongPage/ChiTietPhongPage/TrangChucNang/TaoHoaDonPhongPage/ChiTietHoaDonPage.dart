@@ -255,8 +255,8 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 4),
-                if (trangThai == 0)
+                if (trangThai == 0) ...[
+                  const SizedBox(width: 4),
                   IconButton(
                     icon: const Icon(
                       Icons.delete_outline,
@@ -268,6 +268,7 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
                   ),
+                ],
               ],
             ),
           ),
@@ -526,6 +527,30 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
             ),
             child: Row(
               children: [
+                OutlinedButton(
+                  onPressed: vm.isSendingInvoice(maHoaDon)
+                      ? null
+                      : () => _guiHoaDon(item, vm),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                    side: BorderSide(color: Colors.blue.shade200),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: vm.isSendingInvoice(maHoaDon)
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(
+                          Icons.send_outlined,
+                          size: 18,
+                          color: Color(0xff1565C0),
+                        ),
+                ),
+                const SizedBox(width: 10),
                 Expanded(
                   child: OutlinedButton.icon(
                     onPressed: () => vm.exportOrSharePdf(item),
@@ -739,6 +764,21 @@ class _ChiTietHoaDonPageState extends State<ChiTietHoaDonPage> {
         ),
       ],
     );
+  }
+
+  Future<void> _guiHoaDon(
+    Map<String, dynamic> item,
+    ChiTietHoaDonPhongViewModel vm,
+  ) async {
+    final thanhCong = await vm.shareInvoicePdf(item);
+    if (!thanhCong && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Không thể mở bảng chia sẻ hóa đơn!"),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   void _confirmDeleteInvoice(
