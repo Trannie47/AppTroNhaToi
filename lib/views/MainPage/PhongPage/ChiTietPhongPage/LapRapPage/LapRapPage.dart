@@ -112,6 +112,44 @@ class _LapRapPageState extends State<LapRapPage> {
     if (!mounted) return;
     await vm.refresh();
   }
+  Future<void> _xacNhanXoaThietBi(LapRap item) async {
+    final xacNhan = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text(
+            "Xác nhận xóa",
+            style: TextStyle(fontWeight: FontWeight.w700),
+          ),
+          content: const Text(
+            "Bạn có chắc muốn xóa lịch sử lắp ráp này không?",
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext, false);
+              },
+              child: const Text("Hủy"),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+              ),
+              onPressed: () {
+                Navigator.pop(dialogContext, true);
+              },
+              child: const Text("Xóa"),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (xacNhan != true) return;
+
+    await vm.xoaThietBi(item);
+  }
 
   @override
   void dispose() {
@@ -206,7 +244,7 @@ class _LapRapPageState extends State<LapRapPage> {
                     _moDialogSuaThietBi(item.lapRap);
                   },
                   delete: () {
-                    vm.xoaThietBi(item.lapRap);
+                    _xacNhanXoaThietBi(item.lapRap);
                   },
                 );
               },
