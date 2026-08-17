@@ -35,15 +35,20 @@ class LichSuSuaChuaPageViewModel extends ChangeNotifier {
 
     txtSearch.addListener(timKiem);
 
-    Future.microtask(() async {
-      await _fetch();
-      await _fetchPhong();
+    Future.microtask(() => _loadAll());
+  }
 
-      dsGoc = List.from(_suaChuaProvider.list);
-      lichSuSuaChua = List.from(dsGoc);
+  /// Tải toàn bộ dữ liệu cần cho trang: lịch sử sửa chữa + thông tin phòng.
+  /// Dùng chung cho lần khởi tạo đầu tiên và mỗi lần reload() để 2 luồng
+  /// luôn nhất quán, tránh reload() bị thiếu bước cập nhật phòng.
+  Future<void> _loadAll() async {
+    await _fetch();
+    await _fetchPhong();
 
-      notifyListeners();
-    });
+    dsGoc = List.from(_suaChuaProvider.list);
+    lichSuSuaChua = List.from(dsGoc);
+
+    notifyListeners();
   }
 
   Future<void> _fetch() async {
@@ -93,12 +98,7 @@ class LichSuSuaChuaPageViewModel extends ChangeNotifier {
   }
 
   Future<void> reload() async {
-    await _fetch();
-
-    dsGoc = List.from(_suaChuaProvider.list);
-    lichSuSuaChua = List.from(dsGoc);
-
-    notifyListeners();
+    await _loadAll();
   }
 
   @override
