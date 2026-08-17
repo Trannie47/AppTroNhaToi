@@ -4,8 +4,6 @@ import 'package:AppTroNhaToi/views/MainPage/KhacPage/ThietBiPage/thietBiPageMode
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
-import '../../models/lap_rap.dart';
-
 class ThietBiApiClient {
   final Dio _dio = RetrofitClient().dio;
 
@@ -54,12 +52,18 @@ class ThietBiApiClient {
       }
 
       return false;
+    } on DioException catch (e) {
+      if (kDebugMode) {
+        print("Lỗi ẩn thiết bị $e");
+      }
+
+      throw Exception(e.response?.data?['message'] ?? "Không thể ẩn thiết bị");
     } catch (e) {
       if (kDebugMode) {
         print("Lỗi ẩn thiết bị $e");
       }
 
-      rethrow;
+      throw Exception("Không thể ẩn thiết bị");
     }
   }
 

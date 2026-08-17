@@ -789,21 +789,30 @@ class _ChiTietThietBiPageState extends State<ChiTietThietBiPage> {
               style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
 
               onPressed: () async {
-                Navigator.pop(context); // đóng dialog trước
+                Navigator.pop(context);
 
-                final ok = await vm.xoaThietBi();
+                try {
+                  final ok = await vm.xoaThietBi();
 
-                if (!mounted) return;
+                  if (!mounted) return;
 
-                if (ok) {
+                  if (ok) {
+                    ScaffoldMessenger.of(this.context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Đã ẩn thiết bị thành công"),
+                      ),
+                    );
+
+                    Navigator.of(this.context).pop(true);
+                  }
+                } catch (e) {
+                  if (!mounted) return;
+
                   ScaffoldMessenger.of(this.context).showSnackBar(
-                    const SnackBar(content: Text("Đã ẩn thiết bị thành công")),
-                  );
-                  Navigator.of(this.context).pop(true); // quay lại trang trước
-                } else {
-                  ScaffoldMessenger.of(this.context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Không thể ẩn thiết bị. Vui lòng thử lại."),
+                    SnackBar(
+                      content: Text(
+                        e.toString().replaceFirst("Exception: ", ""),
+                      ),
                     ),
                   );
                 }
