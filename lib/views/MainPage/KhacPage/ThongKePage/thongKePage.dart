@@ -1356,23 +1356,24 @@ class _ThongKePageState extends State<ThongKePage> {
               child: _buildDebtPersonList(data.topCongNoTapHoa),
             ),
 
-            // Tạm ẩn: nợ điện nước (theo phòng) — bật lại khi cần hiển thị.
-            // _buildDebtSubSection(
-            //   title: "Nợ điện nước",
-            //   icon: Icons.water_drop_rounded,
-            //   color: Colors.blue,
-            //   child: _buildDebtRoomList(
-            //     data.topCongNoDienNuoc
-            //         .map(
-            //           (e) => _DebtRoomEntry(
-            //             tenPhong: e.tenPhong,
-            //             tongDaThu: e.tongDaThu,
-            //             tongCongNo: e.tongCongNo,
-            //           ),
-            //         )
-            //         .toList(),
-            //   ),
-            // ),
+            
+            _buildDebtSubSection(
+              title: "Nợ điện nước",
+              icon: Icons.water_drop_rounded,
+              color: Colors.blue,
+              child: _buildDebtRoomList(
+                data.topCongNoDienNuoc
+                    .map(
+                      (e) => _DebtRoomEntry(
+                        tenPhong: e.tenPhong,
+                        tongDaThu: e.tongDaThu,
+                        tongCongNo: e.tongCongNo,
+                      ),
+                    )
+                    .toList(),
+              ),
+            ),
+            
             _buildDebtSubSection(
               title: "Nợ gửi xe / phương tiện",
               icon: Icons.two_wheeler_rounded,
