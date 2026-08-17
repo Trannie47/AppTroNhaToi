@@ -112,44 +112,117 @@ class _LapRapPageState extends State<LapRapPage> {
     if (!mounted) return;
     await vm.refresh();
   }
-  Future<void> _xacNhanXoaThietBi(LapRap item) async {
-    final xacNhan = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          title: const Text(
-            "Xác nhận xóa",
-            style: TextStyle(fontWeight: FontWeight.w700),
+
+  // Future<void> _xacNhanXoaThietBi(LapRap item) async {
+  //   final xacNhan = await showDialog<bool>(
+  //     context: context,
+  //     builder: (dialogContext) {
+  //       return AlertDialog(
+  //         title: const Text(
+  //           "Xác nhận xóa",
+  //           style: TextStyle(fontWeight: FontWeight.w700),
+  //         ),
+  //         content: const Text(
+  //           "Bạn có chắc muốn xóa lịch sử lắp ráp này không?",
+  //         ),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () {
+  //               Navigator.pop(dialogContext, false);
+  //             },
+  //             child: const Text("Hủy"),
+  //           ),
+  //           ElevatedButton(
+  //             style: ElevatedButton.styleFrom(
+  //               backgroundColor: Colors.red,
+  //               foregroundColor: Colors.white,
+  //             ),
+  //             onPressed: () {
+  //               Navigator.pop(dialogContext, true);
+  //             },
+  //             child: const Text("Xóa"),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+
+  //   if (xacNhan != true) return;
+
+  //   await vm.xoaThietBi(item);
+  // }
+
+Future<void> _xacNhanXoaThietBi(LapRap item) async {
+  final xacNhan = await showDialog<bool>(
+    context: context,
+    builder: (dialogContext) {
+      return AlertDialog(
+        title: const Text(
+          "Xác nhận xóa",
+          style: TextStyle(fontWeight: FontWeight.w700),
+        ),
+        content: const Text(
+          "Bạn có chắc muốn xóa lịch sử lắp ráp này không?",
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(dialogContext, false);
+            },
+            child: const Text("Hủy"),
           ),
-          content: const Text(
-            "Bạn có chắc muốn xóa lịch sử lắp ráp này không?",
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.pop(dialogContext, true);
+            },
+            child: const Text("Xóa"),
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(dialogContext, false);
-              },
-              child: const Text("Hủy"),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-              ),
-              onPressed: () {
-                Navigator.pop(dialogContext, true);
-              },
-              child: const Text("Xóa"),
-            ),
-          ],
-        );
-      },
+        ],
+      );
+    },
+  );
+
+  if (xacNhan != true) return;
+
+  try {
+    final thanhCong = await vm.xoaThietBi(item);
+
+    if (!mounted) return;
+
+    if (thanhCong) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Xóa lịch sử lắp ráp thành công!"),
+          backgroundColor: Color(0xff2D7A3A),
+        ),
+      );
+    }  else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Không thể xóa lịch sử lắp ráp vì thiết bị đang có lịch sử sửa chữa chưa hoàn thành. Vui lòng hoàn thành sửa chữa trước khi xóa.",
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  } catch (e) {
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          e.toString().replaceFirst("Exception: ", ""),
+        ),
+        backgroundColor: Colors.red,
+      ),
     );
-
-    if (xacNhan != true) return;
-
-    await vm.xoaThietBi(item);
   }
+}
 
   @override
   void dispose() {

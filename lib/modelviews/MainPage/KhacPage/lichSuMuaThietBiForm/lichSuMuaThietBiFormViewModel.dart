@@ -80,6 +80,10 @@ class LichSuMuaThietBiFormViewModel extends ChangeNotifier {
         errSoLuong = "Số lượng phải lớn hơn 0";
         hopLe = false;
       }
+      //     else if (soLuong > 99) {
+      //   errSoLuong = "Số lượng mua tối đa là 99 thiết bị/lần";
+      //   hopLe = false;
+      // }
     }
 
     // Đơn giá

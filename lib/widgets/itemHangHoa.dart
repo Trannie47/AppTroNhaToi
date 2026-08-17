@@ -32,8 +32,8 @@ class ItemHangHoa extends StatelessWidget {
             children: [
               /// Icon hàng hóa
               Container(
-                width: 52,
-                height: 52,
+                width: 32,
+                height: 32,
                 decoration: BoxDecoration(
                   color: const Color(0xffEDF5EE),
                   borderRadius: BorderRadius.circular(16),
@@ -57,7 +57,7 @@ class ItemHangHoa extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.w700,
                         color: Colors.black,
                       ),
