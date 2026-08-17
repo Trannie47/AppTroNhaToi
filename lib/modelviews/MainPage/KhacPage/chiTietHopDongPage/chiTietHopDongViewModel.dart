@@ -86,24 +86,32 @@ class ChiTietHopDongViewModel extends ChangeNotifier {
     }
   }
 
-  Future<bool> terminateHopDong(String hopDongId) async {
-    try {
-      _isLoadingPhong = true;
-      notifyListeners();
+ Future<bool> terminateHopDong(
+  String hopDongId, {
+  bool ketThucLuanChuyen = false,
+}) async {
+  try {
+    _isLoadingPhong = true;
+    notifyListeners();
 
-      final success = await _hopDongProvider.terminateHopDong(hopDongId);
-      if (success) {
-        isUpdated = true;
-      }
-      return success;
-    } catch (e) {
-      if (kDebugMode) print("Lỗi kết thúc hợp đồng trong VM: $e");
-      rethrow; // Ném tiếp lỗi ra ngoài để UI bắt được nội dung thông báo
-    } finally {
-      _isLoadingPhong = false;
-      notifyListeners();
+    final success = await _hopDongProvider.terminateHopDong(
+      hopDongId,
+      ketThucLuanChuyen: ketThucLuanChuyen,
+    );
+
+    if (success) {
+      isUpdated = true;
     }
+
+    return success;
+  } catch (e) {
+    if (kDebugMode) print("Lỗi kết thúc hợp đồng trong VM: $e");
+    rethrow;
+  } finally {
+    _isLoadingPhong = false;
+    notifyListeners();
   }
+}
 
   void updateHopDongData(HopDong hd, List<NguoiOGhepDTO> nguoiOGhep) {
     _hopDong = HopDongDTO(

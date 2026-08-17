@@ -215,21 +215,33 @@ class HopDongApiClient {
     }
   }
 
-  Future<HopDong> terminateContract(String hopDongId) async {
-    try {
-      final request = await _dio.post("hop-dong/$hopDongId/terminate");
-      if (request.statusCode == 200 || request.statusCode == 201) {
-        final responseData = request.data['data'] ?? request.data;
-        return HopDong.fromMap(responseData as Map<String, dynamic>);
-      }
-      throw Exception(
-        "Kết thúc hợp đồng thất bại! (Mã lỗi: ${request.statusCode})",
-      );
-    } catch (e) {
-      if (kDebugMode) print("Lỗi terminateContract HopDongApiClient: $e");
-      rethrow;
+Future<HopDong> terminateContract(
+  String hopDongId, {
+  bool ketThucLuanChuyen = false,
+}) async {
+  try {
+    final request = await _dio.post(
+  "hop-dong/$hopDongId/terminate",
+  queryParameters: {
+    "ketThucLuanChuyen": ketThucLuanChuyen,
+  },
+);
+
+    if (request.statusCode == 200 || request.statusCode == 201) {
+      final responseData = request.data['data'] ?? request.data;
+      return HopDong.fromMap(responseData as Map<String, dynamic>);
     }
+
+    throw Exception(
+      "Kết thúc hợp đồng thất bại! (Mã lỗi: ${request.statusCode})",
+    );
+  } catch (e) {
+    if (kDebugMode) {
+      print("Lỗi terminateContract HopDongApiClient: $e");
+    }
+    rethrow;
   }
+}
 
   Future<List<HopDongDTO>> getLichSuThuePhong(int phongId) async {
     try {

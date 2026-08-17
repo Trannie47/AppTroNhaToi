@@ -123,18 +123,25 @@ class HopDongProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> terminateHopDong(String hopDongId) async {
-    try {
-      await hopdongRepository.terminateContract(hopDongId);
-      await getListHD();
-      return true;
-    } catch (e) {
-      if (kDebugMode) {
-        print("Lỗi terminateHopDong Provider: $e");
-      }
-      rethrow;
+ Future<bool> terminateHopDong(
+  String hopDongId, {
+  bool ketThucLuanChuyen = false,
+}) async {
+  try {
+    await hopdongRepository.terminateContract(
+      hopDongId,
+      ketThucLuanChuyen: ketThucLuanChuyen,
+    );
+
+    await getListHD();
+    return true;
+  } catch (e) {
+    if (kDebugMode) {
+      print("Lỗi terminateHopDong Provider: $e");
     }
+    rethrow;
   }
+}
 
   Future<List<RoomAvailableDTO>> getRoomsAvailable() async {
     try {

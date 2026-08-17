@@ -50,9 +50,15 @@ class HopdongRepository {
   }
 
   //kết thúc hợp đồng
-  Future<HopDong> terminateContract(String hopDongId) {
-    return hopDongApiClient.terminateContract(hopDongId);
-  }
+ Future<HopDong> terminateContract(
+  String hopDongId, {
+  bool ketThucLuanChuyen = false,
+}) {
+  return hopDongApiClient.terminateContract(
+    hopDongId,
+    ketThucLuanChuyen: ketThucLuanChuyen,
+  );
+}
 
   Future<List<RoomAvailableDTO>> getRoomsAvailableForContract() {
     return hopDongApiClient.getRoomsAvailableForContract();
