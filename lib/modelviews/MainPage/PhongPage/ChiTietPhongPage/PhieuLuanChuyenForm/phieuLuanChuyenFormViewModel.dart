@@ -153,39 +153,53 @@ class PhieuLuanChuyenFormViewModel extends ChangeNotifier {
     BuildContext context,
     TextEditingController controller,
   ) async {
+    final now = DateTime.now();
+
+    // Chỉ cho chọn từ ngày 01 của tháng hiện tại đến ngày hôm nay
+    final firstDate = DateTime(now.year, now.month, 1);
+    final lastDate = DateTime(now.year, now.month, now.day);
+
     DateTime ngayHienTai;
+
     try {
-      ngayHienTai = controller.text.isNotEmpty
-          ? (chuyenNgay(controller.text) ?? DateTime.now())
-          : DateTime.now();
+      final ngayDangCo = controller.text.isNotEmpty
+          ? chuyenNgay(controller.text)
+          : null;
+
+      if (ngayDangCo != null &&
+          !ngayDangCo.isBefore(firstDate) &&
+          !ngayDangCo.isAfter(lastDate)) {
+        ngayHienTai = ngayDangCo;
+      } else {
+        ngayHienTai = lastDate;
+      }
     } catch (_) {
-      ngayHienTai = DateTime.now();
+      ngayHienTai = lastDate;
     }
 
     final ngayChon = await showDatePicker(
       context: context,
       initialDate: ngayHienTai,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
+      firstDate: firstDate,
+      lastDate: lastDate,
     );
 
     if (ngayChon != null) {
       controller.text = formatDate(ngayChon);
 
-      // Ngày kết thúc phải sau ngày bắt đầu ít nhất 1 ngày (không được
-      // trùng) -> nếu ngày kết thúc hiện tại <= ngày bắt đầu mới chọn thì
-      // tự đẩy nó sang ngày kế tiếp. txtDenNgay có thể đang để trống (không
-      // bắt buộc) nên phải kiểm tra rỗng trước khi parse.
+      // Ngày kết thúc phải sau ngày bắt đầu ít nhất 1 ngày
       if (txtDenNgay.text.trim().isNotEmpty) {
         try {
           final ngayKetThucHienTai = chuyenNgay(txtDenNgay.text);
-          if (!ngayKetThucHienTai.isAfter(ngayChon)) {
+
+          if (ngayKetThucHienTai != null &&
+              !ngayKetThucHienTai.isAfter(ngayChon)) {
             txtDenNgay.text = formatDate(
               DateTime(ngayChon.year, ngayChon.month, ngayChon.day + 1),
             );
           }
         } catch (_) {
-          // Ngày kết thúc đang nhập dở/không hợp lệ -> bỏ qua, không tự đẩy.
+          // Ngày kết thúc không hợp lệ thì bỏ qua.
         }
       }
 
@@ -233,6 +247,7 @@ class PhieuLuanChuyenFormViewModel extends ChangeNotifier {
   bool _validate() {
     bool hopLe = true;
 
+    // Reset lỗi
     errHopDong = null;
     errPhongMoi = null;
     errTuNgay = null;
@@ -242,11 +257,17 @@ class PhieuLuanChuyenFormViewModel extends ChangeNotifier {
     errGhiChu = null;
     errLuu = null;
 
+    // =========================
+    // KIỂM TRA HỢP ĐỒNG
+    // =========================
     if (hopDongDaChonId == null || hopDongDaChonId!.trim().isEmpty) {
       errHopDong = "Vui lòng chọn hợp đồng";
       hopLe = false;
     }
 
+    // =========================
+    // KIỂM TRA PHÒNG MỚI
+    // =========================
     if (phongMoiDaChonId == null) {
       errPhongMoi = "Vui lòng chọn phòng mới";
       hopLe = false;
@@ -255,6 +276,7 @@ class PhieuLuanChuyenFormViewModel extends ChangeNotifier {
       hopLe = false;
     } else {
       final hopDong = hopDongDaChon;
+
       final phongMoi = dsPhongCoTheChon
           .where((p) => p.phongId == phongMoiDaChonId)
           .cast<ItemPhongModel?>()
@@ -263,6 +285,7 @@ class PhieuLuanChuyenFormViewModel extends ChangeNotifier {
       if (hopDong != null && phongMoi != null) {
         final soNguoiHopDong =
             1 + hopDong.dsNguoiOGhep.where((ng) => !ng.isDelete).length;
+
         final soChoTrong =
             phongMoi.loaiPhong.soNguoiToiDa - phongMoi.soNguoiHienTai;
 
@@ -274,6 +297,9 @@ class PhieuLuanChuyenFormViewModel extends ChangeNotifier {
       }
     }
 
+    // =========================
+    // KIỂM TRA NGÀY BẮT ĐẦU
+    // =========================
     DateTime? tuNgay;
 
     if (txtTuNgay.text.trim().isEmpty) {
@@ -286,6 +312,24 @@ class PhieuLuanChuyenFormViewModel extends ChangeNotifier {
         if (tuNgay == null) {
           errTuNgay = "Ngày bắt đầu không hợp lệ";
           hopLe = false;
+        } else {
+          final now = DateTime.now();
+
+          // Ngày 01 của tháng hiện tại
+          final firstDate = DateTime(now.year, now.month, 1);
+
+          // Ngày hiện tại
+          final lastDate = DateTime(now.year, now.month, now.day);
+
+          // Bỏ phần giờ để chỉ so sánh ngày
+          final tuNgayChiNgay = DateTime(tuNgay.year, tuNgay.month, tuNgay.day);
+
+          if (tuNgayChiNgay.isBefore(firstDate) ||
+              tuNgayChiNgay.isAfter(lastDate)) {
+            errTuNgay =
+                "Ngày bắt đầu phải từ ngày 01 đến ngày hiện tại trong tháng này";
+            hopLe = false;
+          }
         }
       } catch (_) {
         errTuNgay = "Ngày bắt đầu không hợp lệ";
@@ -293,6 +337,9 @@ class PhieuLuanChuyenFormViewModel extends ChangeNotifier {
       }
     }
 
+    // =========================
+    // KIỂM TRA NGÀY KẾT THÚC
+    // =========================
     DateTime? denNgay;
 
     if (txtDenNgay.text.trim().isNotEmpty) {
@@ -309,16 +356,29 @@ class PhieuLuanChuyenFormViewModel extends ChangeNotifier {
       }
     }
 
-    if (tuNgay != null && denNgay != null && !denNgay.isAfter(tuNgay)) {
-      errDenNgay = "Ngày kết thúc phải sau ngày bắt đầu ít nhất 1 ngày";
-      hopLe = false;
+    // Ngày kết thúc phải sau ngày bắt đầu ít nhất 1 ngày
+    if (tuNgay != null && denNgay != null) {
+      final tuNgayChiNgay = DateTime(tuNgay.year, tuNgay.month, tuNgay.day);
+
+      final denNgayChiNgay = DateTime(denNgay.year, denNgay.month, denNgay.day);
+
+      if (!denNgayChiNgay.isAfter(tuNgayChiNgay)) {
+        errDenNgay = "Ngày kết thúc phải sau ngày bắt đầu ít nhất 1 ngày";
+        hopLe = false;
+      }
     }
 
+    // =========================
+    // KIỂM TRA LÝ DO
+    // =========================
     if (txtLyDo.text.trim().isEmpty) {
       errLyDo = "Vui lòng nhập lý do luân chuyển";
       hopLe = false;
     }
 
+    // =========================
+    // KIỂM TRA CHI PHÍ
+    // =========================
     final chiPhiText = txtChiPhi.text
         .replaceAll('.', '')
         .replaceAll(',', '')
