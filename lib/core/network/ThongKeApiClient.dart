@@ -33,6 +33,34 @@ class ThongKeApiClient {
     }
   }
 
+  Future<List<NguoiHayNoModel>> getNguoiHayNo({int top = 10}) async {
+    try {
+      final response = await _dio.get(
+        "thong-ke/nguoi-hay-no",
+        queryParameters: {"top": top},
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final List rawList = response.data as List;
+        return rawList
+            .map((e) => NguoiHayNoModel.fromMap(e as Map<String, dynamic>))
+            .toList();
+      }
+
+      return [];
+    } on DioException catch (e) {
+      if (kDebugMode) {
+        print("Lỗi ThongKeApiClient.getNguoiHayNo: $e");
+      }
+      throw Exception(_mapErrorToMessage(e));
+    } catch (e) {
+      if (kDebugMode) {
+        print("Lỗi không xác định ThongKeApiClient.getNguoiHayNo: $e");
+      }
+      throw Exception("Đã có lỗi xảy ra, vui lòng thử lại");
+    }
+  }
+
   String _mapErrorToMessage(DioException e) {
     if (e.type == DioExceptionType.connectionTimeout ||
         e.type == DioExceptionType.receiveTimeout ||

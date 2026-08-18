@@ -812,3 +812,54 @@ class HopDongSapHetModel {
 
   Map<String, dynamic> toMap() => raw;
 }
+
+/// ==========================================
+/// NGƯỜI THUÊ HAY BỊ NỢ TIỀN PHÒNG NHẤT (tính trên toàn bộ lịch sử,
+/// khác "topCongNo" chỉ tính trong 1 kỳ tháng/năm đang chọn)
+/// GET /thong-ke/nguoi-hay-no
+/// ==========================================
+class NguoiHayNoModel {
+  final int idnt;
+  final String? hoTen;
+  final String? sdt;
+  final int soLanNo;
+  final double tongConNo;
+  final List<String> danhSachThangNoDong;
+  final PhongMiniModel? phong;
+
+  NguoiHayNoModel({
+    required this.idnt,
+    required this.hoTen,
+    required this.sdt,
+    required this.soLanNo,
+    required this.tongConNo,
+    required this.danhSachThangNoDong,
+    required this.phong,
+  });
+
+  factory NguoiHayNoModel.fromMap(Map<String, dynamic> map) {
+    return NguoiHayNoModel(
+      idnt: intOf(map['idnt']),
+      hoTen: strOf(map['hoTen']),
+      sdt: strOf(map['sdt']),
+      soLanNo: intOf(map['soLanNo']),
+      tongConNo: numOf(map['tongConNo']),
+      danhSachThangNoDong: ((map['danhSachThangNoDong'] as List?) ?? [])
+          .map((e) => e.toString())
+          .toList(),
+      phong: map['phong'] == null
+          ? null
+          : PhongMiniModel.fromMap(map['phong'] as Map<String, dynamic>),
+    );
+  }
+
+  Map<String, dynamic> toMap() => {
+    'idnt': idnt,
+    'hoTen': hoTen,
+    'sdt': sdt,
+    'soLanNo': soLanNo,
+    'tongConNo': tongConNo,
+    'danhSachThangNoDong': danhSachThangNoDong,
+    'phong': phong?.toMap(),
+  };
+}

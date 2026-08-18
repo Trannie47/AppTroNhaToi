@@ -11,6 +11,12 @@ class ThongKeProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
+  List<NguoiHayNoModel> _nguoiHayNo = [];
+  List<NguoiHayNoModel> get nguoiHayNo => _nguoiHayNo;
+
+  bool _isLoadingNguoiHayNo = false;
+  bool get isLoadingNguoiHayNo => _isLoadingNguoiHayNo;
+
   double get tongDoanhThuThang =>
       _thongKe?.doanhThu.tongDoanhThu.toDouble() ?? 0;
 
@@ -34,6 +40,25 @@ class ThongKeProvider extends ChangeNotifier {
       rethrow;
     } finally {
       _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<List<NguoiHayNoModel>> getNguoiHayNo({int top = 10}) async {
+    _isLoadingNguoiHayNo = true;
+    notifyListeners();
+
+    try {
+      _nguoiHayNo = await _thongKeRepository.getNguoiHayNo(top: top);
+
+      return _nguoiHayNo;
+    } catch (e) {
+      if (kDebugMode) {
+        print("Lỗi ThongKeProvider.getNguoiHayNo: $e");
+      }
+      rethrow;
+    } finally {
+      _isLoadingNguoiHayNo = false;
       notifyListeners();
     }
   }

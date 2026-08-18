@@ -12,6 +12,9 @@ class ThongKePageViewModel extends ChangeNotifier {
     _service.addListener(_onThongKeUpdate);
 
     Future.microtask(() => _service.getThongKe());
+    // Tính trên toàn bộ lịch sử, không phụ thuộc kỳ tháng/năm đang chọn
+    // nên chỉ cần tải 1 lần, không cần gọi lại khi đổi tháng/năm.
+    Future.microtask(() => _service.getNguoiHayNo());
   }
 
   void _onThongKeUpdate() {
@@ -59,6 +62,12 @@ class ThongKePageViewModel extends ChangeNotifier {
   ///================ DATA ==================
 
   ThongKeDTO? get data => _service.thongKe;
+
+  ///================ NGƯỜI HAY NỢ (toàn bộ lịch sử) ==================
+
+  List<NguoiHayNoModel> get nguoiHayNo => _service.nguoiHayNo;
+
+  bool get isLoadingNguoiHayNo => _service.isLoadingNguoiHayNo;
 
   ///================ KPI ==================
 

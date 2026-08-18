@@ -85,8 +85,8 @@ class _ThongKePageState extends State<ThongKePage> {
                     case 8:
                       return _buildTopDebt(vm);
 
-                    // case 9:
-                    //   return _buildRecentActivity(vm);
+                    case 9:
+                      return _buildNguoiHayNoSection(vm);
 
                     default:
                       return const SizedBox();
@@ -1541,6 +1541,179 @@ class _ThongKePageState extends State<ThongKePage> {
           ),
         );
       }),
+    );
+  }
+
+  // NGƯỜI HAY NỢ (toàn bộ lịch sử, không giới hạn theo kỳ đang chọn)
+  Widget _buildNguoiHayNoSection(ThongKePageViewModel vm) {
+    final items = vm.nguoiHayNo;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(22),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Row(
+              children: [
+                Icon(Icons.history_toggle_off_rounded, color: Colors.deepOrange),
+                SizedBox(width: 10),
+                Text(
+                  "Người thuê hay bị nợ tiền phòng nhất",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            const Text(
+              "Tính trên toàn bộ lịch sử, không riêng kỳ đang xem",
+              style: TextStyle(fontSize: 11, color: Colors.grey),
+            ),
+
+            const SizedBox(height: 16),
+
+            if (vm.isLoadingNguoiHayNo)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 12),
+                child: Center(child: CircularProgressIndicator()),
+              )
+            else if (items.isEmpty)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 12),
+                child: Text(
+                  "Chưa có người thuê nào bị nợ nhiều lần.",
+                  style: TextStyle(color: Colors.grey),
+                ),
+              )
+            else
+              ...items.map((item) => _buildNguoiHayNoCard(item)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNguoiHayNoCard(NguoiHayNoModel item) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.hoTen ?? "Không xác định",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                    ),
+                    if (item.phong?.tenPhong != null) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        "Phòng ${item.phong!.tenPhong}",
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.red.shade50,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.red.shade200),
+                ),
+                child: Text(
+                  "Nợ ${item.soLanNo} lần",
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red.shade700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 10),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                "Tổng còn nợ",
+                style: TextStyle(fontSize: 12, color: Colors.black54),
+              ),
+              Text(
+                formatMoney(item.tongConNo),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red,
+                ),
+              ),
+            ],
+          ),
+
+          if (item.danhSachThangNoDong.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: item.danhSachThangNoDong
+                  .map(
+                    (thang) => Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.shade50,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.orange.shade200),
+                      ),
+                      child: Text(
+                        thang,
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: Colors.orange.shade800,
+                        ),
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
+          ],
+        ],
+      ),
     );
   }
 }

@@ -12,4 +12,8 @@ class ThongKeRepository {
       nam: nam ?? now.year,
     );
   }
+
+  Future<List<NguoiHayNoModel>> getNguoiHayNo({int top = 10}) async {
+    return await thongKeApiClient.getNguoiHayNo(top: top);
+  }
 }
